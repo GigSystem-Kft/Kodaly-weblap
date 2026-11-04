@@ -33,6 +33,7 @@ export const ChatAssistant: React.FC = () => {
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [aiMode, setAiMode] = useState<AiMode>('checking');
+  const [knowledgeSummary, setKnowledgeSummary] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,6 +42,7 @@ export const ChatAssistant: React.FC = () => {
         if (!res.ok) throw new Error('Chat status request failed');
         const data = await res.json();
         setAiMode(data.mode === 'gemini' ? 'gemini' : 'fallback');
+        if (data.knowledge) setKnowledgeSummary(`${data.knowledge.indexedSources} forrás, ${data.knowledge.lessonChunks} tananyagrészlet`);
       })
       .catch(() => setAiMode('error'));
   }, []);
@@ -81,7 +83,7 @@ export const ChatAssistant: React.FC = () => {
         setMessages((prev) => [...prev, {
           role: 'model',
           text: isFallback
-            ? `ℹ️ Helyi, korlátozott tudásbázisból származó válasz (Gemini API-kulcs nincs beállítva).\n\n${data.reply}`
+            ? `ℹ️ Kereshető helyi tudásbázis (Gemini API-kulcs nincs beállítva). A forrásokból releváns szövegrészleteket mutatok.\n\n${data.reply}`
             : data.reply,
         }]);
       } else {
@@ -136,10 +138,11 @@ export const ChatAssistant: React.FC = () => {
                   <span>
                     {aiMode === 'checking' && 'AI állapotának ellenőrzése...'}
                     {aiMode === 'gemini' && 'Gemini konfigurálva'}
-                    {aiMode === 'fallback' && 'Helyi mód (hiányzó API-kulcs)'}
+                    {aiMode === 'fallback' && 'Helyi tudásbázis (Gemini nélkül)'}
                     {aiMode === 'error' && 'AI-kapcsolati hiba'}
                   </span>
                 </p>
+                {knowledgeSummary && <p className="text-[10px] text-slate-400 mt-0.5">{knowledgeSummary}</p>}
               </div>
             </div>
             <button
