@@ -1,4 +1,4 @@
-# Zenelméleti Műhely – CloudPanel / MySQL telepítési terv
+# Zeneelméleti Műhely – CloudPanel / MySQL telepítési terv
 
 ## Előkészített környezet
 
