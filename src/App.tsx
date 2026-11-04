@@ -14,6 +14,7 @@ import { TextbookView } from './components/TextbookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays } from './progress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -22,57 +23,37 @@ export default function App() {
   const [flashcardCategory, setFlashcardCategory] = useState<string>();
   const [matchingCategory, setMatchingCategory] = useState<string>();
 
-  const [progress, setProgress] = useState<UserProgress>(() => {
-    const saved = localStorage.getItem('kodaly_progress');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return {
-      completedChapters: [],
-      completedSubchapters: [],
-      quizScores: {},
-      flashcardsMastered: [],
-      matchingCompleted: [],
-      xp: 100,
-      streak: 3,
-      lastActiveDate: new Date().toISOString()
-    };
-  });
+  const [progress, setProgress] = useState<UserProgress>(readProgress);
 
   useEffect(() => {
-    localStorage.setItem('kodaly_progress', JSON.stringify(progress));
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
   }, [progress]);
 
   const addXp = (amount: number) => {
-    setProgress((prev) => ({
-      ...prev,
-      xp: prev.xp + amount
-    }));
+    setProgress(prev => recordActivity(prev, amount));
   };
 
   const completeChapter = (chapterId: string) => {
-    if (!progress.completedChapters.includes(chapterId)) {
-      setProgress((prev) => ({
-        ...prev,
-        completedChapters: [...prev.completedChapters, chapterId],
-        xp: prev.xp + 50
-      }));
-    }
+    setProgress(prev => prev.completedChapters.includes(chapterId)
+      ? prev
+      : recordActivity({ ...prev, completedChapters: [...prev.completedChapters, chapterId] }, 50));
+  };
+
+  const markFlashcard = (id: string) => {
+    setProgress(prev => prev.flashcardsMastered.includes(id)
+      ? prev
+      : recordActivity({ ...prev, flashcardsMastered: [...prev.flashcardsMastered, id] }, 15));
   };
 
   const saveQuizScore = (chapterId: string, score: number) => {
-    setProgress((prev) => ({
-      ...prev,
-      quizScores: {
-        ...prev.quizScores,
-        [chapterId]: Math.max(prev.quizScores[chapterId] || 0, score)
-      },
-      xp: prev.xp + 30
-    }));
+    setProgress(prev => {
+      const previousBest = prev.quizScores[chapterId] ?? 0;
+      const improved = score > previousBest;
+      return recordActivity({
+        ...prev,
+        quizScores: { ...prev.quizScores, [chapterId]: Math.max(previousBest, score) }
+      }, improved ? 30 : 0);
+    });
   };
 
   const handleSelectChapter = (chapter: Chapter) => {
@@ -112,7 +93,7 @@ export default function App() {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         xp={progress.xp}
-        streak={progress.streak}
+        streak={consecutiveDays(progress.activityDays ?? [])}
       />
 
       <main className="flex-1 pb-16">
@@ -137,7 +118,7 @@ export default function App() {
         )}
 
         {activeTab === 'flashcards' && (
-          <FlashcardsView onAddXp={addXp} initialCategory={flashcardCategory} />
+          <FlashcardsView onAddXp={addXp} onMasterCard={markFlashcard} masteredCards={progress.flashcardsMastered} initialCategory={flashcardCategory} />
         )}
 
         {activeTab === 'matching' && (
