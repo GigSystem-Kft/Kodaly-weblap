@@ -1,0 +1,1553 @@
+=== [OLDAL 1] (ábrák/rajzelemek: 2) ===
+
+
+=== [OLDAL 2] (ábrák/rajzelemek: 1) ===
+Bevezető
+
+Ha a belelapoznak az elkövetkező oldalakba, talán sokan csodálkoznak, hiszen jól ismert
+tudománnyal találkoznak. S mások lehet hogy egy kicsit megrémülnek. Meg tudom én ezt
+tanulni? Megértem? S a szakember pedig méltán gondolja, ezeket az ismereteket
+kisgyermekkorban, de legkésőbb kisiskolás korban kellett volna megtanulni. Nos talán
+mindkét félnek igaza van. De higgyük el, hisz sok évtizedes pedagógiai gyakorlat bizonyítja,
+hogy valamit megtanulni sosem késő!
+
+Az itt következő ismeretekkel elérhetjük, hogy tanári segédlet nélkül is képesek legyünk
+dalismeretünket bővíteni, s nem tanulunk meg egy gyermekdalt, vagy bármilyen zenei
+szemelvényt hibákkal, s adjuk azt tovább rosszul, több generációnak. A zene nem csak
+élményforrás, hanem egy rendezett, szabályokkal összerendezett világ, amelyben bárki
+eligazodhat. Ezt kínáljuk hallgatóinknak is.
+
+Azt írta Kodály Zoltán a 333. olvasógyakorlat utószavában: ”Egyenlőre a legkisebbeken
+akartam segíteni. Azok lehetnek felnőttek is, mert „Ki miben járatlan, abban gyermek”.
+[KODÁLY, 1941: UTÓSZÓ]
+
+S azt is írja Kodály ugyanott, csak 1961-ben, hogy „zeneértővé pedig csak aktív zenei
+tevékenység tehet” [KODÁLY, 1961 - UTÓSZÓ]
+
+Lássunk munkához!
+
+=== [OLDAL 3] (ábrák/rajzelemek: 6) ===
+1. Ritmus
+A ritmus jelen van életünk minden pillanatában, testünk működésében és a bennünket
+körülvevő világban. Ezt a ritmust érzékeli az anyuka, miközben gyermekét várja, "s ezt a
+ritmust érzi a kisgyermek is gondozója ölében, akinek egyenletes szívverése biztonságot és
+nyugalmat közvetít feléje” [SALK, 1962].
+A ritmus „a zenében a hangok sorának időbeli rendje, egymáshoz való időértékviszonya.”
+[BÖHM, 2000: 212. ]
+Úgy is fogalmazhatjuk egyszerűbben, hogy hosszabb és rövidebb zenei egységek
+egymásutánisága.
+A ritmusérzék fejlesztésének kiemelt szerepe van a zenei nevelésben. Kodály Zoltán írta a
+következőket: „A zene elemei külön-külön is értékes nevelő eszközök. A ritmus figyelmet,
+koncentrációt, határozottságot, beidegző képességet fejleszt.” [KODÁLY, 1974: 95.]
+
+A ritmusérzék fejlesztésének folyamata csak akkor lehet eredményes, ha a legalapvetőbb
+fogalmakat megismerjük, és helyesen alkalmazzuk a zenei írás-olvasás folyamatában és a
+gyakorlati muzsikálásban.
+Megelégedhetünk azonban csak azoknak a ritmusértékeknek, ritmusképleteknek és
+írásképüknek elsajátításával, amelyek a mi gyakorlatunkban előfordulnak!
+
+Ritmusértékek
+A kiinduló értékünk az egész érték. Valamennyi rövidebb ritmusértéket felezéssel hozzuk
+létre. A következő táblázatban jól érzékelhető a ritmusértékek egymáshoz való viszonya.
+
+egész érték – gyakorló neve: tá - á - á - á
+
+fél érték – gyakorló neve: tá - á
+
+negyed érték – gyakorló neve: tá
+
+nyolcad érték – gyakorló neve: (párban) ti -ti
+
+=== [OLDAL 4] (ábrák/rajzelemek: 9) ===
+tizenhatod érték – gyakorló neve:(párban) ri – ri , illetve
+használatos a ti-ri elnevezés is.
+
+Természetesen léteznek még a tizenhatodnál apróbb értékek és nagyobbak is az egész
+értéknél. A mi gyakorlatunkban ezek nem fordulnak elő.
+A nyolcad és tizenhatod értékek, ha nem párban vannak, hanem egyedül állók, egy illetve két
+zászlóval ( és
+) írandók. A gyermekdalokban a nyolcad értékek legtöbbször párosan
+jelennek meg, vízszintes gerendával kapcsoljuk össze a két nyolcadot! A tizenhatod érték
+legtöbbször mondókákban tizenhatod pár + nyolcad kombinációban fordul elő. Pl.:
+
+Gyakorlatunkban előfordul a pontozott fél érték, a fél értéket megnyújtó pontozott érték
+is, az ismert magyar népdalban:
+
+Mivel a fél érték fele a negyed, így egy negyeddel nő a pontozott hangjegy értéke: három
+negyed értékű, pontosan annyi, mint pl. az 1. ütem hangjai együttesen.
+
+Ritmusképletek
+A fenti ritmusértékekből létrehozhatunk ritmusképleteket, amelyek a gyermekdalokban,
+népdalokban és zenehallgatási dallamokban előfordulhatnak.
+
+szinkópa ritmus [TI-TÁ-TI], amely két nyolcad értékből, s középen negyed
+értékből áll. Arányos megszólaltatásában segít, ha elképzeljük és beleérezzük a
+nyolcad lüktetést.
+Négy nyolcad értékből így jön létre a szinkópa ritmus:
+
+=== [OLDAL 5] (ábrák/rajzelemek: 8) ===
+[FORRAI, 1986: 64.]
+Magyar népdalokban a szöveghez alkalmazkodva találkozunk nyújtott és éles
+ritmusokkal. Itt kell ismételten szólni a hangjegyérték után található pontról. Ez a jelzés a
+hangjegyet értékének felével nyújtja meg. Jelen esetben a negyed annak felével, tehát egy
+nyolcad értékkel megnő, így ez az érték összesen három nyolcadnyi.
+
+- éles ritmus [TI-TÁM, VAGY TI-TÁI], amely négy nyolcadból így vezethető le:
+
+
+- nyújtott ritmus [TÁM-TI VAGY TÁI-TI], amely szintén négy nyolcadból vezethető
+le, csak fordítva, mint az éles ritmusnál:
+
+A következő szép magyar népdal részletében találkozhatunk az éles és a nyújtott ritmussal is.
+
+]
+
+Tanuljuk meg énekelni és furulyázni ezt a népdalt! A teljes népdal megtalálható a Hangközök
+és ismert dalok kapcsolata fejezetben.
+
+ Ha egy negyed érték megszólalásának ideje alatt egyenletesen oszlik el három
+kisebb érték, az a triola ritmus:
+
+=== [OLDAL 6] (ábrák/rajzelemek: 17) ===
+[FORRAI, 1966: 12.]
+
+Szünetek
+Az értékekhez szünetjelek is társulnak. (Zárójelben található a gyakrabban használt
+szünetek gyakorló neve!)
+=
+
+=
+
+=
+írott forma
+
+=
+
+=
+
+[SZÜ - NET]
+
+[SZÜN]
+[SZÜ]
+
+A ritmusértékek és ritmusképletek egy részről a dallammal társulva a zeneművek –
+gyermekdalok és zenehallgatási dallamok létrehozói, másrészről a mondókák ritmusához is
+kapcsolódnak. A mondókákat kötött tempóban, lüktetve is mondhatjuk és játszhatjuk. A
+hosszabb és rövidebb értékeket a magyar nyelv ritmusa, a hangzók hosszúsága befolyásolja.
+A lüktetés, vagyis a metrum alapértéke a negyed érték. A lüktetés érzékeltetésénél nagy
+figyelmet kell fordítanunk a szünetekre, hiszen csak akkor tudjuk az egyenletességet
+érzékeltetni, ha a szünetre is mérünk, azaz lüktetünk. Az egyenletes lüktetés érzékeltetése a
+kisgyermek számára egy lehetőség a fejlesztésre. Tudjuk ezt tenni a ringatáskor, végtagjainak
+vagy egész testének mozgatásakor, s teszi ezt ő is, ha lüktető zenét hall. De nem feladatunk
+annak kialakítása bölcsődés korban, s csak akkor tegyük, ha ő is szívesen részt vesz a közös
+mozgásban! Óvodában és alsó tagozatban viszont már tanítjuk.
+
+Fű. fű. fű
+
+Szép zöld fű
+
+Eredj ki te zöld-fü-lű
+
+=== [OLDAL 7] (ábrák/rajzelemek: 4) ===
+[FORRAI, 1994: 31. ]
+
+Tempó
+A kisgyermek számára közvetített mondókák és dalok megszólaltatásakor rendkívül fontos
+szerepe van a tempónak. A tempó köznapi értelemben sebesség, gyorsaság. „A zenemű, a
+hangjegyek időtartamának abszolút meghatározása, szemben az egyes hangjegyek
+időtartamát relatíve, egymáshoz viszonyítva meghatározó ritmussal.” [ BÖHM, 2000: 243. ]
+
+A tempó meghatározásakor a lüktetésbe kell kapaszkodnunk. Ennek érzékeltetésével, s
+gyorsaságával tudjuk a mondókák, dalok tempóját meghatározni, szabályozni. Az
+egyenletességgel, a lüktetés segítségével lehet a hosszabb és rövidebb ritmusértékeket
+arányosan elosztani és megszólaltatni. Ügyelnünk kell arra, hogy a bölcsődés korú gyermek
+számára közvetített mondókák, dalok tempója lassú legyen. Ez a tempó jellemző még az
+óvoda kis csoportjában, s az évek során ez egyre gyorsabb lesz, míg elérjük a felnőttek
+tempóját.A zenei szempontok mellett a beszédértés tempója is befolyásol bennünket. Forrai
+Katalin meghatározta, hogy az óvoda különböző korcsoportjaiban mekkora metronóm
+számmal, azaz milyen tempóval énekeljünk és mondókázzunk. Országos tapasztalatokra
+hivatkozva a 3-4 éveseknél =66-80, 4-5 éveseknél =80-92 és az 5-6 éveseknél =92-108 az
+átlagos normál tempó. [FORRAI, 1974: 75. ]
+Meg kell azonban jegyeznünk, hogy az élettempó az elmúlt negyven esztendőben nagyon
+felgyorsult s ez hatással van a gyermekek mozgásának tempójára is, ezáltal gyorsabban
+énekelünk és mondókázunk. Természetesen az óvodai kis csoport tempója lehet számunkra
+irányadó, s esetenként még annál is lassabb tempó a helyes bölcsődében.
+Ebben segítségünkre van a Mälzel – féle metronóm – akár mechanikus, akár
+digitális változata - amelyen beállítható a tempó egy ingavezető sínen,
+amelyen számokat találunk. A kiválasztott számhoz helyezzük a sínen lévő,
+csúszó súlyt.
+Ha ezt a jelzést látjuk, hogy M. M. =60, akkor 60 ütés jut egy percre, azaz hatvanszor leng
+az inga, illetve ad hangot a digitális metronóm. (Az M. M. rövidítés: Mälzel’s Metronóm)
+Metronóm hiányában ezt a tempót egy óra másodperc mutatójának segítségével is el tudjuk
+képzelni. Ennél egyébként alig kell gyorsabb tempót választanunk a legapróbbaknál.
+
+=== [OLDAL 8] (ábrák/rajzelemek: 6) ===
+Ütemfajták
+A ma használatos kottaírás egyik velejárója, hogy a zeneművek ütemekbe rendeződnek. Az
+ütem „metrikus egység, írásban mindig két főhangsúly közé esik.” [ BÖHM, 2000: 262. ]
+Ütemvonal választja el a két főhangsúlyt. Zeneművek kottaképének kezdetén látható
+törtszám az ütemjelző, amelyben a nevezőben lévő szám azt mutatja, hogy milyen értékű
+hang, hangjegy osztja egyenlő részekre az ütemet. A számlálóban lévő érték pedig azt
+mutatja, hogy hányszor fordul elő a metrikai egység két ütemvonal között.
+
+Ismerkedjünk meg a leggyakoribb ütemjelzőkkel és tartalmukkal!
+
+1.
+
+Az ütemben a lüktetés negyedértékű (nevező) és ebből a negyedből kettő jut egy ütemre
+(számláló). Az első súlyos, a második súlytalan. Nézzünk néhány ritmusvariációt a 2/4-es
+ütemre jól ismert dalokból és mondókákból:
+
+(EGYEDEM, BEGYEDEM, TENGERTÁNC)
+
+(CIFRA PALOTA, ZÖLD AZ ABLAKA)
+
+(HULL A SZILVA A FÁRÓL)
+
+Ez az ütemfajta a magyar gyermekdalok jellemző ütemfajtája.
+
+2.
+
+=== [OLDAL 9] (ábrák/rajzelemek: 17) ===
+Erre az ütemfajtára már láttunk példát az Ábcd…kezdetű dalnál. Egy súlyos és két súlytalan
+egységből áll. Egy ütemben három negyed értéknek megfelelő hang van. Például így
+elrendezve:
+
+(ELMENT A KÉT LÁNY VIRÁGOT SZEDNI)
+vagy:
+(SÁRGA CSIKÓ)
+
+3.
+
+A fősúly az első negyeden, melléksúly a 3. negyeden van. A 2. és 4. negyed súlytalan egység.
+Egy ütemben négy negyed értéknek megfelelő hang van.
+Pl.:
+
+(SÁRGUL MÁR A FÜGEFA LEVELE, SEJ, HIDEG
+AKAR LENNI.)
+4.
+
+Más népek dalaiban, műzenei szemelvényekben találkozhatunk a nyolcad egységnyi
+ütemmel, ahol a lüktetést, metrumot adó érték nyolcad (nevező) s hogy hány, azt a számláló
+adja (6)
+Vigyázat! Nem tévesztendő össze a triolával, ahol egy negyed értékre jut három
+azonos hosszúságú hang! Itt nyolcad a lüktetés és egy ütemben 6 nyolcad értékű hang fér.
+
+(SUMMÁJÁT ÍROM EGER VÁRÁNAK)
+
+=== [OLDAL 10] (ábrák/rajzelemek: 6) ===
+Az itt bemutatott ütemfajtákon kívül még nagyon sokfélét használnak a zenében. Az általunk
+megismert ütemfajták azok, melyek a bölcsődében énekelt és hangszerrel megszólaltatott
+zenei anyagokban a leggyakrabban előfordulnak.
+
+Mondókák
+A lüktetés, ritmus és tempó érzékeltetése a kisgyermek számára a dallam nélküli mondókák
+által a legsikeresebb.
+
+Vegyünk
+példaként
+egy
+mondókát
+és
+próbáljuk
+végiggondolni
+játékának
+és
+megszólaltatásának lehetőségeit!
+Elmondhatjuk oly módon, hogy a lassú kavaró mozdulatot a szöveg ritmusa szerint végezzük.
+Ezzel a megoldással szótagolva mondjuk a szöveget, ami az artikulációt emeli ki, segítve a
+szövegértést és a szép kiejtést.
+
+[A MONDÓKA MEGSZÓLALTATÁSA KÖZBEN ÜGYELJÜNK ARRA, HOGY BÁR A RITMUSKÉP MIATT AZ ELSŐ SZÓ
+ÖSSZEKAPCSOLÓDIK A KÖVETŐ NÉVELŐVEL, MÉGIS PRÓBÁLJUK MEG SZÉTVÁLASZTANI A NÉVELŐ KIEMELÉSÉVEL:
+KAVAROM A….]
+
+Másik megoldással csak az egyenletes lüktetést érzékeltetjük. A szövegmondásunk
+megegyezik az előző szótagoló beszéddel. A mozgásban történik változás, egyenletes
+negyedértékű mozdulatokkal végezzük a kavaró mozdulatokat.
+
+=== [OLDAL 11] (ábrák/rajzelemek: 4) ===
+[ A SZÖVEG FÖLÖTTI NEGYED ÉRTÉKEK A LÜKTETÉST JELÖLIK, VAGYIS A KAVARÓ MOZDULATOT. ]
+
+A harmadik megoldással érhetjük el a legjobb eredményt a gyermeknél. Megtartva az
+egyenletes lüktetést az utolsó sorban fokozatos tempógyorsítást alkalmazva biztosan mosolyt
+fakasztunk a gyermek arcán, hisz így izgalmassá válik a játék és a történés.
+
+A ritmusérzék fejlesztése mellett a formaérzék irányába is léphetünk. A mondókák ütempáros
+szerkezetűek, vagyis négy lüktetésnyi egységekből állnak. Az egyenletes lüktetéssel s a
+kétütemenkénti irányváltoztatással észrevétlenül kialakítjuk a kisgyermekben a motívikus
+szerkezet érzetét anélkül, hogy elveszítenénk a játék örömét. Sőt, azzal, hogy kezdetben az
+óramutató járásával megegyező irányban teszünk kavaró mozdulatokat, majd két ütem múlva
+az ellenkező irányba, a játék örömét fokozzuk!
+Ha ritmusérzék fejlesztésre gondolunk a bölcsődében, minden mozzanat során – ahogy már az
+előzőekben említettük - az egyenletes lüktetés érzését lehet erősítenünk, hiszen ezzel válik
+kiegyenlítetté a gyermek mozgása, járása s még a beszéd fejlődésében is segítségére lesz, de
+ez a hatás az óvodában és iskolában is hasonló lesz..
+
+Hangok
+
+„Ha a levegő rezgése szabályos, zenei hangról beszélünk.” [BÖHM, 2000: 107. ]
+. Az énekhang keletkezésekor a rugalmas hangszalagok rezgésbe jönnek, s ezt a rezgést
+átadják a környező levegőnek, s a hangszalagokkal azonos rezgésszámmal rezeg.
+Az így létrejött zenei hangokat lejegyezhetjük, majd a lejegyzett anyagot ismételten meg
+tudjuk szólaltatni.
+
+=== [OLDAL 12] (ábrák/rajzelemek: 5) ===
+A hangok magasságát, nevét, a vonalrendszeren elfoglalt helyük határozza meg. A ma
+használatos vonalrendszer öt vonalból és négy vonalközből áll. Számozásuk alulról felfelé
+történik.
+A hangok lejegyzésekor és megszólaltatásakor kétféle rendszert használunk.
+
+ Abszolút hangok
+Az abszolút hangok helye és magassága állandó. A hangok neveiket az ABC betűiből kapták
+és mindig nagy betűket használunk jelölésükre. E hangok biztos olvasása elengedhetetlenül
+szükséges a hangszertanulásnál.
+
+A vonalrendszeren az eligazodást a kulcsok biztosítják. A számunkra legfontosabb kulcs a
+violin vagy G kulcs. A kezdő rajzolat a második vonalon helyezkedik el, ami az egyvonalas G
+hang helye. Innen a G kulcs elnevezés. A mi pedagógusi munkánk során használt zenei anyag
+olvasásához elég ezt a kulcsot ismerni, illetve elég ennek a kulcsnak segítségével eligazodni a
+vonalrendszeren. Általában középfekvésben énekelünk, ami az egyvonalas oktáv valamennyi
+hangját, felfelé a kétvonalas oktáv két – három hangját illetve lefelé a kis oktáv 3-4 hangját
+jelenti. Az egyvonalas C hang alatti három-négy hangot (a kis oktáv hangjai) pótvonalakkal
+jelöljük.
+
+E három hanggal együtt a következő hangkészlet olvasása fontos számunkra:
+
+Így elkerülhetjük az F - kulcsok közül a basszus kulcs használatát.
+(A PIROS PONT A KIS F HANG HELYÉT JELÖLI A 4. VONALON.)
+
+=== [OLDAL 13] (ábrák/rajzelemek: 3) ===
+Az alábbi kottakép tanulmányozásával megérthetjük az abszolút hangok elhelyezkedését a
+vonalrendszeren.
+
+A középen látható violin kulcs után a vonalrendszeren emelkedve találhatóak az általunk
+énekelt hangok. Ebben a magasságban nők és gyermekek énekelnek. Az egymást követő
+hangok egymástól azonos távolságra szólalnak meg, kivéve két hangpárt, melyek csak fele
+akkora távolságra vannak egymástól, mint a többi hang. Ez a két hangpár az EF és a HC
+hangok. E hangok kis szekund távolságra vannak egymástól, míg a többi hang nagy szekund
+távolságban következik egymás után. (LD.: HANGKÖZÖK)
+A kisgyermek, ha majd felismerhető dallamot énekel, az egyvonalas D és H hangok közti
+intervallumban ad ki hangot általában. (Ennél magasabb hangot csak a hangját próbálgató,
+sikongató csecsemő szólaltat meg.) Ezért igyekezzünk mi is ebben a magasságban énekelni,
+ha olyan dalokat énekelünk, amit a gyermek is énekelhet velünk, ha kedve van hozzá. Nagyon
+fontos a kisgyermek éneklési készségének kialakításában ezt betartani, mert számtalanszor
+hallunk nagyon mélyen éneklő felnőtt mellett a szöveget csak ritmikusan mondó
+kisgyermeket, s ha jó magasságra váltunk, szinte mindig kiderül, hogy a gyermek tökéletesen
+énekel.
+A férfiak hangfekvése mélyebb egy oktávval, vagyis 8 hanggal a női hangnál. A kis és nagy
+oktáv hangjai ezek. Tapasztalataink szerint a kisgyermek számára nem okoz gondot az
+oktávváltás. Vagyis ha már tud dallamot visszaadni, nem zavarja, ha apukája oktávval
+mélyebben énekel. A kis oktáv hangjai közül legalább hármat a nők is meg tudnak szólaltatni.
+( H, A, G ). Az ábrán közvetlenül a violin kulcs előtti és utáni hang ugyanazt a hangot jelöli –
+az egyvonalas C hangot. A kétféle kulcs használata okozza azt, hogy a vonalrendszeren két
+különböző helyen vannak, de ha megszólaltatjuk, ugyanabban a magasságban énekeljük,
+illetve játsszuk hangszeren.
+
+=== [OLDAL 14] (ábrák/rajzelemek: 7) ===
+Természetesen e két kulcson kívül még használjuk a zenei hangok lejegyzésére, a C
+kulcsokat:
+amelyek a C helyét adják meg (a C hangot a kulcs közepe jelöli. A mi
+példánknál a C helye a 3. vonalon van.) De mi maradjunk a violin kulcs olvasásánál!
+’
+
+Módosító jelek
+A C-D-E-F-G-A-H hangok törzshangok, vagyis módosítás nélküli hangok. A törzshangok
+magasságát módosító jelek befolyásolják. Hatásuk csak abban az ütemben érvényes,
+amelyben alkalmazzuk a jelölést.
+A kereszt – jele: # - a hang magasságát fél hanggal felemeli. Arra a hangra érvényes, amelyik
+előtt áll és azon a helyen kell lennie a vonalrendszeren, ahol a
+módosítandó hangjegy van. A hangok neve egy „-isz” szótaggal egészül
+ki (F Fisz, D Disz )
+
+A bé – jele: - a hang magasságát fél hanggal leszállítja. Ugyanazok a szabályok érvényesek
+rá, mint a keresztre. A hangok neve „sz” hangzóval egészül ki. Kivétel a
+H hang esetében van, mert az -vel módosítva, B nevet kap.
+
+A két jelet alkalmazhatjuk a kottasorok elején is, a kulcs után is, változó mennyiséggel, de
+akkor a dallam/zenemű valamennyi hangjára érvényes a módosítás. Ebben az esetben
+előjegyzésnek hívjuk. A # és
+előjegyzésből következtetni lehet a hangnemre, azaz a dó
+vagy lá helyére. (LD.:HANGSOROK )
+
+ Szolmizációs (relatív) hangok
+A relatív, más néven szolmizációs hangok gyökerei a középkorba nyúlnak vissza. Arezzoi
+Guido Szent János himnusza által találkozhattunk a szolmizációs nevekkel, amelyek
+hexachord (LD: GYERMEKDALAINK HANGKÉSZLETE) hangkészletet hoztak létre. A kezdő ut szótag
+átalakul a 18. században do-ra, s kiegészül a ti-vel hétfokú hangkészletté.
+
+=== [OLDAL 15] (ábrák/rajzelemek: 6) ===
+1
+A szolmizáció nem a hangok abszolút magasságát, hanem egy hangnemen (LD.: HANGSOROK)
+belül jelzi a hang funkcióját, relatív magasságát. Így egy dúr jellegű hangsorban az 1. hang a
+dó, 2. ré, 3. mi, 4. fá, 5. szó, 6. lá, 7. ti. Míg egy moll jellegű hangsorban az 1. hang az lá, 2. ti,
+3. dó, 4. ré. 5. mi, 6. fá, 7. szó. (LD.: HANGSOROK) Tehát a módosítás nélküli szolmizációs
+hangok egyszerű jelölése magasságuk sorrendjében:
+d – r – mf – s – l – t(d’)
+Nem véletlenül került közelebb a hangok sorában két hangpár, a mi és fá, valamint a ti és
+felső dó. E két hang-pár magasságbeli távolsága kisebb a többi szomszédos hangénál. Fél
+hang távolságra vannak egymástól, azaz kis szekund a távolságuk. (LD.: HANGKÖZÖK) Ez a
+hangköz a gyermekdalok hangkészletében legfeljebb a befejező szakaszban fordul elő, lefutó
+pentachordként. (LD.: GYERMEKDALAINK HANGKÉSZLETE) Ezért énekelünk a kisgyermeknek fél
+hang nélküli dallamokat, hiszen az ilyen hangkészletű dallamokat könnyebb intonálni. Kodály
+így foglalja össze a félhang nélküli dallamok éneklésének előnyeit:
+1. „Könnyebb félhang nélkül tisztán énekelni.
+2. Jobban fejlődik a zenei felfogóképesség és hangtaláló készség ugrásokkal vegyes
+lépéseken, mint a diatonikus létramozgáson.
+3. Csak így lehet magyar zenei öntudatra, a magyar zene megértésére nevelni.”
+[ KODÁLY, 1974: 168. ]
+
+1 „Hogy könnyült szívvel csodatetteidnek
+zenghessék hírét szabadult szolgáid,
+oldd meg, Szent János, kötelét a bűntől
+szennyes ajaknak. ” [Sík Sándor ford.]
+
+=== [OLDAL 16] (ábrák/rajzelemek: 6) ===
+Óriási előnye a szolmizációnak az abszolút hangokkal szemben, hogy nem kell
+ragaszkodnunk a leírt magassághoz. Abban a magasságban énekelünk, ami számunkra
+kellemes, s „csak” a hangoknak egymáshoz való kapcsolatára kell ügyelnünk. Könnyíti az
+intonálást az a tény is, hogy azonos távolságoknak sokszor azonos az elnevezése: pl.: a kis
+terc hangköz intonálásánál a szó – mi, vagy a dó – lá, elnevezést alkalmazzuk igen gyakran,
+így az intervallum létrehozásakor az ó – i vagy az ó – á hangzókat ejtjük. Az azonos hangzók
+miatt a hangképző szervek könnyebben és tisztábban szólaltatják meg a hangközt, s az jobban
+rögzül zenei emlékezetünkben.
+
+A szolmizációs hangok módosítása
+A szolmizációs hangok magasságát is tudjuk módosítani felfelé vagy lefelé, az abszolút
+hangokhoz hasonlóan. A # felemel, s a leszállít ebben a rendszerben is. A felemelt hangok
+nevei –i végződést, s a leszállított hangok nevei -a végződést kapnak.
+Pl.: szó szi , fá fi, illetve ti ta elnevezés lesz.
+
+3. A gyermekdalok és népdalok építőkövei – hangközök
+
+„Hangköz, vagy intervallum: két hang egymástól való távolsága.” [BÖHM, 1961: 107. ]
+Ezekből az intervallumokból építkeznek a zeneművek. Két hang közti lefelé vagy
+felfelé lépéssel illetve ugrással szólaltathatjuk meg a zenei alkotásokat – akár
+énekhangunkról, akár egy hangszerről van szó.
+A címben megjelölt korlátozás, miszerint csak a gyermekdalok és népdalok
+építőköveit vizsgáljuk, azt is jelenti, hogy itt nem kívánunk foglalkozni a hangközök összes
+fajtájával.
+Tanulmányaink során csak korlátozott számban tanulunk gyermekdalokat, népdalokat,
+műzenei alkotásokat. Szeretnénk hinni, hogy ezzel a dalkinccsel nem elégedhet meg egyetlen
+kisgyermeknevelő sem. Életünk során mindig bővítjük, változtatjuk azt a dalanyagot, amit a
+gyermekeknek énekelünk. A vizsgált hangközök felismerése, megszólaltatása hozzásegít
+bennünket ahhoz, hogy bármelyik ismeretlen dallamot el tudjuk énekelni.
+
+=== [OLDAL 17] (ábrák/rajzelemek: 1) ===
+Mielőtt megfigyelnénk egy konkrét dallam hangjainak távolságát, ismerkedjünk meg a
+hangközök nevével! Mindegyik mellett álljon egy példa a sok lehetőség közül, szolmizációs
+nevekkel is!
+a) Két azonos magasságú hang közti hangköz neve: prím (1), pl.: d-d
+b) Szomszédos hangok egymás utáni megszólalása, vagy együtthangzása hozza létre a
+szekund (2) hangközt. Pl: s-l
+c) Három hang távolság van a terc (3) hangköz esetében. Pl: s - m
+d) Négy hang a kvart (4) hangköz hangjai közti távolság. Pl: d – s,
+e) A kvint (5) öt hang távolságát jelöli. Pl: l,- m
+f) Ha hat hang távolság van két hang között, az a szext (6) hangköz. Pl: d-l
+g) Szeptim (7) a neve a hét hang távolságát jelölő hangköznek. Pl: d-t
+h) Nyolc hang közti intervallum neve: oktáv (8). Pl: l,- l’
+i) Előfordulhat népdalainkban kilenc hang távolsága is, melynek neve: nona (9) Pl: d-r’
+j) S a legnagyobb intervallum az általunk használt dalkörben a tíz hang távolságát jelelő
+decima (10) hangköz. Pl: d-m’
+
+Tanuljuk meg a hangközök elnevezését, mielőtt továbblépnénk!
+
+A távolság megállapítása mellett foglalkoznunk kell az intervallumok milyenségével.
+
+Vannak az úgynevezett tiszta hangközök (jelölésben a szám előtt álló t betű). Ezek a prím
+(t1), oktáv (t8), kvint (t5) és kvart (t4) hangközök Ezek a hangközök a legkonszonánsabbak
+(JÓL HANGZÓAK). A hangok frekvenciaaránya a konszonancia oka. Az ókorban élő Pythagoras [
+KARDOS, 1969: 218.] nevéhez fűződik a megállapítás, hogy a húrhossz s a hang magassága között
+kapcsolat van. Ha egy bármilyen kifeszített húrt – amely ad egy bizonyos magasságú hangot -
+felezünk, a hang oktávja, majd a további felezésekkel a kvintje majd a kvartja szólal meg.
+Ezek a hang első felhangjai, ezért együtthangzásuk a hanggal tökéletes konszonanciát, tehát jó
+hangzást eredményeznek.
+
+A hangközök másik nagy csoportja, amellyel találkozhatunk a gyermekdalokban, azok
+az úgynevezett kis – és nagy hangközök. Ezekről a szekund (k2, n2) terc (k3, n3), szext (k6,
+n6), szeptim (k7, n7), nona (k9, n9) és a decima (k10, n10) esetében beszélünk. (k=kis,
+n=nagy)
+
+=== [OLDAL 18] (ábrák/rajzelemek: 4) ===
+Először a szekund hangközt válasszuk szét. Két hangkapcsolat esetében beszélhetünk
+kis szekundról (k2). Szolmizációs nevekkel a mi - fá és ti - dó’, s abszolút törzshangokkal E-F
+és H-C’ hangok között szólal meg a k2 hangköz. A továbbiakban ezek előfordulásának
+száma teszi kis, illetve nagy hangközzé a intervallumokat.
+A többi módosítás nélküli szomszédos hang hozza létre a nagy szekundot(n2) Pl.: d –r,
+s – l)
+A szekundnál nagyobb hangközöket lépéseire bontjuk, és a következő eredményt
+kapjuk:
+Két n2 alkotja a nagy tercet (n3). Pl.: d – ( r ) – m vagy s – ( l ) – t, stb. Ha az egyik
+szekund nagy s a másik kicsi, kis terc (k3) szólal meg. Pl.: s – (f)– m, l – (t) – d’
+A szext hangköz akkora távolság, hogy kikerülhetetlen, hogy az egyik kis szekund ne
+kerüljön bele az intervallumba. Így jön létre a nagy szext (n6), mint pl.: d-l
+
+Ha a hat hang között mind a két kisszekund lépés ott van, akkor már kis szext (k6) szólal meg.
+Pl.:
+
+Ugyanígy kell a szeptimek között különbséget tenni. A nagy szeptimben (n7) csak egy
+fél hang, azaz kis szekundlépés található, pl.: d –t (d r mf s l t), míg a kis szeptim (k7) mindkét
+kis szekund lépést tartalmazza, pl.: l, – s (l, t,d r mf s).
+A kis és nagy hangközök csoportjába tartozik a nona és a decima is. Ezek a hangközök
+oktávnál nagyobbak. A milyenségüket az adja, hogy milyen az oktávon túli hangközrész
+szekundja illetve terce. Pl. nagy nona a d-r’ hangköz, mert a d-r nagy szekund, s kis nona a m-
+f’, mert a m-f kis szekund. S kicsi a l, -d’ decima, mert a l,-d terc is kicsi és nagy a d-m’
+decima, mert a d-m nagy terc.
+
+Végül vegyük példaként az alábbi népdalt, és vizsgáljuk meg a hangok egymástól való
+távolságát a dallamon belül! Tanuljuk meg énekelni is!
+
+=== [OLDAL 19] (ábrák/rajzelemek: 10) ===
+[ BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 931. ]
+
+A dal elején ismétlődő hangokat énekelünk, melyek tiszta prím (t1) hangközt
+eredményeznek.
+
+Ugyanez a hangköz figyelhető meg a dal második sorában:
+
+Kvint hangköz találunk a dallam alábbi részében:
+
+Tiszta kvart a távolság a dal befejező részében a megjelölt hangok között:
+
+A népdal első sorának záróhangja és legmagasabb hangja között tiszta oktáv a távolság:
+
+=== [OLDAL 20] (ábrák/rajzelemek: 6) ===
+S keressünk kis és nagy hangközöket!
+
+Nagy szekund van a D” és E” hangok között:
+
+Kis szekund a H’ és a kétvonalas C” hangok között.
+
+Mindkét terc egy ütemen belül, előbb kis terc (D” –H’), majd nagy terc (H’ –G’).
+
+Dallamalkotó hangköz a nagy szext a népdal első és második sorának találkozásakor:
+
+Bár ezt a népdalt ebben a magasságban is el tudjuk énekelni és furulyázni, álljon itt egy másik
+kezdőhangról is. Ebben a fekvésben nem kell módosított hangra ügyelni furulyázáskor, és
+énekelni is kényelmesebben tudjuk, mert minden hangja középfekvésben van. Bár a
+hangneme [LD.: HANGNEMEK ] így más, a hangok egymáshoz való viszonya nem változott ebben
+
+=== [OLDAL 21] (ábrák/rajzelemek: 6) ===
+az esetben sem. Szolmizáljuk el ebben a hangnemben is, majd gyakorlásként nevezzük meg a
+bejelölt hangközöket, és hasonlítsuk az első változathoz ellenőrzésképpen!
+
+=== [OLDAL 22] (ábrák/rajzelemek: 6) ===
+S végezetül egy másik hangnemben is megvizsgálhatjuk a hangközöket. Ebben az esetben a
+dó=D hanggal, így a kezdőhang, a szó, a második vonalközben van. (szó=A)
+
+Hangközök és ismert dalok kapcsolata
+A hangközök intonálását tudatosan előkészíthetjük, hogy mire ismeretlen dallamot szeretnénk
+énekelni, elég biztosak legyünk a hangközök elképzelésében. Általunk jól ismert és biztosan
+énekelt dallamok kezdőhangközeit alkalmazhatjuk a gyakorlásra. Természetesen ki-ki a
+legjobban szeretett illetve ismert dalaiból választhat, de felhasználhatóak a fenti népdal elemei
+is, ha már jól tudjuk a dallamot. A hangközöket lehetőleg ne csak felfelé, hanem lefelé is
+gyakoroljuk!
+
+=== [OLDAL 23] (ábrák/rajzelemek: 13) ===
+A példákat két hangnemben is megmutatjuk, ezzel is bizonyítva, hogy szolmizálva „csak” a
+hangoknak egymáshoz való kapcsolatára kell ügyelnünk. [LD. SZOLMIZÁCIÓS HANGOK]
+[A ZÁRÓJELBEN LÉVŐ ELŐJEGYZÉSRŐL ITT CSAK ANNYI SZÓ ESSÉK, HOGY A HANGNEM MEGHATÁROZÁSÁHOZ
+SZÜKSÉG VAN RÁ, DE MIVEL A HANGKÉSZLET NEM TARTALMAZZA A HANGOT, AMELYRE VONATKOZIK, CÉLSZERŰ
+ZÁRÓJELBE TENNI. FORRAI KATALIN TANKÖNYVEIBEN EL IS MARADNAK A ZÁRÓJELES ELŐJEGYZÉSEK.]
+
+pl.: s-l
+
+Csipp, csipp csóka
+
+[FORRAI, 1986: 121. DALLAM]
+
+pl.: l-s
+Háp, háp, háp
+
+[FORRAI, 1986: 180. DALLAM]
+
+pl.: m-f
+
+Ősszel
+érik
+babám
+
+[PÉCSI,
+2000:
+270.
+OLDAL
+
+=== [OLDAL 24] (ábrák/rajzelemek: 13) ===
+pl.:d-t,
+
+Udvarom, udvarom
+
+[PÉCSI, 2000: 56. ]
+
+pl.: m-s
+
+Egy kismalac, röf. röf. röf
+
+[FORRAI, 1986: 158. DALLAM]
+
+pl.: s-m
+Zsipp, zsupp
+
+[FORRAI, 1994: 71. DALLAM ]
+
+=== [OLDAL 25] (ábrák/rajzelemek: 15) ===
+pl.: d-m
+Aki nem lép egyszerre
+[FORRAI, 1994: 82. DALLAM ]
+
+pl.: m-d
+Cifra palota
+
+[LANTOSNÉ - LUKINNÉ, 2001: 26]
+
+pl.:d-s,
+Serkenj fel
+
+[FORRAI, 1986: 223. DALLAM]
+
+pl.: s,-d
+A gúnárom elveszett
+[FORRAI, 1986: 176. DALLAM]
+
+pl.:d-s
+
+Jön a kocsi
+
+[FORRAI, 1986:244]
+
+=== [OLDAL 26] (ábrák/rajzelemek: 12) ===
+pl. : m-l,
+Itt a farsang
+
+[FORRAI, 1986: 241. DALLAM]
+
+pl.: d-l
+
+A part alatt
+
+[FORRAI, 1986:179]
+
+pl.: m - (d ) - s,
+
+Cifra palota
+
+[LANTOSNÉ - LUKINNÉ, 2001: 26 ]
+
+Ebben az estben egy közbeiktatott hang hidalja át a nagy hangközt.
+
+pl.: l,- f
+Gerencséri utca
+
+=== [OLDAL 27] (ábrák/rajzelemek: 9) ===
+[PÉCSI, 2000: 47]
+
+Itt is célszerű közbeiktatott hanggal áthidalni az intervallumot, hiszen jó esetben a leugró t4 és
+a leugró k3 már jól és biztonsággal intonált hangköz.
+
+pl.: d’ – (s) – m
+
+Hopp Juliska
+
+vagy egy másik kottakép alapján:
+
+Ez a dallamváza a horvát gyermekdal első két sorának is:
+
+[FORRAI, 1966:68.]
+
+=== [OLDAL 28] (ábrák/rajzelemek: 7) ===
+pl.: l – l’
+Hull a szilva a fáról [PÉCSI, 2000: 47]
+
+4. Gyermekdalaink hangkészlete
+
+A hangkészlet a dallamokat alkotó – így természetesen a gyermekdalokat is alkotó – hangok
+csoportosulása. [VARGYAS: 2002: 2. FEJEZET] A hangkészlet a váz, amely a dallamban variálódik.
+A legkisebb hangkészlettel a gyermekdalok rendelkeznek. Ez is bizonyítja, hogy ezek azok a
+dallamok – és csak ezek - amelyek énekeltetése, vagy csak meghallgatása, befogadása is
+egészen kisgyermek korban javasolt.
+A kisgyermek hangszalagjai rövidek és vékonyak. [LD.: HANGEGÉSZSÉGTANI TUDNIVALÓK] Az ilyen
+méretű hangszalag csak kis hangkészletű dallamot tud tisztán megszólaltatni. Bár bölcsődés
+korban nem tanítunk dalokat énekelni, de a célunk az, hogy ha a gyermeknek kedve van az
+énekléshez, akkor próbálgasson énekelni a gondozónővel. A dalválasztással biztosítanunk kell
+azt, hogy sikerüljön a tiszta megszólaltatás. S természetesen óvodás korban már természetes,
+hogy a gyermek meg is tanulja az óvodapedagógustól sokszor hallott dalokat.
+
+=== [OLDAL 29] (ábrák/rajzelemek: 2) ===
+Kodály Zoltán pedagógiai elvei alapján a gyermekkel zenei anyanyelvét, vagyis a magyar
+népzenét kell elsajátítani, s csak később – iskolás korban - próbálkozhatunk más népek
+dalainak megtanításával, illetve a zeneirodalom értékes alkotásainak tanításával.
+A gyermeket természetesen nem csak a pedagógus által közvetített zenei hatások érik. Családi
+körben többféle zenei stílust is hall, s sokszor nem a legértékesebbek közül.
+Fogékonyságának, kíváncsiságának köszönhetően felfigyel, megszeret, s részleteiben meg is
+tanul olyan dallamokat, amelyeket Forrai Katalin megfogalmazása szerint „ nemkívánatos
+dalok”-nak nevezünk. [FORRAI, 1986:20.] Ilyen például a Boci, boci tarka kezdetű dal is, amelyet
+sokszor hallunk bölcsődében, s szövege miatt igen népszerű a kisgyermekek között. Mit is
+tehetünk ilyen esetben, ha a gyermektől hallunk ilyen dallamokat? Mindenképpen meg kell őt
+hallgatnunk szeretettel és figyelmesen, ezzel egy magatartási mintát nyújtunk számára. Meg is
+dicsérhetjük pl. mert szépen mondja a szöveget, csengő hangon énekel, stb. Ne építsünk
+gátlásokat benne azzal, hogy ledorongoljuk, hiszen nem az ő vétke, hogy nem feltétlenül
+zenei értéket énekel. S biztosan tudjuk egy hasonló témájú, de zenei fejlődését szolgáló másik
+dallammal elterelni a figyelmét az általa énekelt dallamról.
+Hogy melyik dallamot választhatjuk bizonyos korosztálynak, abban segít a hangkészlet
+megállapítása. Minél fiatalabb a gyermek, annál kisebb hangterjedelmű dalokat érdemes
+számára ismételgetni, s természetesen mindig kísérje mozgás az éneklést.
+
+Két csoportra oszthatjuk a gyermekdalokat hangkészletük alapján.
+1. Azok a dallamok, melyeknek hangjai nem egymás után következnek. (-ton
+hangkészlet). A nem egymás mellett lévő hangokból álló hangkészlet nélkülözi a kis
+szekund hangközt.
+2. Azok a dallamok, melyeknek hangjai egymás után következnek, szomszédok, s egy
+sort alkotnak. ( -chord hangkészlet )
+
+1.
+Gyűjtsük össze az első csoportba tartozókat!
+
+ Ha két különböző hangból áll a dallam és nem egymás melletti a két hang, ez a biton
+hangkészlet. A gyermekdalok nagyon kedvelt fajtája, és már egészen kicsi korban is
+jól megszólaltatható. Lehet, hogy még nem is beszél a kisgyermek, de ezt a
+hangkapcsolatot már megfelelő magasságban tisztán intonálja. (A dallamok előtti
+hangkészlet megjelölésében az aláhúzott hang mindig a záróhang. Ennek alapján kell a
+kezdőhang nevét meghatározni!)
+
+=== [OLDAL 30] (ábrák/rajzelemek: 9) ===
+[A FEJEZET DALLAMAI SZÁNDÉKOSAN KÜLÖNBÖZŐ DÓ-HELYEKKEL KERÜLNEK LEJEGYZÉSRE, A
+FURULYA – JÁTÉK ÉS A ZENEI ÍRÁS-OLVASÁS GYAKORLÁSA ÉRDEKÉBEN. A DALOKAT KÖVETŐ
+JÁTÉKLEÍRÁSOK ÖLBELI JÁTÉKKÉNT ÉRTENDŐK. BÖLCSŐDÉBEN, ÓVODÁBAN, S 1.2. OSZTÁLYBAN
+SZABAD TEVÉKENYSÉGEK KÖZBEN ALKALMAZHATJUK.]
+
+s – m
+
+[BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 314]
+Játékjavaslat
+A gyermek két kezét megfogjuk és segítünk abban, hogy egyenletesen hívó mozdulatokat
+tegyen. Ha fölé hajolunk, akkor csak egyik kezünkkel csalogassuk a csigát, vagy a gyermek két
+kezét gyengéden összeérintetjük.
+
+ Három, nem szomszédos hang alkotja a triton hangkészletet. A gyermekdalokban a
+két leggyakoribb fordulat a s-l-s-m és a s-m-d fordulat.
+[VARGYAS, 2002: 2]
+
+l – s - m
+
+[BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 163]
+
+=== [OLDAL 31] (ábrák/rajzelemek: 7) ===
+Játékjavaslat
+A főzés mozdulatait jelenítsük meg a gyermek tenyerében. Az első két ütem ideje alatt kavaró
+mozdulatot teszünk a tenyérben. A második két ütem ideje alatt sót hintünk. A paprikázást
+tenyércsipkedéssel mutatjuk. A dal végén a gyermek két tenyerét egyenletes mozdulatokkal
+összeütögetjük.
+
+ A tetraton hangkészletről négy, nem szomszédos hangból álló dallamok esetében
+beszélhetünk. Ez a hangkészlet egészül majd ki egy hang hozzákerülésével
+pentatóniává. A d – r – m – s és a l, - d – r – m hangkészlet esetében már tonalitást is
+érzünk. (LD.: HANGSOROK)
+
+s - m – r – d
+
+[BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 106]
+
+Játékjavaslat
+Járhatunk a gyermek mindkét kezét fogva, illetve ha biztosan jár, akkor elég az egyik kezét
+megfogni. A „fordulj angyalmódra” szövegnél irányt váltva tovább járunk. Ha még nem jár, de
+biztosan ül, akkor az ölünkben tartva az egyik lábunkon lovagoltatjuk, s a dal végén átemeljük a
+másik lábunkra.
+
+ Pentaton hangkészlet
+A gyermekdalok mellett a felnőttek dalainak is jellemző hangkészlete az öt, nem
+egymás melletti hangból történő építkezés. A gyermekdalok között a leggyakoribb a
+dó és a lá hangokra történő dallamépítés.
+
+l – s - m – r – d
+
+=== [OLDAL 32] (ábrák/rajzelemek: 8) ===
+[GÁGYOR, 2002: 111]
+
+Játékjavaslat
+A gyermek felemelt kezével lefelé irányuló mozdulatok ismétlésével az esőcseppek hullását
+mutatjuk. Igyekezzünk élénk arcmimikával kifejezni a dal cselekményét.
+
+2.
+Következzék a második csoport!
+ A szomszédos két hang (nagy szekund távolságban) a legkisebb hangkészlet. Ez a
+bichord hangkészlet. Az alábbi dallam s-l hangokból építkezik.
+
+l - s
+
+[BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 367]
+
+=== [OLDAL 33] (ábrák/rajzelemek: 5) ===
+Játékjavaslat
+A gyermeket, ha már biztonságosan ül, ölbe vesszük felénk fordítva, és megfogjuk mindkét kezét.
+Az első dallamsor éneklése alatt fokozatosan széttárjuk a karját. A második dallamsortól egyenletes
+mozgással integetünk felemelt karral a napocskának. A dal végén magunkhoz vonjuk a gyermeket,
+mintha melengetnénk. A még ülni nem tudó gyermeket mindegyik dal esetében csak finoman
+ringatjuk a dal lüktetésére, esetleg gyengéden megérintjük, vagy simítjuk kezét, fejét, vagy arcát. A
+lüktetés negyed értékű, s a kézben tartott gyermeknek nagyon lassan énekeljünk, hogy a mozgatás
+kellemes legyen számára.
+
+ Számos dallamunk van, amelyek két egymás melletti nagy szekundból, azaz három
+egymás melletti hangból építkeznek. Ezek a trichord dallamok. E dallamoknál már jól
+érzékelhető a hangnem is. Nagy terc esetében dúr tonalitást érzünk. míg kis tercnél
+moll hangnemet. (LD.: HANGSOROK) Az alábbi dallam d-r-m hangkészletű, ezért dúr
+hangnem érzetünk van.
+
+m – r – d
+
+[FORRAI, 1994: 209]
+
+Játékjavaslat
+A „túrót ettem” szövegnél egyenletesen csipkedjük, szedegessük a gyermek tenyeréből a túrót. Az
+„elejtettem” szövegnél tegyük a kezeit az ölébe, tárjuk szét kezeit az „azt sem tudom, hová tettem”
+résznél, majd a dal folytatásában mindkét kezét megfogva egyenletesen mozgassuk jobbra-balra
+egy kicsit hozzádőlve az iránynak.
+
+ Tetrachord hangkészletű dallamból nagyon kevés van a magyar népzenében. S még
+kevesebb a gyermekdalok körében. A tetrachord dallamok nagyon gyorsan
+
+=== [OLDAL 34] (ábrák/rajzelemek: 7) ===
+kiegészülnek pentachord hangkészletté, s így elkerülhető a súlyos ütemrészre eső fa
+hang (A 2/4-es ütembeosztású dallamok ütemen belüli első egységén megszólaló f-m
+hangok). Nézzünk azért egy példát erre a hangkészletre is! Természetesen Kodály
+Zoltán és Forrai Katalin elveit tiszteletben tartva ezeknek a dallamoknak megtanítását
+nem kíséreljük meg! Kodály ezt így indokolta: „Könnyebb félhang nélkül tisztán
+énekelni.” [KODÁLY, 1947: 168R ] A kiválasztott dal d – r – mf hangkészletű.
+
+f - m – r – d
+
+[BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 119]
+
+Játékjavaslat
+Ehhez a játékhoz tehetünk magunk mellé eszközöket is. A dal elején egy kisfiúra, majd egy
+kislányra, mutatunk. Egy ritmusbotot vagy bot formájú eszközt teszünk egy kisfiú kezébe, majd
+koszorút egy kislány fejére. Az „aki látja, meg se mondja” szövegnél a szabad kezével
+figyelmeztető mozgást végzünk és a fejünket is ingassuk. A játék végén az ajtó felé mutatunk.
+A dallamot csak zenehallgatásként kétszer-háromszor mutatjuk meg a
+gyermekeknek. A hangkészlete miatt nem énekeljük többet, nehogy megtanulják!
+
+ Pentachord
+Az öt egymást követő hangból építkező hangkészletre sok szép példát találunk
+népdalaink sorában.
+
+s –f-m – r – d
+
+=== [OLDAL 35] (ábrák/rajzelemek: 5) ===
+[BARTÓK, KODÁLY ÉS KERÉNYI, 1951: 493]
+
+Játékjavaslat
+Mivel sokféle mozgás és helyváltoztatás kapcsolódik a dalhoz, végig lovagoltathatjuk a gyermeket
+az ölünkben. A szöveg szerint végzünk integető, terítő mozdulatokat. A refrén alatt a fejünkkel
+bólintgatunk jobbra-balra, s a kezünkkel segítjük a gyermeket az utánzásban.
+
+ Hexachord
+
+Ezek a dallamok hat egymás melletti hangból építkeznek. Szép számmal találunk ilyen
+hangkészletű dallamot. Ezek a dallamok többnyire a nagyobb gyermekek dalai. Ezt a
+hangkészletet ismerjük meg egy már jól ismert gyermekdal változatán. Érdemes
+megjegyezni ezt a változatot!
+
+l – s – f-m – r – d
+
+AZ ALÁBBI DALLAM NEM A KÖZISMERT VÁLTOZAT!
+
+=== [OLDAL 36] (ábrák/rajzelemek: 2) ===
+[GÁGYOR, 2002: 28]
+
+Játékjavaslat
+A gyermek és a mi kezünk egymás fölé kerülve csípő mozdulattal összekapcsolódik. Egyenletesen
+mozgatjuk az összekapcsolódott kezeket. A „hess” szónál kézlegyintéssel elzavarjuk a madarat.
+5. Hétfokú hangsorok
+
+A gyermekdalok hangkészletének vizsgálata során eljutottunk a hat egymás melletti hangból
+álló hangkészletig, a hexachord hangkészletig. Ez a legnagyobb hangkészlet a
+gyermekdaloknál. A felnőttek dalainak nagyobb a hangkészlete. A legtöbb, legalább hét
+egymás melletti hangból áll. A hét különböző magasságú hangkészlet alkotja a hétfokú
+hangsorokat. E hangsoroknak két nagy csoportját különböztethetjük meg. A két csoportba
+tartozást az alaphangra (a hangok sorában az első hang) épülő terc hangköz [LD.: HANGKÖZÖK ]
+nagysága határozza meg.
+Azok a hétfokú hangsorok, amelyeknek hangkészletét összeállítva tapasztaljuk, hogy az
+alaphangra épített tercük nagy (n3), azok dúr jellegű hangsorok. Ilyen jellegű hangsorokkal
+már a reneszánsz korban [14-16. SZÁZAD ] komponált művekben is találkozhatunk. Ezek a
+következők:
+
+Dó - ra épülő hétfokú hangsor – ion hangsor
+
+Fá – ra épülő hétfokú hangsor – líd hangsor
+Szó- ra épülő hétfokú hangsor – mixolíd hangsor.
+A másik csoportba tartozók az alaphangra épített kis terccel (k3) kezdődnek, s ezek a moll
+jellegű hangsorok:
+
+lá – ra épülő hétfokú hangsor − eol hangsor
+ré – re épülő hétfokú hangsor – dor hangsor
+mi – re épülő hétfokú hangsor − frig hangsor
+ti – re épülő hétfokú hangsor – lokriszi hangsor
+[A HANGSOROK ELNEVEZÉSÉNÉL NEM VÉLETLEN A NAGY ILLETVE KIS KEZDŐBETŰ. A NEMZETKÖZI
+GYAKORLATBAN ÁLTALÁBAN A DÚR JELLEGŰ HANGSOROKAT NAGY, MÍG A MOLL JELLEGŰ HANGSOROK NEVEIT
+KIS KEZDŐBETŰVEL JELÖLJÜK. ]
+
+=== [OLDAL 37] (ábrák/rajzelemek: 2) ===
+Természetesen e hangsoroknak csak a jellege dúr, vagy moll. Mindegyik egy jellemző
+hangközében eltér a jelleget adó hangsortól, a dúr hangsortól és a moll hangsortól. Ezért
+szolmizáljuk a líd hangsort dó sorként fi -vel, mert a jellemző hangköze a bővített kvart (b4).
+A mixolíd hangsort dó sorként ta - val, mert jellemző hangköze a kis szeptim (k7). A dor
+hangsort lá sorként fi - vel szólaltatjuk meg, mert jellemző hangköze a nagy szext (n6), a fríg
+hangsort lá sorként ta - val, mert jellemző hangköze a kis szekund (k2), s a lokriszi hangsor lá
+sorként ta – val és ma - val szólal meg, mert jellemző hangköze a kis szekund (k2) és a
+szűkített kvint (sz5). Ezek a hétfokú hangsorok a modális hangsorok csoportjába tartoznak.
+Nem csak a reneszánsz művekben, hanem a magyar népzenében is találkozhatunk ilyen
+hangkészletre épülő népdalokkal. Bennünket azonban elsősorban a dúr és moll hangsorok
+érdekelnek, hiszen a leggyakrabban előforduló hangsorok az európai műzenében és a
+népzenében is, vagyis abban a zenei anyagban, amelyet mi zenehallgatásként szólaltatunk
+meg alkalmanként a bölcsődében, óvodában és iskolában. Ezek azok a dallamok, amelyeket
+nagyobb hangterjedelmük miatt csak néhányszor énekelünk el a kisgyermeknek, ügyelve
+ezzel arra- mint már említettük-, nehogy véletlenül elkezdje énekelni, hiszen ezt még
+hangszalagjainak mérete miatt nem tudná jól megoldani. Ilyen esetben csak a szöveget
+mondják, szinte csak szavalják a dalokat.
+
+Most pedig foglalkozzunk a dúr hangsorral!
+A Dúr hangsor felépítésének vizsgálata legyen első feladatunk. A dúr hangsor megegyezik a
+szolmizációs (relatív) [LD.: HANGOK ] hangokból felépített hétfokú dó hangsorral. A dúr hangsor
+2 egész, egy fél majd 3 egész és egy fél lépésből épül. Vagyis, n2+n2+k2+n2+n2+n2+k2
+szerkezetű. Az abszolút hangok bármelyikére felépíthető egy dúr hangsor, csak ügyelni kell
+ennek a szerkezetnek a megtartására. Hogy ezt biztosítsuk, használnunk kell a módosításokat
+(# és )
+A módosítások nem csak egy hang esetében érvényesek ilyenkor, hanem a zenemű
+valamennyi, a módosításhoz kapcsolódó hangjának magasságát befolyásolják, függetlenül
+attól, hogy mely magasságban szólal meg. Ezért már a kulcs után alkalmazzuk a jelölésben a
+szükséges #-et vagy -t. Ebben a szerepben már előjegyzésnek nevezzük a módosító jeleket.
+Ezt a változtatási folyamatot nyomon tudjuk követni az alábbi öt kottasorban, a kiválasztott
+hangsorok esetében.
+
+=== [OLDAL 38] (ábrák/rajzelemek: 6) ===
+Az első esetben egyvonalas C hangra építettük fel a dúr hangsort. Jól látható, hogy változtatás
+nélkül létrejött a dúr hangsor, vagyis nem szükséges előjegyzés.
+
+Ez a C-dúr hangsor
+
+A második esetben G hangra építettük a hét hangot és felső oktávját. Itt a 7. hangot fel kell
+emelnünk a szükséges szerkezet megtartásához.
+
+1
+1 ½
+1
+1
+
+1
+½
+
+Tehát F hang helyett Fisz hang szerepel ebben a hangsorban.
+Így a G hangra épített dúr hangsor hangjai a következők:
+G– A – H-C – D – E – FISZ-(G)
+Ezért, ha G hangra építünk fel egy dúr hangsort, s ezzel G=dó-val, már a kottasor elején, a
+kulcs után, s az esetleges ütemmutató előtt az 5. vonalra írjuk a keresztet.
+
+E
+Ez a G-dúr hangsor
+
+=== [OLDAL 39] (ábrák/rajzelemek: 6) ===
+Itt kell szólnunk egy másik gyakorlatról, amely a # helyét megváltoztatja. Forrai Katalin Ének
+a bölcsődében, Ének az óvodában könyvében, és sok más kiadványban találkozunk azzal a
+helyzettel, hogy a kereszt az első vonalközben van, így:
+
+Ha alaposan megnézzük azokat a dallamokat, ahol ezt a jelölést alkalmazzák, akkor észre
+vehetjük, hogy ezek a dallamok nem mozdulnak ki az egyvonalas oktávból, vagyis kis
+hangterjedelmű
+gyermekdalok
+kottaképénél
+alkalmazzák
+az
+egyvonalas
+Fisz–t
+előjegyzésként. Ezzel egyértelművé teszik kottagrafikailag is, hogy a dallam az egyvonalas
+oktávban mozog, s így figyelnie kell a kottát olvasónak az előjegyzésre.
+Lépjünk tovább a rendszerünkben!
+Ha a D hangot választjuk a hangsor kezdőhangjának, akkor bővül a keresztek száma, azért,
+hogy a dúr hangsor szerkezete megmaradjon. Így:
+
+1
+1
+½
+1
+1
+1
+½
+
+Itt tehát D=dó - val, ezért előjegyzésként két keresztre van szükségünk, a Fisz-re és a Cisz-re.
+A sorrend betartása logikailag fontos és a keresztek helye is, s természetesen a -k helye is az
+egész világon egységes.
+
+Ez a D-dúr hangsor
+
+Forrai Katalin könyveiben és Kodály Zoltán pedagógiai műveiben is találkozunk olyan
+kottaképpel, ahol a dó=D, mégis csak 1# az előjegyzés.
+Nézzünk egy példát erre a problémára!
+
+=== [OLDAL 40] (ábrák/rajzelemek: 5) ===
+[A BEÍRT KEZDŐHANG ALAPJÁN SZÓ-VAL KEZDJÜK SZOLMIZÁLNI, PEDIG AZ ELŐJEGYZÉS ALAPJÁN EZ A HANG RÉ
+LENNE, HISZEN 1# ESETÉN A DÓ=G-VEL, TEHÁT AZ A HANG=RÉ-VEL.
+MI ENNEK AZ OKA?
+A MAGYARÁZAT A HANGKÉSZLETBEN VAN. A GYERMEKDALOK NEM TARTALMAZZÁK A HÉTFOKÚ HANGSOR
+MINDEN HANGJÁT. E MELLETT A LEGTÖBB FÉL HANG (K2) LÉPÉS NÉLKÜLI. AZ ELŐJEGYZÉSEK SORÁBAN AZ
+UTOLSÓ # MINDIG TI SZOLMIZÁCIÓS HANG ÉS AZ UTOLSÓ
+PEDIG FÁ SZOLMIZÁCIÓS HANG. VAGYIS NEM
+SZEREPELNEK A HANGKÉSZLETBEN. EZÉRT MARAD EL SOK KIADVÁNYBAN AZ UTOLSÓ ELŐJEGYZÉS. ÍGY CSAK A
+FORDULATOK ALAPJÁN TUDJUK A HELYES HANGNEMET MEGHATÁROZNI. MEGKÖNNYÍTI AZ OLVASÁST, HA A
+HANGNEM SZEMPONTJÁBÓL FONTOS ELŐJEGYZÉST, AMELY NEM SZEREPEL A HANGKÉSZLETBEN, ZÁRÓJELBE
+TESSZÜK.]
+
+Ezzel a D-dúr hangsor hangjai emelkedő sorrendben a következők:
+D – E – FISZ-G – A – H – CISZ-(D)
+Egyenlőre megszakítjuk a keresztes hangsorokkal való foglalkozást, térjünk át a bés
+hangsorokra!
+Elsőként a dó helyét az F hang helyére tegyük!
+Láthatjuk, hogy a 3. és 4. hang között borul fel a dúr hangsor szerkezete. Ezért a 4. hangot
+leszállítjuk, s ezzel közelebb hozzuk a 3. hanghoz, azaz kis szekund (k2) távolságot hozunk
+létre.
+
+1
+1 ½
+1
+1
+
+1
+½
+
+Ebben az esetben egy előjegyzésre van szükségünk a dúr hangsor szerkezetének
+megtartásához.
+
+Az előjegyzés, az egy , amelynek a harmadik vonalon van a helye.
+
+Az F-dúr hangsor hangjai emelkedő sorrendben a következők:
+
+=== [OLDAL 41] (ábrák/rajzelemek: 6) ===
+F – G – A-B – C – D – E-(F)
+Próbálkozzunk egy olyan hangot választani, amely már módosított, tehát nem törzshang.
+Legyen ez a hang a B hang.
+A dúr hangsor szerkezetét megtartva a B hang mellett az E hangot is le kell szállítani, így két
+lesz az előjegyzés.
+
+1
+1
+½
+1
+1
+
+1
+½
+
+A hangsor hangjai:
+
+B – C – D-ESZ – F – G – A-(B)
+
+A két , a B és Esz
+S itt most álljunk meg és rakjunk rendet az új ismeretekben. Előtte azonban sokat kell
+énekelgetni a hangsorokat szolmizálva és abszolút magasságban és abszolút hangnévvel. Dúr
+hangsorokat hoztunk létre, s ehhez előjegyzésekként kellett a # -t és -t alkalmazni.
+Az előjegyzés nélküli dúr hangsor C hangra épül. Az egy # - s dúr hangsor G-re, s a két # - s
+dúr hangsor pedig D hangra épült. Keressünk kapcsolatot a hangsorok között!
+Az egymás utáni hangok között kvint távolság van:
+
+Ha megtanuljuk 2#-ig a dúr hangsorokat, könnyen ki tudjuk számolni a többi keresztes
+hangsort, hiszen csak emelkedő irányban kvinteket kell egymásra tenni. De nem csak a
+hangsorok, hanem az előjegyzések (#) is emelkedő kvintenként követik egymást.
+
+3# 4# 5# 6# 7#
+
+A- E- H - FISZ- CISZ- DÚR
+
+=== [OLDAL 42] (ábrák/rajzelemek: 7) ===
+S a szintén emelkedő kvintenként következő keresztek:
+
+Fisz – Cisz – Gisz – Disz – Aisz – Eisz – Hisz
+
+S van még egy lehetőségünk arra, hogy a dó helyek biztos ismerete nélkül is könnyedén
+megtaláljuk a kezdőhang szolmizációs nevét, s megállapíthassuk, hogy milyen hangnemben
+van lejegyezve egy-egy dallam, milyen a tonalitása?
+A megvizsgált G-dúr és D-dúr hangsornál megfigyelhetjük, hogy a kereszttel illetve D-dúr
+esetében az utolsó kereszttel módosított hang ti szolmizációs hanggal egyenlő. Ebből az
+következik, hogy az utolsó kereszt mindig ti szolmizációs hang. Erről a hangról fel kell lépni
+egy kis szekundot (k2) és máris megtaláltuk a dó helyét.
+Nézzünk egy konkrét példán a megoldást!
+Az előjegyzés 5#, a kezdőhang kétvonalas Disz hang.
+Kérdés: mi lesz a kezdőhang szolmizálva?
+Az utolsó kereszt a 2. vonalközben van, tehát Aisz. Ez a
+hang a ti szolmizálva. A dó k2-al feljebb van, tehát H
+hang. Ha a dó= H, akkor a Disz=mi.
+Vezessük végig a
+-s hangnemeken is a folyamatot!
+Tudjuk a
+- s hangnemeket 2
+-ig. Itt is megfigyelhető a kvint kapcsolat az előjegyzések
+számának növekedésével, csak a kvint lefelé ugrik:
+
+Így már könnyen létrehozzuk a folytatást!
+
+S természetesen az előjegyzések is lefelé tiszta kvintenként követik egymást:
+
+B – Esz – Asz – Desz – Gesz – Cesz – Fesz
+
+S ezekkel a hangsorokkal is készítsünk egy példát a kezdőhang megállapítására.
+Ha tudjuk 2
+- ig a dúr hangsorokat, itt is észrevehetünk egy újabb összefüggést.
+
+=== [OLDAL 43] (ábrák/rajzelemek: 5) ===
+Az utolsó előtti
+= dó-val.
+
+A feladatban négy
+az előjegyzés. Az utolsó
+előtti
+megadja a dó helyét, az Asz hangot. Lefelé
+haladva: dó – ti, – la,. S már célba is értünk,
+megtaláltuk a kezdő hangot, az alsó la-t.
+
+A dúr hangsorok után foglalkoznunk kell a moll hangsorokkal is.
+A moll hangsort a dúr hangsorból tudjuk legkönnyebben levezetni. A moll hangsor hétfokú
+hangsor, amely a dúr hangsor 6. fokára épül. Szolmizálva. la- hangsor. Fő jellemzője, hogy a
+kezdőhangra épített terc kicsi. Vegyük mintaként az előjegyzés nélküli C-dúr hangsort. Ha
+megkeressük a C-dúr hatodik hangját - amit a legkönnyebben úgy tehetünk, hogy lelépünk a
+C-ről egy kis tercet (k3) -, az A hangra érkezünk. A C-dúr hangsorhoz kapcsolódó moll
+hangsor tehát az a-moll (a moll hangsorok nevét mindig kis kezdőbetűvel írjuk!).
+A moll hangsornak három fajtájával találkozhatunk zeneművekben:
+
+ Természetes moll – valamennyi hangja a hozzá tartozó dúr hangsor hangjaiból áll. Pl.:
+e-moll – dúrja G-dúr, tehát 1# az előjegyzés
+
+E
+Fisz G
+A H C
+D
+(E)
+S a szolmizációs nevek is álljanak itt!
+
+la
+ti dó re mi fa szó (la)
+(Az alaphang felső oktávját – amelyet zárójelben tartunk - azért tartjuk fontosnak jelölni a
+hangsorban, hogy a későbbiekben a módosítások miatt jobban érzékeljük a változtatást.)
+
+ Összhangzatos moll – a hangsor 7. hangját felfelé módosítjuk.
+
+Disz
+
+Szi
+
+=== [OLDAL 44] (ábrák/rajzelemek: 4) ===
+A felemelt 7. hang töretlenül vezet bennünket az alaphang felső oktávjára, oda oldódik. Ezért
+a hang neve vezető hang. A klasszikus korban terjedt el a hangsor használata az európai
+műzenében.
+
+ Dallamos moll – a 6. 7. hang felemelt a felfelé tartó dallamfordulatokban, míg a lefelé
+hajló dallamokban a természetes moll hangkészletét használja.
+
+Cisz
+Disz
+
+fi szi
+S még egy utolsó gyakorlati megközelítés a dúr és moll hangsorok világából.
+Mielőtt elkezdenénk egy új dal megtanulását, fontos, hogy elképzeljük a darab hangnemét. Ha
+már elég sokat gyakoroltuk az előjegyzések és hangnemek kapcsolatát, elég az előjegyzésre
+és a záró hangra tekinteni, s már is meg tudjuk állapítani, hogy dúr vagy moll dallamot fogunk
+megszólaltatni. Nézzünk egy konkrét példát, és tanuljuk is meg ezt a szép lengyel népdalt!
+
+(PÉCSI, 2000: 114)
+A fenti dallamban két bé az előjegyzés, s a záróhang G, ami lá szolmizációs hang. Ezért ez a
+dallam moll tonalitású. S a dallamban előforduló szi hang miatt összhangzatos g – moll.
+
+A következő táblázaton jól áttekinthető az előjegyzések, valamint a dúr és moll hangsorok
+kapcsolata
+
+=== [OLDAL 45] (ábrák/rajzelemek: 204) ===
+Tiszta kvint (t5)
+
+6. Hármashangzatok
+
+Ha három hang egy időben szólal meg, és a hangok között terc távolság van, akkor
+hármashangzatot hallunk.
+A tercek elrendeződése alapján négy féle hármashangzatot tudunk megkülönböztetni.
+
+Meghatározó az alsó terc. Ha ez a terc hangköz nagy, és fölötte egy kis terc
+szólal meg, dúr hármashangzatot (D) hallunk. A hármashangzat a dúr
+hangsor első öt hangját öleli át.
+
+DÚR
+
+moll
+CISZ
+7#
+aisz
+FISZ
+6#
+disz
+H
+5#
+gisz
+E
+4#
+cisz
+A
+3#
+fisz
+D
+2#
+h
+G
+1#
+e
+C
+0
+a
+F
+1
+
+d
+B
+2
+
+g
+ESZ
+3
+
+c
+ASZ
+4
+
+f
+DESZ 5
+
+b
+GESZ 6
+
+esz
+CESZ 7
+
+asz
+DÚR
+
+moll
+
+=== [OLDAL 46] (ábrák/rajzelemek: 5) ===
+Az alsó terc kicsi és fölötte nagy terc van – vagyis fordítva vannak a tercek, mint a dúr
+hármashangzatnál – moll hármashangzat (m) jön létre.
+
+A moll hármashangzatnál kisebb, mondhatjuk szűkebb az a
+hármashangzat, melynek mindkét terce kicsi. Ez a szűkített
+hármashangzat (sz).
+
+A dúr hármashangzatnál nagyobb, bővebb a két nagy tercből építkező
+hangzat. Ez a bővített hármashangzat (B).
+
+A négyféle hármashangzatot azonos hangra építettük, s a módosításokkal alakítottuk a
+megfelelő felépítésre.
+Érdemes megvizsgálni, hogy a két meghatározó hétfokú hangsornak, a dúr és moll
+hangsornak egyes hangjaira milyen hármashangzat építhető?
+Elkészíthetjük a leltárt!
+Dúr hangsorban:
+
+I. II. III. IV. V. VI. VII.
+I. IV. V. hangra (fokra) dúr hármashangzat,
+II. III. VI. hangra (fokra) moll hármashangzat,
+VII. hangra (fokra) szűkített hármashangzat építhető.
+Moll (természetes) hangsorban:
+
+I.
+II. III.
+
+IV. V. VI. VII.
+I. IV. V. hangra (fokra) moll hármashangzat,
+III. VI. hangra (fokra) dúr hármashangzat,
+
+=== [OLDAL 47] (ábrák/rajzelemek: 3) ===
+II. hangra (fokra) szűkített hármashangzat építhető.
+
+Mivel az összhangzatos moll hangsor jelenléte nagyon gyakori az európai műzenében, ezért
+készítsük el ennek a hangsornak is hármashangzat leltárát!
+Moll (összhangzatos) hangsorban:
+
+I. II. III.
+IV. V. VI. VII.
+
+V. VI. hangra (fokra) dúr hármashangzat,
+I. IV. hangra (fokra) moll hármashangzat,
+
+II. VII. fokra szűkített hármashangzat,
+III. fokra bővített hármashangzat építhető.
+
+A mi gyakorlatunkban hármashangzatot a legegyszerűbb formában
+akkor hallunk, ha kánont énekelünk, legalább három szólamban.
+Ebben
+az
+esetben
+a
+szólamok
+együtthangzása
+létrehozhat
+hármashangzatokat. Vegyük példaként a közkedvelt Pál, Kata, Péter
+kezdetű dallam első ütemét, ahol jól látható és reméljük hallható is a D
+- Fisz - A hangokból álló dúr hármashangzat, ha már az összes szólam
+elkezdett kánonban énekelni. (A négy kottasort összekötő ütemvonal
+jelzi, hogy a négy szólam együtt hangzik.)
+
+A hármashangzat nem csak akkordként szólalhat meg gyakorlatunkban. Több dallamban
+találkozhatunk felbontva, dallamalkotó elemként hármashangzatot. Ezekben az esetekben
+azonban már nem mindig tercépítkezésű hármashangzatokat énekelünk, hanem előfordulnak
+olyan fordulatok is, amikor a hármashangzatok hangjait megfordították a dallamot alkotók.
+De ha figyelmesen összerakjuk a hangokat tercekbe, ráismerhetünk valamelyik
+hármashangzatunkra. S ha nem sajnáljuk az időt az analizálásra, hamarabb, könnyebben meg
+tudunk tanulni dallamokat, és feltehetően tisztábban is énekeljük azokat. Keressünk néhány
+példát az ilyen fordulatokra is!
+
+=== [OLDAL 48] (ábrák/rajzelemek: 9) ===
+1.
+
+2.
+
+3.
+
+4.
+
+5.
+
+=== [OLDAL 49] (ábrák/rajzelemek: 1) ===
+Ezzel az ismeretek sorát lezárjuk.
+
+Nem mintha mindent megtanultunk volna, amire egy jó zenésznek szüksége lehet. De
+talán ezen ismeretek birtokában bátrabban keresünk új dalokat, és igényesebben
+szólaltatjuk meg a már megtanultakat.
+Az is előfordulhat, hogy a tanulmányok során nem sikerül valamennyi zenei ismeretet
+elsajátítani, ami ebben a könyvben szerepel. Lehet, hogy majd csak a gyakorlati
+munka közben lesz igény és lehetőség bizonyos területek tökéletesítésére. Legyen ez a
+fejezet segítség ebben.
+Muzsikáljunk sokat a ránk bízott kisgyermekeknek, hiszen a zene lételemük. S ne
+felejtkezzünk meg saját zenei készségeink állandó fejlesztéséről sem, mert „a
+tanulásnak nincsen vége” [KODÁLY, 1974:284]
+
+=== [OLDAL 50] (ábrák/rajzelemek: 13) ===
+7. Furulyagyakorlatok
+
+Az a hangszer, amit mi használunk, szoprán furulya, s germán hangolású.
+Az alábbi segédanyag mellé nem árt, ha van tanári segítség, de ha valaki
+nagyon alaposan és gondosan gyakorol és betartja a leírt szabályokat, akár önállóan is
+meg tud tanulni alapfokon ezen a hangszeren.
+
+A furulyán lévő nyílásokat igyekezzünk lazán befedni a megfelelő
+ujjakkal. Ne szorítsuk a hangszert és ne is nézzük a kezünket! Érezzük a
+hangszert! A jelölt ujjrend betartása kötelező!
+
+Az ujjak sorszáma!
+
+2. ujj
+3. ujj Bal kéz
+4. ujj
+
+2. ujj
+3. ujj
+4. ujj Jobb kéz
+
+5. ujj
+
+Ha egy új hangot tanulunk, először „tü” hangzóval többször fújjuk meg
+hosszan, majd röviden! Ügyeljünk a levegővételre és a helyes testtartásra.
+
+Nem a dalokat tanuljuk meg furulyázni, hanem elsajátítjuk a furulya fogásrendjét, hogy
+bármilyen dallamot el tudjunk fújni, akár első látásra is hangjegyekről.
+
+A gyakorlatok megszólaltatása nagyon fontos, mielőtt elkezdenénk a dallamokat gyakorolni.
+A hangokat nem csak egymás utáni kapcsolásban kell tudni megszólaltatni, hanem az
+ugrásokat is be kell gyakorolni.
+Először két – két hangot tanulunk meg fújni, de a későbbiekben mindig csak egy hanggal
+bővítjük tudásunkat.. A hangokat célszerű legato (kötötten) és staccato (élesen elválasztva) is
+fújni. Ugyanígy tegyünk minden új hang bevezetése előtt.
+
+=== [OLDAL 51] (ábrák/rajzelemek: 9) ===
+
+
+=== [OLDAL 52] (ábrák/rajzelemek: 8) ===
+Az előbbiekben már megtanultuk az A hangot. Kapcsoljuk most hozzá a két új hangunkhoz!
+
+1.
+2
+
+2.
+3
+
+3.
+
+2 Forrai Katalin(1986): Ének a bölcsődében. Zeneműkiadó 60. oldal 44. szemelvény
+3 A magyar népzene tára (1951)I. Gyermekjátékok. Szek.:Bartók Béla és Kodály Zoltán. Sajtó alá rendezte:
+Kerényi György dr.. Zeneműkiadó Vállalat, Budapest, 16. oldal , 42. szemelvény
+
+=== [OLDAL 53] (ábrák/rajzelemek: 8) ===
+4
+
+Gyakorlat:
+
+4A magyar népzene tára (1951)I. Gyermekjátékok. Szek.:Bartók Béla és Kodály Zoltán. Sajtó alá rendezte:
+Kerényi György dr.. Zeneműkiadó Vállalat, Budapest, 17. oldal , 45. szemelvény
+
+=== [OLDAL 54] (ábrák/rajzelemek: 10) ===
+1.
+
+5
+
+6.
+2.
+
+3.
+
+6
+
+Gyakorlat:
+
+7
+
+6 A magyar népzene tára (1951)I. Gyermekjátékok. Szek.:Bartók Béla és Kodály Zoltán. Sajtó alá rendezte:
+Kerényi György dr.. Zeneműkiadó Vállalat, Budapest, 766. szemelvény
+7 Forrai Katalin(1986): Ének a bölcsődében. Zeneműkiadó 60. oldal 109. szemelvény
+
+=== [OLDAL 55] (ábrák/rajzelemek: 9) ===
+Gyakorlat
+
+Ismételjük meg a gyakorlatot visszafelé haladva A hangról!
+1.
+
+8
+2.
+
+9
+
+8Forrai Katalin (1994) Ének az óvodában. Budapest: Editio Musica 277.szemelvény
+
+9 Forrai Katalin (1994) Ének az óvodában. Budapest: Editio Musica 272. szemelvény
+
+=== [OLDAL 56] (ábrák/rajzelemek: 7) ===
+3.
+
+4.
+
+10
+
+10 Forrai Katalin (1994) Ének az óvodában. Budapest: Editio Musica, 216. szemelvény
+
+=== [OLDAL 57] (ábrák/rajzelemek: 10) ===
+Gyakorlat
+
+Ezt a sort sokszor ismételjük!
+
+1.
+
+11
+
+11 A magyar népzene tára (1951)I. Gyermekjátékok. Szek.:Bartók Béla és Kodály Zoltán. Sajtó alá rendezte:
+Kerényi György dr.. Zeneműkiadó Vállalat, Budapest, 42. szemelvény
+
+=== [OLDAL 58] (ábrák/rajzelemek: 8) ===
+2.
+
+12
+
+1.
+
+13
+Gyakorlat
+
+Hasznos az alábbi menetet nagyon sokszor eljátszani, mert a nagyobb
+hangterjedelmű dallamok legtöbbjének ez a befejező fordulata!
+
+2.
+
+12 Forrai Katalin(1986): Ének a bölcsődében. Zeneműkiadó 162. szemelvény
+
+13 A magyar népzene tára (1951)I. Gyermekjátékok. Szek.:Bartók Béla és Kodály Zoltán. Sajtó alá rendezte:
+Kerényi György dr.. Zeneműkiadó Vállalat, Budapest, 307. szemelvény
+
+=== [OLDAL 59] (ábrák/rajzelemek: 5) ===
+14
+
+14 Forrai Katalin(1986) Ének a bölcsődében. Zeneműkiadó 124.. szemelvény
+
+=== [OLDAL 60] (ábrák/rajzelemek: 10) ===
+Az egyik legnehezebben megszólaltatható hang a szoprán furulyán.
+Igyekezzünk nagyon gondosan lezárni a lyukakat. Különösen a két alsó
+befogása igényel kiemelt figyelmet a dupla nyílás miatt. Feltétlenül állítsuk be
+elforgatással a furulyánk lábát az ujjaink hosszához igazítva.
+
+Az alábbi gyakorlat ismételgetése sokat segít.
+
+1.
+
+2.
+
+15
+
+16
+
+15 Pécsi G. – Uzsalyné Pécsi R.(2000) Kulcs a muzsikához, Énektár. Kulcs a muzsikához alapítvány, Pécs, 7. o.
+16 Pécsi G. – Uzsalyné Pécsi R.(2000) Kulcs a muzsikához, Énektár. Kulcs a muzsikához alapítvány, Pécs, 5. o.
+
+=== [OLDAL 61] (ábrák/rajzelemek: 10) ===
+1.
+
+17
+
+18
+2. Amikor paripám ballag,
+Odanéz valahány csillag.
+Amikor paripám táncol,
+Odanéz a nap is százszor.
+
+17 Pécsi G. – Uzsalyné Pécsi R.(2000) Kulcs a muzsikához, Énektár. Kulcs a muzsikához alapítvány, Pécs, 5. o.
+
+18 Járdányi
+
+=== [OLDAL 62] (ábrák/rajzelemek: 10) ===
+Gyakorlat:
+
+1.
+
+19
+
+2.
+
+20
+
+19 Forrai Katalin(1986): Ének a bölcsődében. Zeneműkiadó 190. szemelvény
+
+20 Forrai Katalin(1986): Ének a bölcsődében. Zeneműkiadó 178. szemelvény
+
+=== [OLDAL 63] (ábrák/rajzelemek: 1) ===
+Felhasznált irodalom:
+
+1. A magyar népzene tára I. Gyermekjátékok (1951) Szerkesztette Bartók Béla és Kodály
+Zoltán. Sajtó alá rendezte Kerényi György. Budapest: Zeneműkiadó
+2. Bárdos Lajos (1961) Modális harmóniák. Budapest: Zeneműkiadó
+3. Bodza Klára – Paksa Katalin (1992) Magyar népi énekiskola I. Budapest:
+Tankönyvkiadó
+4. Böhm László (1961) Zenei műszótár. Budapest: Editio Musica
+5. Brockhaus-Riemann Zenei lexikon (1983) Szerk: Boronkay Antal. Budapest:
+Zeneműkiadó
+6. Forrai Katalin (1986) Ének a bölcsődében. Budapest: Zeneműkiadó
+7. Forrai Katalin (1994) Ének az óvodában. Budapest: Editio Musica
+8. Forrai Katalin (1966) Európai gyermekdalok I .II. Budapest: Editio Musica
+9. Gágyor József (2002) Játékos állatkert. Dunaszerdahely: Lilium Aurum
+10. Járdányi Pál
+11. Kardos Pál (1969) Kórusnevelés-kórushangzás. Budapest: Zeneműkiadó
+12. Kodály Zoltán (1941) 333 olvasógyakorlat. Bevezető a magyar népzenébe. Budapest:
+Zeneműkiadó
+13. Kodály Zoltán (1974) Visszatekintés I. Összegyűjtött írások, beszédek, nyilatkozatok.
+Sajtó alá rendezte, és bibliográfiai jegyzetekkel ellátta Bónis Ferenc. Budapest:
+Zeneműkiadó Vállalat
+14. Lantos Rezsőné - Lukin Lászlóné (2001) Ének-zene az általános iskola 1. osztálya
+számára. Budapest: Nemzeti Tankkönyvkiadó
+15. Lantos Rezsőné - Lukin Lászlóné (2002) Ének-zene az általános iskola 2. osztálya
+számára. Budapest: Nemzeti Tankkönyvkiadó
+16. Pécsi Géza – Uzsalyné Pécsi Rita (1999) Kulcs a muzsikához. Művészeti,
+zeneelméleti és magyar népzenei alapismeretek. Pécs: Kulcs a muzsikához Alapítvány
+17. Pécsi Géza – Uzsalyné Pécsi Rita (2000) Kulcs a muzsikához. Énektár. Pécs: Kulcs a
+muzsikához Alapítvány
+18. Salk, L. (1962): Mothers' heartbeat as an imprinting stimulus. Transactions of the New
+York Academy of Sciences, 7: 753-763.
+19. Szabolcsi Bence – Tóth Aladár (1965) Zenei lexikon. Budapest: Zeneműkiadó
+20. Törzsök Béla (1982) Zenehallgatás az óvodában. Budapest: Editio Musica
+21. Vargyas Lajos (2002) A magyarság népzenéje. Jelenlévő múlt. Budapest: Planétás
+
+=== [OLDAL 64] (ábrák/rajzelemek: 1) ===

@@ -1,0 +1,6 @@
+{
+  "name": "Kodály Zenei Műhely & Furulya Akadémia",
+  "description": "Interaktív egyetemi oktatási segédanyag és gyakorló platform zenei ismeretekből, ritmusból, hangközökből és furulyagyakorlatokból.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
