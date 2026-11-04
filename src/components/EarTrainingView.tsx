@@ -8,15 +8,15 @@ interface EarTrainingViewProps {
 
 const EAR_CHALLENGES = [
   { id: 1, title: 'Tiszta Prím (t1)', notes: ['C4','C4'], description: '0 félhang: két azonos hang.' },
-  { id: 2, title: 'Kis Szekund (k2)', notes: ['C4','Db4'], description: '1 félhang, például C–Desz.' },
+  { id: 2, title: 'Kis Szekund (k2)', notes: ['C4','C#4'], description: '1 félhang, például C–Desz.' },
   { id: 3, title: 'Nagy Szekund (n2)', notes: ['C4','D4'], description: '2 félhang: C–D.' },
-  { id: 4, title: 'Kis Terc (k3)', notes: ['C4','Eb4'], description: '3 félhang: C–Esz.' },
+  { id: 4, title: 'Kis Terc (k3)', notes: ['C4','D#4'], description: '3 félhang: C–Esz.' },
   { id: 5, title: 'Nagy Terc (n3)', notes: ['C4','E4'], description: '4 félhang: C–E.' },
   { id: 6, title: 'Tiszta Kvart (t4)', notes: ['C4','F4'], description: '5 félhang: C–F.' },
   { id: 7, title: 'Tiszta Kvint (t5)', notes: ['C4','G4'], description: '7 félhang: C–G.' },
-  { id: 8, title: 'Kis Szext (k6)', notes: ['C4','Ab4'], description: '8 félhang: C–Asz.' },
+  { id: 8, title: 'Kis Szext (k6)', notes: ['C4','G#4'], description: '8 félhang: C–Asz.' },
   { id: 9, title: 'Nagy Szext (n6)', notes: ['C4','A4'], description: '9 félhang: C–A.' },
-  { id: 10, title: 'Kis Szeptim (k7)', notes: ['C4','Bb4'], description: '10 félhang: C–B.' },
+  { id: 10, title: 'Kis Szeptim (k7)', notes: ['C4','A#4'], description: '10 félhang: C–B.' },
   { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','B4'], description: '11 félhang: C–H.' },
   { id: 12, title: 'Tiszta Oktáv (t8)', notes: ['C4','C5'], description: '12 félhang: C–C.' }
 ];
