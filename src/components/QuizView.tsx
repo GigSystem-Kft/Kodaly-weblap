@@ -5,12 +5,11 @@ import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from '
 import { playNote } from '../utils/audio';
 
 interface QuizViewProps {
-  onAddXp: (amount: number) => void;
   onSaveQuizScore: (chapterId: string, score: number) => void;
   initialChapterId?: string;
 }
 
-export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, initialChapterId }) => {
+export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChapterId }) => {
   const [selectedChapter, setSelectedChapter] = useState<string>(initialChapterId || 'all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -33,7 +32,6 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, in
     if (isCorrect) {
       playNote('C5', 300);
       setCorrectCount((prev) => prev + 1);
-      onAddXp(20);
     } else {
       playNote('C3', 300);
     }
