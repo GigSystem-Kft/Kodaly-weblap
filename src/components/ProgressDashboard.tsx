@@ -1,6 +1,7 @@
 import React from 'react';
 import { UserProgress } from '../types';
-import { MUSIC_CHAPTERS } from '../data/musicData';
+import { MUSIC_CHAPTERS, FLASHCARDS_DATA } from '../data/musicData';
+import { consecutiveDays } from '../progress';
 import { Award, Flame, Sparkles, CheckCircle2, BookOpen, Trophy } from 'lucide-react';
 
 interface ProgressDashboardProps {
@@ -9,6 +10,7 @@ interface ProgressDashboardProps {
 
 export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress }) => {
   const totalChapters = MUSIC_CHAPTERS.length;
+  const trueStreak = consecutiveDays(progress.activityDays ?? []);
   const completedCount = progress.completedChapters.length;
   const completionPercentage = Math.round((completedCount / totalChapters) * 100);
 
@@ -23,7 +25,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress }
           <Award className="w-3.5 h-3.5" />
           <span>Tanulmányi Előrehaladás</span>
         </span>
-        <h2 className="text-3xl font-extrabold text-white mb-2">Hallgatói Teljesítmény Statisztika</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-2">Tanulási profil és eredmények</h2>
         <p className="text-slate-400 text-sm">
           Kövesd nyomon fejezetenkénti haladásodat, kvízeredményeidet és megszerzett XP-det.
         </p>
@@ -57,7 +59,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress }
           </div>
           <div>
             <p className="text-xs text-slate-400 font-medium">Tanulási Sorozat</p>
-            <h4 className="text-2xl font-bold text-white mt-1">{progress.streak} nap</h4>
+            <h4 className="text-2xl font-bold text-white mt-1">{trueStreak} nap</h4>
           </div>
         </div>
 
@@ -69,6 +71,19 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress }
             <p className="text-xs text-slate-400 font-medium">Összesített XP</p>
             <h4 className="text-2xl font-bold text-white mt-1">{progress.xp} XP</h4>
           </div>
+        </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 text-slate-800 rounded-2xl p-5 mb-8">
+        <h3 className="font-bold text-lg mb-2">Személyes tanulási naplód</h3>
+        <p className="text-sm leading-relaxed text-slate-600">
+          Jelenleg a tanulási eredményeid csak ebben a böngészőben, ezen az eszközön tárolódnak.
+          Ez még nem felhasználói fiók: másik számítógépen nem jelennek meg automatikusan.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+          <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-500">Tanulási napok</span><strong>{(progress.activityDays ?? []).length}</strong></div>
+          <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-500">Megtanult szókártyák</span><strong>{progress.flashcardsMastered.length} / {FLASHCARDS_DATA.length}</strong></div>
+          <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-500">Utolsó tanulás</span><strong>{progress.lastActiveDate || 'Még nincs'}</strong></div>
         </div>
       </div>
 
