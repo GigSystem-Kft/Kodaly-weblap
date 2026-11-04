@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS zm_users (
   id CHAR(36) NOT NULL PRIMARY KEY,
   email VARCHAR(254) NOT NULL,
   display_name VARCHAR(120) NOT NULL,
-  password_hash VARCHAR(150) NOT NULL,
+  password_hash VARCHAR(180) NOT NULL,
   role ENUM('student','teacher') NOT NULL DEFAULT 'student',
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY uq_zm_users_email (email)
