@@ -118,7 +118,7 @@ export default function App() {
         )}
 
         {activeTab === 'flashcards' && (
-          <FlashcardsView onAddXp={addXp} onMasterCard={markFlashcard} masteredCards={progress.flashcardsMastered} initialCategory={flashcardCategory} />
+          <FlashcardsView onMasterCard={markFlashcard} masteredCards={progress.flashcardsMastered} initialCategory={flashcardCategory} />
         )}
 
         {activeTab === 'matching' && (
