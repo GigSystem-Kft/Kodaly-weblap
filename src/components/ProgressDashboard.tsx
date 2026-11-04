@@ -6,9 +6,10 @@ import { Award, Flame, Sparkles, CheckCircle2, BookOpen, Trophy } from 'lucide-r
 
 interface ProgressDashboardProps {
   progress: UserProgress;
+  signedIn?: boolean;
 }
 
-export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress }) => {
+export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, signedIn = false }) => {
   const totalChapters = MUSIC_CHAPTERS.length;
   const trueStreak = consecutiveDays(progress.activityDays ?? []);
   const completedCount = progress.completedChapters.length;
@@ -77,8 +78,9 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress }
       <div className="bg-white border border-slate-200 text-slate-800 rounded-2xl p-5 mb-8">
         <h3 className="font-bold text-lg mb-2">Személyes tanulási naplód</h3>
         <p className="text-sm leading-relaxed text-slate-600">
-          Jelenleg a tanulási eredményeid csak ebben a böngészőben, ezen az eszközön tárolódnak.
-          Ez még nem felhasználói fiók: másik számítógépen nem jelennek meg automatikusan.
+          {signedIn
+            ? 'Bejelentkezve: az eredményeidet a szerver menti. Ugyanezzel a fiókkal másik eszközön is elérhetők.'
+            : 'Vendégként az eredményeidet ez a böngésző tárolja. Regisztráció és bejelentkezés után a fiókodban is mentheted őket.'}
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-500">Tanulási napok</span><strong>{(progress.activityDays ?? []).length}</strong></div>
