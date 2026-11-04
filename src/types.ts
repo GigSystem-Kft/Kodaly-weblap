@@ -57,4 +57,5 @@ export interface UserProgress {
   xp: number;
   streak: number;
   lastActiveDate: string;
+  activityDays?: string[];
 }
