@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Chapter } from '../types';
+import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
+import { ImageLightbox } from './ImageLightbox';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord } from '../utils/audio';
 
@@ -19,8 +21,10 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   isCompleted
 }) => {
   const [activeSubId, setActiveSubId] = useState<string>(chapter.subchapters[0]?.id || '');
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
 
   const currentSub = chapter.subchapters.find((s) => s.id === activeSubId) || chapter.subchapters[0];
+  const illustrations = LESSON_ILLUSTRATIONS[currentSub.id] ?? [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -114,6 +118,32 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               ))}
             </div>
 
+            {/* Az eredeti Hangértékek galéria releváns ábrái itt, a leckében. */}
+            {illustrations.length > 0 && (
+              <section className="mt-8 mb-8 pt-6 border-t border-slate-800" aria-label="A lecke szemléltető képei">
+                <h4 className="text-sm font-bold uppercase tracking-wider text-slate-300 mb-2">Szemléltető kottaképek</h4>
+                <p className="text-slate-400 text-xs mb-5">Kattints a képre a nagyításhoz.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {illustrations.map((item) => (
+                    <figure key={item.title} className="overflow-hidden rounded-2xl bg-white border border-slate-700">
+                      <button
+                        type="button"
+                        onClick={() => setZoom({ src: item.image, alt: item.title })}
+                        className="w-full bg-white p-3 cursor-zoom-in focus-visible:outline focus-visible:outline-4 focus-visible:outline-indigo-500"
+                        aria-label={`${item.title} nagyítása`}
+                      >
+                        <img src={item.image} alt={item.title} loading="lazy" className="w-full h-auto max-h-72 object-contain" />
+                      </button>
+                      <figcaption className="px-4 py-3 border-t border-slate-200">
+                        <strong className="block text-sm text-slate-900">{item.title}</strong>
+                        <span className="block text-xs leading-relaxed text-slate-600 mt-1">{item.description}</span>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Quotes */}
             {currentSub.quotes && currentSub.quotes.map((q, qIdx) => (
               <div key={qIdx} className="bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-5 my-6 flex items-start space-x-4">
@@ -156,6 +186,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
           </div>
         </div>
       </div>
+      {zoom && <ImageLightbox src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} />}
     </div>
   );
 };
