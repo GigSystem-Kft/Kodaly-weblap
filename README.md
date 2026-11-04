@@ -55,3 +55,18 @@ git remote -v
 ```
 
 A `zeneelmelet.digitaliskottatar.hu` CloudPanel-webhely már létrejött. Az SSL/TLS oldalon telepített Let's Encrypt tanúsítvány látható; a teljes éles működéshez még az alkalmazás futtatását és a háttéradatbázist kell beállítani.
+
+## Hallgatói fiókok – fejlesztői előnézet
+
+A 06. Profil oldalon a regisztráció és bejelentkezés az adatbázis beállítása után válik elérhetővé. A fiókrendszer MySQL/MariaDB és `mysql2` segítségével működik.
+
+**CloudPanel szerverbeállítások, SQL-import és biztonsági lépések:** [Telepítési útmutató](docs/cloudpanel-telepites.md).
+
+A következő fájlok tartoznak hozzá:
+
+- `server-auth.ts` – fiókkezelő és eredménymentő API
+- `database/schema.sql` – adatbázistáblák
+- `src/components/AccountPanel.tsx` – hallgatói bejelentkezés és regisztráció
+- `.env.example` – konfigurációs minta, valódi jelszavak nélkül
+
+SSH-hozzáférés nélkül a fejlesztés GitHubon és a helyi gépen folytatható; ez **nem jelenti a szerveren történő telepítést**. Jelszót és privát SSH-kulcsot ne tölts fel a GitHubra.
