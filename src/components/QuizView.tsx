@@ -46,7 +46,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, in
       setCurrentIndex((prev) => prev + 1);
     } else {
       setIsFinished(true);
-      const finalScore = Math.round(((correctCount + (selectedOption === currentQ.correctIndex ? 1 : 0)) / questions.length) * 100);
+      const finalScore = Math.round((correctCount / questions.length) * 100);
       if (selectedChapter !== 'all') {
         onSaveQuizScore(selectedChapter, finalScore);
       }
