@@ -12,15 +12,11 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak }) => {
   const navItems = [
     { id: 'chapters', label: '01. Tananyag' },
-    { id: 'gallery', label: '02. Ábratár' },
-    { id: 'notationTable', label: '03. Jelölések' },
-    { id: 'solfege', label: '04. Szolmizáció' },
-    { id: 'abcNotes', label: '05. ABC-s hangok' },
-    { id: 'flashcards', label: '06. Szókártyák' },
-    { id: 'matching', label: '07. Játék' },
-    { id: 'quiz', label: '08. Teszt' },
-    { id: 'eartraining', label: '09. Hallás' },
-    { id: 'dashboard', label: '10. Profil' },
+    { id: 'flashcards', label: '02. Szókártyák' },
+    { id: 'matching', label: '03. Játék' },
+    { id: 'quiz', label: '04. Teszt' },
+    { id: 'eartraining', label: '05. Hallás' },
+    { id: 'dashboard', label: '06. Profil' },
   ];
 
   return (
@@ -60,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
                   : 'text-[#1c1c1c]/60 hover:text-[#1c1c1c]'
               }`}
             >
-              11. Tankönyvek ▾
+              07. Tankönyvek ▾
             </button>
             <div className="absolute left-0 top-full pt-2 hidden group-hover:block group-focus-within:block z-40">
               <div className="bg-white border border-[#1c1c1c]/15 shadow-md min-w-44 flex flex-col">
