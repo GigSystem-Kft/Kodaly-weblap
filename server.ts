@@ -5,6 +5,7 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import { knowledgeContext, knowledgeStatus, localKnowledgeReply } from './server-knowledge';
+import { installAccountRoutes } from './server-auth';
 
 dotenv.config({ path: ['.env.local', '.env'] });
 
@@ -13,7 +14,8 @@ const __dirname = dirname(__filename);
 
 async function startServer() {
   const app = express();
-  app.use(express.json());
+  app.use(express.json({ limit: '100kb' }));
+  installAccountRoutes(app);
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
   const ai = apiKey ? new GoogleGenAI({
@@ -105,6 +107,11 @@ ${indexedContext || 'Ehhez a kérdéshez nem találtam biztosan releváns részl
         error: errorMessage,
       });
     }
+  });
+
+  app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error('API request failed:', error);
+    if (!res.headersSent) res.status(503).json({ error: 'A szerveroldali szolgáltatás átmenetileg nem érhető el.' });
   });
 
   // Vite middleware for development
