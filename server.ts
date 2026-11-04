@@ -14,6 +14,8 @@ const __dirname = dirname(__filename);
 
 async function startServer() {
   const app = express();
+  // CloudPanel nginx operates as a local reverse proxy; only trust local forwarded addresses.
+  app.set('trust proxy', 'loopback');
   app.use(express.json({ limit: '100kb' }));
   installAccountRoutes(app);
 
@@ -130,7 +132,7 @@ ${indexedContext || 'Ehhez a kérdéshez nem találtam biztosan releváns részl
   }
 
   const port = process.env.PORT || 3000;
-  app.listen(port, () => {
+  app.listen(port, '127.0.0.1', () => {
     console.log(`Server running on http://localhost:${port}`);
   });
 }
