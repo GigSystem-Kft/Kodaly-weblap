@@ -215,7 +215,7 @@ export default function App() {
                 syncError={syncError}
               />
             </div>
-            <ProgressDashboard progress={progress} />
+            <ProgressDashboard progress={progress} signedIn={!!account} />
           </>
         )}
 
