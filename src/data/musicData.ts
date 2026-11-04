@@ -1,4 +1,5 @@
 import { Chapter, Flashcard, QuizQuestion, MatchingPair } from '../types';
+import { ADDITIONAL_LESSONS, ADDITIONAL_QUESTIONS, ADDITIONAL_FLASHCARDS, ADDITIONAL_MATCHING } from './extendedMusicData';
 
 export const MUSIC_CHAPTERS: Chapter[] = [
   {
@@ -43,7 +44,7 @@ export const MUSIC_CHAPTERS: Chapter[] = [
         content: [
           'Szinkópa [TI-TÁ-TI]: Két nyolcad értékből, s középen negyed értékből áll. Négy nyolcadból jön létre.',
           'Éles ritmus [TI-TÁM / TI-TÁI]: Nyolcad + pontozott negyed.',
-          'Nyújtott ritmus [TÁM-TI / TÁI-TI]: Pontozott nyegyed + nyolcad.',
+          'Nyújtott ritmus [TÁM-TI / TÁI-TI]: Pontozott negyed + nyolcad.',
           'Triola: Ha egy negyed érték megszólalásának ideje alatt egyenletesen oszlik el három kisebb érték.',
           'Szünetjelek: Egész szünet (-), fél szünet ([SZÜ-NET]), negyed szünet ([SZÜN]), nyolcad szünet ([SZÜ]).'
         ],
@@ -200,7 +201,7 @@ export const MUSIC_CHAPTERS: Chapter[] = [
           'Dúr hangsor szerkezete: n2 + n2 + k2 + n2 + n2 + n2 + k2 (dó-tól dó-ig).',
           'G-dúr: 1 kereszt (#) - Fisz.',
           'D-dúr: 2 kereszt (#) - Fisz, Cisz.',
-          'F-dúr: 1 bé (b) - Esz.',
+          'F-dúr: 1 bé (b) - B.',
           'Modális hangsorok: Ion (dúr), Líd (bővített kvart), Mixolíd (kis szeptim).'
         ]
       },
@@ -421,7 +422,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     chapterId: 'ritmus',
     question: 'Mi a magyar gyermekdalok legjellemzőbb ütemfajtája?',
     options: ['3/4-es ütem', '4/4-es ütem', '2/4-es ütem', '6/8-os ütem'],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation: 'A 2/4-es ütem (egy súlyos és egy súlytalan negyed) a magyar gyermekdalok legjellemzőbb ütemfajtája.'
   },
   {
@@ -578,3 +579,11 @@ export const MATCHING_PAIRS: MatchingPair[] = [
   { id: 'm22', term: 'H', match: 'A természetes B hang magyar neve', category: 'ABC-s hangok' },
   { id: 'm23', term: 'B', match: 'A leszállított H hang magyar neve (B♭)', category: 'ABC-s hangok' }
 ];
+
+// Kiegészítő leckék és feladatok: az eredeti azonosítók megtartásával.
+for (const chapter of MUSIC_CHAPTERS) {
+  chapter.subchapters.push(...(ADDITIONAL_LESSONS[chapter.id] ?? []));
+}
+FLASHCARDS_DATA.push(...ADDITIONAL_FLASHCARDS);
+QUIZ_QUESTIONS.push(...ADDITIONAL_QUESTIONS);
+MATCHING_PAIRS.push(...ADDITIONAL_MATCHING);
