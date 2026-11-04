@@ -7,6 +7,7 @@ import { MatchingGame } from './components/MatchingGame';
 import { QuizView } from './components/QuizView';
 import { EarTrainingView } from './components/EarTrainingView';
 import { ProgressDashboard } from './components/ProgressDashboard';
+import { AccountPanel, type AccountUser } from './components/AccountPanel';
 import { ChatAssistant } from './components/ChatAssistant';
 import { NoteGallery } from './components/NoteGallery';
 import { NotationTable } from './components/NotationTable';
@@ -14,7 +15,7 @@ import { TextbookView } from './components/TextbookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
-import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays } from './progress';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress } from './progress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -24,10 +25,77 @@ export default function App() {
   const [matchingCategory, setMatchingCategory] = useState<string>();
 
   const [progress, setProgress] = useState<UserProgress>(readProgress);
+  const [account, setAccount] = useState<AccountUser | null>(null);
+  const [accountReady, setAccountReady] = useState(false);
+  const [syncError, setSyncError] = useState('');
 
   useEffect(() => {
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
-  }, [progress]);
+    let active = true;
+    const initialize = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (!response.ok) throw new Error('Nem elérhető a fiókszolgáltatás.');
+        const data = await response.json();
+        if (data.user) {
+          const progressResponse = await fetch('/api/progress');
+          if (!progressResponse.ok) throw new Error('Nem sikerült betölteni a mentett eredményeket.');
+          const saved = await progressResponse.json();
+          if (active) {
+            setProgress(migrateProgress(saved.progress));
+            setAccount(data.user as AccountUser);
+          }
+        }
+      } catch (error) {
+        if (active) setSyncError(error instanceof Error ? error.message : 'Fiókbetöltési hiba.');
+      } finally {
+        if (active) setAccountReady(true);
+      }
+    };
+    void initialize();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!accountReady) return;
+    if (!account) {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+      return;
+    }
+    const handle = window.setTimeout(async () => {
+      try {
+        const response = await fetch('/api/progress', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ progress })
+        });
+        if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
+        setSyncError('');
+      } catch (error) {
+        setSyncError(error instanceof Error ? error.message : 'Mentési hiba.');
+      }
+    }, 600);
+    return () => window.clearTimeout(handle);
+  }, [progress, account, accountReady]);
+
+  const signIn = async (user: AccountUser) => {
+    const response = await fetch('/api/progress');
+    if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
+    const saved = await response.json();
+    setProgress(migrateProgress(saved.progress));
+    setSyncError('');
+    setAccount(user);
+    setAccountReady(true);
+  };
+
+  const signOut = () => {
+    setAccount(null);
+    setProgress(readProgress());
+    setSyncError('');
+  };
+
+  const importLocal = () => {
+    setProgress(previous => mergeProgress(previous, readProgress()));
+  };
 
   const addXp = (amount: number) => {
     setProgress(prev => recordActivity(prev, amount));
@@ -137,7 +205,18 @@ export default function App() {
         )}
 
         {activeTab === 'dashboard' && (
-          <ProgressDashboard progress={progress} />
+          <>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+              <AccountPanel
+                user={account}
+                onSignedIn={signIn}
+                onSignedOut={signOut}
+                onImportLocal={importLocal}
+                syncError={syncError}
+              />
+            </div>
+            <ProgressDashboard progress={progress} />
+          </>
         )}
 
         {activeTab === 'gallery' && (
