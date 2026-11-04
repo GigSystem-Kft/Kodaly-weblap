@@ -22,12 +22,12 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-10">
-        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3 border border-indigo-500/30">
+        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-800 text-xs font-semibold mb-3 border border-indigo-200">
           <Award className="w-3.5 h-3.5" />
           <span>Tanulmányi Előrehaladás</span>
         </span>
-        <h2 className="text-3xl font-extrabold text-white mb-2">Tanulási profil és eredmények</h2>
-        <p className="text-slate-400 text-sm">
+        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Tanulási profil és eredmények</h2>
+        <p className="text-slate-600 text-sm">
           Kövesd nyomon fejezetenkénti haladásodat, kvízeredményeidet és megszerzett XP-det.
         </p>
       </div>
