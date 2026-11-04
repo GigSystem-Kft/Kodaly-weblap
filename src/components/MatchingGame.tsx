@@ -22,7 +22,8 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
     const categoryPairs = initialCategory
       ? MATCHING_PAIRS.filter((pair) => pair.category === initialCategory)
       : MATCHING_PAIRS;
-    const subset = initialCategory ? categoryPairs : categoryPairs.slice(0, 6);
+    const shuffledPairs = [...categoryPairs].sort(() => Math.random() - 0.5);
+    const subset = shuffledPairs.slice(0, Math.min(6, shuffledPairs.length));
     const tList = subset.map((p) => ({ id: p.id, text: p.term, pairId: p.id })).sort(() => Math.random() - 0.5);
     const mList = subset.map((p) => ({ id: p.id + '-m', text: p.match, pairId: p.id })).sort(() => Math.random() - 0.5);
     setTerms(tList);
@@ -36,7 +37,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
 
   useEffect(() => {
     initGame();
-  }, []);
+  }, [initialCategory]);
 
   const handleSelectTerm = (id: string, pairId: string) => {
     if (matchedPairs.includes(pairId)) return;
