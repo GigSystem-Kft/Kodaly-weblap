@@ -7,10 +7,10 @@ Interaktív magyar nyelvű zeneelméleti tananyag és gyakorlófelület, kottak�
 - **Terméknév:** Zenelméleti Műhely
 - **npm-csomag:** `zenelmeleti-muhely`
 - **Javasolt GitHub-tárhely:** `GigSystem-Kft/zenelmeleti-muhely`
-- **Tervezett webcím:** `https://zenelmeleti.gigsystem.eu` (még nem létrehozott DNS/webhely)
+- **Tervezett webcím:** `https://zeneelmelet.digitaliskottatar.hu` (CloudPanelben létrehozva; telepített Let's Encrypt tanúsítvánnyal)
 - **Jelenlegi GitHub-tárhely:** `GigSystem-Kft/Kodaly-weblap`, amíg a tárhely átnevezése megtörténik.
 
-A domain, DNS, CloudPanel webhely, HTTPS-tanúsítvány és GitHub-tárhely neve **nem változik meg** a forráskód átírásától. Ezeket az üzemeltetőnek külön kell beállítania.
+A CloudPanelben a `zeneelmelet.digitaliskottatar.hu` webhely létrejött, a Let's Encrypt tanúsítvány telepítve van. Az alkalmazás éles telepítése és az adatbázis létrehozása ettől még külön lépés. A GitHub-tárhely neve **nem változik meg** a forráskód átírásától.
 
 ## Helyi indítás
 
@@ -54,4 +54,4 @@ git remote set-url origin https://github.com/GigSystem-Kft/zenelmeleti-muhely.gi
 git remote -v
 ```
 
-A webcím beállításakor CloudPanelben létre kell hozni a `zenelmeleti.gigsystem.eu` webhelyet, és a domain DNS-rekordját a szerverhez kell irányítani. HTTPS-t csak a megfelelő DNS-beállítás után állíts be.
+A `zeneelmelet.digitaliskottatar.hu` CloudPanel-webhely már létrejött. Az SSL/TLS oldalon telepített Let's Encrypt tanúsítvány látható; a teljes éles működéshez még az alkalmazás futtatását és a háttéradatbázist kell beállítani.
