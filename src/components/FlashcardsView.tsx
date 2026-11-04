@@ -4,15 +4,15 @@ import { Sparkles, RotateCw, Check, ArrowRight, ArrowLeft, Volume2 } from 'lucid
 import { playNote } from '../utils/audio';
 
 interface FlashcardsViewProps {
-  onAddXp: (amount: number) => void;
+  onMasterCard: (id: string) => void;
+  masteredCards: string[];
   initialCategory?: string;
 }
 
-export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onAddXp, initialCategory }) => {
+export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, masteredCards, initialCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
-  const [masteredCards, setMasteredCards] = useState<string[]>([]);
 
   const categories = ['all', ...Array.from(new Set(FLASHCARDS_DATA.map((f) => f.category)))];
 
@@ -34,8 +34,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onAddXp, initial
 
   const handleMaster = () => {
     if (!masteredCards.includes(currentCard.id)) {
-      setMasteredCards([...masteredCards, currentCard.id]);
-      onAddXp(15);
+      onMasterCard(currentCard.id);
     }
     handleNext();
   };
