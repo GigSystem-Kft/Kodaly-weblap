@@ -11,8 +11,8 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak }) => {
   const navItems = [
-    { id: 'chapters', label: '01. Fejezetek' },
-    { id: 'gallery', label: '02. Hangértékek' },
+    { id: 'chapters', label: '01. Tananyag' },
+    { id: 'gallery', label: '02. Ábratár' },
     { id: 'notationTable', label: '03. Jelölések' },
     { id: 'solfege', label: '04. Szolmizáció' },
     { id: 'abcNotes', label: '05. ABC-s hangok' },
