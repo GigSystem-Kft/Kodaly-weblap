@@ -76,7 +76,7 @@ function buildIndex(): KnowledgeChunk[] {
       const body = [sub.summary, ...sub.content].join('\n\n');
       const label = `${chapter.title} / ${sub.title}`;
       for (const piece of splitLongText(body, 1200)) {
-        const chunk = makeChunk('Kodály Zenei Műhely – Tananyag', label, piece, 'lesson');
+        const chunk = makeChunk('Zenelméleti Műhely – Tananyag', label, piece, 'lesson');
         if (chunk) entries.push(chunk);
       }
     }
