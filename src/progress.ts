@@ -74,3 +74,25 @@ export function readProgress(): UserProgress {
     return createEmptyProgress();
   }
 }
+
+/** Import guest achievements without deleting achievements already stored in the account. */
+export function mergeProgress(account: UserProgress, guest: UserProgress): UserProgress {
+  const union = (a: string[], b: string[]) => [...new Set([...a, ...b])];
+  const quizScores: Record<string, number> = { ...account.quizScores };
+  for (const [chapter, score] of Object.entries(guest.quizScores)) {
+    quizScores[chapter] = Math.max(score, quizScores[chapter] ?? 0);
+  }
+  const days = union(account.activityDays ?? [], guest.activityDays ?? []).sort();
+  return {
+    ...account,
+    completedChapters: union(account.completedChapters, guest.completedChapters),
+    completedSubchapters: union(account.completedSubchapters, guest.completedSubchapters),
+    quizScores,
+    flashcardsMastered: union(account.flashcardsMastered, guest.flashcardsMastered),
+    matchingCompleted: union(account.matchingCompleted, guest.matchingCompleted),
+    xp: Math.max(account.xp, guest.xp),
+    activityDays: days,
+    lastActiveDate: days.at(-1) ?? '',
+    streak: consecutiveDays(days)
+  };
+}
