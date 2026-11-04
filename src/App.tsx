@@ -127,7 +127,6 @@ export default function App() {
 
         {activeTab === 'quiz' && (
           <QuizView
-            onAddXp={addXp}
             onSaveQuizScore={saveQuizScore}
             initialChapterId={quizChapterId}
           />
