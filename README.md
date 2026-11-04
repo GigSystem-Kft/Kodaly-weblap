@@ -1,12 +1,12 @@
-# Zenelméleti Műhely
+# Zeneelméleti Műhely
 
 Interaktív magyar nyelvű zeneelméleti tananyag és gyakorlófelület, kottaképekkel, szókártyákkal, kvízekkel, hallásgyakorlatokkal és forrásalapú Tanársegéddel.
 
 ## Projektazonosítók
 
-- **Terméknév:** Zenelméleti Műhely
-- **npm-csomag:** `zenelmeleti-muhely`
-- **Javasolt GitHub-tárhely:** `GigSystem-Kft/zenelmeleti-muhely`
+- **Terméknév:** Zeneelméleti Műhely
+- **npm-csomag:** `zeneelmeleti-muhely`
+- **Javasolt GitHub-tárhely:** `GigSystem-Kft/zeneelmeleti-muhely`
 - **Tervezett webcím:** `https://zeneelmelet.digitaliskottatar.hu` (CloudPanelben létrehozva; telepített Let's Encrypt tanúsítvánnyal)
 - **Jelenlegi GitHub-tárhely:** `GigSystem-Kft/Kodaly-weblap`, amíg a tárhely átnevezése megtörténik.
 
@@ -47,10 +47,10 @@ A jelenlegi alkalmazás a böngésző `localStorage` tárolójában őrzi a tanu
 
 ## Átnevezés a GitHubon
 
-A repository adminisztrátora a GitHub **Settings → General → Repository name** mezőjében tudja a `Kodaly-weblap` nevet `zenelmeleti-muhely` névre módosítani. Ezután a lokális klónban:
+A repository adminisztrátora a GitHub **Settings → General → Repository name** mezőjében tudja a `Kodaly-weblap` nevet `zeneelmeleti-muhely` névre módosítani. Ezután a lokális klónban:
 
 ```bash
-git remote set-url origin https://github.com/GigSystem-Kft/zenelmeleti-muhely.git
+git remote set-url origin https://github.com/GigSystem-Kft/zeneelmeleti-muhely.git
 git remote -v
 ```
 
