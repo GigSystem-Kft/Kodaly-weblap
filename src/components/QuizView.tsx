@@ -45,9 +45,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     } else {
       setIsFinished(true);
       const finalScore = Math.round((correctCount / questions.length) * 100);
-      if (selectedChapter !== 'all') {
-        onSaveQuizScore(selectedChapter, finalScore);
-      }
+      onSaveQuizScore(selectedChapter, finalScore);
     }
   };
 
