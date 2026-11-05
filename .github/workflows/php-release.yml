@@ -8,6 +8,8 @@ on:
       - 'src/**'
       - 'public/**'
       - 'php/**'
+      - 'database/**'
+      - 'scripts/create-invitation.mjs'
       - 'scripts/export-php-knowledge.ts'
       - 'server-data/**'
       - 'deploy/php-telepites.md'
@@ -43,6 +45,7 @@ jobs:
           php -v
           php -l php/api/index.php
           php -l deploy/zeneelmelet-private.example.php
+          node --check scripts/create-invitation.mjs
       - name: Build frontend for PHP API
         env:
           VITE_PHP_API: '1'
