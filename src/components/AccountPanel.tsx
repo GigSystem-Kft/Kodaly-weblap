@@ -23,7 +23,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const [available, setAvailable] = useState(false);
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
   const [loadingStatus, setLoadingStatus] = useState(true);
-  const [mode, setMode] = useState<'login' | 'register' | 'reset-request' | 'reset' | 'change-password'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'reset-request' | 'reset' | 'resend-verification' | 'change-password'>('login');
   const [accountToken, setAccountToken] = useState('');
   const [success, setSuccess] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -84,9 +84,9 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
     setError('');
     setSuccess('');
     try {
-      const route = mode === 'reset-request' ? 'reset-request'
+      const route = mode === 'resend-verification' ? 'resend-verification' : mode === 'reset-request' ? 'reset-request'
         : mode === 'reset' ? 'reset' : mode === 'change-password' ? 'change-password' : mode;
-      const payload = mode === 'reset-request' ? { email }
+      const payload = (mode === 'resend-verification' || mode === 'reset-request') ? { email }
         : mode === 'reset' ? { token: accountToken, password: newPassword }
         : mode === 'change-password' ? { currentPassword: password, newPassword }
         : { email, password, ...(mode === 'register' ? { displayName, invitationCode: invitationCode.trim() } : {}) };
@@ -102,6 +102,9 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
       setInvitationCode('');
       if (mode === 'register') {
         setSuccess(data.message || 'Ellenőrizd a postafiókodat és erősítsd meg az e-mail-címedet.');
+        setMode('login');
+      } else if (mode === 'resend-verification') {
+        setSuccess(data.message || 'Ha a fiók megerősítésre vár, új levelet küldtünk.');
         setMode('login');
       } else if (mode === 'reset-request') {
         setSuccess(data.message || 'Ha létezik a fiók, küldtünk egy levelet.');
@@ -185,10 +188,15 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
           </div>
           {!registrationEnabled && <p className="text-sm text-amber-700 mb-3">A regisztráció jelenleg zárva van. A bejelentkezés meglévő fiókkal lehetséges.</p>}
           {registrationEnabled && invitationRequired && <p className="text-sm text-indigo-700 mb-3">Regisztráció csak személyre szóló, egyszer használható meghívókóddal lehetséges.</p>}
-          {(mode === 'login' || mode === 'reset-request') && (
+          {(mode === 'login' || mode === 'reset-request' || mode === 'resend-verification') && (
             <button type="button" onClick={() => {setMode(mode === 'login' ? 'reset-request' : 'login');setError('');}}
               className="text-sm text-indigo-700 underline mb-3">
               {mode === 'login' ? 'Elfelejtetted a jelszavad?' : 'Vissza a bejelentkezéshez'}
+            </button>
+          )}
+          {mode === 'login' && (
+            <button type="button" onClick={() => {setMode('resend-verification');setError('');}} className="text-sm text-indigo-700 underline block mb-3">
+              Új megerősítő e-mail kérése
             </button>
           )}
           {success && <p role="status" className="text-sm text-emerald-700 mb-3">{success}</p>}
@@ -224,7 +232,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
             {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
             <button disabled={busy} type="submit" className="flex items-center justify-center gap-2 rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60">
               {mode === 'register' ? <UserRoundPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
-              {busy ? 'Folyamatban…' : mode === 'register' ? 'Fiók létrehozása' : mode === 'reset-request' ? 'Helyreállító e-mail küldése' : mode === 'reset' ? 'Új jelszó mentése' : 'Bejelentkezés'}
+              {busy ? 'Folyamatban…' : mode === 'register' ? 'Fiók létrehozása' : mode === 'resend-verification' ? 'Megerősítő levél újraküldése' : mode === 'reset-request' ? 'Helyreállító e-mail küldése' : mode === 'reset' ? 'Új jelszó mentése' : 'Bejelentkezés'}
             </button>
           </form>
           <p className="text-xs text-slate-500 mt-3">A fiók jelenleg csak hallgatói jogosultsággal jön létre. Az oktatói szerepkör külön engedélyezést igényel.</p>
