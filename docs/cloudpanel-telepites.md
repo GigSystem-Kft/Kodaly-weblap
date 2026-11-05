@@ -80,3 +80,28 @@ A CloudPanel 3100-as portja az alkalmazás `PORT` értékével egyezzen. Az alka
 - A jelenlegi fiókrendszer **pilot/teszt célú**: nincs még e-mail-cím-megerősítés, jelszó-visszaállítás, adminisztrációs felület, részletes auditnapló vagy többpéldányos közös rate limit.
 - A tanulói haladás személyes önellenőrzés: a szerver jelenleg kliensről érkező eredményadatokat ment. Ez még **nem hiteles vizsgáztatási vagy jegybeírási rendszer**.
 - Éles nyilvános regisztráció előtt adatvédelmi tájékoztatás, adatmegőrzési szabályok, biztonsági audit és rendszeres adatbázis-mentések szükségesek.
+
+## Előre elkészíthető Linuxos telepítőcsomag SSH nélkül
+
+A GitHub Actions új `.github/workflows/deploy-bundle.yml` munkafolyamata Ubuntu 24.04 / Node.js 24 környezetben állítja elő a csomagot. Előtte automatikusan futtatja az `npm test`, `npm run lint`, `npm run build` ellenőrzéseket. Az archívum a szerveroldali függőségeket is tartalmazza, így a kibontás után külön `npm install` nem feltétlenül szükséges.
+
+**Használat:**
+
+1. Nyisd meg a GitHubon a projekt **Actions** fülét.
+2. Válaszd a **Zeneelméleti Műhely – Linux telepítőcsomag** munkafolyamatot. A kézi indítás csak akkor látható, ha a workflow fájl a repository alapértelmezett ágán is megtalálható; a fejlesztési PR futását az automatikus `pull_request` esemény is indíthatja.
+3. Sikeres futásnál az **Artifacts** részből töltsd le a `zeneelmeleti-muhely-linux-node24` csomagot. A GitHub egy ZIP-fájlt ad, abban található a `zeneelmeleti-muhely-linux-node24.tar.gz` archívum.
+4. Csak **zöldre futott** ellenőrzés esetén használd a csomagot. Ha valamelyik ellenőrzés hibás, ne telepítsd.
+5. A CloudPanel **Fájlkezelő** felületén a célkönyvtár:
+   `/home/zeneelmelet/htdocs/zeneelmelet.digitaliskottatar.hu/`.
+   A `.well-known` mappát semmilyen körülmények között ne töröld. Az archívum kibontásához a fájlkezelőnek támogatnia kell a TAR.GZ formátumot; ennek hiányában helyben kibontott és ZIP-be csomagolt fájlokkal dolgozhatsz.
+6. A csomaghoz csatolt `README-TELPITES.txt` megadja a szerveroldali beállításokat.
+
+**A feltöltés önmagában nem indítja el a webalkalmazást.** A Node.js folyamatot a szerveren, a `zeneelmelet` webhely felhasználójával, a megfelelő környezeti változókkal kell futtatni:
+
+```bash
+node server.mjs
+```
+
+Ehhez a szerver rendszergazdája által beállított folyamatkezelő vagy engedélyezett SSH/terminál hozzáférés szükséges. A későbbi üzemeltetési ellenőrzés a `/api/health` és `/api/auth/status` útvonalakon végezhető.
+
+A telepítőcsomag nem tartalmaz adatbázis-jelszót, nem telepít adatbázist, és a GitHub Actions futása **nem jelent éles szervertelepítést**.
