@@ -186,10 +186,10 @@ function lessonReply(array $hits): string {
     foreach ($hits as $hit) {
         $excerpt=preg_replace('/\\s+/u',' ',(string)$hit['text']) ?? (string)$hit['text'];
         if (strlen($excerpt)>600) $excerpt=substr($excerpt,0,600) . '…';
-        $pieces[]='**' . $hit['source'] . ' – ' . $hit['label'] . "**\\n" . $excerpt;
+        $pieces[]='**' . $hit['source'] . ' – ' . $hit['label'] . "**\n" . $excerpt;
     }
     $pieces[]='_Ez a PHP-s helyi kereső a betöltött forrásokból idéz. Nem helyettesíti a tanári ellenőrzést._';
-    return implode("\\n\\n",$pieces);
+    return implode("\n\n",$pieces);
 }
 
 try {
