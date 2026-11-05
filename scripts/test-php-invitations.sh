@@ -16,6 +16,7 @@ return [
  'app_origin' => 'http://localhost:8000',
  'invite_registration' => true,
  'mail_enabled' => true,
+ 'mail_transport' => 'local-test',
  'mail_from' => 'test@example.org',
  'db' => ['host'=>'127.0.0.1','port'=>3306,'name'=>'zeneelmelet',
           'user'=>'root','password'=>'test-only-password']
