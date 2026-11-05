@@ -260,11 +260,11 @@ try {
         catch (Throwable) { $available = false; }
         answer(200, [
             'available'=>$available,
-            'registrationEnabled'=>($config['invite_registration'] ?? false) === true,
+            'registrationEnabled'=>($config['invite_registration'] ?? false) === true && ($config['mail_enabled'] ?? false) === true,
             'invitationRequired'=>true
         ]);
     }
-    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/reset-request','auth/reset','auth/change-password'], true)) {
+    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/resend-verification','auth/reset-request','auth/reset','auth/change-password'], true)) {
         method('POST');
         guardWrite($config);
     } elseif ($route === 'progress' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'PUT') {
@@ -382,6 +382,28 @@ try {
                 throw $e;
             }
             answer(200, ['success'=>true]);
+
+        case 'auth/resend-verification':
+            throttle('resend-verification', 5);
+            $body=getPayload();
+            $email=is_string($body['email'] ?? null) ? strtolower(trim($body['email'])) : '';
+            if (strlen($email)>254 || filter_var($email,FILTER_VALIDATE_EMAIL) === false) fail(400,'Érvénytelen e-mail-cím.');
+            if (($config['mail_enabled'] ?? false) !== true) fail(503, 'Az e-mailes fiókszolgáltatás még nincs beállítva.');
+            $stmt=$pdo->prepare('SELECT id FROM zm_users WHERE email=? AND email_verified_at IS NULL LIMIT 1');
+            $stmt->execute([$email]);
+            $user=$stmt->fetch();
+            if ($user) {
+                $pdo->beginTransaction();
+                try {
+                    $token=issueAccountToken($pdo, $user['id'], 'verify', 1440);
+                    deliverAccountLink($config, $email, 'verify', $token);
+                    $pdo->commit();
+                } catch (Throwable $e) {
+                    if ($pdo->inTransaction()) $pdo->rollBack();
+                    throw $e;
+                }
+            }
+            answer(200,['message'=>'Ha a fiók megerősítésre vár, új levelet küldtünk.']);
 
         case 'auth/reset-request':
             throttle('reset-request', 8);
