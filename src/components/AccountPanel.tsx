@@ -1,3 +1,4 @@
+import { apiFetch } from '../api';
 import React, { useEffect, useState } from 'react';
 import { LogIn, LogOut, UserRoundPlus, Cloud, AlertCircle } from 'lucide-react';
 
@@ -29,7 +30,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    fetch('/api/auth/status', { credentials: 'same-origin' })
+    apiFetch('/api/auth/status', { credentials: 'same-origin' })
       .then(async response => {
         if (!response.ok) throw new Error('A szerver nem válaszolt.');
         const data = await response.json();
@@ -45,7 +46,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
     setBusy(true);
     setError('');
     try {
-      const response = await fetch(`/api/auth/${mode}`, {
+      const response = await apiFetch(`/api/auth/${mode}`, {
         method: 'POST', credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, ...(mode === 'register' ? { displayName } : {}) })
@@ -65,7 +66,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
     setBusy(true);
     setError('');
     try {
-      const response = await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+      const response = await apiFetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
       if (!response.ok) throw new Error('Nem sikerült a kijelentkezés.');
       onSignedOut();
     } catch (cause) {
