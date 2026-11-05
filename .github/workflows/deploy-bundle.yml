@@ -34,7 +34,9 @@ jobs:
       # Az eredeti projekt lockfile-ját a mysql2 felvétele után frissíteni kell.
       # Az npm install ezt a futás munkakönyvtárában teszi meg, így a csomag reprodukálható lockfile-t tartalmaz.
       - name: Függőségek és lockfile szinkronizálása
-        run: npm install --no-audit --no-fund
+        run: |
+          rm -rf node_modules
+          npm install --no-audit --no-fund
 
       - name: Unit tesztek
         run: npm test
