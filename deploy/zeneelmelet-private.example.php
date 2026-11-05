@@ -5,8 +5,9 @@
 // PHP 8.4/8.5 + pdo_mysql szükséges.
 return [
     'app_origin' => 'https://zeneelmelet.digitaliskottatar.hu',
-    // Csak zárt teszteléshez állítsd true-ra; jelenleg nincs e-mail ellenőrzés.
-    'allow_registration' => false,
+    // A regisztrációhoz adatbázisban tárolt, e-mailhez kötött, egyszeri meghívó kell.
+    // Csak a V002 SQL migráció importálása után engedélyezd.
+    'invite_registration' => false,
     'db' => [
         'host' => '127.0.0.1',
         'port' => 3306,
