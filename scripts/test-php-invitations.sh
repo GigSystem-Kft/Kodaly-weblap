@@ -82,6 +82,15 @@ php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j[
 # Confirm account ownership through delivered verification link.
 verifyToken="$(grep -oE 'account=verify&token=[a-f0-9]{64}' /tmp/zm-test-mail.txt | head -1 | cut -d= -f3)"
 test "${#verifyToken}" = 64
+# Asking for another verification link invalidates the original one.
+resendStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/resend-verification' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org"}')"
+test "$resendStatus" = 200
+newVerifyToken="$(grep -oE 'account=verify&token=[a-f0-9]{64}' /tmp/zm-test-mail.txt | head -1 | cut -d= -f3)"
+test "${#newVerifyToken}" = 64
+test "$newVerifyToken" != "$verifyToken"
+statusOld="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/verify' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"token\":\"$verifyToken\"}")"
+test "$statusOld" = 400
+verifyToken="$newVerifyToken"
 verifyStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/verify' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"token\":\"$verifyToken\"}")"
 test "$verifyStatus" = '200'
 verifyStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/verify' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"token\":\"$verifyToken\"}")"
