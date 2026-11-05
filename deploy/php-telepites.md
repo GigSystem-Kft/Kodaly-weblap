@@ -130,3 +130,40 @@ A V003 nem törli a meglévő tanulási eredményeket. A már regisztrált pilot
 **Fontos:** a meghívó továbbra is egyszer használható, az e-mail megerősítő és jelszó-visszaállító tokeneket az adatbázis csak SHA-256 lenyomatként tárolja, a linkek egyszer használhatók. A nyilvános, meghívó nélküli regisztráció továbbra sincs bekapcsolva.
 
 A PHP CI valós MySQL 8 tesztadatbázissal és teszt e-mail-átvevővel ellenőrzi a folyamatot. Ez nem helyettesíti a valódi CloudPaneles kézbesítési próbát, a biztonsági auditot és az adatvédelmi dokumentáció elkészítését.
+
+## Rackhost SMTP – dedikált feladó (2026-11)
+
+A dedikált postafiók: `noreply@digitaliskottatar.hu`.
+A webmailbe való bejelentkezés önmagában **nem bizonyítja**, hogy a CloudPanel szerverről kimenő SMTP elérhető.
+
+Az alkalmazás PHPMailert használ hitelesített SMTP-vel, implicit TLS-sel (`smtp.rackhost.hu:465`).
+A telepítő ZIP már tartalmazza a szükséges Composer `vendor` könyvtárat;
+**a CloudPanelre sem Composer, sem SSH nem szükséges**.
+
+A `/home/zeneelmeletadmin/zeneelmelet-private.php` fájlban, a `return [` tömbben legyen:
+
+```php
+'mail_enabled' => false,
+'mail_transport' => 'smtp',
+'mail_from' => 'noreply@digitaliskottatar.hu',
+'smtp' => [
+    'host' => 'smtp.rackhost.hu',
+    'port' => 465,
+    'user' => 'noreply@digitaliskottatar.hu',
+    'password' => 'IDE_IRD_A_POSTAFIOK_JELSZAVAT',
+],
+```
+
+Ezt a fájlt a **htdocs-on kívül** kell tárolni, megfelelő fájljogosultsággal.
+Ne töltsd fel GitHubra, és ne oszd meg a jelszót a beszélgetésben.
+A gyártási útvonalon `mail()` helyett a hitelesített SMTP használatos;
+a `local-test` opció kizárólag `http://localhost:8000` alatt engedélyezett.
+
+Telepítés utáni lépések:
+1. Frissítsd az `api/index.php` fájlt és az `api/vendor/` mappát az új ZIP-ből.
+2. Ellenőrizd a V003 migrációt, az API státuszt, a meglévő felhasználó bejelentkezését.
+3. Egyeztess az üzemeltetővel: a CloudPanel szerver kimenő `smtp.rackhost.hu:465` forgalma engedélyezett-e. A Rackhost MX-rekordjaihoz vagy a már működő weboldal DNS A-rekordjaihoz most nem kell hozzányúlni. Az SPF/DKIM/DMARC legyen beállítva a választott feladói domainen.
+4. A tesztfiókhoz egy új meghívóval, szűk tesztidőszakban `mail_enabled=true` és `invite_registration=true` mellett próbálj regisztrálni. A megerősítő levél **valós kézbesítését** ellenőrizd. Hiba esetén vissza `mail_enabled=false`, és nézd meg a CloudPanel PHP error logot titkok megosztása nélkül.
+5. Sikeres levélküldés után ellenőrizd a megerősítést és a jelszó-visszaállítást.
+
+**Ne állítsd éles nyilvános regisztrációra a weboldalt**, amíg a kézbesítés és az adatvédelmi folyamatok nem lettek ellenőrizve.
