@@ -23,7 +23,10 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const [available, setAvailable] = useState(false);
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
   const [loadingStatus, setLoadingStatus] = useState(true);
-  const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'reset-request' | 'reset' | 'change-password'>('login');
+  const [accountToken, setAccountToken] = useState('');
+  const [success, setSuccess] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
@@ -31,6 +34,35 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const [invitationRequired, setInvitationRequired] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const token = url.searchParams.get('token');
+    const action = url.searchParams.get('account');
+    if (!token || !['verify', 'reset'].includes(action || '')) return;
+    url.searchParams.delete('token');
+    url.searchParams.delete('account');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+    if (action === 'reset') {
+      setAccountToken(token);
+      setMode('reset');
+      setSuccess('Adj meg egy új jelszót a fiókodhoz.');
+      return;
+    }
+    void (async () => {
+      try {
+        const response = await apiFetch('/api/auth/verify', {
+          method: 'POST', headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({token})
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Nem sikerült a megerősítés.');
+        setSuccess('Az e-mail-címedet megerősítettük. Most már bejelentkezhetsz.');
+      } catch (cause) {
+        setError(cause instanceof Error ? cause.message : 'Nem sikerült a megerősítés.');
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     apiFetch('/api/auth/status', { credentials: 'same-origin' })
@@ -50,17 +82,41 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
     if (busy) return;
     setBusy(true);
     setError('');
+    setSuccess('');
     try {
-      const response = await apiFetch(`/api/auth/${mode}`, {
+      const route = mode === 'reset-request' ? 'reset-request'
+        : mode === 'reset' ? 'reset' : mode === 'change-password' ? 'change-password' : mode;
+      const payload = mode === 'reset-request' ? { email }
+        : mode === 'reset' ? { token: accountToken, password: newPassword }
+        : mode === 'change-password' ? { currentPassword: password, newPassword }
+        : { email, password, ...(mode === 'register' ? { displayName, invitationCode: invitationCode.trim() } : {}) };
+      const response = await apiFetch(`/api/auth/${route}`, {
         method: 'POST', credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, ...(mode === 'register' ? { displayName, invitationCode: invitationCode.trim() } : {}) })
+        body: JSON.stringify(payload)
       });
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Nem sikerült a bejelentkezés.');
+      if (!response.ok) throw new Error(data.error || 'Nem sikerült a művelet.');
       setPassword('');
+      setNewPassword('');
       setInvitationCode('');
-      await onSignedIn(data.user as AccountUser);
+      if (mode === 'register') {
+        setSuccess(data.message || 'Ellenőrizd a postafiókodat és erősítsd meg az e-mail-címedet.');
+        setMode('login');
+      } else if (mode === 'reset-request') {
+        setSuccess(data.message || 'Ha létezik a fiók, küldtünk egy levelet.');
+        setMode('login');
+      } else if (mode === 'reset') {
+        setAccountToken('');
+        setSuccess('Az új jelszavadat mentettük. Jelentkezz be!');
+        setMode('login');
+      } else if (mode === 'change-password') {
+        onSignedOut();
+        setMode('login');
+        setSuccess('A jelszavadat módosítottuk, minden eszközön kijelentkeztettünk. Jelentkezz be újra!');
+      } else {
+        await onSignedIn(data.user as AccountUser);
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Ismeretlen hiba.');
     } finally {
@@ -95,13 +151,28 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
           <AlertCircle className="w-5 h-5 shrink-0 text-amber-600" />
           <p>A fiókrendszer fejlesztői előnézete elkészült, de ezen a szerveren még nincs beállítva a MySQL-kapcsolat. A helyi tanulási eredményeid továbbra is elérhetők. A szerveroldali regisztráció a beállítás után aktiválódik.</p>
         </div>
+      ) : user && mode === 'change-password' ? (
+        <form className="grid gap-3 max-w-md" onSubmit={submit}>
+          <h4 className="font-semibold">Jelszó módosítása</h4>
+          <label className="text-sm">Jelenlegi jelszó
+            <input required type="password" autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2" />
+          </label>
+          <label className="text-sm">Új jelszó (legalább 12 karakter)
+            <input required type="password" autoComplete="new-password" minLength={12} maxLength={128} value={newPassword} onChange={e=>setNewPassword(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2" />
+          </label>
+          {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
+          <button type="submit" disabled={busy} className="bg-indigo-600 text-white rounded-lg p-2">{busy?'Mentés…':'Jelszó mentése és kijelentkezés'}</button>
+          <button type="button" onClick={()=>setMode('login')} className="text-sm text-slate-600">Mégse</button>
+        </form>
       ) : user ? (
         <div>
           <p className="text-sm text-slate-600">Bejelentkezve: <strong>{user.displayName}</strong> ({user.email})</p>
           <p className="text-sm text-emerald-700 mt-2">Az eredmények automatikusan mentésre kerülnek a saját fiókodba.</p>
           {syncError && <p role="alert" className="text-sm text-rose-600 mt-2">{syncError}</p>}
+          {success && <p role="status" className="text-sm text-emerald-700 mt-2">{success}</p>}
           <div className="flex flex-wrap gap-2 mt-4">
             <button type="button" onClick={onImportLocal} className="rounded-lg px-4 py-2 bg-indigo-600 text-white text-sm hover:bg-indigo-500">Korábbi helyi eredmények átvitele</button>
+            <button type="button" onClick={() => {setMode('change-password');setError('');}} className="rounded-lg px-4 py-2 border border-indigo-300 text-indigo-700 text-sm hover:bg-indigo-50">Jelszó módosítása</button>
             <button type="button" disabled={busy} onClick={signOut} className="rounded-lg px-4 py-2 border border-slate-300 text-slate-700 text-sm hover:bg-slate-100 flex items-center gap-2"><LogOut className="w-4 h-4" />Kijelentkezés</button>
           </div>
           <p className="text-xs text-slate-500 mt-3">Az átvitel a jelenlegi böngészőben tárolt eredményeket egyesíti a fiók adataival. Nem töröl korábbi teljesítéseket.</p>
@@ -114,6 +185,13 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
           </div>
           {!registrationEnabled && <p className="text-sm text-amber-700 mb-3">A regisztráció jelenleg zárva van. A bejelentkezés meglévő fiókkal lehetséges.</p>}
           {registrationEnabled && invitationRequired && <p className="text-sm text-indigo-700 mb-3">Regisztráció csak személyre szóló, egyszer használható meghívókóddal lehetséges.</p>}
+          {(mode === 'login' || mode === 'reset-request') && (
+            <button type="button" onClick={() => {setMode(mode === 'login' ? 'reset-request' : 'login');setError('');}}
+              className="text-sm text-indigo-700 underline mb-3">
+              {mode === 'login' ? 'Elfelejtetted a jelszavad?' : 'Vissza a bejelentkezéshez'}
+            </button>
+          )}
+          {success && <p role="status" className="text-sm text-emerald-700 mb-3">{success}</p>}
           <form onSubmit={submit} className="grid gap-3 max-w-md">
             {mode === 'register' && (
               <label className="text-sm">Név
@@ -128,7 +206,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
                   className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 font-mono text-sm" />
               </label>
             )}
-            <label className="text-sm">E-mail-cím
+            {mode !== 'reset' && <label className="text-sm">E-mail-cím
               <input required type="email" maxLength={254} autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
             </label>
             <label className="text-sm">Jelszó {mode === 'register' && <span className="text-slate-500">(legalább 12 karakter)</span>}
@@ -137,7 +215,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
             {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
             <button disabled={busy} type="submit" className="flex items-center justify-center gap-2 rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60">
               {mode === 'register' ? <UserRoundPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
-              {busy ? 'Folyamatban…' : mode === 'register' ? 'Fiók létrehozása' : 'Bejelentkezés'}
+              {busy ? 'Folyamatban…' : mode === 'register' ? 'Fiók létrehozása' : mode === 'reset-request' ? 'Helyreállító e-mail küldése' : mode === 'reset' ? 'Új jelszó mentése' : 'Bejelentkezés'}
             </button>
           </form>
           <p className="text-xs text-slate-500 mt-3">A fiók jelenleg csak hallgatói jogosultsággal jön létre. Az oktatói szerepkör külön engedélyezést igényel.</p>
