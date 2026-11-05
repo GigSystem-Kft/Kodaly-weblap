@@ -132,7 +132,7 @@ ${indexedContext || 'Ehhez a kérdéshez nem találtam biztosan releváns részl
     });
   }
 
-  const port = process.env.PORT || 3000;
+  const port = Number(process.env.PORT || 3000);
   app.listen(port, '127.0.0.1', () => {
     console.log(`Server running on http://localhost:${port}`);
   });
