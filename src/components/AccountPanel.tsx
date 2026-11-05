@@ -206,12 +206,21 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
                   className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 font-mono text-sm" />
               </label>
             )}
-            {mode !== 'reset' && <label className="text-sm">E-mail-cím
-              <input required type="email" maxLength={254} autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
-            </label>
-            <label className="text-sm">Jelszó {mode === 'register' && <span className="text-slate-500">(legalább 12 karakter)</span>}
-              <input required type="password" minLength={mode === 'register' ? 12 : undefined} maxLength={128} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={e => setPassword(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
-            </label>
+            {mode !== 'reset' && (
+              <label className="text-sm">E-mail-cím
+                <input required type="email" maxLength={254} autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
+              </label>
+            )}
+            {(mode === 'login' || mode === 'register') && (
+              <label className="text-sm">Jelszó {mode === 'register' && <span className="text-slate-500">(legalább 12 karakter)</span>}
+                <input required type="password" minLength={mode === 'register' ? 12 : undefined} maxLength={128} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={e => setPassword(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
+              </label>
+            )}
+            {mode === 'reset' && (
+              <label className="text-sm">Új jelszó (legalább 12 karakter)
+                <input required type="password" minLength={12} maxLength={128} autoComplete="new-password" value={newPassword} onChange={e => setNewPassword(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
+              </label>
+            )}
             {error && <p role="alert" className="text-sm text-rose-600">{error}</p>}
             <button disabled={busy} type="submit" className="flex items-center justify-center gap-2 rounded-lg px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-500 disabled:opacity-60">
               {mode === 'register' ? <UserRoundPlus className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
