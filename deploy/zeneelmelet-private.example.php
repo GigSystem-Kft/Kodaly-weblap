@@ -8,6 +8,9 @@ return [
     // A regisztrációhoz adatbázisban tárolt, e-mailhez kötött, egyszeri meghívó kell.
     // Csak a V002 SQL migráció importálása után engedélyezd.
     'invite_registration' => false,
+    // Csak akkor aktiváld, ha az admin igazolta a PHP mail() kézbesítését.
+    'mail_enabled' => false,
+    'mail_from' => 'noreply@zeneelmelet.digitaliskottatar.hu',
     'db' => [
         'host' => '127.0.0.1',
         'port' => 3306,
