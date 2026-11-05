@@ -111,4 +111,18 @@ resetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http
 test "$resetStatus" = 200
 resetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"token\":\"$resetToken\",\"password\":\"UjabbJelszo2026!\"}")"
 test "$resetStatus" = 400
-echo 'PHP account pilot: invitation, verified email, replay prevention, password reset passed'
+# Login with reset password, change it while signed in and verify old session is gone.
+loginStatus="$(curl -sS -c /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
+test "$loginStatus" = 200
+statusMe="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=auth/me')"
+test "$statusMe" = 200
+php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j["user"]["email"]??null)!=="pilot@example.org") exit(1);'
+changeStatus="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HarmadikTesztJelszo2026!"}')"
+test "$changeStatus" = 200
+curl -fsS -b /tmp/zm-cookies.txt 'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-response.json
+php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j["user"]??false)!==null) exit(1);'
+loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
+test "$loginStatus" = 401
+loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"HarmadikTesztJelszo2026!"}')"
+test "$loginStatus" = 200
+echo 'PHP account pilot: invitation, email verification, one-use reset and password change passed'
