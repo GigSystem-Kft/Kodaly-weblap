@@ -7,7 +7,7 @@
 - Percona/MySQL 8, meglévő `zm_users`, `zm_sessions`, `zm_progress` táblák
 - CloudPanel generikus PHP webhely: `zeneelmelet.digitaliskottatar.hu`
 - Éles gépen **nem kell Node.js / Docker / SSH** a futtatáshoz
-- Regisztráció zárt állapotban, amíg az e-mail ellenőrzés és az üzemeltetési kontrollok nincsenek készen.
+- Regisztráció alapesetben zárva; a meghívásos pilotot külön kell aktiválni.
 
 ## 1. GitHub Actions ZIP
 
@@ -72,6 +72,33 @@ előtt migráció vagy biztonságos jelszó-visszaállítás szükséges.
 
 - A PHP API támogatja a regisztrációt, bejelentkezést, kijelentkezést és a profil eredménymentését.
 - A Tanársegéd PHP-kiadása a telepítőcsomagban található, lecke- és forrásrészletekből álló **helyi keresőmóddal** működik. Nem használ külső Gemini API-t és nem fogalmaz önálló AI-magyarázatot.
-- Nincs még e-mail-cím ellenőrzés, jelszó-visszaállítás, fiókadat-törlés, adatvédelmi tájékoztató.
+- Nincs még tényleges e-mail-cím ellenőrzés (a meghívó megadott e-mail-címhez kötődik, de nem bizonyítja annak birtoklását), jelszó-visszaállítás, fiókadat-törlés, adatvédelmi tájékoztató.
 - Az IP-alapú belépésvédelem a PHP szerver ideiglenes könyvtárát használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
 - **Nyilvános regisztráció ne induljon az üzemeltetési és adatvédelmi ellenőrzésekig.**
+
+## Meghívásos regisztráció (új kiadás)
+
+A már működő `zeneelmelet` adatbázist **nem kell törölni vagy újratelepíteni**.
+
+1. phpMyAdmin → `zeneelmelet` adatbázis → Importálás: `database/V002__one_time_invitations.sql`. Ezzel létrejön a `zm_invitations` tábla, a korábbi három tábla változatlan marad.
+2. A Macen, a projekt könyvtárában egyetlen címzettnek generálj meghívót:
+
+   ```bash
+   node scripts/create-invitation.mjs cimzett@pelda.hu
+   ```
+
+   A parancs megjelenít egy **titkos kódot** és egy **SQL INSERT** utasítást. Az utóbbit futtasd a megfelelő adatbázis phpMyAdmin SQL lapján. A kódot biztonságos csatornán add át a címzettnek, és ne küldd ide a beszélgetésbe.
+3. A privát `/home/zeneelmeletadmin/zeneelmelet-private.php` konfigurációba írd be:
+
+   ```php
+   'invite_registration' => true,
+   ```
+
+   A régi `allow_registration` opciót a PHP API már **nem használja**; ezt törölheted.
+4. Töltsd fel a **legfrissebb PHP telepítő ZIP** tartalmát a webhely gyökérkönyvtárába; őrizd meg a `.well-known` mappát. Ne töltsd fel a privát konfigurációt a webhely alá.
+5. A Profil oldalon megjelenik a **Meghívókód** mező. Az új hallgatónak ugyanazt az e-mail-címet kell megadnia, amelyhez a meghívót létrehoztad.
+6. Ellenőrizd, hogy ugyanaz a kód második regisztrációra már nem használható. Próbáld ki a bejelentkezést, a kvízeredmény szerveroldali mentését és az újra bejelentkezés utáni visszatöltést.
+
+**Biztonság:** csak a kód SHA-256 hash-e szerepel a MySQL-ben; a nyers meghívó nem. A kód 32 bájt kriptográfiai véletlenből készül, 64 hexadecimális karakter hosszú; 7 napig érvényes, és adatbázis-tranzakcióban pontosan egyszer használható. A meghívó nem helyettesíti a tényleges e-mail megerősítését. Nyilvános regisztráció továbbra sincs.
+
+**Régi jelszavak:** a korábbi Node.js scrypt-hash nem kompatibilis a PHP Argon2id ellenőrzésével. A régi fiókokhoz külön migráció/jelszó-visszaállítás szükséges.
