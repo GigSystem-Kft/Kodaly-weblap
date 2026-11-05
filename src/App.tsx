@@ -1,5 +1,6 @@
 import { apiFetch } from './api';
 import React, { useState, useEffect } from 'react';
+import { AdminDashboard } from './components/AdminDashboard';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
 import { ChapterDetailView } from './components/ChapterDetailView';
@@ -161,6 +162,7 @@ export default function App() {
           setActiveTab(tab);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        isAdmin={account?.role === 'admin'}
         xp={progress.xp}
         streak={consecutiveDays(progress.activityDays ?? [])}
       />
@@ -204,6 +206,8 @@ export default function App() {
         {activeTab === 'eartraining' && (
           <EarTrainingView onAddXp={addXp} />
         )}
+
+        {activeTab === 'admin' && account?.role === 'admin' && <AdminDashboard />}
 
         {activeTab === 'dashboard' && (
           <>
