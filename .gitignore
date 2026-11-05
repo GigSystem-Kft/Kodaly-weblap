@@ -1,4 +1,4 @@
-# Zenelméleti Műhely: helyi konfiguráció és generált állományok
+# Zeneelméleti Műhely: helyi konfiguráció és generált állományok
 .env
 .env.*
 !.env.example
