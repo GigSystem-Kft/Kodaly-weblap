@@ -24,7 +24,7 @@ function adminApi(PDO $pdo, array $config, string $route): never {
     if ($route === 'admin/invitations') {
         method('GET');
         $rows=$pdo->query(
-            "SELECT LEFT(token_hash,12) AS id,email,created_at,expires_at,used_at
+            "SELECT token_hash AS id,email,created_at,expires_at,used_at
              FROM zm_invitations ORDER BY created_at DESC LIMIT 100"
         )->fetchAll();
         answer(200,['invitations'=>$rows]);
@@ -64,8 +64,8 @@ function adminApi(PDO $pdo, array $config, string $route): never {
     }
     if ($route === 'admin/revoke-invite') {
         $id=$body['id'] ?? null;
-        if (!is_string($id) || !preg_match('/^[a-f0-9]{12}$/D',$id)) fail(400,'Érvénytelen meghívóazonosító.');
-        $stmt=$pdo->prepare('DELETE FROM zm_invitations WHERE LEFT(token_hash,12)=? AND used_at IS NULL');
+        if (!is_string($id) || !preg_match('/^[a-f0-9]{64}$/D',$id)) fail(400,'Érvénytelen meghívóazonosító.');
+        $stmt=$pdo->prepare('DELETE FROM zm_invitations WHERE token_hash=? AND used_at IS NULL');
         $stmt->execute([$id]);
         answer(200,['success'=>true,'revoked'=>$stmt->rowCount()>0]);
     }
@@ -82,7 +82,9 @@ function adminApi(PDO $pdo, array $config, string $route): never {
         if ($stmt->rowCount()===0) {
             $check=$pdo->prepare('SELECT role FROM zm_users WHERE id=?');
             $check->execute([$userId]);
-            if ($check->fetchColumn()===false) fail(404,'A felhasználó nem található.');
+            $existingRole=$check->fetchColumn();
+            if ($existingRole===false) fail(404,'A felhasználó nem található.');
+            if ($existingRole==='admin') fail(403,'Adminisztrátori fiók jogosultsága itt nem módosítható.');
         }
         answer(200,['success'=>true]);
     }
