@@ -158,13 +158,51 @@ function sendAccountMail(array $config, string $email, string $subject, string $
         preg_match('/[\r\n]/', $from)) {
         fail(503, 'Az e-mailes fiókszolgáltatás még nincs beállítva.');
     }
-    $headers = [
-        'From: Zeneelmeleti Muhely <' . $from . '>',
-        'Content-Type: text/plain; charset=UTF-8',
-        'MIME-Version: 1.0'
-    ];
-    if (!mail($email, $subject, $message, implode("\r\n", $headers))) {
-        throw new RuntimeException('Mail delivery submission failed');
+
+    // Explicit local-only test transport. Never permit mail() fallback on production.
+    if (($config['mail_transport'] ?? '') === 'local-test' &&
+        ($config['app_origin'] ?? '') === 'http://localhost:8000') {
+        if (!mail($email, $subject, $message, 'From: ' . $from)) {
+            throw new RuntimeException('Test mail failed');
+        }
+        return;
+    }
+    if (($config['mail_transport'] ?? '') !== 'smtp') {
+        fail(503, 'Nincs beállítva a hitelesített SMTP-küldés.');
+    }
+    $smtp = $config['smtp'] ?? [];
+    if (!is_array($smtp) ||
+        empty($smtp['host']) || empty($smtp['user']) || empty($smtp['password']) ||
+        !is_string($smtp['host']) || !is_string($smtp['user']) ||
+        !is_string($smtp['password']) ||
+        (int)($smtp['port'] ?? 0) !== 465) {
+        fail(503, 'Hiányos SMTP-beállítások.');
+    }
+    $autoload=__DIR__ . '/vendor/autoload.php';
+    if (!is_readable($autoload)) {
+        throw new RuntimeException('PHPMailer dependency is not deployed');
+    }
+    require_once $autoload;
+    $mailer = new \PHPMailer\PHPMailer\PHPMailer(true);
+    try {
+        $mailer->isSMTP();
+        $mailer->Host = $smtp['host'];
+        $mailer->Port = 465;
+        $mailer->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+        $mailer->SMTPAuth = true;
+        $mailer->Username = $smtp['user'];
+        $mailer->Password = $smtp['password'];
+        $mailer->Timeout = 12;
+        $mailer->SMTPDebug = 0;
+        $mailer->CharSet = 'UTF-8';
+        $mailer->setFrom($from, 'Zeneelméleti Műhely');
+        $mailer->addAddress($email);
+        $mailer->Subject = $subject;
+        $mailer->Body = $message;
+        $mailer->isHTML(false);
+        $mailer->send();
+    } catch (\PHPMailer\PHPMailer\Exception $error) {
+        throw new RuntimeException('SMTP delivery failed', 0, $error);
     }
 }
 function issueAccountToken(PDO $pdo, string $userId, string $purpose, int $minutes): string {
