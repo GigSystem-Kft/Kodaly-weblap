@@ -13,6 +13,9 @@ on:
       - 'package-lock.json'
       - 'vite.config.ts'
       - 'index.html'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'compose.yaml'
       - '.github/workflows/deploy-bundle.yml'
 
 permissions:
@@ -57,6 +60,9 @@ jobs:
             --format=esm \
             --packages=external \
             --outfile=release/server.mjs
+
+      - name: Docker image összeállítása (registry push nélkül)
+        run: docker build --file Dockerfile --tag zeneelmeleti-muhely:ci .
 
       - name: Produktionális csomag előállítása
         shell: bash
