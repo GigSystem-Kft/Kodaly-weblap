@@ -310,6 +310,11 @@ try {
     }
     $pdo = database($config);
 
+    if (str_starts_with($route, 'admin/')) {
+        require_once __DIR__ . '/admin.php';
+        adminApi($pdo, $config, $route);
+    }
+
     switch ($route) {
         case 'auth/me':
             method('GET');
