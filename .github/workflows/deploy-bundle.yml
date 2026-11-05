@@ -1,0 +1,79 @@
+name: Zeneelméleti Műhely – Linux telepítőcsomag
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'server*.ts'
+      - 'server-data/**'
+      - 'database/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'index.html'
+      - '.github/workflows/deploy-bundle.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Ellenőrzés és Linux Node 24 csomag
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      # Az eredeti projekt lockfile-ját a mysql2 felvétele után frissíteni kell.
+      # Az npm install ezt a futás munkakönyvtárában teszi meg, így a csomag reprodukálható lockfile-t tartalmaz.
+      - name: Függőségek és lockfile szinkronizálása
+        run: npm install --no-audit --no-fund
+
+      - name: Unit tesztek
+        run: npm test
+
+      - name: TypeScript ellenőrzés
+        run: npm run lint
+
+      - name: Frontend build
+        run: npm run build
+
+      - name: Szerver fordítása Linux Node 24-re
+        run: |
+          mkdir -p release
+          ./node_modules/.bin/esbuild server.ts \
+            --bundle \
+            --platform=node \
+            --target=node24 \
+            --format=esm \
+            --packages=external \
+            --outfile=release/server.mjs
+
+      - name: Produktionális csomag előállítása
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp -a dist release/dist
+          cp -a server-data release/server-data
+          cp package.json package-lock.json release/
+          npm prune --omit=dev --no-audit --no-fund
+          cp -a node_modules release/node_modules
+          cp deploy/README-TELPITES.txt release/README-TELPITES.txt
+          tar -czf zeneelmeleti-muhely-linux-node24.tar.gz -C release .
+          printf 'Bundle SHA256: '
+          sha256sum zeneelmeleti-muhely-linux-node24.tar.gz
+
+      - name: Telepítőcsomag feltöltése
+        uses: actions/upload-artifact@v4
+        with:
+          name: zeneelmeleti-muhely-linux-node24
+          path: zeneelmeleti-muhely-linux-node24.tar.gz
+          if-no-files-found: error
+          retention-days: 14
