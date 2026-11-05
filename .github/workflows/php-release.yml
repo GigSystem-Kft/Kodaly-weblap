@@ -8,6 +8,8 @@ on:
       - 'src/**'
       - 'public/**'
       - 'php/**'
+      - 'scripts/export-php-knowledge.ts'
+      - 'server-data/**'
       - 'deploy/php-telepites.md'
       - 'package.json'
       - 'package-lock.json'
@@ -51,6 +53,7 @@ jobs:
           mkdir -p release/api
           cp -a dist/. release/
           cp php/api/index.php release/api/index.php
+          node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
           cd release
           zip -q -r ../zeneelmeleti-muhely-php.zip .
       - name: Upload deploy ZIP
