@@ -147,6 +147,51 @@ function progressOk(mixed $p): bool {
     return isset($p['xp']) && is_numeric($p['xp']) &&
         $p['xp'] >= 0 && $p['xp'] <= 100000000;
 }
+
+/** Accent-insensitive keyword search over packaged lesson and source excerpts. */
+function searchTerms(string $value): array {
+    $chars = ['á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ö'=>'o','ő'=>'o',
+        'ú'=>'u','ü'=>'u','ű'=>'u','Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o',
+        'Ö'=>'o','Ő'=>'o','Ú'=>'u','Ü'=>'u','Ű'=>'u'];
+    $text = strtolower(strtr($value, $chars));
+    $words = preg_split('/[^a-z0-9]+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    return array_values(array_unique(array_filter($words,
+        static fn(string $w): bool => strlen($w)>2 && !in_array($w,
+        ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy','van','nem','kerlek'],true)
+    )));
+}
+function knowledgeEntries(): array {
+    $file=__DIR__ . '/knowledge.php';
+    if (!is_file($file)) return [];
+    $list=require $file;
+    return is_array($list) ? $list : [];
+}
+function searchLessons(string $question, int $limit=4): array {
+    $tokens=searchTerms($question);
+    if (!$tokens) return [];
+    $hits=[];
+    foreach (knowledgeEntries() as $entry) {
+        if (!is_array($entry) || !isset($entry['text'],$entry['source'],$entry['label'])) continue;
+        $haystack=searchTerms($entry['text'] . ' ' . $entry['label']);
+        $labelWords=searchTerms($entry['label']);
+        $matched=array_intersect($tokens,$haystack);
+        $score=count($matched) + count(array_intersect($tokens,$labelWords))*2;
+        if ($score>0) $hits[]=['score'=>$score,'entry'=>$entry];
+    }
+    usort($hits,static fn($a,$b)=>$b['score'] <=> $a['score']);
+    return array_slice(array_map(static fn($v)=>$v['entry'],$hits),0,$limit);
+}
+function lessonReply(array $hits): string {
+    $pieces=['**A tananyagban található kapcsolódó részletek:**'];
+    foreach ($hits as $hit) {
+        $excerpt=preg_replace('/\\s+/u',' ',(string)$hit['text']) ?? (string)$hit['text'];
+        if (strlen($excerpt)>600) $excerpt=substr($excerpt,0,600) . '…';
+        $pieces[]='**' . $hit['source'] . ' – ' . $hit['label'] . "**\\n" . $excerpt;
+    }
+    $pieces[]='_Ez a PHP-s helyi kereső a betöltött forrásokból idéz. Nem helyettesíti a tanári ellenőrzést._';
+    return implode("\\n\\n",$pieces);
+}
+
 try {
     $route = $_GET['route'] ?? '';
     if (!is_string($route) || strlen($route) > 70) fail(404, 'Ismeretlen útvonal.');
@@ -248,11 +293,25 @@ try {
 
         case 'chat/status':
             method('GET');
+            $entries=knowledgeEntries();
+            $sources=[];
+            $lessons=0;
+            foreach ($entries as $entry) {
+                if (($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag') $lessons++;
+                else $sources[$entry['source'] ?? ''] = true;
+            }
             answer(200,['mode'=>'fallback',
-                'knowledge'=>['indexedSources'=>0,'lessonChunks'=>0,'indexedChunks'=>0]]);
+                'knowledge'=>['indexedSources'=>count($sources),
+                    'lessonChunks'=>$lessons,'indexedChunks'=>count($entries)]]);
         case 'chat':
             method('POST'); guardWrite($config); throttle('chat', 60);
-            fail(503, 'A Zeneelmélet Tanársegéd PHP-változatának forráskeresője még nincs aktiválva.');
+            $data=getPayload();
+            $question=trim($data['message'] ?? '');
+            if (!is_string($question) || !$question || strlen($question)>1000) fail(400,'Írj egy rövid zeneelméleti kérdést.');
+            $hits=searchLessons($question);
+            if (!$hits) answer(200, ['mode'=>'fallback',
+                'reply'=>'A jelenleg betöltött tananyagban nem találtam biztos forrásrészletet ehhez a kérdéshez. Próbálj pontosabb zeneelméleti fogalmat megadni.']);
+            answer(200,['mode'=>'fallback','reply'=>lessonReply($hits)]);
         default:
             fail(404,'Ismeretlen API-végpont.');
     }
