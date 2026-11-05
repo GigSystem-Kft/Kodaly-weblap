@@ -1,3 +1,4 @@
+import { apiFetch } from '../api';
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { MessageSquare, Send, Bot, User, Sparkles, X, Minimize2, Maximize2 } from 'lucide-react';
@@ -37,7 +38,7 @@ export const ChatAssistant: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch('/api/chat/status')
+    apiFetch('/api/chat/status')
       .then(async (res) => {
         if (!res.ok) throw new Error('Chat status request failed');
         const data = await res.json();
@@ -67,7 +68,7 @@ export const ChatAssistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await apiFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMsg }),
