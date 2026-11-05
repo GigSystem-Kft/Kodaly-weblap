@@ -30,6 +30,7 @@ A ZIP felépítése:
 index.html
 assets/
 api/index.php
+api/knowledge.php
 ...```
 
 A ZIP-et ebbe a gyökérkönyvtárba bontsd ki. **NE** egy új `zeneelmeleti-muhely-php/`
@@ -70,7 +71,7 @@ előtt migráció vagy biztonságos jelszó-visszaállítás szükséges.
 ## Korlátok
 
 - A PHP API támogatja a regisztrációt, bejelentkezést, kijelentkezést és a profil eredménymentését.
-- A Tanársegéd jelenleg **nem működik a PHP-kiadásban**; a felület hibát jelez.
+- A Tanársegéd PHP-kiadása a telepítőcsomagban található, lecke- és forrásrészletekből álló **helyi keresőmóddal** működik. Nem használ külső Gemini API-t és nem fogalmaz önálló AI-magyarázatot.
 - Nincs még e-mail-cím ellenőrzés, jelszó-visszaállítás, fiókadat-törlés, adatvédelmi tájékoztató.
 - Az IP-alapú belépésvédelem a PHP szerver ideiglenes könyvtárát használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
 - **Nyilvános regisztráció ne induljon az üzemeltetési és adatvédelmi ellenőrzésekig.**
