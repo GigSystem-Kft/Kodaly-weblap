@@ -3,7 +3,7 @@
   "description": "PHP SMTP transport for Zeneelméleti Műhely",
   "type": "project",
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.3",
     "phpmailer/phpmailer": "6.10.0"
   }
 }
