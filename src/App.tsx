@@ -1,3 +1,4 @@
+import { apiFetch } from './api';
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
@@ -33,11 +34,11 @@ export default function App() {
     let active = true;
     const initialize = async () => {
       try {
-        const response = await fetch('/api/auth/me');
+        const response = await apiFetch('/api/auth/me');
         if (!response.ok) throw new Error('Nem elérhető a fiókszolgáltatás.');
         const data = await response.json();
         if (data.user) {
-          const progressResponse = await fetch('/api/progress');
+          const progressResponse = await apiFetch('/api/progress');
           if (!progressResponse.ok) throw new Error('Nem sikerült betölteni a mentett eredményeket.');
           const saved = await progressResponse.json();
           if (active) {
@@ -63,7 +64,7 @@ export default function App() {
     }
     const handle = window.setTimeout(async () => {
       try {
-        const response = await fetch('/api/progress', {
+        const response = await apiFetch('/api/progress', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ progress })
@@ -78,7 +79,7 @@ export default function App() {
   }, [progress, account, accountReady]);
 
   const signIn = async (user: AccountUser) => {
-    const response = await fetch('/api/progress');
+    const response = await apiFetch('/api/progress');
     if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
     const saved = await response.json();
     setProgress(migrateProgress(saved.progress));
