@@ -37,11 +37,14 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    const token = url.searchParams.get('token');
-    const action = url.searchParams.get('account');
+    // Prefer fragment tokens: they never reach HTTP server logs or referrer headers.
+    const fragment = new URLSearchParams(url.hash.startsWith('#') ? url.hash.slice(1) : '');
+    const token = fragment.get('token') || url.searchParams.get('token');
+    const action = fragment.get('account') || url.searchParams.get('account');
     if (!token || !['verify', 'reset'].includes(action || '')) return;
     url.searchParams.delete('token');
     url.searchParams.delete('account');
+    url.hash = '';
     window.history.replaceState(null, '', url.pathname + url.search + url.hash);
     if (action === 'reset') {
       setAccountToken(token);
