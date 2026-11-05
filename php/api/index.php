@@ -203,7 +203,11 @@ try {
         method('GET');
         try { database($config)->query('SELECT 1'); $available = true; }
         catch (Throwable) { $available = false; }
-        answer(200, ['available'=>$available, 'registrationEnabled'=>($config['allow_registration'] ?? false) === true]);
+        answer(200, [
+            'available'=>$available,
+            'registrationEnabled'=>($config['invite_registration'] ?? false) === true,
+            'invitationRequired'=>true
+        ]);
     }
     if (in_array($route, ['auth/login','auth/register','auth/logout'], true)) {
         method('POST');
@@ -218,27 +222,68 @@ try {
             method('GET');
             answer(200, ['user'=>currentUser($pdo)]);
         case 'auth/register':
-            if (($config['allow_registration'] ?? false) !== true) fail(403, 'A regisztráció még nincs megnyitva.');
+            if (($config['invite_registration'] ?? false) !== true) {
+                fail(403, 'A meghívásos regisztráció még nincs engedélyezve.');
+            }
             throttle('register', 8);
             $data = getPayload();
-            $email = strtolower(trim($data['email'] ?? ''));
-            $name = trim($data['displayName'] ?? '');
+            $email = is_string($data['email'] ?? null)
+                ? strtolower(trim($data['email'])) : '';
+            $name = is_string($data['displayName'] ?? null)
+                ? trim($data['displayName']) : '';
             $pass = $data['password'] ?? null;
+            $invite = is_string($data['invitationCode'] ?? null)
+                ? strtolower(trim($data['invitationCode'])) : '';
+            if (!preg_match('/^[a-f0-9]{64}$/D', $invite)) {
+                fail(400, 'Érvénytelen vagy hiányzó meghívókód.');
+            }
             if (!is_string($email) || strlen($email)>254 ||
                 filter_var($email,FILTER_VALIDATE_EMAIL) === false ||
                 !is_string($name) || strlen($name)<2 || strlen($name)>120 ||
                 !is_string($pass) || strlen($pass)<12 || strlen($pass)>128) {
                 fail(400,'Érvényes e-mail-cím, név és legalább 12 karakteres jelszó szükséges.');
             }
+            // A meghívót és a fiók létrehozását egy adatbázis-tranzakció védi:
+            // egyetlen kód egyszerre érkező kérések között sem használható fel kétszer.
             $uuid = tokenToUuid(bin2hex(random_bytes(16)));
-            $hash = password_hash($pass, defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare(
-                "INSERT INTO zm_users(id,email,display_name,password_hash,role)
-                 VALUES(?,?,?,?,'student')"
-            );
-            try { $stmt->execute([$uuid,$email,$name,$hash]); }
-            catch (PDOException $e) {
-                if ($e->getCode() === '23000') fail(409, 'Ezzel az e-mail-címmel már létezik fiók.');
+            $hash = password_hash($pass, PASSWORD_ARGON2ID);
+            $pdo->beginTransaction();
+            try {
+                $lock = $pdo->prepare(
+                    'SELECT email, expires_at, used_at FROM zm_invitations
+                     WHERE token_hash = ? FOR UPDATE'
+                );
+                $lock->execute([hash('sha256', $invite)]);
+                $invitation = $lock->fetch();
+                if (!$invitation ||
+                    $invitation['used_at'] !== null ||
+                    strtotime($invitation['expires_at'] . ' UTC') <= time() ||
+                    !hash_equals(strtolower((string)$invitation['email']), $email)) {
+                    $pdo->rollBack();
+                    fail(403, 'Érvénytelen, lejárt vagy már felhasznált meghívókód, illetve eltérő e-mail-cím.');
+                }
+                $stmt = $pdo->prepare(
+                    "INSERT INTO zm_users(id,email,display_name,password_hash,role)
+                     VALUES(?,?,?,?,'student')"
+                );
+                $stmt->execute([$uuid,$email,$name,$hash]);
+                $consume = $pdo->prepare(
+                    'UPDATE zm_invitations SET used_at=UTC_TIMESTAMP(),used_by=?
+                     WHERE token_hash=? AND used_at IS NULL'
+                );
+                $consume->execute([$uuid, hash('sha256', $invite)]);
+                if ($consume->rowCount() !== 1) {
+                    throw new RuntimeException('Invitation already consumed');
+                }
+                $pdo->commit();
+            } catch (PDOException $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                if ($e->getCode() === '23000') {
+                    fail(409, 'Ezzel az e-mail-címmel már létezik fiók.');
+                }
+                throw $e;
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
                 throw $e;
             }
             newSession($pdo, ['id'=>$uuid,'email'=>$email,'displayName'=>$name,'role'=>'student']);
