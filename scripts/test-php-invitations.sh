@@ -127,4 +127,29 @@ loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http
 test "$loginStatus" = 401
 loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"HarmadikTesztJelszo2026!"}')"
 test "$loginStatus" = 200
+# Admin role activation is an explicit one-time database operation, never a public endpoint.
+php -r '
+$p=new PDO("mysql:host=127.0.0.1;dbname=zeneelmelet","root","test-only-password",[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+$p->exec("ALTER TABLE zm_users MODIFY COLUMN role ENUM(\x27student\x27,\x27teacher\x27,\x27admin\x27) NOT NULL DEFAULT \x27student\x27");
+$p->exec("UPDATE zm_users SET role=\x27admin\x27 WHERE email=\x27pilot@example.org\x27");
+'
+# Admin APIs reject unauthenticated users.
+anonymous="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=admin/users')"
+test "$anonymous" = 401
+# Admin logs in with the final password from earlier tests.
+adminLogin="$(curl -sS -c /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"HarmadikTesztJelszo2026!"}')"
+test "$adminLogin" = 200
+adminList="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=admin/users')"
+test "$adminList" = 200
+# Invite is sent by mail; server stores only the hash.
+inviteStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=admin/invite' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"second@example.org"}')"
+test "$inviteStatus" = 201
+invitesStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=admin/invitations')"
+test "$invitesStatus" = 200
+php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true);if(count($j["invitations"]??[])<2)exit(1);'
+# Self-demotion and elevation through admin API are forbidden.
+adminId="$(php -r '$p=new PDO("mysql:host=127.0.0.1;dbname=zeneelmelet","root","test-only-password");echo $p->query("SELECT id FROM zm_users WHERE email=\x27pilot@example.org\x27")->fetchColumn();')"
+selfRole="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=admin/set-role' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"userId\":\"$adminId\",\"role\":\"student\"}")"
+test "$selfRole" = 403
+echo 'PHP admin: guarded endpoints, invitation, listing and privilege restrictions passed'
 echo 'PHP account pilot: invitation, email verification, one-use reset and password change passed'
