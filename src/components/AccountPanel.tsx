@@ -21,6 +21,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   user, onSignedIn, onSignedOut, onImportLocal, syncError
 }) => {
   const [available, setAvailable] = useState(false);
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
   const [loadingStatus, setLoadingStatus] = useState(true);
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [email, setEmail] = useState('');
@@ -35,6 +36,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         if (!response.ok) throw new Error('A szerver nem válaszolt.');
         const data = await response.json();
         setAvailable(data.available === true);
+        setRegistrationEnabled(data.registrationEnabled !== false);
       })
       .catch(() => setAvailable(false))
       .finally(() => setLoadingStatus(false));
@@ -104,8 +106,9 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         <div>
           <div className="flex gap-2 mb-4">
             <button type="button" onClick={() => {setMode('login');setError('');}} className={`text-sm rounded-lg px-3 py-2 ${mode === 'login' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'}`}>Bejelentkezés</button>
-            <button type="button" onClick={() => {setMode('register');setError('');}} className={`text-sm rounded-lg px-3 py-2 ${mode === 'register' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'}`}>Regisztráció</button>
+            <button type="button" disabled={!registrationEnabled} onClick={() => {setMode('register');setError('');}} className={`text-sm rounded-lg px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed ${mode === 'register' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'}`}>Regisztráció</button>
           </div>
+          {!registrationEnabled && <p className="text-sm text-amber-700 mb-3">A nyilvános regisztrációt még nem nyitottuk meg. A bejelentkezés meglévő fiókkal lehetséges.</p>}
           <form onSubmit={submit} className="grid gap-3 max-w-md">
             {mode === 'register' && (
               <label className="text-sm">Név
