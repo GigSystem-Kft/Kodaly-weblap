@@ -18,6 +18,7 @@ async function startServer() {
   app.set('trust proxy', 'loopback');
   app.use(express.json({ limit: '100kb' }));
   installAccountRoutes(app);
+  app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'zeneelmeleti-muhely' }));
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
   const ai = apiKey ? new GoogleGenAI({
