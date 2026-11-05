@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Automated localhost-only PHP invitation acceptance test, NEVER production.
-set -euo pipefail
+set -eEuo pipefail
+trap 'echo "Account integration assertion failed at line $LINENO" >&2' ERR
 ROOT="$(pwd)"
 CONFIG="$(dirname "$ROOT")/zeneelmelet-private.php"
 cleanup() {
