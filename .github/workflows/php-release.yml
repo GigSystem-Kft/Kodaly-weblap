@@ -10,6 +10,7 @@ on:
       - 'php/**'
       - 'database/**'
       - 'scripts/create-invitation.mjs'
+      - 'scripts/test-php-invitations.sh'
       - 'scripts/export-php-knowledge.ts'
       - 'server-data/**'
       - 'deploy/php-telepites.md'
@@ -26,6 +27,19 @@ jobs:
   php-release:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test-only-password
+          MYSQL_DATABASE: zeneelmelet
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest-only-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -46,6 +60,8 @@ jobs:
           php -l php/api/index.php
           php -l deploy/zeneelmelet-private.example.php
           node --check scripts/create-invitation.mjs
+      - name: Test invitation signup against MySQL
+        run: bash scripts/test-php-invitations.sh
       - name: Build frontend for PHP API
         env:
           VITE_PHP_API: '1'
