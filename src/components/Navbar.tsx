@@ -6,10 +6,11 @@ interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   xp: number;
+  isAdmin?: boolean;
   streak: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak }) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak, isAdmin = false }) => {
   const navItems = [
     { id: 'chapters', label: '01. Tananyag' },
     { id: 'flashcards', label: '02. Szókártyák' },
@@ -17,6 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
     { id: 'quiz', label: '04. Teszt' },
     { id: 'eartraining', label: '05. Hallás' },
     { id: 'dashboard', label: '06. Profil' },
+    ...(isAdmin ? [{ id: 'admin', label: 'Admin' }] : []),
   ];
 
   return (
