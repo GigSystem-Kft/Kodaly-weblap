@@ -148,6 +148,61 @@ function progressOk(mixed $p): bool {
         $p['xp'] >= 0 && $p['xp'] <= 100000000;
 }
 
+/** Mail transport must be explicitly approved/configured by the server administrator.
+ * PHP mail() requires a working local MTA; absent configuration fails closed.
+ */
+function sendAccountMail(array $config, string $email, string $subject, string $message): void {
+    $from = $config['mail_from'] ?? '';
+    if (($config['mail_enabled'] ?? false) !== true ||
+        !is_string($from) || !filter_var($from, FILTER_VALIDATE_EMAIL) ||
+        preg_match('/[\r\n]/', $from)) {
+        fail(503, 'Az e-mailes fiókszolgáltatás még nincs beállítva.');
+    }
+    $headers = [
+        'From: Zeneelmeleti Muhely <' . $from . '>',
+        'Content-Type: text/plain; charset=UTF-8',
+        'MIME-Version: 1.0'
+    ];
+    if (!mail($email, $subject, $message, implode("\r\n", $headers))) {
+        throw new RuntimeException('Mail delivery submission failed');
+    }
+}
+function issueAccountToken(PDO $pdo, string $userId, string $purpose, int $minutes): string {
+    $token = bin2hex(random_bytes(32));
+    $delete = $pdo->prepare('DELETE FROM zm_account_tokens WHERE user_id=? AND purpose=?');
+    $delete->execute([$userId, $purpose]);
+    $stmt=$pdo->prepare('INSERT INTO zm_account_tokens(token_hash,user_id,purpose,expires_at)
+        VALUES(?,?,?,DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? MINUTE))');
+    $stmt->execute([hash('sha256',$token), $userId, $purpose, $minutes]);
+    return $token;
+}
+function deliverAccountLink(array $config, string $email, string $kind, string $token): void {
+    $action = $kind === 'verify' ? 'E-mail-cim megerositese' : 'Jelszo visszaallitasa';
+    $url = ($config['app_origin'] ?? '') . '/?account=' . $kind . '&token=' . rawurlencode($token);
+    sendAccountMail($config, $email, 'Zeneelmeleti Muhely - ' . $action,
+        "Zeneelmeleti Muhely\n\n" . $action . "\n\n" .
+        "Nyisd meg az alabbi hivatkozast:\n" . $url . "\n\n" .
+        "Ha nem te kerted, hagyd figyelmen kivul az uzenetet.\n");
+}
+function redeemToken(PDO $pdo, string $token, string $purpose): ?array {
+    if (!preg_match('/^[a-f0-9]{64}$/D', $token)) return null;
+    $stmt = $pdo->prepare('SELECT user_id,used_at,expires_at FROM zm_account_tokens
+        WHERE token_hash=? AND purpose=? FOR UPDATE');
+    $stmt->execute([hash('sha256',$token), $purpose]);
+    $row=$stmt->fetch();
+    if (!$row || $row['used_at'] !== null ||
+        strtotime($row['expires_at'] . ' UTC') <= time()) return null;
+    $consume=$pdo->prepare('UPDATE zm_account_tokens SET used_at=UTC_TIMESTAMP()
+        WHERE token_hash=? AND used_at IS NULL');
+    $consume->execute([hash('sha256',$token)]);
+    return $consume->rowCount() === 1 ? $row : null;
+}
+function validateNewPassword(mixed $pass): void {
+    if (!is_string($pass) || strlen($pass)<12 || strlen($pass)>128) {
+        fail(400, 'Legalább 12, legfeljebb 128 karakteres jelszó szükséges.');
+    }
+}
+
 /** Accent-insensitive keyword search over packaged lesson and source excerpts. */
 function searchTerms(string $value): array {
     $chars = ['á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ö'=>'o','ő'=>'o',
@@ -209,7 +264,7 @@ try {
             'invitationRequired'=>true
         ]);
     }
-    if (in_array($route, ['auth/login','auth/register','auth/logout'], true)) {
+    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/reset-request','auth/reset','auth/change-password'], true)) {
         method('POST');
         guardWrite($config);
     } elseif ($route === 'progress' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'PUT') {
@@ -245,6 +300,7 @@ try {
             }
             // A meghívót és a fiók létrehozását egy adatbázis-tranzakció védi:
             // egyetlen kód egyszerre érkező kérések között sem használható fel kétszer.
+            if (($config['mail_enabled'] ?? false) !== true) fail(503, 'Az e-mail-küldés még nincs beállítva.');
             $uuid = tokenToUuid(bin2hex(random_bytes(16)));
             $hash = password_hash($pass, PASSWORD_ARGON2ID);
             $pdo->beginTransaction();
@@ -275,6 +331,8 @@ try {
                 if ($consume->rowCount() !== 1) {
                     throw new RuntimeException('Invitation already consumed');
                 }
+                $token = issueAccountToken($pdo, $uuid, 'verify', 1440);
+                deliverAccountLink($config, $email, 'verify', $token);
                 $pdo->commit();
             } catch (PDOException $e) {
                 if ($pdo->inTransaction()) $pdo->rollBack();
@@ -286,7 +344,7 @@ try {
                 if ($pdo->inTransaction()) $pdo->rollBack();
                 throw $e;
             }
-            newSession($pdo, ['id'=>$uuid,'email'=>$email,'displayName'=>$name,'role'=>'student']);
+            answer(201, ['verificationPending'=>true, 'message'=>'Elküldtük a megerősítő levelet. A belépéshez kattints a levélben található hivatkozásra.']);
 
         case 'auth/login':
             throttle('login', 20);
@@ -296,14 +354,102 @@ try {
             if (!is_string($email) || strlen($email)>254 || !is_string($pass) || strlen($pass)>128) {
                 fail(400, 'Érvénytelen adatok.');
             }
-            $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash FROM zm_users WHERE email=? LIMIT 1');
+            $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash,email_verified_at FROM zm_users WHERE email=? LIMIT 1');
             $stmt->execute([$email]);
             $row=$stmt->fetch();
             if (!$row || !password_verify($pass, $row['password_hash'])) {
                 fail(401,'Hibás e-mail-cím vagy jelszó.');
             }
+            if ($row['email_verified_at'] === null) {
+                fail(403, 'A belépés előtt erősítsd meg az e-mail-címedet.');
+            }
             newSession($pdo, ['id'=>$row['id'],'email'=>$row['email'],
                 'displayName'=>$row['display_name'],'role'=>$row['role']]);
+
+        case 'auth/verify':
+            throttle('verify', 30);
+            $body = getPayload();
+            $token = is_string($body['token'] ?? null) ? strtolower(trim($body['token'])) : '';
+            $pdo->beginTransaction();
+            try {
+                $row=redeemToken($pdo, $token, 'verify');
+                if (!$row) { $pdo->rollBack(); fail(400, 'A megerősítő hivatkozás lejárt vagy már felhasználták.'); }
+                $stmt=$pdo->prepare('UPDATE zm_users SET email_verified_at=UTC_TIMESTAMP() WHERE id=?');
+                $stmt->execute([$row['user_id']]);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+            }
+            answer(200, ['success'=>true]);
+
+        case 'auth/reset-request':
+            throttle('reset-request', 8);
+            $body = getPayload();
+            $email = is_string($body['email'] ?? null) ? strtolower(trim($body['email'])) : '';
+            if (strlen($email)>254 || filter_var($email,FILTER_VALIDATE_EMAIL) === false) fail(400,'Érvénytelen e-mail-cím.');
+            if (($config['mail_enabled'] ?? false) !== true) fail(503, 'Az e-mailes helyreállítás még nincs beállítva.');
+            $stmt=$pdo->prepare('SELECT id FROM zm_users WHERE email=? LIMIT 1');
+            $stmt->execute([$email]);
+            $user=$stmt->fetch();
+            if ($user) {
+                $pdo->beginTransaction();
+                try {
+                    $token=issueAccountToken($pdo, $user['id'], 'reset', 30);
+                    deliverAccountLink($config, $email, 'reset', $token);
+                    $pdo->commit();
+                } catch (Throwable $e) {
+                    if ($pdo->inTransaction()) $pdo->rollBack();
+                    throw $e;
+                }
+            }
+            answer(200,['message'=>'Ha létezik ilyen fiók, elküldtük a helyreállítási hivatkozást.']);
+
+        case 'auth/reset':
+            throttle('reset', 15);
+            $body=getPayload();
+            $token=is_string($body['token'] ?? null) ? strtolower(trim($body['token'])) : '';
+            validateNewPassword($body['password'] ?? null);
+            $pdo->beginTransaction();
+            try {
+                $row=redeemToken($pdo, $token, 'reset');
+                if (!$row) { $pdo->rollBack(); fail(400, 'Érvénytelen, lejárt vagy már felhasznált helyreállítási hivatkozás.'); }
+                $stmt=$pdo->prepare('UPDATE zm_users SET password_hash=? WHERE id=?');
+                $stmt->execute([password_hash($body['password'], PASSWORD_ARGON2ID), $row['user_id']]);
+                $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
+                $stmt->execute([$row['user_id']]);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+            }
+            tokenCookie('', time()-3600);
+            answer(200,['success'=>true]);
+
+        case 'auth/change-password':
+            throttle('password-change', 15);
+            $user=requireUser($pdo);
+            $body=getPayload();
+            $previous=$body['currentPassword'] ?? null;
+            validateNewPassword($body['newPassword'] ?? null);
+            if (!is_string($previous)) fail(400,'A jelenlegi jelszó megadása kötelező.');
+            $stmt=$pdo->prepare('SELECT password_hash FROM zm_users WHERE id=?');
+            $stmt->execute([$user['id']]);
+            $stored=$stmt->fetchColumn();
+            if (!$stored || !password_verify($previous, (string)$stored)) fail(403, 'A jelenlegi jelszó helytelen.');
+            $pdo->beginTransaction();
+            try {
+                $stmt=$pdo->prepare('UPDATE zm_users SET password_hash=? WHERE id=?');
+                $stmt->execute([password_hash($body['newPassword'], PASSWORD_ARGON2ID),$user['id']]);
+                $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
+                $stmt->execute([$user['id']]);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+            }
+            tokenCookie('', time()-3600);
+            answer(200,['success'=>true]);
 
         case 'auth/logout':
             $token=$_COOKIE[COOKIE_NAME] ?? '';
