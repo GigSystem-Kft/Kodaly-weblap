@@ -121,7 +121,7 @@ php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j[
 changeStatus="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HarmadikTesztJelszo2026!"}')"
 test "$changeStatus" = 200
 curl -fsS -b /tmp/zm-cookies.txt 'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-response.json
-php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j["user"]??false)!==null) exit(1);'
+php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(!array_key_exists("user",$j) || $j["user"]!==null) exit(1);'
 loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
 test "$loginStatus" = 401
 loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"HarmadikTesztJelszo2026!"}')"
