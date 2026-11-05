@@ -178,7 +178,7 @@ function issueAccountToken(PDO $pdo, string $userId, string $purpose, int $minut
 }
 function deliverAccountLink(array $config, string $email, string $kind, string $token): void {
     $action = $kind === 'verify' ? 'E-mail-cim megerositese' : 'Jelszo visszaallitasa';
-    $url = ($config['app_origin'] ?? '') . '/?account=' . $kind . '&token=' . rawurlencode($token);
+    $url = ($config['app_origin'] ?? '') . '/#account=' . $kind . '&token=' . rawurlencode($token);
     sendAccountMail($config, $email, 'Zeneelmeleti Muhely - ' . $action,
         "Zeneelmeleti Muhely\n\n" . $action . "\n\n" .
         "Nyisd meg az alabbi hivatkozast:\n" . $url . "\n\n" .
