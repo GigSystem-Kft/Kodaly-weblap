@@ -27,6 +27,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const [email, setEmail] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
+  const [invitationCode, setInvitationCode] = useState('');
+  const [invitationRequired, setInvitationRequired] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -37,6 +39,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         const data = await response.json();
         setAvailable(data.available === true);
         setRegistrationEnabled(data.registrationEnabled !== false);
+        setInvitationRequired(data.invitationRequired === true);
       })
       .catch(() => setAvailable(false))
       .finally(() => setLoadingStatus(false));
@@ -51,11 +54,12 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
       const response = await apiFetch(`/api/auth/${mode}`, {
         method: 'POST', credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, ...(mode === 'register' ? { displayName } : {}) })
+        body: JSON.stringify({ email, password, ...(mode === 'register' ? { displayName, invitationCode: invitationCode.trim() } : {}) })
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Nem sikerült a bejelentkezés.');
       setPassword('');
+      setInvitationCode('');
       await onSignedIn(data.user as AccountUser);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Ismeretlen hiba.');
@@ -108,11 +112,20 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
             <button type="button" onClick={() => {setMode('login');setError('');}} className={`text-sm rounded-lg px-3 py-2 ${mode === 'login' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'}`}>Bejelentkezés</button>
             <button type="button" disabled={!registrationEnabled} onClick={() => {setMode('register');setError('');}} className={`text-sm rounded-lg px-3 py-2 disabled:opacity-40 disabled:cursor-not-allowed ${mode === 'register' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-700'}`}>Regisztráció</button>
           </div>
-          {!registrationEnabled && <p className="text-sm text-amber-700 mb-3">A nyilvános regisztrációt még nem nyitottuk meg. A bejelentkezés meglévő fiókkal lehetséges.</p>}
+          {!registrationEnabled && <p className="text-sm text-amber-700 mb-3">A regisztráció jelenleg zárva van. A bejelentkezés meglévő fiókkal lehetséges.</p>}
+          {registrationEnabled && invitationRequired && <p className="text-sm text-indigo-700 mb-3">Regisztráció csak személyre szóló, egyszer használható meghívókóddal lehetséges.</p>}
           <form onSubmit={submit} className="grid gap-3 max-w-md">
             {mode === 'register' && (
               <label className="text-sm">Név
                 <input required minLength={2} maxLength={120} autoComplete="name" value={displayName} onChange={e => setDisplayName(e.target.value)} className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900" />
+              </label>
+            )}
+            {mode === 'register' && invitationRequired && (
+              <label className="text-sm">Meghívókód
+                <input required type="text" autoComplete="off" inputMode="text" minLength={64} maxLength={64} spellCheck={false}
+                  value={invitationCode} onChange={e => setInvitationCode(e.target.value)}
+                  placeholder="Az e-mailben kapott 64 karakteres kód"
+                  className="w-full mt-1 rounded-lg border border-slate-300 px-3 py-2 text-slate-900 font-mono text-sm" />
               </label>
             )}
             <label className="text-sm">E-mail-cím
