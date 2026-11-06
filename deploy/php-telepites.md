@@ -167,3 +167,46 @@ Telepítés utáni lépések:
 5. Sikeres levélküldés után ellenőrizd a megerősítést és a jelszó-visszaállítást.
 
 **Ne állítsd éles nyilvános regisztrációra a weboldalt**, amíg a kézbesítés és az adatvédelmi folyamatok nem lettek ellenőrizve.
+
+## Tanársegéd: ellenőrzött források és külön képgenerálás (2026-11)
+
+A hibásan felismert `kesztler-zenei-alapismeretek.txt` OCR-szöveget **kivettük**
+a `server-data/forrasok/` könyvtárból. Az exportáló és a PHP betöltő
+egyaránt szűri a Kesztler-féle forráscímkéket; a következő kiadás
+`api/knowledge.php` állománya sem tartalmazza. Ez **nem a könyv szakmai
+minőségének** megítélése, kizárólag a hibás digitális átirat kizárása.
+
+Az Admin felület új *Tanársegéd – további források* részében ellenőrzött
+`.txt` vagy `.md` szövegek tölthetők fel (UTF-8, maximum 300 KB/fájl,
+maximum 25 dokumentum). Az alkalmazás privát mappában tárolja őket:
+`/home/zeneelmeletadmin/zeneelmelet-ai-sources/` — nem a `htdocs` alatt.
+Feltöltés vagy eltávolítás után a PHP kereső azonnal az új állományból dolgozik;
+ehhez nincs szükség új GitHub-csomagra. PDF, fényképezett könyvoldal vagy
+nyers OCR-átirat közvetlen feltöltése nem engedélyezett. Előbb ellenőrizd
+és alakítsd pontos, jogszerűen használható UTF-8 szöveggé.
+
+A Gemini **képgenerálás a régi, előre rögzített képek megjelenítésétől külön
+funkció**, amelyet csak a szerveroldali privát konfigurációval lehet aktiválni:
+
+```php
+'tutor_image_generation' => [
+    'enabled' => false, // true csak ellenőrzött API-számlázás és keret után
+    'model' => 'gemini-2.5-flash-image',
+    'api_key' => 'A_GOOGLE_AI_STUDIO_API_KULCSOD',
+],
+```
+
+A PHP a `generativelanguage.googleapis.com` hivatalos API-ját hívja.
+Az API-kulcs soha nem kerül a böngészőbe vagy a GitHubba. Bekapcsolás esetén
+a képgenerálás **bejelentkezéshez kötött**, a kéréslimit 3/15 perc/felhasználó
+és IP kombinációval. A kép csak a kérés válaszában, átmenetileg jelenik meg,
+az alkalmazás nem menti el a szerverre. A rövid PHP API-kérés előbb is
+megszakadhat, ha a szolgáltató nagyon lassú, így élesítéskor próbát igényel.
+A generált képekben a kotta és a hangközök pontatlanok lehetnek.
+
+**Költségek:** képgeneráláshoz a Google API fizetős modellkerete
+szükséges lehet. A `enabled=false` beállítás mellett nem történik képgenerálási
+API-hívás és nincs ilyen költség. A szerver kimenő HTTPS-kapcsolatát
+és a Google AI Studio projekt kvótáit előbb ellenőrizni kell.
+Egyidejű sokfelhasználós használat előtt központi, havi költségkeret,
+nyomon követés és szigorúbb kvótakezelés szükséges.
