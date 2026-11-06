@@ -94,7 +94,7 @@ function buildIndex(): KnowledgeChunk[] {
   }
   for (const period of MUSIC_HISTORY) {
     const summary = [
-      period.lead, ...period.features, ...period.genres, ...period.figures,
+      period.lead, ...(period.sections ?? []).flatMap(section=>[section.title,...section.paragraphs]), ...period.features, ...period.genres, ...period.figures,
       period.example, 'Források: ' + period.sourceLinks.map(link=>link.url).join('; ')
     ].join('\\n');
     const chunk = makeChunk(
