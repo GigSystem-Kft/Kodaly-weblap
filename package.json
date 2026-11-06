@@ -9,7 +9,7 @@
     "start": "tsx server.ts",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
-    "test": "node --import tsx --test server-knowledge.test.ts progress.test.ts"
+    "test": "node --import tsx --test server-knowledge.test.ts progress.test.ts scripts/test-music-history.ts scripts/test-curriculum67.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
