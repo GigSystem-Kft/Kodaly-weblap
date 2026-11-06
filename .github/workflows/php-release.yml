@@ -63,6 +63,8 @@ jobs:
           php -v
           php -l php/api/index.php
           php -l php/api/admin.php
+          php -l php/api/music-answers.php
+          php scripts/test-php-music-answers.php
           php -l deploy/zeneelmelet-private.example.php
           node --check scripts/create-invitation.mjs
       - name: Test invitation signup against MySQL
@@ -78,6 +80,7 @@ jobs:
           cp -a dist/. release/
           cp php/api/index.php release/api/index.php
           cp php/api/admin.php release/api/admin.php
+          cp php/api/music-answers.php release/api/music-answers.php
           cp -a php/api/vendor release/api/vendor
           node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
           cd release
