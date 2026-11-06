@@ -100,7 +100,7 @@ export const NEW_QUIZZES: QuizQuestion[] = questions.map(([question,correct,...r
   id:'curriculum67-q'+String(index+1).padStart(2,'0'),
   chapterId:index<12?'kreativ':'zenetortenet',
   question,
-  options: [correct,rest[0],rest[1],rest[2]],
-  correctIndex:0,
+  options: [correct,rest[0],rest[1],rest[2]].map((_, pos, array) => array[(pos + 4 - (index % 4)) % 4]),
+  correctIndex: index % 4,
   explanation:rest[3]
 }));
