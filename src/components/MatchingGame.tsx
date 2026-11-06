@@ -10,6 +10,8 @@ interface MatchingGameProps {
 }
 
 export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCategory }) => {
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory ?? 'all');
+  const categories = ['all', ...new Set(MATCHING_PAIRS.map(pair => pair.category))];
   const [terms, setTerms] = useState<{ id: string; text: string; pairId: string }[]>([]);
   const [matches, setMatches] = useState<{ id: string; text: string; pairId: string }[]>([]);
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
@@ -19,8 +21,8 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
   const initGame = () => {
-    const categoryPairs = initialCategory
-      ? MATCHING_PAIRS.filter((pair) => pair.category === initialCategory)
+    const categoryPairs = selectedCategory !== 'all'
+      ? MATCHING_PAIRS.filter((pair) => pair.category === selectedCategory)
       : MATCHING_PAIRS;
     const shuffledPairs = [...categoryPairs].sort(() => Math.random() - 0.5);
     const subset = shuffledPairs.slice(0, Math.min(6, shuffledPairs.length));
@@ -37,7 +39,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
 
   useEffect(() => {
     initGame();
-  }, [initialCategory]);
+  }, [selectedCategory]);
 
   const handleSelectTerm = (id: string, pairId: string) => {
     if (matchedPairs.includes(pairId)) return;
@@ -97,6 +99,19 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
         </p>
       </div>
 
+      <div className="flex flex-wrap gap-2 justify-center mb-7" aria-label="Párosító témakör">
+        {categories.map(category => (
+          <button key={category} type="button"
+            onClick={() => setSelectedCategory(category)}
+            className={`px-3 py-2 rounded-xl border text-xs transition-colors ${
+              selectedCategory === category
+                ? 'border-indigo-400 bg-indigo-600 text-white'
+                : 'border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800'
+            }`}>
+            {category === 'all' ? 'Összes téma' : category}
+          </button>
+        ))}
+      </div>
       {isCompleted ? (
         <div className="bg-slate-900/90 border border-emerald-500/40 rounded-3xl p-8 text-center shadow-2xl">
           <div className="w-16 h-16 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
