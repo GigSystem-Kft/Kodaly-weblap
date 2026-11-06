@@ -111,16 +111,18 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
         </div>
 
         <div className="flex items-center justify-between">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              playNote('C5', 400);
-            }}
-            className="p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700"
-            title="Hang lejátszása"
-          >
-            <Volume2 className="w-4 h-4" />
-          </button>
+          {!['Kreatív zenei nevelés','Zenetörténet','Zenetörténet – alkotók'].includes(currentCard.category) && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                playNote('C5', 400);
+              }}
+              className="p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700"
+              title="Példahang lejátszása (C5)"
+            >
+              <Volume2 className="w-4 h-4" />
+            </button>
+          )}
           <span className="text-xs text-slate-400 group-hover:text-indigo-300 transition-colors">
             {isFlipped ? 'Mutasd a kifejezést' : 'Mutasd a jelentést'}
           </span>
