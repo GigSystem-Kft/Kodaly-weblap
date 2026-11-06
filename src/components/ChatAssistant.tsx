@@ -79,13 +79,11 @@ export const ChatAssistant: React.FC = () => {
         setAiMode('error');
         setMessages((prev) => [...prev, { role: 'model', text: data.error || 'Nem sikerült választ kapni az AI-tól.' }]);
       } else if (data.reply) {
-        const isFallback = data.mode === 'fallback';
+        const isFallback = data.mode !== 'gemini';
         setAiMode(isFallback ? 'fallback' : 'gemini');
         setMessages((prev) => [...prev, {
           role: 'model',
-          text: isFallback
-            ? `ℹ️ Kereshető helyi tudásbázis (Gemini API-kulcs nincs beállítva). A forrásokból releváns szövegrészleteket mutatok.\n\n${data.reply}`
-            : data.reply,
+          text: data.reply,
         }]);
       } else {
         setAiMode('error');
@@ -139,7 +137,7 @@ export const ChatAssistant: React.FC = () => {
                   <span>
                     {aiMode === 'checking' && 'AI állapotának ellenőrzése...'}
                     {aiMode === 'gemini' && 'Gemini konfigurálva'}
-                    {aiMode === 'fallback' && 'Helyi tudásbázis (Gemini nélkül)'}
+                    {aiMode === 'fallback' && 'Helyi tanársegéd – ellenőrzött fogalmak'}
                     {aiMode === 'error' && 'AI-kapcsolati hiba'}
                   </span>
                 </p>
