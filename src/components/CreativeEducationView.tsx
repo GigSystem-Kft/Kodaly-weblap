@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CREATIVE_SOURCE, CREATIVE_THEMES, CREATIVE_PRACTICES } from '../data/creativeEducation';
-import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Users, Clock, Target } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Users, Clock, Target, X, ZoomIn } from 'lucide-react';
 
 interface CreativeEducationViewProps {
   onBack?: () => void;
@@ -10,6 +10,7 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
   const [theme, setTheme] = useState('Összes téma');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [missingImages, setMissingImages] = useState<string[]>([]);
+  const [enlargedImageId, setEnlargedImageId] = useState<string | null>(null);
   const sourceImages = [
     {
       id: 'szunet',
@@ -33,6 +34,16 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
       related: 'testritmus',
     },
   ];
+  const enlargedImage = sourceImages.find(image => image.id === enlargedImageId) ?? null;
+  useEffect(() => {
+    if (!enlargedImageId) return;
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setEnlargedImageId(null);
+    };
+    window.addEventListener('keydown', onEscape);
+    return () => window.removeEventListener('keydown', onEscape);
+  }, [enlargedImageId]);
+
   const filtered = theme === 'Összes téma' ? CREATIVE_PRACTICES :
     CREATIVE_PRACTICES.filter(practice => practice.theme === theme);
 
@@ -74,8 +85,15 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
           {sourceImages.filter(image => !missingImages.includes(image.id)).map(image => (
             <figure key={image.id} className="rounded-xl border border-[#1c1c1c]/15 bg-white overflow-hidden">
-              <img src={image.src} alt={image.title} loading="lazy" className="w-full object-contain bg-white"
-                onError={() => setMissingImages(previous => previous.includes(image.id) ? previous : [...previous, image.id])} />
+              <button type="button" onClick={() => setEnlargedImageId(image.id)}
+                aria-label={image.title + ' nagyítása'}
+                className="block w-full relative cursor-zoom-in group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <img src={image.src} alt={image.title} loading="lazy" className="w-full object-contain bg-white"
+                  onError={() => setMissingImages(previous => previous.includes(image.id) ? previous : [...previous, image.id])} />
+                <span className="absolute right-2 bottom-2 bg-white/90 rounded-full p-1.5 shadow text-slate-700 group-hover:text-indigo-600" aria-hidden="true">
+                  <ZoomIn size={18} />
+                </span>
+              </button>
               <figcaption className="p-3 text-xs text-[#1c1c1c]/75">
                 <strong className="block mb-1">{image.title}</strong>
                 <span>{CREATIVE_SOURCE.author} ({CREATIVE_SOURCE.year}): {CREATIVE_SOURCE.title}, {image.page} oldal.</span>
@@ -136,8 +154,11 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
                   </div>
                   {sourceImages.filter(image => image.related === practice.id && !missingImages.includes(image.id)).map(image => (
                     <figure key={image.id} className="mt-5 max-w-xl rounded-xl border border-[#1c1c1c]/15 overflow-hidden">
-                      <img src={image.src} alt={image.title} loading="lazy" className="w-full bg-white"
-                        onError={() => setMissingImages(previous => previous.includes(image.id) ? previous : [...previous, image.id])} />
+                      <button type="button" onClick={() => setEnlargedImageId(image.id)}
+                        aria-label={image.title + ' nagyítása'} className="block w-full cursor-zoom-in focus-visible:outline-2 focus-visible:outline-indigo-600">
+                        <img src={image.src} alt={image.title} loading="lazy" className="w-full bg-white"
+                          onError={() => setMissingImages(previous => previous.includes(image.id) ? previous : [...previous, image.id])} />
+                      </button>
                       <figcaption className="px-3 py-2 bg-slate-50 text-xs text-[#1c1c1c]/70">
                         Forrás: {CREATIVE_SOURCE.author} ({CREATIVE_SOURCE.year}), {image.page} oldal.
                       </figcaption>
@@ -152,6 +173,25 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
           );
         })}
       </div>
+      {enlargedImage && (
+        <div role="dialog" aria-modal="true" aria-label={enlargedImage.title + ' nagyított képe'}
+          className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4 md:p-8"
+          onClick={() => setEnlargedImageId(null)}>
+          <button type="button" aria-label="Nagyított kép bezárása" autoFocus
+            onClick={() => setEnlargedImageId(null)}
+            className="absolute top-4 right-4 text-white bg-slate-800 rounded-full p-3 hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-white">
+            <X size={24} />
+          </button>
+          <img src={enlargedImage.src} alt={enlargedImage.title}
+            className="max-w-full max-h-[78vh] object-contain rounded-md bg-white"
+            onClick={event => event.stopPropagation()} />
+          <p className="max-w-3xl mt-4 text-center text-sm text-white">
+            <strong>{enlargedImage.title}</strong>
+            {' — '}{CREATIVE_SOURCE.author} ({CREATIVE_SOURCE.year}): {CREATIVE_SOURCE.title}, {enlargedImage.page} oldal.
+          </p>
+          <p className="mt-1 text-white/70 text-xs">Bezárás: Esc vagy kattintás a háttérre</p>
+        </div>
+      )}
     </div>
   );
 };
