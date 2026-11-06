@@ -234,3 +234,29 @@ alatt áll, **nyilvános közzététel előtt meg kell győződni az ábrák
 újraközlésére vonatkozó engedélyről**. A részleteket ne terjeszd tovább
 jogosultság nélkül. Az alkalmazás működik a képek nélkül is; sikertelen
 képbetöltéskor eltünteti az érintett képhelyet.
+
+## 2026-11-06 – teljes Kreatív kézikönyv visszavonása
+
+A Szirányi Borbála-féle teljes 71 oldalas, nyilvános könyvmásolatot kivettük
+a `07. Tankönyvek` menüből. A régi `textbook-5` felületet a React-alkalmazás
+többé nem nyitja meg. A `06. Kreatív zenei nevelés` önálló, saját
+megfogalmazású módszertani feldolgozása megmarad és **21 feladatra bővült**.
+
+**Fontos: a menüpont elrejtése nem törli a már feltöltött fájlokat.**
+A CloudPanel Fájlkezelőben, a megfelelő webhely
+`/home/zeneelmeletadmin/htdocs/zeneelmelet.digitaliskottatar.hu/`
+gyökérkönyvtárából **töröld kizárólag a `tankonyvek/5/` mappát teljes
+tartalmával** (`oldalak.json` és `p001.jpg` … `p071.jpg`).
+A `tankonyvek/1/` … `tankonyvek/4/` mappákat NE töröld.
+Ez biztosítja, hogy a régi közvetlen könyvoldal-URL-ek se működjenek.
+
+Törlés után ellenőrizd például ezt a címet:
+`https://zeneelmelet.digitaliskottatar.hu/tankonyvek/5/p001.jpg`.
+Ennek HTTP 404-et kell adnia, nem könyvborítót vagy indexoldalt.
+Nginx/Varnish vagy CDN gyorstárból is töröld a régi oldalakat, ha továbbra
+is láthatók.
+
+A `Kreatív` módszertani oldalon külön létező 3 eredeti illusztrációhoz
+a felhasználási jogot külön kell tisztázni. Engedély hiányában az
+`images/kreativ/` alatt tárolt eredeti képrészleteket se terjeszd nyilvánosan.
+A szöveges, önálló összefoglalók nem igénylik az eredeti PDF közzétételét.
