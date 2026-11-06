@@ -69,6 +69,7 @@ jobs:
           php scripts/test-php-tutor-visuals.php
           php -l php/api/tutor-image-generation.php
           php -l php/api/tutor-sources.php
+          php scripts/test-php-tutor-sources.php
           php scripts/test-php-tutor-image-generation.php
           php -l deploy/zeneelmelet-private.example.php
           node --check scripts/create-invitation.mjs
