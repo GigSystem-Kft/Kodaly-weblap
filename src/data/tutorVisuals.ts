@@ -23,6 +23,11 @@ export const TUTOR_VISUALS: Record<string, TutorVisual> = {
     description: 'Dúr hangnemek és relatív molljaik kvintlépések szerint.',
     image: '/images/kvintkor.svg', source: 'Zeneelméleti Műhely – saját szerkesztésű ábra'
   },
+  dur_akkord: {
+    id: 'dur_akkord', title: 'C-dúr hármashangzat',
+    description: 'A C, E és G hangok együtt dúr hármashangzatot alkotnak: nagy terc és kis terc.',
+    image: '/images/c-dur-harmashangzat.svg', source: 'Zeneelméleti Műhely – saját szerkesztésű ábra'
+  },
   hangkoz: fromLesson('hangkoz', 'hangkoz-fajtak'),
   szolmizacio: fromLesson('szolmizacio', 'szolmizacio-elonyai'),
   elojegyzes: fromLesson('elojegyzes', 'modositok', 1),
