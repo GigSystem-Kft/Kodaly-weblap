@@ -9,7 +9,7 @@ export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) =
   const query = normalize(search.trim());
   const visible = MUSIC_HISTORY.filter(period =>
     !query || normalize([period.name,period.lead,period.period,
-      ...period.features,...period.genres,...period.figures].join(' ')).includes(query)
+      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title)].join(' ')).includes(query)
   );
 
   return (
@@ -112,6 +112,16 @@ export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) =
               </button>
               {expanded && (
                 <div id={`history-${period.id}`} className="px-5 md:px-7 pt-5 pb-7 border-t border-slate-100">
+                  {period.sections?.map(section => (
+                    <section key={section.title} className="mb-6">
+                      <h4 className="font-serif-cormorant font-semibold text-xl md:text-2xl mb-3">{section.title}</h4>
+                      <div className="space-y-3">
+                        {section.paragraphs.map((paragraph, i) => (
+                          <p key={i} className="text-sm md:text-base text-slate-700 leading-relaxed">{paragraph}</p>
+                        ))}
+                      </div>
+                    </section>
+                  ))}
                   <div className="grid md:grid-cols-2 gap-7">
                     <div>
                       <h4 className="font-semibold mb-2">Jellegzetességek</h4>
@@ -136,6 +146,27 @@ export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) =
                       <p className="text-sm text-slate-700">{period.question}</p>
                     </div>
                   </div>
+                  {!!period.listening?.length && (
+                    <section className="mt-6 p-5 bg-indigo-50/50 border border-indigo-100 rounded-xl">
+                      <h4 className="font-semibold mb-2">Zenehallgatás – jellemző művek</h4>
+                      <p className="text-sm text-slate-600 mb-4">
+                        A hivatkozások a YouTube-on nyílnak meg, saját videót nem másolunk a weboldalra.
+                        A keresési találatoknál válassz szakmailag megfelelő előadást.
+                      </p>
+                      <div className="space-y-3">
+                        {period.listening.map(item => (
+                          <div key={item.url} className="bg-white border border-indigo-100 rounded-lg p-3">
+                            <a href={item.url} target="_blank" rel="noopener noreferrer"
+                              className="inline-flex gap-1 items-center font-semibold text-sm text-[#4a54e1] hover:underline">
+                              {item.title}<ExternalLink size={14} />
+                            </a>
+                            <p className="text-sm text-slate-700 mt-1"><strong>Megfigyelés:</strong> {item.focus}</p>
+                            {item.kind === 'search' && <p className="text-xs text-slate-500 mt-1">YouTube-keresési hivatkozás, nem ellenőrzött konkrét felvétel.</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )}
                   <div className="mt-6 border-t pt-4">
                     <h4 className="font-semibold text-xs uppercase tracking-wide mb-2">Felhasznált Wikipédia-szócikkek</h4>
                     <div className="flex flex-wrap gap-4 text-sm">
