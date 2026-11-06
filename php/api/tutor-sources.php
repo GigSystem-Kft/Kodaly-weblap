@@ -6,6 +6,7 @@ declare(strict_types=1);
  * Deliberately rejects PDFs/OCR: those must be proofread before ingestion.
  */
 function tutorSourceDirectory(): string {
+    if (PHP_SAPI === 'cli' && ($override = getenv('ZM_TEST_SOURCE_DIR')) !== false && $override !== '') return $override;
     return dirname(__DIR__, 3) . '/zeneelmelet-ai-sources';
 }
 function tutorSourceFile(string $id): string {
