@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
+import { MUSIC_HISTORY } from '../src/data/musicHistory';
 
 type Entry = { source: string; label: string; text: string; creativePractice?: {
   id: string; title: string; theme: string; goal: string; materials: string;
@@ -35,6 +36,21 @@ for (const practice of CREATIVE_PRACTICES) {
       goal: practice.goal, materials: practice.materials, steps: practice.steps,
       observation: practice.observation, extension: practice.extension, page: practice.page
     }
+  });
+}
+for (const period of MUSIC_HISTORY) {
+  entries.push({
+    source: 'Zenetörténet – önálló oktatási összefoglaló, magyar Wikipédia-szócikkek alapján',
+    label: `Zenetörténet / ${period.name} / ${period.period}`,
+    text: [
+      period.lead,
+      'Jellemzők: ' + period.features.join('; '),
+      'Műfajok: ' + period.genres.join('; '),
+      'Zeneszerzők és személyek: ' + period.figures.join('; '),
+      'Hallgatási feladat: ' + period.example,
+      'Önellenőrző kérdés: ' + period.question,
+      'Források: ' + period.sourceLinks.map(link => link.name + ' ' + link.url).join('; ')
+    ].join('\\n')
   });
 }
 const root = resolve('server-data');
