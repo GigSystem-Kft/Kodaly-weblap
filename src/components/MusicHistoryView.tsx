@@ -3,7 +3,13 @@ import { MUSIC_HISTORY } from '../data/musicHistory';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../data/musicHistoryProfiles';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 
-export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+interface MusicHistoryViewProps {
+  onBack: () => void;
+  onQuiz: () => void;
+  onFlashcards: () => void;
+  onMatching: () => void;
+}
+export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQuiz, onFlashcards, onMatching }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
@@ -235,6 +241,15 @@ export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) =
           );
         })}
       </div>
+      <aside className="mt-10 border border-indigo-200 rounded-2xl p-5 md:p-7 bg-indigo-50/60">
+        <h3 className="font-serif-cormorant font-semibold text-2xl mb-2">Gyakorold a zenetörténetet!</h3>
+        <p className="text-sm text-slate-700 mb-4">A teljes fejezet után válassz feladattípust. Korábbi eredményeid megmaradnak.</p>
+        <div className="flex gap-3 flex-wrap">
+          <button type="button" onClick={onFlashcards} className="px-4 py-3 rounded-xl border border-indigo-200 bg-white text-[#4a54e1] font-semibold hover:bg-indigo-50">Szókártyák</button>
+          <button type="button" onClick={onMatching} className="px-4 py-3 rounded-xl border border-indigo-200 bg-white text-[#4a54e1] font-semibold hover:bg-indigo-50">Párosító játék</button>
+          <button type="button" onClick={onQuiz} className="px-4 py-3 rounded-xl bg-[#4a54e1] text-white font-semibold hover:opacity-90">Tudáspróba</button>
+        </div>
+      </aside>
       <p className="text-xs text-slate-500 mt-8">
         Tájékozódási forrás: Wikipédia szerkesztői közössége, magyar Wikipédia.
         Az összefoglalók saját megfogalmazásban készültek; a forrásoldalak időközben változhatnak.
