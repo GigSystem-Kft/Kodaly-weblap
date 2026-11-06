@@ -8,6 +8,7 @@ interface Message {
   role: 'user' | 'model';
   text: string;
   visuals?: string[];
+  generatedImage?: string;
 }
 
 const PAGE_IMG = (n: number) => `/assets/jegyzet/oldal-${n}.jpg`;
@@ -28,6 +29,7 @@ export const ChatAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [zoomPage, setZoomPage] = useState<number | null>(null);
   const [zoomVisual, setZoomVisual] = useState<string | null>(null);
+  const [zoomGenerated, setZoomGenerated] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'model',
@@ -89,6 +91,7 @@ export const ChatAssistant: React.FC = () => {
           role: 'model',
           text: data.reply,
           visuals: Array.isArray(data.visuals) ? data.visuals.filter((id: unknown) => typeof id === 'string' && Object.prototype.hasOwnProperty.call(TUTOR_VISUALS, id)).slice(0, 3) : [],
+          generatedImage: typeof data.generatedImage === 'string' && /^data:image\/(png|jpeg|webp);base64,[a-zA-Z0-9+/=]+$/.test(data.generatedImage) && data.generatedImage.length < 10000000 ? data.generatedImage : undefined,
         }]);
       } else {
         setAiMode('error');
@@ -193,6 +196,19 @@ export const ChatAssistant: React.FC = () => {
                         >
                           {clean}
                         </ReactMarkdown>
+                        {m.generatedImage && (
+                          <figure className="mt-3 overflow-hidden rounded-xl bg-white border border-slate-600">
+                            <button type="button" className="w-full cursor-zoom-in"
+                              onClick={() => setZoomGenerated(m.generatedImage ?? null)}
+                              aria-label="AI által készített ábra nagyítása">
+                              <img src={m.generatedImage} alt="AI által készített zeneelméleti szemléltető kép"
+                                className="w-full max-h-80 object-contain" />
+                            </button>
+                            <figcaption className="p-2 text-xs text-slate-700">
+                              Újonnan generált kép · A kottaképet és a hangközöket érdemes ellenőrizni.
+                            </figcaption>
+                          </figure>
+                        )}
                         {m.visuals && m.visuals.length > 0 && (
                           <div className="mt-3 space-y-3">
                             {m.visuals.map(id => {
@@ -263,6 +279,15 @@ export const ChatAssistant: React.FC = () => {
               <Send className="w-4 h-4" />
             </button>
           </form>
+        </div>
+      )}
+      {zoomGenerated && (
+        <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-5"
+          role="dialog" aria-modal="true" aria-label="Generált ábra nagyítása"
+          onClick={() => setZoomGenerated(null)}>
+          <button type="button" aria-label="Bezárás" onClick={() => setZoomGenerated(null)}
+            className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white"><X className="w-5 h-5" /></button>
+          <img src={zoomGenerated} alt="AI által generált ábra" className="max-w-full max-h-full rounded-lg bg-white object-contain" onClick={e=>e.stopPropagation()} />
         </div>
       )}
       {zoomVisual && TUTOR_VISUALS[zoomVisual] && (
