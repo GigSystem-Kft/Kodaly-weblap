@@ -18,7 +18,6 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
     { id: 'quiz', label: '04. Teszt' },
     { id: 'eartraining', label: '05. Hallás' },
     { id: 'dashboard', label: '06. Profil' },
-    { id: 'creative', label: 'Kreatív' },
     ...(isAdmin ? [{ id: 'admin', label: 'Admin' }] : []),
   ];
 
