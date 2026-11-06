@@ -1,5 +1,6 @@
 import { Chapter, Flashcard, QuizQuestion, MatchingPair } from '../types';
 import { ADDITIONAL_LESSONS, ADDITIONAL_QUESTIONS, ADDITIONAL_FLASHCARDS, ADDITIONAL_MATCHING } from './extendedMusicData';
+import { NEW_FLASHCARDS, NEW_QUIZZES, NEW_MATCHING } from './curriculum67Practice';
 
 export const MUSIC_CHAPTERS: Chapter[] = [
   {
@@ -587,3 +588,7 @@ for (const chapter of MUSIC_CHAPTERS) {
 FLASHCARDS_DATA.push(...ADDITIONAL_FLASHCARDS);
 QUIZ_QUESTIONS.push(...ADDITIONAL_QUESTIONS);
 MATCHING_PAIRS.push(...ADDITIONAL_MATCHING);
+// Additive banks: keep all previous IDs and recorded student results intact.
+FLASHCARDS_DATA.push(...NEW_FLASHCARDS);
+QUIZ_QUESTIONS.push(...NEW_QUIZZES);
+MATCHING_PAIRS.push(...NEW_MATCHING);
