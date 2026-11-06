@@ -6,10 +6,12 @@ declare(strict_types=1);
  * No claims that retrieved documents or generative AI produced these answers.
  */
 function musicNormalize(string $text): string {
-    $text = strtr(mb_strtolower($text, 'UTF-8'), [
+    $text = strtolower(strtr($text, [
         'á'=>'a','é'=>'e','í'=>'i','ó'=>'o','ö'=>'o','ő'=>'o',
-        'ú'=>'u','ü'=>'u','ű'=>'u'
-    ]);
+        'ú'=>'u','ü'=>'u','ű'=>'u',
+        'Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o','Ö'=>'o','Ő'=>'o',
+        'Ú'=>'u','Ü'=>'u','Ű'=>'u'
+    ]));
     return $text;
 }
 
