@@ -85,7 +85,7 @@ function buildIndex(): KnowledgeChunk[] {
     { file: 'Bartáné Góhér Edit – egyetemi jegyzet', path: resolve(DATA_DIR, 'jegyzet.txt') }
   ];
   if (existsSync(SOURCES_DIR)) {
-    for (const file of readdirSync(SOURCES_DIR).filter(f => /\.(txt|md)$/i.test(f) && !f.startsWith('_')).sort()) {
+    for (const file of readdirSync(SOURCES_DIR).filter(f => /\.(txt|md)$/i.test(f) && !f.startsWith('_') && !/kesztler[-_ ]zenei[-_ ]alapismeretek/i.test(f)).sort()) {
       sources.push({ file, path: resolve(SOURCES_DIR, file) });
     }
   }
