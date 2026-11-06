@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
+import { CreativeEducationView } from './components/CreativeEducationView';
 import { ChapterDetailView } from './components/ChapterDetailView';
 import { FlashcardsView } from './components/FlashcardsView';
 import { MatchingGame } from './components/MatchingGame';
@@ -172,7 +173,12 @@ export default function App() {
           <ChapterListView
             onSelectChapter={handleSelectChapter}
             progress={progress}
+            onOpenCreative={() => { setActiveTab('creative'); window.scrollTo({top:0,behavior:'smooth'}); }}
           />
+        )}
+
+        {activeTab === 'creative' && (
+          <CreativeEducationView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
         )}
 
         {activeTab === 'chapterDetail' && selectedChapter && (
