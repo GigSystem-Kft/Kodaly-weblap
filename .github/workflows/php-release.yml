@@ -68,6 +68,7 @@ jobs:
           php -l php/api/tutor-visuals.php
           php scripts/test-php-tutor-visuals.php
           php -l php/api/tutor-image-generation.php
+          php -l php/api/tutor-sources.php
           php scripts/test-php-tutor-image-generation.php
           php -l deploy/zeneelmelet-private.example.php
           node --check scripts/create-invitation.mjs
@@ -87,6 +88,7 @@ jobs:
           cp php/api/music-answers.php release/api/music-answers.php
           cp php/api/tutor-visuals.php release/api/tutor-visuals.php
           cp php/api/tutor-image-generation.php release/api/tutor-image-generation.php
+          cp php/api/tutor-sources.php release/api/tutor-sources.php
           cp -a php/api/vendor release/api/vendor
           node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
           php -r '$a=require "release/api/knowledge.php"; foreach($a as $e){if(stripos($e["source"]??"", "kesztler")!==false) {fwrite(STDERR,"Excluded OCR text found in index\\n"); exit(1);}} echo "Source blacklist verified\\n";'
