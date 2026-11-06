@@ -6,9 +6,10 @@ import { CheckCircle2, ChevronRight } from 'lucide-react';
 interface ChapterListViewProps {
   onSelectChapter: (chapter: Chapter) => void;
   progress: UserProgress;
+  onOpenCreative: () => void;
 }
 
-export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapter, progress }) => {
+export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapter, progress, onOpenCreative }) => {
   const totalChapters = MUSIC_CHAPTERS.length;
   const completedCount = progress.completedChapters.length;
 
@@ -25,6 +26,16 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
           </p>
         </div>
 
+        <div className="rounded-xl border border-[#4a54e1]/25 bg-[#4a54e1]/[0.05] px-5 py-4 mb-6">
+          <span className="block text-[0.65rem] font-bold uppercase tracking-widest text-[#4a54e1] mb-2">Új módszertani terület</span>
+          <h3 className="font-serif-cormorant text-2xl font-semibold mb-1">Kreatív zenei nevelés</h3>
+          <p className="text-sm text-[#1c1c1c]/70 mb-3">
+            Énekes játékok, ritmikus mozgás és kipróbálható jógyakorlatok a tanításban.
+            Szirányi Borbála tanári kézikönyvére épülő, forrásmegjelölt módszertani ötlettár.
+          </p>
+          <button type="button" onClick={onOpenCreative}
+            className="text-sm font-semibold text-[#4a54e1] hover:underline">Jógyakorlatok megnyitása →</button>
+        </div>
         <div className="flex flex-col sm:flex-row sm:items-center gap-6 pt-6 border-t border-[#1c1c1c]/10">
           <button
             onClick={() => onSelectChapter(MUSIC_CHAPTERS[0])}
