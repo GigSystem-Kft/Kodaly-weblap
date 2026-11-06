@@ -44,6 +44,7 @@ for (const period of MUSIC_HISTORY) {
     label: `Zenetörténet / ${period.name} / ${period.period}`,
     text: [
       period.lead,
+      ...(period.sections ?? []).flatMap(section => [section.title, ...section.paragraphs]),
       'Jellemzők: ' + period.features.join('; '),
       'Műfajok: ' + period.genres.join('; '),
       'Zeneszerzők és személyek: ' + period.figures.join('; '),
