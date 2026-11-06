@@ -247,7 +247,7 @@ export default function App() {
           />
         )}
 
-        {activeTab.startsWith('textbook-') && (
+        {activeTab.startsWith('textbook-') && [1, 2, 3, 4].includes(Number(activeTab.split('-')[1])) && (
           <TextbookView book={Number(activeTab.split('-')[1])} />
         )}
       </main>
