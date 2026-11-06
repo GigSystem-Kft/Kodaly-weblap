@@ -621,7 +621,11 @@ try {
                     answer(200, generateTutorImage($config, $question, $previousTopic));
                 }
                 $visual = tutorImageReply($question, $previousTopic);
-                if ($visual !== null) answer(200,$visual);
+                if ($visual !== null && !empty($visual['visuals'])) {
+                    $visual['reply'] = 'Az önálló képgenerálás még nincs bekapcsolva. Addig egy meglévő, ellenőrzött tananyagábrát mutatok, nem újonnan generált képet.';
+                    answer(200,$visual);
+                }
+                answer(200, generateTutorImage($config, $question, $previousTopic));
             }
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
