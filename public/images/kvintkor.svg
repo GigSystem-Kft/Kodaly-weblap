@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="920" viewBox="0 0 900 920" role="img" aria-labelledby="title desc">
+<title id="title">Kvintkör – dúr hangnemek és párhuzamos molljaik</title>
+<desc id="desc">C-dúrtól az óramutató járásával egyezően kvintenként: G, D, A, E, H, Fisz és Gesz. A másik irányban: F, B, Esz, Asz, Desz és Gesz. Belül az azonos előjegyzésű moll hangnemek.</desc>
+<rect width="900" height="920" fill="#fff"/>
+<text x="450" y="66" text-anchor="middle" font-size="39" font-weight="700" font-family="Georgia,serif" fill="#182b44">Kvintkör</text>
+<text x="450" y="105" text-anchor="middle" font-size="17" font-family="Arial,sans-serif" fill="#40556e">Óramutató szerint: +1 kereszt · Ellentétesen: +1 bé</text>
+<g font-family="Arial,sans-serif">
+<path d="M 450 485 L 368.47 180.73 A 315 315 0 0 1 531.53 180.73 Z" fill="#f1f6fd" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 531.53 180.73 A 315 315 0 0 1 672.74 262.26 Z" fill="#e6effa" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 672.74 262.26 A 315 315 0 0 1 754.27 403.47 Z" fill="#f1f6fd" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 754.27 403.47 A 315 315 0 0 1 754.27 566.53 Z" fill="#e6effa" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 754.27 566.53 A 315 315 0 0 1 672.74 707.74 Z" fill="#f1f6fd" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 672.74 707.74 A 315 315 0 0 1 531.53 789.27 Z" fill="#e6effa" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 531.53 789.27 A 315 315 0 0 1 368.47 789.27 Z" fill="#f1f6fd" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 368.47 789.27 A 315 315 0 0 1 227.26 707.74 Z" fill="#e6effa" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 227.26 707.74 A 315 315 0 0 1 145.73 566.53 Z" fill="#f1f6fd" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 145.73 566.53 A 315 315 0 0 1 145.73 403.47 Z" fill="#e6effa" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 145.73 403.47 A 315 315 0 0 1 227.26 262.26 Z" fill="#f1f6fd" stroke="#b2cbe4" stroke-width="1.2"/>
+<path d="M 450 485 L 227.26 262.26 A 315 315 0 0 1 368.47 180.73 Z" fill="#e6effa" stroke="#b2cbe4" stroke-width="1.2"/>
+
+<circle cx="450" cy="485" r="205" fill="#fff7e9" stroke="#b2cbe4" stroke-width="3"/>
+<circle cx="450" cy="485" r="108" fill="#fff" stroke="#b2cbe4" stroke-width="2"/>
+<text x="450" y="225" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">C-dúr</text>
+<text x="450" y="321" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">a-moll</text>
+<text x="580" y="259.83" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">G-dúr</text>
+<text x="532" y="342.97" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">e-moll</text>
+<text x="675.17" y="355" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">D-dúr</text>
+<text x="592.03" y="403" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">h-moll</text>
+<text x="710" y="485" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">A-dúr</text>
+<text x="614" y="485" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">fisz-moll</text>
+<text x="675.17" y="615" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">E-dúr</text>
+<text x="592.03" y="567" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">cisz-moll</text>
+<text x="580" y="710.17" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">H-dúr</text>
+<text x="532" y="627.03" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">gisz-moll</text>
+<text x="450" y="745" text-anchor="middle" dominant-baseline="middle" font-size="15" font-weight="700" fill="#17395c">Fisz/Gesz-dúr</text>
+<text x="450" y="649" text-anchor="middle" dominant-baseline="middle" font-size="14" fill="#35445d">disz/esz-moll</text>
+<text x="320" y="710.17" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">Desz-dúr</text>
+<text x="368" y="627.03" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">b-moll</text>
+<text x="224.83" y="615" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">Asz-dúr</text>
+<text x="307.97" y="567" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">f-moll</text>
+<text x="190" y="485" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">Esz-dúr</text>
+<text x="286" y="485" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">c-moll</text>
+<text x="224.83" y="355" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">B-dúr</text>
+<text x="307.97" y="403" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">g-moll</text>
+<text x="320" y="259.83" text-anchor="middle" dominant-baseline="middle" font-size="19" font-weight="700" fill="#17395c">F-dúr</text>
+<text x="368" y="342.97" text-anchor="middle" dominant-baseline="middle" font-size="17" fill="#35445d">d-moll</text>
+
+<text x="450" y="474" text-anchor="middle" font-size="21" font-weight="700" fill="#182b44">Dúr</text>
+<text x="450" y="503" text-anchor="middle" font-size="18" fill="#40556e">és relatív moll</text>
+</g>
+<text x="450" y="851" text-anchor="middle" font-size="15" font-family="Arial,sans-serif" fill="#52677c">A Fisz/Gesz enharmonikus hangnemek közös pozícióban szerepelnek.</text>
+<text x="450" y="879" text-anchor="middle" font-size="13" font-family="Arial,sans-serif" fill="#52677c">Zeneelméleti Műhely · Saját szerkesztésű szemléltető ábra</text>
+</svg>
