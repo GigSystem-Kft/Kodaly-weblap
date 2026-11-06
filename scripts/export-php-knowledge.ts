@@ -19,7 +19,7 @@ const files = [
   { file: 'jegyzet.txt', label: 'Bartáné Góhér Edit – egyetemi jegyzet' }
 ];
 const sub = join(root, 'forrasok');
-if (existsSync(sub)) for (const f of readdirSync(sub).filter(x=>/\.(txt|md)$/i.test(x) && !x.startsWith('_'))) {
+if (existsSync(sub)) for (const f of readdirSync(sub).filter(x=>/\.(txt|md)$/i.test(x) && !x.startsWith('_') && !/kesztler[-_ ]zenei[-_ ]alapismeretek/i.test(x))) {
   files.push({ file: 'forrasok/' + f, label: f });
 }
 for (const item of files) {
