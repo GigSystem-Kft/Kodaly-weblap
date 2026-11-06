@@ -7,6 +7,7 @@ function tutorVisualTopic(string $question): ?string {
     $q = musicNormalize($question);
     $rules = [
         'kvintkor' => '/kvintkor/',
+        'dur_akkord' => '/akkord|harmashangzat|hangzat/',
         'hangkoz' => '/hangkoz|\b(kvint|kvart|terc|szekund|oktav|szext|szeptim)\b/',
         'szolmizacio' => '/szolmiz|\b(do|re|mi|fa|szo|la|ti)\b/',
         'elojegyzes' => '/elojegyz/',
