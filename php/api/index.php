@@ -606,6 +606,10 @@ try {
             $question=$data['message'] ?? null;
             if (!is_string($question) || !trim($question) || strlen($question)>1000) fail(400,'Írj egy rövid zeneelméleti kérdést.');
             $question=trim($question);
+            require_once __DIR__ . '/tutor-visuals.php';
+            $previousTopic=is_string($data['previousTopic'] ?? null) ? substr($data['previousTopic'],0,1000) : '';
+            $visual=tutorImageReply($question, $previousTopic);
+            if ($visual!==null) answer(200,$visual);
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
             if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
