@@ -12,4 +12,6 @@ checkVisual(tutorImageReply('Tudsz képet mutatni?', 'Most az előjegyzésről b
 checkVisual(tutorImageReply('Mi a tiszta kvint?', 'kvintkör')===null,'Do not override ordinary theory answers');
 checkVisual(tutorImageReply('Tudsz képet mutatni?', '')['visuals']===[],'No fabricated unrelated image');
 checkVisual(tutorImageReply('Mutass képet a kvintkörről!', '')['visuals']===['kvintkor'],'Explicit circle image');
+checkVisual(tutorImageReply('mutatnál egy ilyen akkordról képet?', 'mondj valamit a Dúr akkordról')['visuals']===['dur_akkord'],'Contextual major chord');
+checkVisual(tutorImageReply('mutass képet a dúr hármashangzatról','')['visuals']===['dur_akkord'],'Explicit major triad image');
 fwrite(STDOUT,"Tutor visual regression checks passed\n");
