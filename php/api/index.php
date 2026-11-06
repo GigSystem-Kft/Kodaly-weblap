@@ -250,7 +250,8 @@ function searchTerms(string $value): array {
     $words = preg_split('/[^a-z0-9]+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
     return array_values(array_unique(array_filter($words,
         static fn(string $w): bool => strlen($w)>2 && !in_array($w,
-        ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy','van','nem','kerlek'],true)
+        ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy','van','nem','kerlek',
+         'roviden','tomoren','lenyegretoro','mondanal','mondj','valamit','szeretnek','tudnal','par','mondatban'],true)
     )));
 }
 function knowledgeEntries(): array {
@@ -268,21 +269,61 @@ function searchLessons(string $question, int $limit=4): array {
         $haystack=searchTerms($entry['text'] . ' ' . $entry['label']);
         $labelWords=searchTerms($entry['label']);
         $matched=array_intersect($tokens,$haystack);
-        $score=count($matched) + count(array_intersect($tokens,$labelWords))*2;
+        // Require actual topic coverage, not one common word from a long PDF page.
+        $topicScore=0;
+        foreach ($tokens as $token) {
+            foreach ($haystack as $word) {
+                if (str_starts_with($word, $token) || str_starts_with($token, $word)) {
+                    $topicScore++;
+                    break;
+                }
+            }
+        }
+        $coverage=$topicScore/count($tokens);
+        if ($topicScore<1 || $coverage<0.75) continue;
+        $score=$topicScore + count(array_intersect($tokens,$labelWords))*4
+            + (($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag' ? 3 : 0);
         if ($score>0) $hits[]=['score'=>$score,'entry'=>$entry];
     }
     usort($hits,static fn($a,$b)=>$b['score'] <=> $a['score']);
     return array_slice(array_map(static fn($v)=>$v['entry'],$hits),0,$limit);
 }
-function lessonReply(array $hits): string {
-    $pieces=['**A tananyagban található kapcsolódó részletek:**'];
+function lessonReply(array $hits, string $question, bool $short=false): string {
+    $tokens=searchTerms($question);
+    $pieces=[];
     foreach ($hits as $hit) {
-        $excerpt=preg_replace('/\\s+/u',' ',(string)$hit['text']) ?? (string)$hit['text'];
-        if (strlen($excerpt)>600) $excerpt=substr($excerpt,0,600) . '…';
-        $pieces[]='**' . $hit['source'] . ' – ' . $hit['label'] . "**\n" . $excerpt;
+        $raw=(string)$hit['text'];
+        $sentences=preg_split('/(?<=[.!?])\\s+/u', preg_replace('/\\s+/u',' ',$raw) ?? $raw) ?: [$raw];
+        // Extract only the relevant explanation, not the beginning of unrelated pages.
+        $ranked=[];
+        foreach ($sentences as $index=>$sentence) {
+            $terms=searchTerms($sentence);
+            $matches=0;
+            foreach ($tokens as $token) {
+                foreach ($terms as $term) {
+                    if (str_starts_with($term,$token) || str_starts_with($token,$term)) {
+                        $matches++; break;
+                    }
+                }
+            }
+            if ($matches>0) $ranked[]=['matches'=>$matches,'index'=>$index,'sentence'=>$sentence];
+        }
+        usort($ranked,static fn($a,$b)=>$b['matches']<=>$a['matches']);
+        if (!$ranked) continue;
+        $answer=trim($ranked[0]['sentence']);
+        if (mbSafeLength($answer)>($short ? 200 : 320)) {
+            $answer=trim(mbSafeCut($answer,$short ? 200 : 320)) . '…';
+        }
+        $pieces[]=$answer . "\n" . '_Forrás: ' . $hit['source'] . ' – ' . $hit['label'] . '_';
+        if ($short) break;
     }
-    $pieces[]='_Ez a PHP-s helyi kereső a betöltött forrásokból idéz. Nem helyettesíti a tanári ellenőrzést._';
-    return implode("\n\n",$pieces);
+    return $pieces ? implode("\n\n",$pieces) :
+        'Nem találtam eléggé releváns, rövid választ a helyi forrásokban.';
+}
+function mbSafeLength(string $text): int { return strlen($text); }
+function mbSafeCut(string $text,int $max): string {
+    $s=substr($text,0,$max);
+    return preg_replace('/[^\\x00-\\x7F][\\x80-\\xBF]*$/','',$s) ?? $s;
 }
 
 try {
@@ -562,12 +603,16 @@ try {
         case 'chat':
             method('POST'); guardWrite($config); throttle('chat', 60);
             $data=getPayload();
-            $question=trim($data['message'] ?? '');
-            if (!is_string($question) || !$question || strlen($question)>1000) fail(400,'Írj egy rövid zeneelméleti kérdést.');
-            $hits=searchLessons($question);
+            $question=$data['message'] ?? null;
+            if (!is_string($question) || !trim($question) || strlen($question)>1000) fail(400,'Írj egy rövid zeneelméleti kérdést.');
+            $question=trim($question);
+            require_once __DIR__ . '/music-answers.php';
+            $direct=musicKnownAnswer($question);
+            if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
+            $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 2);
             if (!$hits) answer(200, ['mode'=>'fallback',
-                'reply'=>'A jelenleg betöltött tananyagban nem találtam biztos forrásrészletet ehhez a kérdéshez. Próbálj pontosabb zeneelméleti fogalmat megadni.']);
-            answer(200,['mode'=>'fallback','reply'=>lessonReply($hits)]);
+                'reply'=>'Erre a kérdésre most nem találtam elég pontos magyarázatot a helyi tananyagban. Próbálj megadni egy konkrét zeneelméleti fogalmat.']);
+            answer(200,['mode'=>'fallback','reply'=>lessonReply($hits, $question, musicBriefRequested($question))]);
         default:
             fail(404,'Ismeretlen API-végpont.');
     }
