@@ -124,6 +124,20 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
         >
           Szolmizáció & Hangközök
         </button>
+        {[
+          { id: 'kreativ', label: '06. Kreatív zenei nevelés' },
+          { id: 'zenetortenet', label: '07. Zenetörténet' }
+        ].map(category => (
+          <button key={category.id}
+            onClick={() => { setSelectedChapter(category.id); restartQuiz(); }}
+            className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+              selectedChapter === category.id
+                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+                : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+            }`}>
+            {category.label}
+          </button>
+        ))}
         <button
           onClick={() => {
             setSelectedChapter('solfege');
