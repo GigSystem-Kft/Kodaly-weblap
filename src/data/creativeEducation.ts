@@ -1,3 +1,4 @@
+import { EXTENDED_CREATIVE_PRACTICES } from './creativeEducationExtended';
 /**
  * Saját megfogalmazású módszertani útmutatók a felhasználó által adott kézikönyv alapján.
  * Forrás: Szirányi Borbála (2021), Kreatív énekes-játékok ritmikus mozgással,
@@ -146,7 +147,8 @@ export const CREATIVE_PRACTICES: CreativePractice[] = [
     ],
     observation: 'A mozgás valóban a hallható zenei változásokat követi-e?',
     extension: 'Két különböző megfigyelési szempont szerint is meghallgathatjátok ugyanazt a zenét.'
-  }
+  },
+  ...EXTENDED_CREATIVE_PRACTICES
 ];
 
 export const CREATIVE_THEMES = [...new Set(CREATIVE_PRACTICES.map(practice => practice.theme))];
