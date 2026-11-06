@@ -258,7 +258,10 @@ function knowledgeEntries(): array {
     $file=__DIR__ . '/knowledge.php';
     if (!is_file($file)) return [];
     $list=require $file;
-    return is_array($list) ? $list : [];
+    $entries = is_array($list) ? $list : [];
+    $entries = array_values(array_filter($entries, static fn($e) => !str_contains(strtolower((string)($e['source'] ?? '')), 'kesztler')));
+    require_once __DIR__ . '/tutor-sources.php';
+    return array_merge($entries, tutorExtraKnowledge());
 }
 function searchLessons(string $question, int $limit=4): array {
     $tokens=searchTerms($question);
