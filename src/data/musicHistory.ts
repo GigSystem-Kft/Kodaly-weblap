@@ -1,3 +1,4 @@
+import { MUSIC_HISTORY_EXTRA } from './musicHistoryExtra';
 /**
  * Zenetörténeti áttekintés, önálló fogalmazásban.
  * A Wikipédia-szócikkek ellenőrzési és továbbolvasási források, nem átvett szövegek.
@@ -14,6 +15,8 @@ export interface HistoryPeriod {
   example: string;
   question: string;
   sourceLinks: { name: string; url: string }[];
+  sections?: { title: string; paragraphs: string[] }[];
+  listening?: { title: string; url: string; focus: string; kind: 'video' | 'search' }[];
 }
 const w = (name: string, slug: string) => ({
   name, url: 'https://hu.wikipedia.org/wiki/' + encodeURIComponent(slug).replace(/%2F/g,'/')
@@ -90,3 +93,9 @@ export const MUSIC_HISTORY: HistoryPeriod[] = [
     sourceLinks: [w('Zenetörténet – 20. század','Zenetörténet'),w('Bartók Béla','Bartók_Béla'),w('Kodály Zoltán','Kodály_Zoltán')]
   }
 ];
+
+// Additive enrichment: preserve original identifiers and source-linked base facts.
+for (const period of MUSIC_HISTORY) {
+  const extra = MUSIC_HISTORY_EXTRA.find(item => item.id === period.id);
+  if (extra) { period.sections = extra.sections; period.listening = extra.listening; }
+}
