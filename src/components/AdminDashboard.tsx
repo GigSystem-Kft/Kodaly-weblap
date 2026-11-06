@@ -3,10 +3,14 @@ import { apiFetch } from '../api';
 
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
+type TutorSource = { id: string; title: string; createdAt: string; size: number };
 
 export const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
+  const [sources, setSources] = useState<TutorSource[]>([]);
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [sourceTitle, setSourceTitle] = useState('');
   const [search, setSearch] = useState('');
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
@@ -15,18 +19,44 @@ export const AdminDashboard: React.FC = () => {
 
   const load = useCallback(async (query = '') => {
     setError('');
-    const [u, i] = await Promise.all([
+    const [u, i, sourceResponse] = await Promise.all([
       apiFetch('/api/admin/users?q=' + encodeURIComponent(query)),
-      apiFetch('/api/admin/invitations')
+      apiFetch('/api/admin/invitations'),
+      apiFetch('/api/admin/sources')
     ]);
-    if (!u.ok || !i.ok) throw new Error('Nem sikerült betölteni az adminisztrációs adatokat.');
+    if (!u.ok || !i.ok || !sourceResponse.ok) throw new Error('Nem sikerült betölteni az adminisztrációs adatokat.');
     setUsers((await u.json()).users);
     setInvites((await i.json()).invitations);
+    setSources((await sourceResponse.json()).sources);
   }, []);
 
   useEffect(() => {
     void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
   }, [load]);
+
+  const uploadSource = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!sourceFile || !sourceTitle.trim() || busy) return;
+    setError(''); setMessage(''); setBusy(true);
+    try {
+      if (sourceFile.size > 300000 || !/\.(txt|md)$/i.test(sourceFile.name)) {
+        throw new Error('Csak legfeljebb 300 KB méretű .txt vagy .md fájlt tölthetsz fel.');
+      }
+      const data = new FormData();
+      data.append('file', sourceFile);
+      data.append('title', sourceTitle.trim());
+      const response = await apiFetch('/api/admin/source-upload', { method: 'POST', body: data });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Nem sikerült feltölteni a forrást.');
+      setSourceFile(null); setSourceTitle('');
+      const chooser = document.getElementById('tutor-source-file') as HTMLInputElement | null;
+      if (chooser) chooser.value = '';
+      setMessage('Forrás feltöltve. A Tanársegéd azonnal kereshet benne.');
+      await load(search);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Feltöltési hiba.');
+    } finally { setBusy(false); }
+  };
 
   const action = async (route: string, payload: object, success: string) => {
     setBusy(true); setError(''); setMessage('');
@@ -85,6 +115,41 @@ export const AdminDashboard: React.FC = () => {
         </div>
         <p className="text-xs text-slate-500 mt-3">Maximum 100 találat; további kereséshez szűkítsd a keresőkifejezést. Admin jogot itt nem lehet kiosztani.</p>
       </div>
+      <section className="rounded-xl border bg-white p-5 mb-6" aria-label="Tanársegéd tudásforrásai">
+        <h3 className="font-bold mb-2">Tanársegéd – további források</h3>
+        <p className="text-sm text-slate-600 mb-4">
+          Ellenőrzött UTF-8 szövegeket tölthetsz fel, amelyeket a helyi kereső azonnal használ.
+          PDF-et és automatikus OCR-átiratot előbb szakmailag ellenőrizni és szöveggé alakítani kell.
+        </p>
+        <form onSubmit={uploadSource} className="grid gap-3 mb-5">
+          <label className="text-sm">Forrás címe
+            <input value={sourceTitle} onChange={e=>setSourceTitle(e.target.value)}
+              required maxLength={120} placeholder="Szerző – cím, kiadás" className="block w-full mt-1 p-2 rounded-lg border border-slate-300" />
+          </label>
+          <label className="text-sm">Szövegfájl (.txt vagy .md, legfeljebb 300 KB)
+            <input id="tutor-source-file" type="file" accept=".txt,.md,text/plain,text/markdown"
+              required onChange={e=>setSourceFile(e.target.files?.[0] ?? null)}
+              className="block w-full mt-1 rounded-lg border border-slate-300 p-2" />
+          </label>
+          <div><button disabled={busy || !sourceFile || !sourceTitle.trim()}
+            className="rounded-lg bg-indigo-600 text-white px-4 py-2 disabled:opacity-50">Forrás feltöltése</button></div>
+        </form>
+        {sources.length === 0 && <p className="text-sm text-slate-500">Még nincs külön feltöltött forrás.</p>}
+        {sources.map(source => (
+          <div key={source.id} className="flex flex-wrap items-center justify-between gap-2 py-3 border-t text-sm">
+            <div><strong>{source.title}</strong><p className="text-xs text-slate-500">{(source.size / 1024).toFixed(1)} KB · {source.createdAt}</p></div>
+            <button type="button" disabled={busy} className="text-red-700 underline disabled:opacity-50"
+              onClick={() => {
+                if (window.confirm('Biztosan eltávolítod ezt a forrást a Tanársegédből?')) {
+                  void action('source-delete',{id:source.id},'Forrás eltávolítva.');
+                }
+              }}>Eltávolítás</button>
+          </div>
+        ))}
+        <p className="text-xs text-slate-500 mt-3">
+          Az anyagok a webgyökéren kívül tárolódnak; a feltöltött források nem válnak nyilvánosan letölthetővé.
+        </p>
+      </section>
       <div className="rounded-xl border bg-white p-5">
         <h3 className="font-bold mb-3">Meghívók</h3>
         <div className="overflow-x-auto">
