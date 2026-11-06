@@ -2,7 +2,11 @@
 export function apiUrl(path: string): string {
   if (!import.meta.env.VITE_PHP_API) return path;
   if (!path.startsWith('/api/')) throw new Error('Érvénytelen API útvonal');
-  return '/api/index.php?route=' + encodeURIComponent(path.slice('/api/'.length));
+  const url = new URL(path, 'https://zeneelmelet.digitaliskottatar.hu');
+  const route = url.pathname.slice('/api/'.length);
+  const params = new URLSearchParams(url.search);
+  params.set('route', route);
+  return '/api/index.php?' + params.toString();
 }
 
 export function apiFetch(path: string, options?: RequestInit): Promise<Response> {
