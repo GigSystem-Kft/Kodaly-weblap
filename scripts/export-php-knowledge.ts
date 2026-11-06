@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 
 type Entry = { source: string; label: string; text: string };
 const entries: Entry[] = [];
@@ -13,6 +14,20 @@ for (const chapter of MUSIC_CHAPTERS) {
       text: text.slice(0, 5000)
     });
   }
+}
+for (const practice of CREATIVE_PRACTICES) {
+  entries.push({
+    source: `${CREATIVE_SOURCE.author} (${CREATIVE_SOURCE.year}) – ${CREATIVE_SOURCE.title} (módszertani feldolgozás)`,
+    label: `Kreatív zenei nevelés / ${practice.theme} / ${practice.title}, ${practice.page} oldal`,
+    text: [
+      'Fejlesztési cél: ' + practice.goal,
+      'Csoport: ' + practice.grouping,
+      'Előkészítés: ' + practice.materials,
+      ...practice.steps,
+      'Megfigyelés: ' + practice.observation,
+      'Továbbfejlesztés: ' + practice.extension
+    ].join('\\n')
+  });
 }
 const root = resolve('server-data');
 const files = [
