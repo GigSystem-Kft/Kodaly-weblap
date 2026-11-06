@@ -608,8 +608,18 @@ try {
             $question=trim($question);
             require_once __DIR__ . '/tutor-visuals.php';
             $previousTopic=is_string($data['previousTopic'] ?? null) ? substr($data['previousTopic'],0,1000) : '';
-            $visual=tutorImageReply($question, $previousTopic);
-            if ($visual!==null) answer(200,$visual);
+            // Paid image creation is never automatic for ordinary theory questions.
+            // Only an explicit illustration request may invoke the external provider.
+            if (tutorImageRequested($question)) {
+                require_once __DIR__ . '/tutor-image-generation.php';
+                if (tutorImageGenerationEnabled($config)) {
+                    $imageUser = requireUser($pdo);
+                    throttle('tutor-image-' . $imageUser['id'], 3);
+                    answer(200, generateTutorImage($config, $question, $previousTopic));
+                }
+                $visual = tutorImageReply($question, $previousTopic);
+                if ($visual !== null) answer(200,$visual);
+            }
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
             if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
