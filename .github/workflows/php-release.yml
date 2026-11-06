@@ -64,6 +64,8 @@ jobs:
           php -l php/api/index.php
           php -l php/api/admin.php
           php -l php/api/music-answers.php
+          php -l php/api/creative-answers.php
+          php scripts/test-php-creative-answers.php
           php scripts/test-php-music-answers.php
           php -l php/api/tutor-visuals.php
           php scripts/test-php-tutor-visuals.php
@@ -87,6 +89,7 @@ jobs:
           cp php/api/index.php release/api/index.php
           cp php/api/admin.php release/api/admin.php
           cp php/api/music-answers.php release/api/music-answers.php
+          cp php/api/creative-answers.php release/api/creative-answers.php
           cp php/api/tutor-visuals.php release/api/tutor-visuals.php
           cp php/api/tutor-image-generation.php release/api/tutor-image-generation.php
           cp php/api/tutor-sources.php release/api/tutor-sources.php
