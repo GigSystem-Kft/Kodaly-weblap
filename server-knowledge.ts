@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
+import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
 
 interface KnowledgeChunk {
   source: string;
@@ -80,6 +81,15 @@ function buildIndex(): KnowledgeChunk[] {
         if (chunk) entries.push(chunk);
       }
     }
+  }
+  for (const practice of CREATIVE_PRACTICES) {
+    const label = `Kreatív zenei nevelés / ${practice.theme} / ${practice.title}, ${practice.page} oldal`;
+    const text = [practice.goal, practice.materials, ...practice.steps, practice.observation, practice.extension].join('\\n');
+    const chunk = makeChunk(
+      `${CREATIVE_SOURCE.author} (${CREATIVE_SOURCE.year}) – ${CREATIVE_SOURCE.title} (módszertani feldolgozás)`,
+      label, text, 'lesson'
+    );
+    if (chunk) entries.push(chunk);
   }
   const sources: { file: string; path: string }[] = [
     { file: 'Bartáné Góhér Edit – egyetemi jegyzet', path: resolve(DATA_DIR, 'jegyzet.txt') }
