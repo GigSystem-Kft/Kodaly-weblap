@@ -4,7 +4,8 @@ import { knowledgeContext, knowledgeStatus, localKnowledgeReply, searchKnowledge
 
 test('indexes the course and the existing written sources', () => {
   const status = knowledgeStatus();
-  assert.ok(status.indexedSources >= 6, 'the university note, Kesztler and four schoolbooks must be present');
+  assert.ok(status.indexedSources >= 5, 'the university note and four schoolbooks must be present');
+  assert.ok(!knowledgeContext('Zenei alapismeretek').includes('kesztler-zenei-alapismeretek.txt'), 'unreliable OCR source must not enter the index');
   assert.ok(status.lessonChunks >= 20, 'course lessons must be indexed');
   assert.ok(status.indexedChunks > status.lessonChunks);
 });
