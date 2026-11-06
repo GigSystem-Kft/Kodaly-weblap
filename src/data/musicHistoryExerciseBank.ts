@@ -5,7 +5,7 @@ import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './musicHistoryProfiles';
 export const PORTRAIT_FLASHCARDS: Flashcard[] = COMPOSER_BIOGRAPHIES.map(person => ({
   id: 'histportrait-f-' + person.id,
   term: person.name,
-  definition: person.significance,
+  definition: person.dates + ' · ' + person.keywords.join(', ') + '. Műve: ' + person.works[0] + '.',
   category: 'Zenetörténet – alkotók'
 }));
 export const PORTRAIT_MATCHING: MatchingPair[] = COMPOSER_BIOGRAPHIES.map(person => ({
