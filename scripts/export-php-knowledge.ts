@@ -3,7 +3,10 @@ import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 
-type Entry = { source: string; label: string; text: string };
+type Entry = { source: string; label: string; text: string; creativePractice?: {
+  id: string; title: string; theme: string; goal: string; materials: string;
+  steps: string[]; observation: string; extension: string; page: string;
+} };
 const entries: Entry[] = [];
 for (const chapter of MUSIC_CHAPTERS) {
   for (const sub of chapter.subchapters) {
@@ -26,7 +29,12 @@ for (const practice of CREATIVE_PRACTICES) {
       ...practice.steps,
       'Megfigyelés: ' + practice.observation,
       'Továbbfejlesztés: ' + practice.extension
-    ].join('\\n')
+    ].join('\n'),
+    creativePractice: {
+      id: practice.id, title: practice.title, theme: practice.theme,
+      goal: practice.goal, materials: practice.materials, steps: practice.steps,
+      observation: practice.observation, extension: practice.extension, page: practice.page
+    }
   });
 }
 const root = resolve('server-data');
