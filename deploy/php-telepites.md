@@ -210,3 +210,27 @@ API-hívás és nincs ilyen költség. A szerver kimenő HTTPS-kapcsolatát
 és a Google AI Studio projekt kvótáit előbb ellenőrizni kell.
 Egyidejű sokfelhasználós használat előtt központi, havi költségkeret,
 nyomon követés és szigorúbb kvótakezelés szükséges.
+
+## Kreatív zenei nevelés – 6. fejezet és kézikönyvi képek
+
+A Kreatív zenei nevelés a Tananyag kezdőoldalán a **6. fejezet**, nem külön felső menüpont.
+A jógyakorlatok a Szirányi Borbála (2021): *Kreatív énekes-játékok ritmikus mozgással*
+című tanári kézikönyv alapján készült, önálló szerkesztésű pedagógiai vázlatok.
+
+A felhasználó által adott PDF-ből három, **eredeti forrásrészletet** kivágtunk
+(nem generált AI-képek). Ezek **külön képcsomagban** érkeznek, a GitHub
+telepítő ZIP jelenleg nem tartalmazza a bináris állományokat.
+
+CloudPanel Fájlkezelőben a képcsomagot a PHP webhely gyökérkönyvtárába
+kell kibontani, az útvonalak változtatása nélkül:
+- `images/kreativ/szunet-testritmus.webp` – 47. nyomtatott oldal, PDF 48.
+- `images/kreativ/szinkopa-testritmus.webp` – 48. nyomtatott oldal, PDF 49.
+- `images/kreativ/egesz-hang-testritmus.webp` – 49. nyomtatott oldal, PDF 50.
+
+A fájlok alatt az oldalnak meg kell jelölnie a forrást:
+Szirányi Borbála (2021): *Kreatív énekes-játékok ritmikus mozgással*,
+az adott nyomtatott oldalszám. Mivel a kézikönyv szerzői jogi védelem
+alatt áll, **nyilvános közzététel előtt meg kell győződni az ábrák
+újraközlésére vonatkozó engedélyről**. A részleteket ne terjeszd tovább
+jogosultság nélkül. Az alkalmazás működik a képek nélkül is; sikertelen
+képbetöltéskor eltünteti az érintett képhelyet.
