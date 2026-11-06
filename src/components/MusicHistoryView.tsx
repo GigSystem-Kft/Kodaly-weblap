@@ -37,6 +37,57 @@ export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) =
           Ez az áttekintés nem helyettesíti a szakirodalmi ellenőrzést.
         </p>
       </div>
+      <section className="mb-8" aria-label="Wikipédia zenetörténeti forrás és ábrák">
+        <h3 className="font-serif-cormorant text-2xl md:text-3xl font-semibold mb-2">Zenetörténeti áttekintő ábrák</h3>
+        <p className="text-sm text-[#1c1c1c]/70 mb-4">
+          Az alábbi idővonalak az eredeti Wikipédia-szócikk szemléltető ábrái.
+          A diagramok a korok időbeli átfedéseit és jelentős zeneszerzőit mutatják be.
+          A részletekért nyisd meg az eredeti forrást.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            {
+              src: 'https://upload.wikimedia.org/wikipedia/hu/timeline/1xgjpwairsmgruzinm8wcjmn3773ng1.png',
+              title: 'Az európai klasszikus zene fő korszakai',
+              alt: 'Idővonal a reneszánsz, barokk, klasszicista, romantikus és 20. századi zenéről'
+            },
+            {
+              src: 'https://upload.wikimedia.org/wikipedia/hu/timeline/a02y9qttkjyb0bl7tnzz5es2crucnsf.png',
+              title: 'Jelentősebb zeneszerzők és stíluskorszakok',
+              alt: 'Zeneszerzőket korszakokhoz rendelő színes Wikipédia-idővonal'
+            }
+          ].map(illustration => (
+            <figure key={illustration.src} className="border border-slate-200 rounded-xl bg-white overflow-hidden">
+              <a href={illustration.src} target="_blank" rel="noopener noreferrer"
+                title="Ábra megnyitása eredeti méretben" className="block cursor-zoom-in p-3 bg-white">
+                <img src={illustration.src} alt={illustration.alt} loading="lazy"
+                  className="w-full h-auto max-h-72 object-contain" />
+              </a>
+              <figcaption className="p-3 text-xs text-slate-700">
+                <strong className="block mb-1">{illustration.title}</strong>
+                Forrás: <a href="https://hu.wikipedia.org/wiki/Zenet%C3%B6rt%C3%A9net"
+                  target="_blank" rel="noopener noreferrer" className="underline text-[#4a54e1]">Wikipédia – Zenetörténet</a>
+                {' · '}<a href="https://creativecommons.org/licenses/by-sa/4.0/"
+                  target="_blank" rel="noopener noreferrer" className="underline">CC BY-SA 4.0</a>.
+                A Wikipédia által készített idővonal; a forrásoldal változhat.
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+        <div className="mt-4 border border-indigo-200 bg-indigo-50/50 rounded-xl p-4">
+          <p className="font-semibold text-sm mb-2">A teljes eredeti szócikk megnyitása</p>
+          <p className="text-sm text-slate-700 mb-3">
+            A fejezet itt saját, tanulásra szerkesztett összefoglalókat tartalmaz.
+            A Wikipédia eredeti, teljes szövegét és valamennyi képét a forrásoldalon olvashatod el.
+          </p>
+          <a href="https://hu.wikipedia.org/wiki/Zenet%C3%B6rt%C3%A9net"
+            target="_blank" rel="noopener noreferrer"
+            className="inline-flex gap-2 items-center text-sm text-[#4a54e1] font-semibold hover:underline">
+            Teljes Zenetörténet-szócikk megnyitása <ExternalLink size={15} />
+          </a>
+        </div>
+      </section>
+
       <label className="block max-w-xl mb-8">
         <span className="block text-xs font-semibold mb-2">Keresés korszak, zeneszerző vagy műfaj szerint</span>
         <input value={search} onChange={event => setSearch(event.target.value)}
