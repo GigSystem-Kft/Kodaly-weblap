@@ -627,6 +627,9 @@ try {
                 }
                 answer(200, generateTutorImage($config, $question, $previousTopic));
             }
+            require_once __DIR__ . '/creative-answers.php';
+            $creativeAnswer=creativePracticeAnswer($question,knowledgeEntries());
+            if ($creativeAnswer!==null) answer(200,['mode'=>'reviewed','reply'=>$creativeAnswer]);
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
             if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
