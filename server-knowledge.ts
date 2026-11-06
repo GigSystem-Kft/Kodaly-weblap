@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
+import { MUSIC_HISTORY } from './src/data/musicHistory';
 
 interface KnowledgeChunk {
   source: string;
@@ -88,6 +89,17 @@ function buildIndex(): KnowledgeChunk[] {
     const chunk = makeChunk(
       `${CREATIVE_SOURCE.author} (${CREATIVE_SOURCE.year}) – ${CREATIVE_SOURCE.title} (módszertani feldolgozás)`,
       label, text, 'lesson'
+    );
+    if (chunk) entries.push(chunk);
+  }
+  for (const period of MUSIC_HISTORY) {
+    const summary = [
+      period.lead, ...period.features, ...period.genres, ...period.figures,
+      period.example, 'Források: ' + period.sourceLinks.map(link=>link.url).join('; ')
+    ].join('\\n');
+    const chunk = makeChunk(
+      'Zenetörténet – Wikipédia-forrásokra épülő saját oktatási összefoglaló',
+      period.name + ' / ' + period.period, summary, 'lesson'
     );
     if (chunk) entries.push(chunk);
   }
