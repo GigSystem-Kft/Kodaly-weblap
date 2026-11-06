@@ -4,6 +4,7 @@ import { AdminDashboard } from './components/AdminDashboard';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
 import { CreativeEducationView } from './components/CreativeEducationView';
+import { MusicHistoryView } from './components/MusicHistoryView';
 import { ChapterDetailView } from './components/ChapterDetailView';
 import { FlashcardsView } from './components/FlashcardsView';
 import { MatchingGame } from './components/MatchingGame';
@@ -174,7 +175,12 @@ export default function App() {
             onSelectChapter={handleSelectChapter}
             progress={progress}
             onOpenCreative={() => { setActiveTab('creative'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onOpenHistory={() => { setActiveTab('musicHistory'); window.scrollTo({top:0,behavior:'smooth'}); }}
           />
+        )}
+
+        {activeTab === 'musicHistory' && (
+          <MusicHistoryView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
         )}
 
         {activeTab === 'creative' && (
