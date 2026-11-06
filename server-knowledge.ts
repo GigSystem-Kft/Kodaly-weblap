@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
 import { MUSIC_HISTORY } from './src/data/musicHistory';
+import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './src/data/musicHistoryProfiles';
 
 interface KnowledgeChunk {
   source: string;
@@ -101,6 +102,20 @@ function buildIndex(): KnowledgeChunk[] {
       'Zenetörténet – Wikipédia-forrásokra épülő saját oktatási összefoglaló',
       period.name + ' / ' + period.period, summary, 'lesson'
     );
+    if (chunk) entries.push(chunk);
+  }
+  for (const person of COMPOSER_BIOGRAPHIES) {
+    const summary=[person.dates,person.significance,...person.keywords,
+      ...person.works,'Forrás: '+person.sourceUrl].join('\\n');
+    const chunk=makeChunk('Zenetörténet – forrásmegjelölt zeneszerzői portré',
+      person.name,summary,'lesson');
+    if (chunk) entries.push(chunk);
+  }
+  for (const study of GUIDED_LISTENING) {
+    const summary=[study.concept,study.before,...study.during,study.after,
+      study.sampleAnswer,'Forrás: '+study.sourceUrl].join('\\n');
+    const chunk=makeChunk('Zenetörténet – irányított műelemzés',
+      study.title,summary,'lesson');
     if (chunk) entries.push(chunk);
   }
   const sources: { file: string; path: string }[] = [
