@@ -3,6 +3,7 @@ import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 import { MUSIC_HISTORY } from '../src/data/musicHistory';
+import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistoryProfiles';
 
 type Entry = { source: string; label: string; text: string; creativePractice?: {
   id: string; title: string; theme: string; goal: string; materials: string;
@@ -51,6 +52,28 @@ for (const period of MUSIC_HISTORY) {
       'Hallgatási feladat: ' + period.example,
       'Önellenőrző kérdés: ' + period.question,
       'Források: ' + period.sourceLinks.map(link => link.name + ' ' + link.url).join('; ')
+    ].join('\\n')
+  });
+}
+for (const profile of COMPOSER_BIOGRAPHIES) {
+  entries.push({
+    source: 'Zenetörténet – önálló tanulási portré, Wikipédia forráslinkkel',
+    label: 'Zenetörténet / ' + profile.name,
+    text: [
+      profile.dates, profile.significance,
+      'Kulcsfogalmak: ' + profile.keywords.join('; '),
+      'Művek: ' + profile.works.join('; '),
+      'Életrajzi forrás: ' + profile.sourceUrl
+    ].join('\\n')
+  });
+}
+for (const study of GUIDED_LISTENING) {
+  entries.push({
+    source: 'Zenetörténet – irányított, önálló műelemzés',
+    label: 'Zenetörténet / Műelemzés / ' + study.title,
+    text: [
+      study.concept, study.before, ...study.during, study.after, study.sampleAnswer,
+      'Forrás: ' + study.sourceUrl
     ].join('\\n')
   });
 }
