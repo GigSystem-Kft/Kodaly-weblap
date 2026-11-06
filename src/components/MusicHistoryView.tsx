@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { MUSIC_HISTORY } from '../data/musicHistory';
+import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../data/musicHistoryProfiles';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 
 export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
   const normalize = (value: string) => value.toLocaleLowerCase('hu-HU').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   const query = normalize(search.trim());
   const visible = MUSIC_HISTORY.filter(period =>
     !query || normalize([period.name,period.lead,period.period,
-      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title)].join(' ')).includes(query)
+      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title),...COMPOSER_BIOGRAPHIES.filter(item => item.periodId === period.id).flatMap(item => [item.name,item.significance,...item.works])].join(' ')).includes(query)
   );
 
   return (
@@ -146,6 +148,55 @@ export const MusicHistoryView: React.FC<{ onBack: () => void }> = ({ onBack }) =
                       <p className="text-sm text-slate-700">{period.question}</p>
                     </div>
                   </div>
+                  <section className="mt-6" aria-label="Zeneszerzői portrék">
+                    <h4 className="font-serif-cormorant font-semibold text-xl md:text-2xl mb-3">Személyek és alkotók közelebbről</h4>
+                    <div className="grid md:grid-cols-2 gap-3">
+                      {COMPOSER_BIOGRAPHIES.filter(profile => profile.periodId === period.id).map(profile => (
+                        <article key={profile.id} className="rounded-xl border border-slate-200 p-4 bg-slate-50">
+                          <h5 className="font-bold mb-1">{profile.name}</h5>
+                          <p className="text-xs text-[#4a54e1] mb-2">{profile.dates}</p>
+                          <p className="text-sm leading-relaxed text-slate-700">{profile.significance}</p>
+                          <p className="text-sm text-slate-700 mt-2"><strong>Kapcsolódó művek:</strong> {profile.works.join(' · ')}</p>
+                          <a href={profile.sourceUrl} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-sm mt-3 text-[#4a54e1] hover:underline">
+                            Életrajzi forrás <ExternalLink size={13}/>
+                          </a>
+                        </article>
+                      ))}
+                    </div>
+                  </section>
+                  <section className="mt-6" aria-label="Irányított műelemzési gyakorlatok">
+                    <h4 className="font-serif-cormorant font-semibold text-xl md:text-2xl mb-3">Irányított műelemzés</h4>
+                    {GUIDED_LISTENING.filter(study => study.periodId === period.id).map(study => (
+                      <article key={study.id} className="rounded-xl border border-indigo-200 p-5 bg-indigo-50/40">
+                        <h5 className="font-semibold text-lg mb-1">{study.title}</h5>
+                        <p className="text-xs text-slate-600 mb-4">Megfigyelendő: {study.concept}</p>
+                        <p className="text-sm text-slate-700 mb-3"><strong>Hallgatás előtt:</strong> {study.before}</p>
+                        <p className="text-sm font-semibold mb-2">Hallgatás közben figyeld meg:</p>
+                        <ol className="list-decimal pl-5 text-sm text-slate-700 space-y-2">
+                          {study.during.map(step=><li key={step}>{step}</li>)}
+                        </ol>
+                        <p className="text-sm text-slate-700 mt-4"><strong>Hallgatás után:</strong> {study.after}</p>
+                        <button type="button" onClick={() => setRevealedAnswers(previous =>
+                          previous.includes(study.id) ? previous.filter(id => id !== study.id) : [...previous, study.id])}
+                          aria-expanded={revealedAnswers.includes(study.id)}
+                          className="text-sm font-semibold text-[#4a54e1] hover:underline mt-4">
+                          {revealedAnswers.includes(study.id) ? 'Mintaválasz elrejtése' : 'Mintaválasz megmutatása'}
+                        </button>
+                        {revealedAnswers.includes(study.id) && (
+                          <p className="text-sm text-slate-700 mt-2 border-l-2 border-indigo-400 pl-3">
+                            {study.sampleAnswer}
+                          </p>
+                        )}
+                        <div className="mt-4">
+                          <a className="text-xs text-[#4a54e1] hover:underline inline-flex gap-1 items-center"
+                            href={study.sourceUrl} target="_blank" rel="noopener noreferrer">
+                            A mű és a szerző forrása <ExternalLink size={12}/>
+                          </a>
+                        </div>
+                      </article>
+                    ))}
+                  </section>
                   {!!period.listening?.length && (
                     <section className="mt-6 p-5 bg-indigo-50/50 border border-indigo-100 rounded-xl">
                       <h4 className="font-semibold mb-2">Zenehallgatás – jellemző művek</h4>
