@@ -8,7 +8,6 @@ export const TEXTBOOKS = [
   { id: 2, title: 'Énekzene 2. osztály' },
   { id: 3, title: 'Énekzene 3. osztály' },
   { id: 4, title: 'Énekzene 4. osztály' },
-  { id: 5, title: 'Kreatív énekes-játékok ritmikus mozgással' },
 ];
 
 export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
@@ -19,6 +18,7 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
 
   useEffect(() => {
     setPages([]); setError(false); setOpen(null); setQuery('');
+    if (!TEXTBOOKS.some(textbook => textbook.id === book)) { setError(true); return; }
     fetch(`/tankonyvek/${book}/oldalak.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setPages)
@@ -46,31 +46,27 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
   }, [open, visible.length]);
 
   const title = TEXTBOOKS.find((t) => t.id === book)?.title;
-  const creative = book === 5;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-[#1c1c1c]">
       <div className="mb-6">
         <span className="inline-flex items-center gap-2 font-mono-jetbrains text-[0.7rem] uppercase tracking-widest text-[#4a54e1]">
-          <BookOpen className="w-3.5 h-3.5" /> {creative ? 'Tanári kézikönyv · Aktív zenetanulás – 1. modell' : 'NAT 2020 állami tankönyv'}
+          <BookOpen className="w-3.5 h-3.5" /> NAT 2020 állami tankönyv
         </span>
         <h2 className="font-serif-cormorant text-4xl italic font-semibold mt-1">{title}</h2>
         <p className="text-sm text-[#1c1c1c]/70 mt-2 max-w-2xl">
-          {creative
-            ? 'Szirányi Borbála (2021): Kreatív énekes-játékok ritmikus mozgással. Aktív zenetanulás énekléssel és mozgással – 1. modell. ISBN 978-615-6316-09-7. Kereshetsz a kézikönyv szövegében, és lapozhatod az eredeti könyvoldalakat.'
-            : 'A tankönyv oldalai kottaképekkel és a hozzájuk tartozó szöveges ismeretanyaggal. Kattints az oldalra a nagyításhoz. Személyes tanulási célra.'}
+          A tankönyv oldalai kottaképekkel és a hozzájuk tartozó szöveges ismeretanyaggal. Kattints az oldalra a nagyításhoz. Személyes tanulási célra.
         </p>
       </div>
 
       <input
         value={query}
         onChange={(e) => { setQuery(e.target.value); setOpen(null); }}
-        placeholder={creative ? 'Keresés a kézikönyvben (pl. szinkópa)…' : 'Keresés a tankönyv szövegében…'}
+        placeholder="Keresés a tankönyv szövegében…"
         className="w-full sm:w-96 mb-6 border border-[#1c1c1c]/20 bg-white px-3 py-2 text-sm"
       />
 
       {error && <p className="text-sm text-red-700">A tankönyv nem tölthető be.</p>}
-      {creative && <p className="text-xs text-[#1c1c1c]/60 mb-3">A megjelenített oldalszám a PDF oldalsorrendje; a nyomtatott könyvoldal általában eggyel kisebb.</p>}
       <p className="font-mono-jetbrains text-[0.7rem] uppercase mb-4">{visible.length} oldal{terms.length ? ' találat' : ''}</p>
 
       <div className="grid sm:grid-cols-2 gap-6">
