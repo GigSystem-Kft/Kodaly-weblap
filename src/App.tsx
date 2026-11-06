@@ -180,7 +180,12 @@ export default function App() {
         )}
 
         {activeTab === 'musicHistory' && (
-          <MusicHistoryView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
+          <MusicHistoryView
+            onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onQuiz={() => openQuiz('zenetortenet')}
+            onFlashcards={() => openFlashcards('Zenetörténet')}
+            onMatching={() => openMatchingGame('Zenetörténet')}
+          />
         )}
 
         {activeTab === 'creative' && (
