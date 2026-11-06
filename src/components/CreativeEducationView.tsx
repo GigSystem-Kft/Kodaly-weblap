@@ -9,6 +9,30 @@ interface CreativeEducationViewProps {
 export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ onBack }) => {
   const [theme, setTheme] = useState('Összes téma');
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [missingImages, setMissingImages] = useState<string[]>([]);
+  const sourceImages = [
+    {
+      id: 'szunet',
+      src: '/images/kreativ/szunet-testritmus.webp',
+      title: 'Negyed szünet és testritmus – Szólj síp, szólj',
+      page: '47.',
+      related: 'szunetszobor',
+    },
+    {
+      id: 'szinkopa',
+      src: '/images/kreativ/szinkopa-testritmus.webp',
+      title: 'Szinkópa és testritmus – Hej, Dunáról fúj a szél',
+      page: '48.',
+      related: 'szinkopalabda',
+    },
+    {
+      id: 'egeszhang',
+      src: '/images/kreativ/egesz-hang-testritmus.webp',
+      title: 'Egész hang értékének megélése – Fut a kicsi kordé',
+      page: '49.',
+      related: 'testritmus',
+    },
+  ];
   const filtered = theme === 'Összes téma' ? CREATIVE_PRACTICES :
     CREATIVE_PRACTICES.filter(practice => practice.theme === theme);
 
@@ -40,6 +64,26 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
           az oldalszámok a nyomtatott kötetre utalnak. A javaslatok a csoport adottságaihoz igazítandók.
         </p>
       </aside>
+
+      <section className="mb-10" aria-label="Szemléltető részletek a tanári kézikönyvből">
+        <h3 className="font-serif-cormorant text-2xl md:text-3xl font-semibold mb-2">Kézikönyvi szemléltető példák</h3>
+        <p className="text-sm text-[#1c1c1c]/65 mb-4">
+          Az eredeti kötet kis részletei a testritmus módszeréről, az eredeti könyvoldalak megadásával.
+          Ezek nem AI által készített illusztrációk, hanem a feltöltött kézikönyvből kivágott képek.
+        </p>
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {sourceImages.filter(image => !missingImages.includes(image.id)).map(image => (
+            <figure key={image.id} className="rounded-xl border border-[#1c1c1c]/15 bg-white overflow-hidden">
+              <img src={image.src} alt={image.title} loading="lazy" className="w-full object-contain bg-white"
+                onError={() => setMissingImages(previous => previous.includes(image.id) ? previous : [...previous, image.id])} />
+              <figcaption className="p-3 text-xs text-[#1c1c1c]/75">
+                <strong className="block mb-1">{image.title}</strong>
+                <span>{CREATIVE_SOURCE.author} ({CREATIVE_SOURCE.year}): {CREATIVE_SOURCE.title}, {image.page} oldal.</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
 
       <div className="flex flex-wrap items-center gap-2 mb-7" aria-label="Módszertani témaszűrő">
         {['Összes téma', ...CREATIVE_THEMES].map(option => (
@@ -90,6 +134,15 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
                       <p className="text-[#1c1c1c]/75">{practice.extension}</p>
                     </div>
                   </div>
+                  {sourceImages.filter(image => image.related === practice.id && !missingImages.includes(image.id)).map(image => (
+                    <figure key={image.id} className="mt-5 max-w-xl rounded-xl border border-[#1c1c1c]/15 overflow-hidden">
+                      <img src={image.src} alt={image.title} loading="lazy" className="w-full bg-white"
+                        onError={() => setMissingImages(previous => previous.includes(image.id) ? previous : [...previous, image.id])} />
+                      <figcaption className="px-3 py-2 bg-slate-50 text-xs text-[#1c1c1c]/70">
+                        Forrás: {CREATIVE_SOURCE.author} ({CREATIVE_SOURCE.year}), {image.page} oldal.
+                      </figcaption>
+                    </figure>
+                  ))}
                   <p className="text-xs text-[#1c1c1c]/55 mt-4">
                     Módszertani alap: {CREATIVE_SOURCE.author}, {CREATIVE_SOURCE.title}, {practice.page} oldal.
                   </p>
