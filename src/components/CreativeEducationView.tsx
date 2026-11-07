@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CREATIVE_SOURCE, CREATIVE_THEMES, CREATIVE_PRACTICES } from '../data/creativeEducation';
 import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { CREATIVE_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
+import { RhythmResearchPanel } from './RhythmResearchPanel';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Users, Clock, Target, X, ZoomIn } from 'lucide-react';
 
 interface CreativeEducationViewProps {
@@ -201,6 +202,7 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
           );
         })}
       </div>
+      <RhythmResearchPanel/>
       <CuratedMediaPanel chapterNumber={6}/>
       {enlargedImage && (
         <div role="dialog" aria-modal="true" aria-label={enlargedImage.title + ' nagyított képe'}
