@@ -2,20 +2,6 @@ import { Flashcard, MatchingPair, QuizQuestion, SubChapter } from '../types';
 
 /** Az eredeti fejezetekhez kapcsolódó, önállóan feldolgozható kiegészítő leckék. */
 export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
-  ritmus: [
-    {
-      id: 'metrum-hangsuly',
-      title: '1.5 Metrum, hangsúly és ütemmutató',
-      summary: 'Egyszerű és összetett ütemek, páros és páratlan lüktetés.',
-      content: [
-        'Az ütemmutató felső száma az ütemben lévő egységek számát, alsó száma a jelzett hangértéket nevezi meg. A tényleges lüktetési egység összetett ütemekben eltérhet ettől.',
-        '2/4-ben két negyednyi, 3/4-ben három negyednyi, 4/4-ben négy negyednyi érték fér el.',
-        '6/8-ban hat nyolcadnyi érték van, de a lüktetés rendszerint két pontozott negyedre tagolódik: 1-2-3 | 4-5-6.',
-        'Egyszerű ütemben az alaplüktetés jellemzően két részre, összetett ütemben három részre oszlik.',
-        'Hallgatási feladat: jelöld a főhangsúlyt minden ütem elején, majd próbáld megállapítani, hogy kettes vagy hármas csoportokat hallasz.'
-      ]
-    }
-  ],
   'hangok-kulcsok': [
     {
       id: 'kottaolvasas',
