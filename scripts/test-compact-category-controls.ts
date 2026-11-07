@@ -28,9 +28,9 @@ test('quiz chapter uses one dropdown and resets the score and question when chan
 
 
 
- assert.match(code,/QUIZ_QUESTIONS.some\\(q => q.chapterId === item.id\\)/);
- assert.match(code,/MUSIC_CHAPTERS.map\\(chapter/);
- assert.match(code,/EXTRA_LEARNING_MODULES.map\\(module/);
+ assert.match(code,/QUIZ_QUESTIONS.some\(q => q.chapterId === item.id\)/);
+ assert.match(code,/MUSIC_CHAPTERS.map\(chapter/);
+ assert.match(code,/EXTRA_LEARNING_MODULES.map\(module/);
  for(const id of ['hangkeszletek','hetfoku-hangsorok']){
    assert.ok(MUSIC_CHAPTERS.some(ch => ch.id === id), 'Missing canonical chapter '+id);
  }
