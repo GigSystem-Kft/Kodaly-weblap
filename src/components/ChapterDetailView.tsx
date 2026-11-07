@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
 import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
@@ -7,7 +7,7 @@ import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { InteractiveMusicVisual } from './InteractiveMusicVisual';
 import { RhythmFiguresVisual } from './RhythmFiguresVisual';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
-import { playNote, playChord } from '../utils/audio';
+import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
 
 interface ChapterDetailViewProps {
   chapter: Chapter;
@@ -29,6 +29,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
 
   const currentSub = chapter.subchapters.find((s) => s.id === activeSubId) || chapter.subchapters[0];
+  useEffect(() => () => stopEarTrainingInterval(), [activeSubId]);
   const illustrations = LESSON_ILLUSTRATIONS[currentSub.id] ?? [];
   const guide = getFoundationsSubchapterGuide(chapter.id, currentSub.id);
 
@@ -239,11 +240,13 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                       </div>
                       {ex.audioNotes && (
                         <button
-                          onClick={() => playChord(ex.audioNotes || ['C4', 'E4', 'G4'], 600)}
+                          onClick={() => currentSub.id === 'abszolutm-hangok' && ex.title === 'Alaphangok skála'
+                            ? playWarmQuarterScale(ex.audioNotes || [], 60)
+                            : playChord(ex.audioNotes || ['C4', 'E4', 'G4'], 600)}
                           className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-md shadow-indigo-600/30 flex items-center space-x-2 shrink-0"
                         >
                           <Play className="w-3.5 h-3.5" />
-                          <span>Példa Hangzása</span>
+                          <span>{currentSub.id === 'abszolutm-hangok' && ex.title === 'Alaphangok skála' ? 'Skála meghallgatása (60 BPM)' : 'Példa hangzása'}</span>
                         </button>
                       )}
                     </div>
