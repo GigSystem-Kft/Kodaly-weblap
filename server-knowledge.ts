@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
 import { FOUNDATIONS_GUIDES } from './src/data/musicFoundationsGuide';
+import { CREATIVE_WORKSHOPS, PEDAGOGY_WORKSHOPS } from './src/data/hungarianDidacticWorkshops';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from './src/data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from './src/data/musicPedagogyDeep';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
@@ -99,6 +100,17 @@ function buildIndex(): KnowledgeChunk[] {
         const chunk=makeChunk('Zeneelméleti Műhely – forrásmegjelölt bővített zeneelméleti tananyag',
           chapter.title+' / '+section.title,piece,'lesson');
         if (chunk) entries.push(chunk);
+      }
+    }
+  }
+  for (const [category,workshops] of [['06. Kreatív zenei nevelés',CREATIVE_WORKSHOPS],['08. Ének-zene tantárgy-pedagógia',PEDAGOGY_WORKSHOPS]] as const) {
+    for (const unit of workshops) {
+      const text=[...unit.aims,...unit.explanation,...unit.differentiation,...unit.evidence,
+        ...unit.questions.flatMap(q=>[q.prompt,q.answer])].join('\n\n');
+      for(const part of splitLongText(text,1200)){
+        const chunk=makeChunk('Magyar nyelvű pedagógiai feldolgozás: '+unit.sources.map(item=>item.url).join(', '),
+          category+' / '+unit.id,part,'lesson');
+        if(chunk)entries.push(chunk);
       }
     }
   }
