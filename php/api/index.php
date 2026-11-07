@@ -570,6 +570,7 @@ try {
 
         case 'chat/status':
             method('GET');
+            require_once __DIR__ . '/tutor-text-generation.php';
             $entries=knowledgeEntries();
             $sources=[];
             $lessons=0;
@@ -577,7 +578,8 @@ try {
                 if (($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag') $lessons++;
                 else $sources[$entry['source'] ?? ''] = true;
             }
-            answer(200,['mode'=>'fallback',
+            answer(200,['mode'=>tutorTextEnabled($config) ? 'gemini' : 'fallback',
+                'requiresLogin'=>tutorTextEnabled($config),
                 'knowledge'=>['indexedSources'=>count($sources),
                     'lessonChunks'=>$lessons,'indexedChunks'=>count($entries),
                     'coverage'=>tutorSourceAudit($entries)]]);
@@ -613,7 +615,18 @@ try {
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
             if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
-            $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 2);
+            $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 3);
+            require_once __DIR__ . '/tutor-text-generation.php';
+            if ($hits && tutorTextEnabled($config)) {
+                // Paid text generation is available only to authenticated users.
+                // Anonymous visitors retain the local source search without external calls.
+                $tutorUser = currentUser(database($config));
+                if ($tutorUser !== null) {
+                    throttle('tutor-text-' . $tutorUser['id'], 15);
+                    $generated = tutorTextReply($config, $question, $hits);
+                    if ($generated !== null) answer(200, $generated);
+                }
+            }
             if (!$hits) answer(200, ['mode'=>'fallback',
                 'reply'=>'Erre a kérdésre most nem találtam elég pontos magyarázatot a helyi tananyagban. Próbálj megadni egy konkrét zeneelméleti fogalmat.']);
             answer(200,['mode'=>'fallback','reply'=>lessonReply($hits, $question, musicBriefRequested($question))]);
