@@ -4,21 +4,6 @@ import { Flashcard, MatchingPair, QuizQuestion, SubChapter } from '../types';
 export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
   ritmus: [
     {
-      id: 'ritmus-gyakorlatok',
-      title: '1.4 Ritmusolvasás és ritmusalkotás',
-      summary: 'Ritmusértékek összeadása, ütemek kitöltése és ritmushibák ellenőrzése.',
-      content: [
-        'A ritmusértékek arányait először állandó negyedlüktetés mellett gyakoroljuk. Egy negyed két nyolcadnak, illetve négy tizenhatodnak felel meg.',
-        'A pont a hang vagy szünet értékét az eredeti érték felével növeli: pontozott negyed = negyed + nyolcad = három nyolcad.',
-        '2/4-es ütemben összesen két negyednyi időérték szükséges. Példa: egy negyed és két nyolcad pontosan kitölt egy ütemet.',
-        '3/4-es ütemben három negyed fér el. Példa: fél + negyed; vagy negyed + négy nyolcad.',
-        '4/4-es ütemben négy negyednyi időérték van. Ütemalkotáskor a szünetek is beleszámítanak az összértékbe.',
-        'Gyakorlat: tapsolj egyenletes negyedlüktetést, miközben mondod: tá | ti-ti | tá | ti-ti. Ezután cseréld fel a két középső mintát.',
-        'Önellenőrzés: egy 3/4-es ütemben a fél + két nyolcad összesen három negyed; egy fél + két negyed viszont már négy negyed, ezért nem fér bele.'
-      ],
-      examples: [{ title: 'Pontozott ritmus számolása', description: 'Pontozott negyed + nyolcad = két negyed; egy teljes 2/4-es ütem.' }]
-    },
-    {
       id: 'metrum-hangsuly',
       title: '1.5 Metrum, hangsúly és ütemmutató',
       summary: 'Egyszerű és összetett ütemek, páros és páratlan lüktetés.',
