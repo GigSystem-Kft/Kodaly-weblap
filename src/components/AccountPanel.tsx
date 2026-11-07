@@ -16,10 +16,11 @@ interface AccountPanelProps {
   onImportLocal: () => void;
   syncError?: string;
   onRetrySync?: () => void;
+  hasUnsavedProgress?: boolean;
 }
 
 export const AccountPanel: React.FC<AccountPanelProps> = ({
-  user, onSignedIn, onSignedOut, onImportLocal, syncError, onRetrySync
+  user, onSignedIn, onSignedOut, onImportLocal, syncError, onRetrySync, hasUnsavedProgress = false
 }) => {
   const [available, setAvailable] = useState(false);
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
@@ -132,6 +133,10 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   };
 
   const signOut = async () => {
+    if (hasUnsavedProgress && !window.confirm(
+      'A legutóbbi tanulási eredményeid még nem kerültek a szerverre. ' +
+      'Ha most kijelentkezel, ezek elveszhetnek. Biztosan kijelentkezel?'
+    )) return;
     setBusy(true);
     setError('');
     try {
