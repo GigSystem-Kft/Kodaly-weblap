@@ -165,6 +165,32 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
                       </figcaption>
                     </figure>
                   ))}
+                  {CREATIVE_WORKSHOPS.filter(item=>item.id===practice.id).map(workshop=><section key={workshop.id}
+                    className="mt-6 rounded-xl border border-indigo-200 p-5 bg-indigo-50/30">
+                    <h4 className="font-serif-cormorant text-xl font-semibold mb-3">Részletes módszertani műhely</h4>
+                    <h5 className="font-semibold text-sm mb-2">Tanulási célok</h5>
+                    <ul className="list-disc ml-5 space-y-1 text-sm text-slate-700 mb-4">
+                      {workshop.aims.map(item=><li key={item}>{item}</li>)}
+                    </ul>
+                    {workshop.explanation.map(item=><p key={item.slice(0,35)}
+                      className="text-sm leading-relaxed text-slate-700 mb-3">{item}</p>)}
+                    <h5 className="font-semibold text-sm mt-4 mb-2">Differenciálási lehetőségek</h5>
+                    <ul className="list-disc ml-5 space-y-1 text-sm text-slate-700 mb-4">
+                      {workshop.differentiation.map(item=><li key={item}>{item}</li>)}
+                    </ul>
+                    <h5 className="font-semibold text-sm mb-2">Hogyan ellenőrizhető a fejlődés?</h5>
+                    <ul className="list-disc ml-5 space-y-1 text-sm text-slate-700 mb-4">
+                      {workshop.evidence.map(item=><li key={item}>{item}</li>)}
+                    </ul>
+                    <h5 className="font-semibold text-sm mb-2">Önellenőrzés – mintaválasszal</h5>
+                    {workshop.questions.map(q=><details key={q.prompt} className="rounded-lg border border-slate-200 bg-white p-3 mb-3">
+                      <summary className="cursor-pointer text-sm font-semibold">{q.prompt}</summary>
+                      <p className="mt-2 text-sm text-slate-700">{q.answer}</p>
+                    </details>)}
+                    <h5 className="font-semibold text-sm mb-2">Magyar nyelvű továbbolvasás</h5>
+                    {workshop.sources.map(source=><a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer"
+                      className="block text-sm text-[#4a54e1] hover:underline mb-2">{source.label} ↗</a>)}
+                  </section>)}
                   <p className="text-xs text-[#1c1c1c]/55 mt-4">
                     Módszertani alap: {CREATIVE_SOURCE.author}, {CREATIVE_SOURCE.title}, {practice.page} oldal.
                   </p>
