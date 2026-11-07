@@ -1,4 +1,6 @@
 import { CuratedMediaPanel } from './CuratedMediaPanel';
+import { HistorySupplementSection } from './HistorySupplementSection';
+import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS } from '../data/musicHistorySupplement';
 import React, { useState } from 'react';
 import { MUSIC_HISTORY } from '../data/musicHistory';
 import { HISTORY_WORKSHOPS } from '../data/musicHistoryWorkshops';
@@ -19,7 +21,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
   const query = normalize(search.trim());
   const visible = MUSIC_HISTORY.filter(period =>
     !query || normalize([period.name,period.lead,period.period,
-      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title),...(HISTORY_WORKSHOPS.find(workshop=>workshop.periodId===period.id)?.context ?? []),...COMPOSER_BIOGRAPHIES.filter(item => item.periodId === period.id).flatMap(item => [item.name,item.significance,...item.works])].join(' ')).includes(query)
+      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title),...(HISTORY_WORKSHOPS.find(workshop=>workshop.periodId===period.id)?.context ?? []),...COMPOSER_BIOGRAPHIES.filter(item => item.periodId === period.id).flatMap(item => [item.name,item.significance,...item.works]),...HISTORY_NOTE_INSIGHTS.filter(item=>item.periodId===period.id).flatMap(item=>[item.title,item.explanation,...item.listenFor]),...HISTORY_TEXTBOOK_LINKS.filter(item=>item.periodId===period.id).flatMap(item=>[item.work,item.focus,item.activity])].join(' ')).includes(query)
   );
 
   return (
@@ -38,13 +40,13 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
       <div className="rounded-2xl border border-indigo-200 bg-indigo-50/60 p-5 mb-8">
         <h3 className="font-bold text-sm flex items-center gap-2 mb-2"><BookOpen size={17} /> A tananyag forrásai</h3>
         <p className="text-sm leading-relaxed text-[#1c1c1c]/75">
-          A fejezet több magyar Wikipédia-szócikk alapján összeállított, önálló megfogalmazású oktatási áttekintés.
+          A fejezet a felhasználó által feltöltött 16 oldalas, „A zene története” című jegyzet, valamint a NAT 2020 Ének-zene 1–4. osztályos tankönyvek műveinek összevetésével készült saját, bővített zenetörténeti áttekintés. A jegyzet teljes szövege oldalanként a Tanársegéd kereshető forrásai között van. További források: magyar nyelvű nemzeti gyűjtemények, múzeumi képek, zenetörténeti szócikkek és ellenőrzött külső műlinkek.
           A megadott korszakhatárok megközelítőek; a művészeti stílusok gyakran átfedtek egymással.
           A forrásszócikkeket a korszakoknál külön megnyithatod, és ellenőrizheted a részletes adatokat.
         </p>
         <p className="text-xs text-[#1c1c1c]/60 mt-3">
           A Wikipédia közösségi enciklopédia, nem lektorált zenetörténeti kézikönyv.
-          Ez az áttekintés nem helyettesíti a szakirodalmi ellenőrzést.
+          A jegyzet történeti anekdotáit és vitatott állításait nem kezeljük automatikusan bizonyított tényként; az eltéréseket külön forráskritikai megjegyzés jelzi. A tankönyvi hivatkozások az adott digitalizált PDF oldalaira mutatnak.
         </p>
       </div>
       <section className="mb-8" aria-label="Wikipédia zenetörténeti forrás és ábrák">
@@ -236,6 +238,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
                       </article>
                     ))}
                   </section>
+                  <HistorySupplementSection periodId={period.id} search={search}/>
                   {!!period.listening?.length && (
                     <section className="mt-6 p-5 bg-indigo-50/50 border border-indigo-100 rounded-xl">
                       <h4 className="font-semibold mb-2">Zenehallgatás – jellemző művek</h4>
