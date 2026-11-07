@@ -1,5 +1,6 @@
 import { apiFetch } from '../api';
 import { TUTOR_VISUALS } from '../data/tutorVisuals';
+import { KnowledgeCoveragePanel } from './KnowledgeCoveragePanel';
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { MessageSquare, Send, Bot, User, Sparkles, X, Minimize2, Maximize2 } from 'lucide-react';
@@ -160,6 +161,7 @@ export const ChatAssistant: React.FC = () => {
             </button>
           </div>
 
+          <KnowledgeCoveragePanel/>
           {/* Messages Scroll Thread */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((m, idx) => (
