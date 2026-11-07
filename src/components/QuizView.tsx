@@ -135,7 +135,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
         </button>
         {[
           { id: 'kreativ', label: '06. Kreatív zenei nevelés' },
-          { id: 'zenetortenet', label: '07. Zenetörténet' }
+          { id: 'zenetortenet', label: '07. Zenetörténet' },
+          { id: 'zenei-kifejezesek', label: '09. Zenei kifejezések és új hangsorok' }
         ].map(category => (
           <button key={category.id}
             onClick={() => { setSelectedChapter(category.id); restartQuiz(); }}
