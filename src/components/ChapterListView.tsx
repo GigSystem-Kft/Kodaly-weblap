@@ -61,8 +61,17 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             return (
               <div
                 key={chapter.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`Tananyag megnyitása: ${chapter.number}. ${chapter.title}`}
                 onClick={() => onSelectChapter(chapter)}
-                className="bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group"
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelectChapter(chapter);
+                  }
+                }}
+                className="bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <div className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">
                   {numStr}
