@@ -293,6 +293,8 @@ export interface SearchResult {
 export function searchKnowledge(query: string, limit = 6): SearchResult[] {
   const terms = [...new Set(tokenize(query))];
   if (!terms.length) return [];
+  const sourcePattern = /ritmikai|ritmust[aá]bl[aá]zat|ritmusp[eé]lda/i.test(query) ? query.match(/\\b([123])\\.(\\d{1,2})\\b/) : null;
+  const targetSourcePage = sourcePattern ? Number(sourcePattern[1]) + 9 : null;
   const scored = INDEX.map(entry => {
     let score = 0;
     let matches = 0;
@@ -306,7 +308,9 @@ export function searchKnowledge(query: string, limit = 6): SearchResult[] {
     // Pontosabb találatok előre, egynél több lekérdezett fogalom esetén is.
     const coverage = matches / terms.length;
     const preferred = entry.kind === 'lesson' ? 1.4 : 1;
-    return { entry, score: score * (0.55 + coverage) * preferred };
+    const pagePriority = targetSourcePage !== null && /MTA-SZTE|ritmikai-fejleszto/i.test(entry.source) &&
+      entry.label.includes(targetSourcePage+'. oldal') ? 20 : 1;
+    return { entry, score: score * (0.55 + coverage) * preferred * pagePriority };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
 
   // Egy forrás hosszú szövege ne nyomja ki a többi releváns forrást.
