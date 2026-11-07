@@ -31,7 +31,7 @@ try {
   await page.getByRole('button',{name:'Fejezet Teljesítése'}).click();
   await page.getByText('Teljesítve',{exact:true}).waitFor();
   await page.getByRole('button',{name:'Vissza a fejezetekhez'}).click();
-  const keyboardChapter=page.locator('[role="button"][aria-label^="Tananyag megnyitása:"]').first();
+  const keyboardChapter=page.locator('[role="button"][tabindex="0"]').first();
   await keyboardChapter.focus();
   await keyboardChapter.press('Enter');
   await page.getByText('Tanulmányozottnak jelölve').waitFor();
