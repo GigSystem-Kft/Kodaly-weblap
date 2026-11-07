@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
 import { CreativeEducationView } from './components/CreativeEducationView';
 import { MusicHistoryView } from './components/MusicHistoryView';
+import { MusicExpressionsView } from './components/MusicExpressionsView';
 import { MusicPedagogyView } from './components/MusicPedagogyView';
 import { ChapterDetailView } from './components/ChapterDetailView';
 import { FlashcardsView } from './components/FlashcardsView';
@@ -179,6 +180,16 @@ export default function App() {
             onOpenCreative={() => { setActiveTab('creative'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onOpenHistory={() => { setActiveTab('musicHistory'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onOpenPedagogy={() => { setActiveTab('musicPedagogy'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onOpenExpressions={() => { setActiveTab('musicExpressions'); window.scrollTo({top:0,behavior:'smooth'}); }}
+          />
+        )}
+
+        {activeTab === 'musicExpressions' && (
+          <MusicExpressionsView
+            onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onQuiz={() => openQuiz('zenei-kifejezesek')}
+            onFlashcards={openFlashcards}
+            onMatching={openMatchingGame}
           />
         )}
 
