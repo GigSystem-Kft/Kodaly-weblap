@@ -86,6 +86,15 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
           Összes kérdés
         </button>
         <button
+          onClick={() => { setSelectedChapter('pedagogia'); restartQuiz(); }}
+          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+            selectedChapter === 'pedagogia'
+              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+          }`}>
+          08. Tantárgy-pedagógia
+        </button>
+        <button
           onClick={() => {
             setSelectedChapter('ritmus');
             restartQuiz();
