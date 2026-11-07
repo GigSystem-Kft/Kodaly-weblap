@@ -28,7 +28,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások és legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés; válaszidő és teljes kérdésenkénti analitika hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
-| P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
+| P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
 | P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, Tanársegéd mobilablak-méretezés javítva; teljes WCAG/mobil audit hátra |
 
 ## Első javítási csomag
@@ -107,6 +107,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-23: a Tanársegéd felugró ablaka már a `100vw` szélességből és a `100dvh` magasságból számított méretkorlátot alkalmazza; kis mobilképernyőn nem lóghat túl a megjelenítési területen.
 - A-09: a PHP CI beemelte a különálló `tutor-text-generation.php` fájlt a kiadási csomagba, hozzáadta a PHP-szintaxist és az opt-in/adatvédelmi unit tesztet. A MySQL nélküli tanársegéd teszt ideiglenes könyvtárába is bekerül a modul. A következő CI eredménye még ellenőrizendő.
 - A P0 médiahiány miatt a teljes PHP telepítő továbbra sem tekinthető késznek.
+
+## Tizenötödik javítási egység (2026-11-07)
+
+- A-22: a fejezetenkénti és vegyes kvízek legfeljebb 15 kérdésből álló, újraindításonként újraválogatott gyakorlókörök. A teljes, korábban hosszú feladatsor helyett a tanuló rövid, megismételhető gyakorlást kap. A `vegyes-gyakorlas` külön mentési azonosítóval rendelkezik, ezért nem írja felül a régi, teljes kérdésbankra vonatkozó `all` eredményt. A tanulási pont továbbra sem vizsgaminősítés.
+- A-06: hálózati hiba miatti mentetlen fiókprogressz esetén böngészőzárási figyelmeztetés készült, de bezárt böngésző után még nem bizonyított a teljes adatmegőrzés.
+- A #2 PR továbbra is draft, a főág érintetlen.
 
 ## Lezárási feltételek
 
