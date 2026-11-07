@@ -104,6 +104,30 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlash
           </figcaption>
         </figure>}
        </section>}
+       {PEDAGOGY_WORKSHOPS.filter(item=>item.id===unit.id).map(workshop=><section key={workshop.id}
+        className="mb-7 rounded-xl border border-indigo-200 bg-indigo-50/30 p-5">
+        <h3 className="font-serif-cormorant font-semibold text-2xl mb-4">Alkalmazó szemináriumi műhely</h3>
+        <h4 className="font-semibold mb-2">Elérendő tanulási eredmények</h4>
+        <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 mb-4">
+         {workshop.aims.map(item=><li key={item}>{item}</li>)}
+        </ul>
+        {workshop.explanation.map(item=><p key={item.slice(0,35)} className="text-sm md:text-base leading-relaxed text-slate-700 mb-3">{item}</p>)}
+        <h4 className="font-semibold mt-5 mb-2">Differenciálási terv</h4>
+        <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 mb-4">
+         {workshop.differentiation.map(item=><li key={item}>{item}</li>)}
+        </ul>
+        <h4 className="font-semibold mb-2">Értékelési szempontok</h4>
+        <ul className="list-disc pl-5 space-y-2 text-sm text-slate-700 mb-4">
+         {workshop.evidence.map(item=><li key={item}>{item}</li>)}
+        </ul>
+        {workshop.questions.map(q=><details key={q.prompt} className="bg-white border border-slate-200 rounded-lg p-3 my-3">
+         <summary className="font-semibold cursor-pointer text-sm">{q.prompt}</summary>
+         <p className="mt-3 text-sm text-slate-700">{q.answer}</p>
+        </details>)}
+        <h4 className="font-semibold mt-5 mb-2">Magyar nyelvű szakirodalmi támpontok</h4>
+        {workshop.sources.map(source=><a key={source.url} href={source.url} target="_blank" rel="noopener noreferrer"
+         className="block text-sm text-[#4a54e1] hover:underline mb-2">{source.label} ↗</a>)}
+       </section>)}
        <div className="grid md:grid-cols-2 gap-4 mt-6">
         <div className="rounded-xl bg-indigo-50/60 border border-indigo-100 p-5">
          <h3 className="font-bold mb-2">Szemináriumi feladatok</h3>
