@@ -114,6 +114,37 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               ))}
             </div>
 
+            {/* Interactive topic illustration and Hungarian video discovery */}
+            <section className="my-7 space-y-4" aria-label="Vizuális és videós szemléltetés">
+              <div className="rounded-2xl bg-white p-5 text-slate-900 border border-slate-200">
+                <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+                  <h4 className="font-semibold text-base">Hangok és hangközök – vizuális szemléltetés</h4>
+                  <span className="text-xs text-slate-500">Interaktív hangkészlet-ábra</span>
+                </div>
+                <div className="grid grid-cols-6 gap-1 sm:gap-2" role="img" aria-label="Hexachord: C D E F G A, szolmizálva ut re mi fa sol la">
+                  {(['C','D','E','F','G','A'] as const).map((note, index) => (
+                    <div key={note} className="min-w-0 rounded-xl border border-indigo-200 bg-gradient-to-b from-indigo-50 to-white p-2 sm:p-4 text-center">
+                      <div className="text-xl sm:text-3xl font-bold text-indigo-700">{note}</div>
+                      <div className="text-xs sm:text-sm text-slate-600 mt-1">{['ut', 're', 'mi', 'fa', 'sol', 'la'][index]}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-600 mt-3">Hat egymás után következő diatonikus hang: a történeti hexachord egyik alapvető példája. Az ábra a hangsorok és szolmizáció tanulásához kapcsolódik.</p>
+              </div>
+              <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/30 p-5">
+                <h4 className="font-semibold text-indigo-200 mb-2">Magyar nyelvű oktatóvideók keresése</h4>
+                <p className="text-sm text-slate-300 mb-3">Az alfejezet címére szabott YouTube-keresés; a találatokat a tanárnak érdemes ellenőriznie felhasználás előtt.</p>
+                <a
+                  href={`https://www.youtube.com/results?search_query=${encodeURIComponent(currentSub.title + ' zeneelmélet magyar oktatóvideó')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                >
+                  <Play className="w-4 h-4" /> Videók az aktuális alfejezethez
+                </a>
+              </div>
+            </section>
+
             {/* Quotes */}
             {currentSub.quotes && currentSub.quotes.map((q, qIdx) => (
               <div key={qIdx} className="bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-5 my-6 flex items-start space-x-4">
