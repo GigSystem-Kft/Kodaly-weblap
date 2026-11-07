@@ -5,7 +5,7 @@ import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from '
 import { playNote } from '../utils/audio';
 
 interface QuizViewProps {
-  onSaveQuizScore: (chapterId: string, score: number) => void;
+  onSaveQuizScore: (chapterId: string, score: number, correct: number, total: number) => void;
   initialChapterId?: string;
 }
 
@@ -45,7 +45,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     } else {
       setIsFinished(true);
       const finalScore = Math.round((correctCount / questions.length) * 100);
-      onSaveQuizScore(selectedChapter, finalScore);
+      onSaveQuizScore(selectedChapter, finalScore, correctCount, questions.length);
     }
   };
 
