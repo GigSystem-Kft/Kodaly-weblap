@@ -17,34 +17,6 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
       ]
     },
   ],
-  'szolmizacio-hangkozok': [
-    {
-      id: 'hangkoz-szamitas',
-      title: '3.3 Hangközök felismerése és számítása',
-      summary: 'Hangközszám, félhangszám és hangközfordítás.',
-      content: [
-        'A hangköz számát a két hang betűnevének befoglaló számolása adja: C–E terc, C–G kvint, C–C oktáv (a következő C-ig).',
-        'A hangköz minőségét a félhangok száma pontosítja. Kis szekund: 1, nagy szekund: 2, kis terc: 3, nagy terc: 4 félhang.',
-        'Tiszta kvart: 5, tiszta kvint: 7, tiszta oktáv: 12 félhang. A tiszta kvart nem hat félhangos: a hat félhang tritónusz.',
-        'Hangközfordításkor az egyik hangot oktávval áthelyezzük. A fordítás hangközszámai kilencre egészítik ki egymást: szekund–szeptim, terc–szext, kvart–kvint.',
-        'A kis hangköz nagyra, a nagy kisre, a tiszta tisztára fordul. Példa: nagy terc fordítása kis szext.',
-        'Gyakorlat: számold ki a C–Esz (kis terc), a C–E (nagy terc), a C–F (tiszta kvart) és a C–G (tiszta kvint) félhangjait.'
-      ],
-      examples: [{ title: 'Hangközök összehasonlítása', description: 'C–Esz: kis terc; C–E: nagy terc; C–G: tiszta kvint.', audioNotes: ['C4','E4','G4'] }]
-    },
-    {
-      id: 'szolmizacio-alkalmazas',
-      title: '3.4 Szolmizáció és transzponálás',
-      summary: 'A relatív fokok megőrzése különböző hangnemekben.',
-      content: [
-        'A relatív szolmizációban ugyanaz a dó–ré–mi dallam bármely dúr hangnembe áthelyezhető, mert a fokok viszonya megmarad.',
-        'C-dúrban dó=C, ré=D, mi=E; G-dúrban dó=G, ré=A, mi=H; F-dúrban dó=F, ré=G, mi=A.',
-        'A két félhanglépés a dúr hangsorban a mi–fá és ti–dó között van.',
-        'A lá-alapú moll megértéséhez énekelj lá–ti–dó–ré–mi sort, majd hasonlítsd össze a dó-alapú dúrral.',
-        'Gyakorlat: szolmizáld a G–A–H–C–D hangsort G-dúrban, utána transzponáld C-dúrba.'
-      ]
-    }
-  ],
   hangkeszletek: [
     {
       id: 'pentaton-gyakorlat',
