@@ -28,8 +28,7 @@ function searchTerms(string $value): array {
 }
 function knowledgeEntries(): array {
     $file=__DIR__ . '/knowledge.php';
-    if (!is_file($file)) return [];
-    $list=require $file;
+    $list=is_file($file) ? require $file : [];
     $entries = is_array($list) ? $list : [];
     $entries = array_values(array_filter($entries, static fn($e) => !str_contains(strtolower((string)($e['source'] ?? '')), 'kesztler')));
     // Licensed full-text pedagogical book is a separate, server-side PHP data file.
