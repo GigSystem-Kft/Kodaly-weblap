@@ -39,7 +39,7 @@ test('chapter 4 retains three distinct lesson sections, each with its own visual
  const detail=readFileSync('src/components/ChapterDetailView.tsx','utf8');
  assert.ok(detail.includes('CollectionLessonVisual'));
  assert.ok(detail.includes("chapter.id === 'hangkeszletek'"));
- assert.ok(!detail.includes("<InteractiveMusicVisual chapterId={chapter.id}/>}\n\n            {/* Az eredeti"));
+ assert.match(detail,/lessonId=\\{currentSub.id\\}/);
 });
 test('note positions are shared with corrected treble staff for all examples',()=>{
  const visual=readFileSync('src/components/CollectionLessonVisual.tsx','utf8');
