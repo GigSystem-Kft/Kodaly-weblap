@@ -25,7 +25,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt a 42411290126-os CI-ben sikeres; további kotta- és lejátszás-E2E hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
-| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások és legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés; válaszidő és teljes kérdésenkénti analitika hátra |
+| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés és gyakorlási idő; részletes kérdésenkénti trend és pedagógiai értékelés hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
@@ -127,6 +127,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-18: a kiadási médiaellenőrző az elnevezés/létezés mellett a JPEG fejléceket, zárójelölőket és minimális méretet is ellenőrzi. Ez akadályozza, hogy hibás HTML oldalt képnek álcázva kiadjon.
 - A-23: a tankönyvoldalak nagyított nézetébe belépéskor a bezárógomb fókuszt kap, Tab-bal a párbeszédablakon belül lehet navigálni, és bezáráskor visszatér a megnyitó gombhoz. A keresőmező hozzáférhető címkét kapott.
 - A-01: a második egyetemi PDF-hivatkozásból letöltött fájl SHA-256-ja nem egyezik az eredetivel. A bizonytalan eredetű fájl importját nem folytattuk; a kiadási kapu továbbra is blokkol a 13 GitHubban hiányzó JPG miatt.
+
+## Tizenhetedik javítási egység (2026-11-07)
+
+- A-17: a gyakorlókörök eltelt ideje is menthető `durationSeconds` adatként, visszamenőleg kompatibilis opcionális mezővel. A PHP adatellenőrzés és a kliensmigráció legfeljebb 10 órás egész másodpercértékeket fogad el, a profil a gyakorlás idejét perc/másodperc formátumban megjeleníti. Új teszt védi az értékvesztés és a hibás/időben túlzó mezők ellen.
+- A-13: a kvízmodul kategóriái automatikusan az alap- és kiegészítő modulkatalógusból származnak; egyesítési/CI próba hátra.
+- A-01/A-18: a teljes GitHub release-t továbbra is meggátolja a repóból hiányzó 13 eredeti ritmikai oldalkép. A hiba nem hallgatható el vagy kerülhető meg minőségromlással.
 
 ## Lezárási feltételek
 
