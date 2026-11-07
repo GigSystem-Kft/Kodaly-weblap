@@ -329,8 +329,9 @@ export function sourceCoverageReport() {
     indexChunks: INDEX.length,
     indexedCharacters: INDEX.reduce((n,e) => n + e.text.length, 0),
     sources: [...groups.values()].sort((a,b) => a.source.localeCompare(b.source,'hu')),
-    omitted: omitted.map(file => ({ file, reason: file.startsWith('_') ?
+    omitted: [...omitted.map(file => ({ file, reason: file.startsWith('_') ?
       'Sablon vagy nem jóváhagyott fájl' : 'Az OCR-átirat szakmai ellenőrzésig szándékosan kizárva' })),
+      ...(!omitted.some(file => /kesztler/i.test(file)) ? [{file:'kesztler-zenei-alapismeretek.txt', reason:'Ellenőrizetlen OCR; a telepítőből és az indexből szándékosan kizárt forrás'}] : [])],
     missing,
     limitations: [
       'Ez a jelentés a szerverbe beépített szöveges indexet méri, nem a teljes fájltárat.',
