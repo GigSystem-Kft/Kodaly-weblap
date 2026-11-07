@@ -6,7 +6,7 @@ trap '[[ -n "${SERVER_PID:-}" ]] && kill "$SERVER_PID" 2>/dev/null || true; rm -
 trap 'echo "PHP offline-chat test failed; sanitized local server log:" >&2; tail -n 50 "$ROOT/php-server.log" >&2 || true' ERR
 SITE="$ROOT/owner/htdocs/example.test"
 mkdir -p "$SITE/api"
-cp php/api/{index.php,tutor-search.php,tutor-sources.php,tutor-visuals.php,creative-answers.php,music-answers.php,tutor-image-generation.php} "$SITE/api/"
+cp php/api/{index.php,tutor-search.php,tutor-sources.php,tutor-visuals.php,creative-answers.php,music-answers.php,tutor-image-generation.php,tutor-text-generation.php} "$SITE/api/"
 cat > "$ROOT/owner/zeneelmelet-private.php" <<'PHP'
 <?php
 return [
