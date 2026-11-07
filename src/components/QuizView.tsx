@@ -81,13 +81,16 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
             {id:'ritmus', label:'01. Ritmus és tempó'},
             {id:'hangok-kulcsok', label:'02. Hangok és kulcsok'},
             {id:'szolmizacio-hangkozok', label:'03. Szolmizáció és hangközök'},
+            {id:'hangkeszletek', label:'04. Hangkészletek'},
+            {id:'hetfoku-hangsorok', label:'05. Hétfokú hangsorok és akkordok'},
             {id:'kreativ', label:'06. Kreatív zenei nevelés'},
             {id:'zenetortenet', label:'07. Zenetörténet'},
             {id:'pedagogia', label:'08. Tantárgy-pedagógia'},
             {id:'zenei-kifejezesek', label:'09. Zenei kifejezések'},
             {id:'solfege', label:'Szolmizációs hangok'},
             {id:'abc-hangok', label:'ABC-s hangok'},
-          ].map(item=><option value={item.id} key={item.id}>{item.label}</option>)}
+          ].filter(item => item.id === 'all' || QUIZ_QUESTIONS.some(q => q.chapterId === item.id))
+            .map(item=><option value={item.id} key={item.id}>{item.label}</option>)}
         </select>
         <p className="text-xs text-slate-600 mt-2">{questions.length} kérdés a kiválasztott témakörben</p>
       </div>
