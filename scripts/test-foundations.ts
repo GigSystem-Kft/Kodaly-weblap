@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
+import { FOUNDATIONS_SUBCHAPTER_IDS, getFoundationsSubchapterGuide } from '../src/data/musicFoundationsSubchapters';
 import { FOUNDATIONS_FLASHCARDS, FOUNDATIONS_MATCHING, FOUNDATIONS_QUIZZES } from '../src/data/musicFoundationsExercises';
 import { MUSIC_CHAPTERS, FLASHCARDS_DATA, MATCHING_PAIRS, QUIZ_QUESTIONS } from '../src/data/musicData';
 
@@ -31,4 +32,17 @@ test('new cards, matching and theory questions are consistent and do not replace
   assert.ok(q.options[q.correctIndex]);
   assert.ok(q.explanation.length>20);
  }
+});
+
+test('each chapter 1–5 subchapter receives focused, in-depth content with stable identifiers',()=>{
+ const all=MUSIC_CHAPTERS.flatMap(chapter=>chapter.subchapters.map(sub=>({chapter,sub})));
+ assert.equal(new Set(FOUNDATIONS_SUBCHAPTER_IDS).size,FOUNDATIONS_SUBCHAPTER_IDS.length);
+ for(const {chapter,sub} of all){
+   const guide=getFoundationsSubchapterGuide(chapter.id,sub.id);
+   assert.ok(guide,sub.id+' guide exists');
+   assert.ok(guide!.sections.length>0,sub.id+' gets a reading');
+   assert.ok(guide!.sections.every(section=>section.paragraphs.length>=2));
+   assert.ok(guide!.guidedPractice.length>=4);
+ }
+ assert.ok(all.length>=20);
 });
