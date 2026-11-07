@@ -18,7 +18,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP CI szerepkörteszt (student/teacher/admin) és fiókéletút sikeres; valódi böngészős és éles próba hátra |
-| P1 | A-24 | Valós telepítési E2E és regressziótesztek | Vizsgálat hátra |
+| P1 | A-24 | Valós telepítési E2E és regressziótesztek | Új Playwright/Chromium PR workflow: vendég UI, szókártya, párosító, 04-es kvíz, tankönyvkeresés és mobil AI; első futás ellenőrzés alatt, éles szerepkörös E2E hátra |
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127=189 tétel definíció alapján átsorolva, 945 helyett 756 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
@@ -29,7 +29,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, tankönyv nagyítás fókuszcsapda, Tanársegéd mobilablak-méretezés javítva; teljes WCAG/mobil audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, tankönyvnagyítás fókuszcsapda, mobil AI-nyitó hozzáférhető neve; Chromium smoke részleges, teljes WCAG/mobil audit hátra |
 
 ## Első javítási csomag
 
@@ -133,6 +133,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-17: a gyakorlókörök eltelt ideje is menthető `durationSeconds` adatként, visszamenőleg kompatibilis opcionális mezővel. A PHP adatellenőrzés és a kliensmigráció legfeljebb 10 órás egész másodpercértékeket fogad el, a profil a gyakorlás idejét perc/másodperc formátumban megjeleníti. Új teszt védi az értékvesztés és a hibás/időben túlzó mezők ellen.
 - A-13: a kvízmodul kategóriái automatikusan az alap- és kiegészítő modulkatalógusból származnak; egyesítési/CI próba hátra.
 - A-01/A-18: a teljes GitHub release-t továbbra is meggátolja a repóból hiányzó 13 eredeti ritmikai oldalkép. A hiba nem hallgatható el vagy kerülhető meg minőségromlással.
+
+## Tizennyolcadik javítási egység (2026-11-07)
+
+- A-24: új `.github/workflows/browser-smoke.yml` kötelező PR ellenőrzésként (vagy kézzel) futtatja a `scripts/browser-smoke.mjs` Playwright Chromium-tesztet. A teszt a vendégoldal, a szókártya Enter-rel történő megfordítása, a párosító, a 04-es témakör tesztje, az 1. tankönyv keresője és képnagyítója, valamint a 390 px széles mobilos Tanársegéd képernyőn maradása irányában ad tényleges UI-ellenőrzést. **A kód bekerült, de a futás eredményét még ellenőrizni kell.**
+- A-23: a mobilon ikonméretű Tanársegéd-nyitógomb hozzáférhető `aria-label` címet kapott.
+- A-01: a 13 oldalképből a helyi fejlesztői környezetben megvan az eredeti PDF alapján renderelt változat; a `scripts/render-rhythm-research-pages.sh` most az eredeti SHA-256 egyezést is kötelezően ellenőrzi, így rossz/módosított PDF-ből nem lehet kiadási képet előállítani.
 
 ## Lezárási feltételek
 
