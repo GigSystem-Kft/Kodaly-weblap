@@ -1,15 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../data/musicPedagogy';
+import { DEEP_PEDAGOGY_LESSONS } from '../data/musicPedagogyDeep';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 
 export const MusicPedagogyView:React.FC<{onBack:()=>void}> = ({onBack}) => {
  const [query,setQuery]=useState('');
  const [active,setActive]=useState<string|null>(PEDAGOGY_UNITS[0]?.id ?? null);
+ const [openImage,setOpenImage]=useState<string|null>(null);
+ const [missingImages,setMissingImages]=useState<string[]>([]);
  const normalized=(s:string)=>s.toLocaleLowerCase('hu-HU').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
  const results=useMemo(()=>{
   const words=normalized(query.trim()).split(/\s+/).filter(Boolean);
   return words.length ? PEDAGOGY_UNITS.filter(unit=>{
-   const haystack=normalized([unit.title,unit.goal,...unit.concepts,...unit.sections.flatMap(section=>[section.heading,section.text]),...unit.seminar,...unit.reflection].join(' '));
+   const haystack=normalized([unit.title,unit.goal,...unit.concepts,...unit.sections.flatMap(section=>[section.heading,section.text]),...(DEEP_PEDAGOGY_LESSONS.find(item=>item.unitId===unit.id)?.explanation ?? []),...unit.seminar,...unit.reflection].join(' '));
    return words.every(word=>haystack.includes(word));
   }) : PEDAGOGY_UNITS;
  },[query]);
@@ -20,7 +23,7 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void}> = ({onBack}) => {
   <p className="text-base md:text-lg leading-relaxed max-w-3xl mb-6 text-slate-700">
     A tanító szakos hallgatók számára készített tantárgy-pedagógiai tanulóút: a zenei
     élmény szerepétől a Kodály-koncepción át a daltanításig, a készségfejlesztésig,
-    a műelemzésig és az óratervezésig. Minden egységhez szeminarumi gyakorlatok
+    a műelemzésig és az óratervezésig. Minden egységhez szemináriumi gyakorlatok
     és önellenőrző kérdések kapcsolódnak.
   </p>
   <div className="rounded-2xl border border-indigo-200 bg-indigo-50/50 p-5 mb-8">
@@ -31,7 +34,7 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void}> = ({onBack}) => {
    </p>
    <p className="text-sm text-slate-700 mt-2">
     Ez önálló megfogalmazású módszertani feldolgozás; a pontos nyomtatott oldalszámokat
-    témánként közöljük. A teljes eredeti művet nem másoljuk a webhelyre.
+    témánként közöljük. Az engedélyezett eredeti kötet szerveroldalon, az AI tudásbázisában külön kereshető.
    </p>
    <a href={PEDAGOGY_SOURCE.originalUrl} target="_blank" rel="noopener noreferrer"
       className="inline-flex items-center gap-1.5 text-sm text-[#4a54e1] mt-3 hover:underline">
@@ -47,7 +50,8 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void}> = ({onBack}) => {
   <p className="text-sm text-slate-600 mb-5">{results.length} / {PEDAGOGY_UNITS.length} témakör</p>
   <div className="space-y-4">
    {results.length===0 && <p className="text-slate-600">Nem találtam ilyen témakört. Próbálj rövidebb kifejezést.</p>}
-   {results.map((unit,index)=>{
+   {results.map((unit)=>{
+    const deep=DEEP_PEDAGOGY_LESSONS.find(item=>item.unitId===unit.id);
     const isOpen=active===unit.id || Boolean(query.trim());
     return <article key={unit.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
       <button type="button" className="w-full text-left px-5 md:px-7 py-5 flex items-start justify-between gap-3 hover:bg-indigo-50/50"
@@ -65,6 +69,31 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void}> = ({onBack}) => {
         <h3 className="font-serif-cormorant font-semibold text-xl md:text-2xl mb-2">{section.heading}</h3>
         <p className="text-sm md:text-base text-slate-700 leading-relaxed">{section.text}</p>
        </section>)}
+       {deep && <section className="mb-6" aria-label="Részletes pedagógiai feldolgozás">
+        <h3 className="font-serif-cormorant font-semibold text-2xl md:text-3xl mb-4">Részletes didaktikai feldolgozás</h3>
+        {deep.explanation.map(paragraph=><p key={paragraph.slice(0,45)} className="text-sm md:text-base text-slate-700 leading-relaxed mb-4">{paragraph}</p>)}
+        <h4 className="font-semibold mt-5 mb-2">Javasolt tanítási folyamat</h4>
+        <ol className="list-decimal pl-5 space-y-2 text-sm md:text-base text-slate-700 leading-relaxed">
+          {deep.lessonPlan.map(step=><li key={step}>{step}</li>)}
+        </ol>
+        <h4 className="font-semibold mt-5 mb-2">Gyakori módszertani hibák</h4>
+        <ul className="list-disc pl-5 space-y-2 text-sm md:text-base text-slate-700">
+          {deep.pitfalls.map(item=><li key={item}>{item}</li>)}
+        </ul>
+        {deep.figure && !missingImages.includes(deep.figure.file) && <figure className="mt-6 max-w-2xl">
+          <button type="button" className="block w-full text-left" title="Kattints az eredeti kottarészlet nagyításához"
+           onClick={()=>setOpenImage(deep.figure?.file ?? null)}>
+            <img src={'/assets/pedagogy/'+deep.figure.file} loading="lazy"
+             alt={deep.figure.caption}
+             onError={()=>setMissingImages(prev=>[...prev,deep.figure!.file])}
+             className="w-full rounded-lg border border-slate-200 cursor-zoom-in shadow-sm hover:shadow-md"/>
+          </button>
+          <figcaption className="text-xs text-slate-500 mt-2">
+            {deep.figure.caption}. Kelemen Judit (2019), nyomtatott {deep.figure.printPage}. oldal
+            (PDF {deep.figure.pdfPage}. oldal). Forrás: Líceum Kiadó.
+          </figcaption>
+        </figure>}
+       </section>}
        <div className="grid md:grid-cols-2 gap-4 mt-6">
         <div className="rounded-xl bg-indigo-50/60 border border-indigo-100 p-5">
          <h3 className="font-bold mb-2">Szemináriumi feladatok</h3>
@@ -80,5 +109,13 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void}> = ({onBack}) => {
      </article>;
    })}
   </div>
+  {openImage && <div role="dialog" aria-modal="true" aria-label="Kottapélda nagyítva"
+   className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4"
+   onClick={()=>setOpenImage(null)}>
+   <button type="button" onClick={()=>setOpenImage(null)}
+    className="absolute right-5 top-4 rounded-lg bg-white text-slate-900 px-4 py-2 font-semibold">Bezárás ×</button>
+   <img src={'/assets/pedagogy/'+openImage} alt="Kottapélda nagyítva"
+    className="max-w-full max-h-[87vh] object-contain bg-white rounded shadow-lg" onClick={e=>e.stopPropagation()}/>
+  </div>}
  </section>;
 };
