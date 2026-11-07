@@ -2,7 +2,7 @@ import React from 'react';
 import { UserProgress } from '../types';
 import { MUSIC_CHAPTERS, QUIZ_QUESTIONS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES, learningProgressSummary } from '../data/learningProgressSummary';
-import { consecutiveDays } from '../progress';
+import { consecutiveDays, localDay } from '../progress';
 import { Award, Sparkles, CheckCircle2, BookOpen, Trophy, ArrowRight, Layers, CalendarDays, ListChecks } from 'lucide-react';
 
 interface ProgressDashboardProps {
@@ -14,12 +14,13 @@ interface ProgressDashboardProps {
 export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, signedIn = false, onOpenModule }) => {
   const stats = learningProgressSummary(progress);
   const trueStreak = consecutiveDays(progress.activityDays ?? []);
+  const earXpToday = progress.earTrainingDailyXp?.[localDay()] ?? 0;
 
   const metrics = [
     { title:'Tanulmányozottnak jelölt egységek', value:`${stats.completedModules} / ${stats.curriculumModules}`, foot:'5 alapfejezet + 4 bővített témakör · saját jelölés', Icon:BookOpen,  },
     { title:'Teljesített alapfejezetek', value:`${stats.completedCoreChapters} / ${stats.coreChapters}`, foot:`${stats.corePercentage}% · csak a követett alapfejezetek`, Icon:CheckCircle2,  },
     { title:'Kvízek átlagos legjobb eredménye', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy,  },
-    { title:'Gyakorlási XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos tanulási sorozat · nem vizsgaértékelés`, Icon:Sparkles,  },
+    { title:'Gyakorlási XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos sorozat · mai hallásfejlesztés: ${earXpToday}/100 XP · nem vizsgaértékelés`, Icon:Sparkles,  },
   ];
 
   return (
