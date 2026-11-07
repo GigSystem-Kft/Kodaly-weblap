@@ -115,7 +115,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-bold text-white mb-2">Gratulálok! Sikeres Párosítás!</h3>
-          <p className="text-slate-300 mb-6">Minden párt sikeresen megtaláltál. Szereztél +50 XP-t!</p>
+          <p className="text-slate-300 mb-6">Minden párt sikeresen megtaláltál. A teljesítésedet rögzítjük; XP csak az újonnan teljesített párokért jár.</p>
           <button
             onClick={initGame}
             className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all shadow-lg shadow-indigo-600/30 flex items-center space-x-2 mx-auto"
@@ -152,7 +152,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                     onClick={() => handleSelectTerm(t.id, t.pairId)}
                     className={`w-full text-left p-4 rounded-2xl font-medium text-sm transition-all border ${
                       isMatched
-                        ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300 opacity-50 cursor-not-allowed'
+                        ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-200 cursor-not-allowed'
                         : isSelected
                         ? 'bg-indigo-600 border-indigo-400 text-white shadow-lg shadow-indigo-600/30'
                         : 'bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800'
@@ -177,7 +177,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                     onClick={() => handleSelectMatch(m.id, m.pairId)}
                     className={`w-full text-left p-4 rounded-2xl font-medium text-sm transition-all border ${
                       isMatched
-                        ? 'bg-emerald-950/30 border-emerald-500/30 text-emerald-300 opacity-50 cursor-not-allowed'
+                        ? 'bg-emerald-950/60 border-emerald-500/50 text-emerald-200 cursor-not-allowed'
                         : isSelected
                         ? 'bg-violet-600 border-violet-400 text-white shadow-lg shadow-violet-600/30'
                         : 'bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800'
