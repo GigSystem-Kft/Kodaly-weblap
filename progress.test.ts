@@ -88,3 +88,16 @@ test('invalid and overlong quiz history cannot break legacy progress',()=>{
   assert.equal(restored.quizAttempts?.length,100);
   assert.ok(restored.quizAttempts?.every(a=>a.score<=100));
 });
+
+test('quiz mistake IDs survive account merge, while oversized diagnostics are discarded',()=>{
+ const server=createEmptyProgress();
+ const attempt={id:'quiz-a',chapterId:'ritmus',score:50,correct:1,total:2,at:'2026-11-07T10:00:00Z',wrongQuestionIds:['q-2']};
+ server.quizAttempts=[attempt];
+ const guest=createEmptyProgress();
+ guest.quizAttempts=[attempt];
+ const merged=mergeProgress(server,guest);
+ assert.equal(merged.quizAttempts?.length,1);
+ assert.deepEqual(migrateProgress(merged).quizAttempts?.[0]?.wrongQuestionIds,['q-2']);
+ const bad={...server,quizAttempts:[{...attempt,wrongQuestionIds:Array.from({length:13},(_,i)=>'q-'+i)}]};
+ assert.deepEqual(migrateProgress(bad).quizAttempts,[]);
+});
