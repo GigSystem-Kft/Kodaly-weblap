@@ -39,3 +39,11 @@ test('subchapter and matching completions are wired into persistent user progres
  assert.match(lesson,/completedSubchapters.includes\(currentSub.id\)/);
  assert.match(game,/onCompleted\(newMatched\)/);
 });
+
+test('quiz uses fair 15-question practice rounds rather than an unbounded all-topic session',()=>{
+ const code=readFileSync('src/components/QuizView.tsx','utf8');
+ assert.match(code,/return shuffled\.slice\(0, 15\)/);
+ assert.match(code,/\[selectedChapter, round\]/);
+ assert.match(code,/setRound\(value => value \+ 1\)/);
+ assert.match(code,/Vegyes gyakorlás \(15 kérdés\)/);
+});
