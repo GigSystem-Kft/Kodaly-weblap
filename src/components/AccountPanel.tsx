@@ -181,7 +181,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
             <button type="button" onClick={() => {setMode('change-password');setError('');}} className="rounded-lg px-4 py-2 border border-indigo-300 text-indigo-700 text-sm hover:bg-indigo-50">Jelszó módosítása</button>
             <button type="button" disabled={busy} onClick={signOut} className="rounded-lg px-4 py-2 border border-slate-300 text-slate-700 text-sm hover:bg-slate-100 flex items-center gap-2"><LogOut className="w-4 h-4" />Kijelentkezés</button>
           </div>
-          <p className="text-xs text-slate-500 mt-3">Az átvitel a jelenlegi böngészőben tárolt eredményeket egyesíti a fiók adataival. Nem töröl korábbi teljesítéseket.</p>
+          <p className="text-xs text-slate-500 mt-3">Az átvitel megtartja a teljesítéseket és a legjobb kvízeredményeket. A két XP-érték közül a nagyobbat őrzi meg, nem adja őket össze. A párhuzamos gyakorlások összes pontja utólag nem állítható helyre.</p>
         </div>
       ) : (
         <div>
