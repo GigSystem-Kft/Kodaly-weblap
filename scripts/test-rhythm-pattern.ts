@@ -24,3 +24,19 @@ test('tempo changes preserve four beats',()=>{
  assert.equal(rhythmPattern(16,80).totalSeconds,3);
  assert.throws(()=>rhythmPattern(4,0));
 });
+
+test('metronome has exactly four quarter beats aligned to a 60 BPM measure',()=>{
+ for(const divisions of RHYTHM_SUBDIVISIONS){
+  const p=rhythmPattern(divisions,60);
+  assert.deepEqual(p.beats.map(beat=>beat.startSeconds),[0,1,2,3]);
+  assert.equal(p.beats.filter(beat=>beat.accent).length,1);
+  assert.equal(p.beats[0].accent,true);
+  assert.ok(p.beats.slice(1).every(beat=>!beat.accent));
+  assert.equal(p.beats.length,4);
+ }
+});
+test('changing tempo moves both notes and metronome on the same timeline',()=>{
+ const p=rhythmPattern(8,120);
+ assert.deepEqual(p.beats.map(beat=>beat.startSeconds),[0,0.5,1,1.5]);
+ assert.equal(p.notes.at(-1)!.startSeconds+p.notes.at(-1)!.durationSeconds,2);
+});
