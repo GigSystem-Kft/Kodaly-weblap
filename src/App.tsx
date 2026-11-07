@@ -93,10 +93,13 @@ export default function App() {
         const result = await response.json();
         if (generation !== accountGenerationRef.current) return;
         if (response.status === 409) {
+          const baseline = migrateProgress(
+            savedSnapshotRef.current ? JSON.parse(savedSnapshotRef.current) : null
+          );
           revisionRef.current = result.revision;
           const serverProgress = migrateProgress(result.progress);
           savedSnapshotRef.current = JSON.stringify(serverProgress);
-          setProgress(previous => mergeProgress(serverProgress, previous));
+          setProgress(previous => mergeConcurrentProgress(serverProgress, previous, baseline));
           setSyncError('Másik eszköz eredményeit összevezettük. Az új mentést újrapróbáljuk.');
           reschedule = true;
           return;
