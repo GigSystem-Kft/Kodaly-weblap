@@ -3,7 +3,7 @@ import { UserProgress } from '../types';
 import { MUSIC_CHAPTERS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES, learningProgressSummary } from '../data/learningProgressSummary';
 import { consecutiveDays } from '../progress';
-import { Award, Flame, Sparkles, CheckCircle2, BookOpen, Trophy, ArrowRight, Layers, CalendarDays, ListChecks } from 'lucide-react';
+import { Award, Sparkles, CheckCircle2, BookOpen, Trophy, ArrowRight, Layers, CalendarDays, ListChecks } from 'lucide-react';
 
 interface ProgressDashboardProps {
   progress: UserProgress;
@@ -16,10 +16,10 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
   const trueStreak = consecutiveDays(progress.activityDays ?? []);
 
   const metrics = [
-    { title:'Elérhető tananyagegységek', value:String(stats.curriculumModules), foot:'5 alapfejezet + 4 bővített témakör', Icon:BookOpen, theme:'indigo' },
-    { title:'Teljesített alapfejezetek', value:`${stats.completedCoreChapters} / ${stats.coreChapters}`, foot:`${stats.corePercentage}% · csak a követett alapfejezetek`, Icon:CheckCircle2, theme:'emerald' },
-    { title:'Kvízek átlagos legjobb eredménye', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy, theme:'violet' },
-    { title:'Összesített XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos tanulási sorozat`, Icon:Sparkles, theme:'amber' },
+    { title:'Elérhető tananyagegységek', value:String(stats.curriculumModules), foot:'5 alapfejezet + 4 bővített témakör', Icon:BookOpen,  },
+    { title:'Teljesített alapfejezetek', value:`${stats.completedCoreChapters} / ${stats.coreChapters}`, foot:`${stats.corePercentage}% · csak a követett alapfejezetek`, Icon:CheckCircle2,  },
+    { title:'Kvízek átlagos legjobb eredménye', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy,  },
+    { title:'Összesített XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos tanulási sorozat`, Icon:Sparkles,  },
   ];
 
   return (
@@ -36,10 +36,10 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {metrics.map(({title,value,foot,Icon,theme})=>(
+        {metrics.map(({title,value,foot,Icon})=>(
           <div key={title} className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg text-white">
             <div className="flex items-start gap-3">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-${theme}-500/20 border border-slate-600`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-indigo-500/20 border border-slate-600`}>
                 <Icon className="w-5 h-5 text-indigo-300"/>
               </div>
               <div className="min-w-0">
