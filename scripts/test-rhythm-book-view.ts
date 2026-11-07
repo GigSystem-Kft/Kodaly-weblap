@@ -29,3 +29,11 @@ test('the original PDF can be converted reproducibly into 13 exact numbered page
  assert.ok(script.includes('public/ritmikai'));
  assert.ok(script.includes('seq 1 13'));
 });
+
+test('rhythm book is independently reachable from 07. Tankönyvek menu',()=>{
+ const textbook=readFileSync('src/components/TextbookView.tsx','utf8');
+ const app=readFileSync('src/App.tsx','utf8');
+ assert.ok(textbook.includes("{ id: 5, title: 'Ritmikai fejlesztőprogram' }"));
+ assert.ok(app.includes("activeTab === 'textbook-5'"));
+ assert.ok(app.includes('<RhythmResearchBookView />'));
+});
