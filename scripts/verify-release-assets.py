@@ -13,10 +13,10 @@ def valid_jpeg(path: Path) -> bool:
     if not path.is_file() or path.stat().st_size < 1024:
         return False
     with path.open("rb") as stream:
-        if stream.read(3) != b"\\xff\\xd8\\xff":
+        if stream.read(3) != b"\xff\xd8\xff":
             return False
         stream.seek(-2, 2)
-        return stream.read(2) == b"\\xff\\xd9"
+        return stream.read(2) == b"\xff\xd9"
 
 expected_pages = {1: 72, 2: 69, 3: 80, 4: 81}
 for book in range(1, 5):
