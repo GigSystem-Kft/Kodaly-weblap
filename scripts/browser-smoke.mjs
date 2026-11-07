@@ -12,7 +12,7 @@ async function checkAccessibility(page, label) {
     .analyze();
   const serious = results.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
   if (serious.length) {
-    const details = serious.map(v => `${v.id}: ${v.nodes.length} elem – ${v.help}`).join('; ');
+    const details = serious.map(v => `${v.id}: ${v.nodes.length} elem – ${v.help}; ${v.nodes.slice(0, 45).map(node => `${node.target.join(' ')}: ${node.failureSummary?.slice(0, 300)}`).join(' | ')}`).join('; ');
     throw new Error(`WCAG ${label}: ${details}`);
   }
   console.log(`Accessibility ${label}: ${results.violations.length} total findings, ${serious.length} serious/critical`);
