@@ -6,10 +6,10 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 
 | Prioritás | ID | Téma | Állapot |
 |---|---|---|---|
-| P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Nyitott; kiadási ellenőrzés hozzáadva, képek pótlása hátra |
+| P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva a felhasználói fájlokban, helyi konverzió sikeres; hivatalos forrásból SHA-ellenőrzött CI generálás beállítva, futás hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Javítás commitolva, CI még nem igazolta |
 | P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision; MySQL integrációs teszt CI-sikeres, valódi többeszközös böngészős próba hátra |
-| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt, a képek még hiányoznak |
+| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt; a hivatalos PDF-ből történő automatikus képgenerálás CI-ben tesztelendő |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Javítás commitolva, CI még nem igazolta |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
@@ -47,6 +47,10 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 - A-03: üres kérdésbank esetén kezelhető üzenet jelenik meg, nem omlik össze a teszt.
 
 **Kiadási tény:** a legutóbbi megvizsgált PHP Actions-futtatásban (42408457312) a TypeScript/egységteszt, a PHP szintaxis/tesztek, a MySQL fiók- és progress-tesztek és a frontend build sikeresek voltak. A ZIP összeállítása továbbra is blokkolt a média-manifeszt miatt. Egy korábbi Linux telepítőcsomag sikeres volt. A sikeres Linux build nem jelenti a PHP produkció készségét. Éles szerver, tényleges felhasználói adatok és minden média URL ellenőrzése továbbra sem történt meg.
+
+## Hatodik javítási egység (2026-11-07)
+
+Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalálható. SHA256: `eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa`. A forrásfájl `pdfinfo` szerint 13 oldal, és helyben 13 JPG oldal előállítható. A PHP-release workflow a szegedi egyetemi hivatalos publikációról próbálja beszerezni a PDF-et és kizárólag SHA256 egyezés után alakítja JPG-vé, majd a manifest vizsgálja. A hivatalos URL kívülről jelenleg hibát adhat; a CI sikere nem igazolt, a kiadás addig blokkolt.
 
 ## Lezárási feltételek
 
