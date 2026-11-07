@@ -87,9 +87,16 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
                 {(attempt.wrongQuestionIds?.length ?? 0)>0 && <details className="mt-2">
                   <summary className="text-indigo-700 cursor-pointer">Átismétlendő kérdések ({attempt.wrongQuestionIds?.length})</summary>
                   <ul className="list-disc pl-5 mt-2 text-slate-700 space-y-1">
-                    {attempt.wrongQuestionIds?.map(id => <li key={id}>
-                      {QUIZ_QUESTIONS.find(q=>q.id===id)?.question ?? 'Korábbi kérdés (már nem szerepel a feladatbankban)'}
-                    </li>)}
+                    {attempt.wrongQuestionIds?.map(id => {
+                      const question = QUIZ_QUESTIONS.find(item => item.id === id);
+                      return <li key={id} className="pl-1 mb-2">
+                        {question ? <>
+                          <strong className="block font-medium text-slate-800">{question.question}</strong>
+                          <span className="block text-emerald-800">Helyes válasz: {question.options[question.correctIndex]}</span>
+                          <span className="block text-slate-600 mt-1">{question.explanation}</span>
+                        </> : 'Korábbi kérdés (már nem szerepel a feladatbankban)'}
+                      </li>;
+                    })}
                   </ul>
                 </details>}
               </li>
