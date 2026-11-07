@@ -3,7 +3,8 @@ import AxeBuilder from '@axe-core/playwright';
 
 const browser = await chromium.launch({headless:true});
 const root='http://127.0.0.1:4173/';
-const page=await browser.newPage({viewport:{width:1280,height:900}});
+const context=await browser.newContext({viewport:{width:1280,height:900}});
+const page=await context.newPage();
 const failures=[];
 async function checkAccessibility(page, label) {
   const results = await new AxeBuilder({ page })
@@ -77,12 +78,13 @@ try {
   console.log('Guest: glossary favorites persist across page navigation');
 
   // A mobile touch device exercises actual click-to-open navigation without hover.
-  const touch=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const touchContext=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  const touch=await touchContext.newPage();
   await touch.goto(root,{waitUntil:'domcontentloaded'});
   await touch.getByRole('button',{name:/07\. Tankönyvek/}).click();
   await touch.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
   await touch.locator('#textbook-search').waitFor();
-  await touch.close();
+  await touchContext.close();
   console.log('Mobile: textbook menu works with touch');
 
   await page.setViewportSize({width:390,height:844});
