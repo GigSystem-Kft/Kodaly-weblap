@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Volume2, Play, Award, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { playNote, playEarTrainingInterval, stopEarTrainingInterval } from '../utils/audio';
 import { shuffleEarChallenges } from '../utils/earTraining';
 import { PitchCollectionTraining } from './PitchCollectionTraining';
@@ -75,58 +75,56 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
         className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='collections'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangkészletek és párosítás</button>
     </nav>
     {trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="text-center mb-8">
-        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3 border border-indigo-500/30">
-          <Volume2 className="w-3.5 h-3.5" />
-          <span>Hallásfejlesztés & Intervallumok</span>
-        </span>
-        <h2 className="text-3xl font-extrabold text-white mb-2">Fülre Hallás & Hangköz Felismerés</h2>
-        <p className="text-slate-400 text-sm">
-          Hallgasd meg a lejátszott hangközt vagy akkordot, majd találd el a helyes megnevezést!
-        </p>
+    <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangközök felismerése">
+      <div className="text-center mb-6">
+        <p className="text-xs uppercase font-bold tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · hangközök</p>
+        <h2 className="text-3xl font-bold mb-3 text-slate-900">Hangközök felismerése</h2>
+        <p className="text-sm text-slate-600">Hallgasd meg a két egymás után megszólaló hangot, majd válaszd ki a helyes hangközt!</p>
       </div>
 
-      <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl text-center">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-lg p-5 sm:p-8 text-center">
         <div className="flex items-center justify-between mb-6">
-          <span className="text-xs font-bold text-indigo-400">
+          <span className="text-xs font-semibold text-indigo-700">
             Kihívás {currentChallengeIndex + 1} / {round.length} · véletlen sorrend
           </span>
-          <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 font-medium">
+          <span className="text-xs font-semibold text-indigo-700">
             Sorozat: {streak} helyes
           </span>
         </div>
 
         <div className="my-8">
           <button
+            type="button"
+            aria-label="Hangközpár lejátszása"
             onClick={playChallenge}
-            className="w-24 h-24 rounded-full bg-gradient-to-tr from-indigo-600 to-violet-500 hover:from-indigo-500 hover:to-violet-400 text-white flex items-center justify-center mx-auto shadow-xl shadow-indigo-500/30 hover:scale-105 transition-transform"
+            className="w-20 h-20 rounded-full bg-violet-600 hover:bg-violet-500 text-white flex items-center justify-center mx-auto transition-colors focus-visible:outline focus-visible:outline-4 focus-visible:outline-indigo-400"
           >
-            <Play className="w-10 h-10 fill-white ml-1" />
+            <Play className="w-9 h-9 fill-white ml-1" />
           </button>
-          <p className="text-sm text-slate-300 mt-4 font-medium">Hallgasd meg a két hosszabb, lágy hangot!</p>
-          <p className="text-xs text-slate-400 mt-1">Újrahallgatáshoz kattints ismét a lejátszásra.</p>
+          <p className="text-sm text-slate-600 mt-4 font-medium">Hallgasd meg a két hosszabb, lágy hangot!</p>
+          <p className="text-xs text-slate-500 mt-1">Újrahallgatáshoz kattints ismét a lejátszásra.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
           {EAR_CHALLENGES.map((ch) => {
-            let btnClass = 'bg-slate-800/80 hover:bg-slate-700 text-slate-200 border-slate-700';
+            let btnClass = 'bg-slate-50 hover:bg-indigo-50 text-slate-900 border-slate-200';
             if (selectedAnswer !== null) {
               if (ch.title === current.title) {
-                btnClass = 'bg-emerald-950/50 border-emerald-500 text-emerald-200';
+                btnClass = 'bg-emerald-100 border-emerald-600 text-emerald-900';
               } else if (ch.title === selectedAnswer) {
-                btnClass = 'bg-rose-950/50 border-rose-500 text-rose-200';
+                btnClass = 'bg-rose-100 border-rose-500 text-rose-800';
               } else {
-                btnClass = 'bg-slate-900 border-slate-800 text-slate-500 opacity-50';
+                btnClass = 'bg-slate-50 border-slate-200 text-slate-500';
               }
             }
 
             return (
               <button
+                type="button"
                 key={ch.id}
                 disabled={selectedAnswer !== null}
                 onClick={() => handleGuess(ch.title)}
-                className={`p-4 rounded-2xl font-medium text-sm transition-all border ${btnClass}`}
+                className={`p-3 sm:p-4 rounded-xl font-semibold text-sm transition-colors border focus-visible:outline focus-visible:outline-4 focus-visible:outline-indigo-400 ${btnClass}`}
               >
                 {ch.title}
               </button>
@@ -135,23 +133,24 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
         </div>
 
         {selectedAnswer !== null && (
-          <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div role="status" className="mt-6 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-left">
-              <p className={`font-bold text-sm ${isCorrect ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <p className={`font-bold text-sm ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
                 {isCorrect ? 'Helyes válasz! Szereztél +25 XP-t.' : `Helytelen. A helyes válasz: ${current.title}`}
               </p>
-              <p className="text-xs text-slate-400 mt-0.5">{current.description}</p>
+              <p className="text-xs text-slate-600 mt-1">{current.description}</p>
             </div>
             <button
+              type="button"
               onClick={nextChallenge}
-              className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all shadow-lg shadow-indigo-600/30 shrink-0"
+              className="px-5 py-3 rounded-lg bg-indigo-700 hover:bg-indigo-600 text-white text-sm font-semibold shrink-0 focus-visible:outline focus-visible:outline-4 focus-visible:outline-indigo-400"
             >
               {currentChallengeIndex === round.length - 1 ? 'Új, kevert kör indítása' : 'Következő kihívás'}
             </button>
           </div>
         )}
       </div>
-    </div>)}
+    </section>)}
     </>
   );
 };
