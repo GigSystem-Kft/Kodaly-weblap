@@ -8,12 +8,12 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Nyitott; kiadási ellenőrzés hozzáadva, képek pótlása hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Javítás commitolva, CI még nem igazolta |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Nyitott; adatmodell + API kompatibilis migráció szükséges |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Verziózott compare-and-swap API + összevezető kliens implementálva; többeszközös teszt hátra (migráció nélkül) |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Részben javítva a 13 kép kötelező ellenőrzésével |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Javítás commitolva, CI még nem igazolta |
-| P1 | A-04 | Alfejezet-teljesítések nem íródnak | Nyitott |
-| P1 | A-05 | Párosító teljesítési naplója hiányzik | Nyitott |
-| P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Nyitott |
+| P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
+| P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
+| P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Fejezetszám 9-re módosítva; regresszió hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Nyitott |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Nyitott; működés tisztázása és validálás |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Nyitott |
@@ -37,7 +37,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 - A-03: 04/05 fejezet kategóriáinak hozzáadása; a lista kizárja azokat a kategóriákat, amelyekben nincs kérdés.
 - A-01/A-18: `php-release.yml` ellenőrzi, hogy a `release/ritmikai/p001.jpg` – `p013.jpg` mind létező, nem üres fájl-e; a jelenlegi hiány esetén a build megáll, nem ad ki hibás ZIP-et.
 
-**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. A commitok CI eredménye még nem ismert.
+**Második javítási egység:** A-04/A-05/A-07 kódjavítás, valamint A-06 verzióazonosítós feltételes szervermentés, 409-es konfliktusválasz és böngészős összevezetés. A késznek minősítéshez CI, valódi párhuzamos eszközös teszt, PHP kompatibilitás és éles adatmegőrzési próba szükséges.\n\n**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. A commitok CI eredménye még nem ismert.
 
 ## Lezárási feltételek
 
