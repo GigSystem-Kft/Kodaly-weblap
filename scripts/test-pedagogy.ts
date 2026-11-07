@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { PEDAGOGY_UNITS, PEDAGOGY_SOURCE } from '../src/data/musicPedagogy';
 
 test('pedagogy course covers 16 sourced teaching-methodology units', () => {
- assert.equal(PEDAGOGY_UNITS.length,16);
+ assert.equal(PEDAGOGY_UNITS.length,17);
  assert.equal(new Set(PEDAGOGY_UNITS.map(x=>x.id)).size,16);
  assert.equal(PEDAGOGY_SOURCE.isbn,'978-615-5621-66-6');
  assert.ok(PEDAGOGY_SOURCE.originalUrl.startsWith('https://publikacio.uni-eszterhazy.hu/'));
