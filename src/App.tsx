@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
 import { CreativeEducationView } from './components/CreativeEducationView';
 import { MusicHistoryView } from './components/MusicHistoryView';
+import { MusicPedagogyView } from './components/MusicPedagogyView';
 import { ChapterDetailView } from './components/ChapterDetailView';
 import { FlashcardsView } from './components/FlashcardsView';
 import { MatchingGame } from './components/MatchingGame';
@@ -176,7 +177,12 @@ export default function App() {
             progress={progress}
             onOpenCreative={() => { setActiveTab('creative'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onOpenHistory={() => { setActiveTab('musicHistory'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onOpenPedagogy={() => { setActiveTab('musicPedagogy'); window.scrollTo({top:0,behavior:'smooth'}); }}
           />
+        )}
+
+        {activeTab === 'musicPedagogy' && (
+          <MusicPedagogyView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
         )}
 
         {activeTab === 'musicHistory' && (
