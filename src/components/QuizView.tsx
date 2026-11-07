@@ -6,7 +6,7 @@ import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from '
 import { playNote } from '../utils/audio';
 
 interface QuizViewProps {
-  onSaveQuizScore: (chapterId: string, score: number, correct: number, total: number, wrongQuestionIds: string[]) => void;
+  onSaveQuizScore: (chapterId: string, score: number, correct: number, total: number, wrongQuestionIds: string[], durationSeconds: number) => void;
   initialChapterId?: string;
 }
 
@@ -19,6 +19,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   const [isFinished, setIsFinished] = useState<boolean>(false);
   const [wrongQuestionIds, setWrongQuestionIds] = useState<string[]>([]);
   const [round, setRound] = useState(0);
+  const [startedAt, setStartedAt] = useState(() => Date.now());
 
   // A practice round is deliberately short; the full bank remains available over
   // repeated rounds, while a single all-topics session no longer needs hundreds of clicks.
@@ -60,7 +61,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
       setIsFinished(true);
       const finalScore = Math.round((correctCount / questions.length) * 100);
       onSaveQuizScore(selectedChapter === 'all' ? 'vegyes-gyakorlas' : selectedChapter,
-        finalScore, correctCount, questions.length, wrongQuestionIds);
+        finalScore, correctCount, questions.length, wrongQuestionIds,
+        Math.min(36_000, Math.max(0, Math.round((Date.now() - startedAt) / 1000))));
     }
   };
 
@@ -72,6 +74,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     setIsFinished(false);
     setWrongQuestionIds([]);
     setRound(value => value + 1);
+    setStartedAt(Date.now());
   };
 
   if (questions.length === 0) {
