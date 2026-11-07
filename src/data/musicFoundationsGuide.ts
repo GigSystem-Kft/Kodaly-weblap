@@ -1,12 +1,10 @@
-/** Forrásmegjelölt, önállóan írt kiegészítés az 01–05. fejezetekhez.
- * Alapművek:
- * - Open Music Theory (Shaffer–Hughes–Moseley et al.), CC BY-SA 4.0:
- *   https://quadriviumpress.com/musicTheory/
- * - Robert Hutchinson, Music Theory for the 21st-Century Classroom:
- *   https://musictheory.pugetsound.edu/mt21c/
- * - Edinburgh University, Fundamentals of Music Theory:
- *   https://open.ed.ac.uk/fundamentals-of-music-theory-open-textbook/
- * Az alábbi pedagógiai megfogalmazások nem szó szerinti fordítások.
+/** Magyar nyelvű hallgatói kiegészítés, önálló szerkesztés.
+ * Felhasznált magyar nyelvű továbbolvasási és módszertani támpontok:
+ * - Nemzeti Köznevelési Portál: Ének-zene 1–2. Tanítói kézikönyv.
+ * - Nemzeti Köznevelési Portál: Ének-zene 5. Tanári kézikönyv.
+ * - Kodály HUB: magyar nyelvű ének-zenei módszertani tudásközpont.
+ * - Nemzeti Jogszabálytár: zeneelméleti követelmények.
+ * A hivatkozások nem jelentenek átvett, szó szerinti könyvszöveget.
  */
 export interface FoundationsGuide {
   chapterId:string;
@@ -17,9 +15,10 @@ export interface FoundationsGuide {
   selfCheck:{question:string;answer:string}[];
   sources:{title:string;url:string;note:string}[];
 }
-const openTheory='https://quadriviumpress.com/musicTheory/';
-const hutchinson='https://musictheory.pugetsound.edu/mt21c/';
-const edinburgh='https://open.ed.ac.uk/fundamentals-of-music-theory-open-textbook/';
+const nkpLower = 'https://www.nkp.hu/api/media/file/5613c98675d9c07ccd556dc9e0d1cd26e6ed8bcf';
+const nkpUpper = 'https://www.nkp.hu/api/media/file/52de04602110d4731ca40fab16af83295c61da2a';
+const kodalyHub = 'https://kodalyhub.hu/tanaroknak/zenei-tavoktatas';
+const syllabus = 'https://njt.jog.gov.hu/jogszabaly/2009-22-20-1W';
 export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
  { chapterId:'ritmus',
   objectives:['A ritmusértékek időarányainak hangzó és írásos azonosítása.','Az egyszerű és az összetett metrum közötti különbség hallási megfigyelése.','Önálló ritmusalkotás és hibajavítás egyenletes lüktetésben.'],
@@ -44,7 +43,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   guidedPractice:['Tarts negyedlüktetést, és tapsolj rá negyed–két nyolcad–negyed–két nyolcad mintát.','Írj két 3/4-es ütemet háromféle ritmusértékkel, majd számold ellenőrzésként a negyedegységeket.','Hasonlíts össze egy 3/4-es és egy 6/8-os részletet: melyiknél hány fő lüktetési csoportot érzel?','Alkoss négyütemes ritmusválaszt egy kétsoros ritmuskérdésre.'],
   commonMistakes:['Az ütemmutató felső számát automatikusan a hallott főlüktetések számának tekintjük.','A pontozást teljes értékkel történő növelésnek gondoljuk.','A szinkópát egyszerűen „gyors” ritmusként nevezzük meg.'],
   selfCheck:[{question:'Hány nyolcadnyi idő a pontozott negyed?',answer:'Három nyolcadnyi: két nyolcad és egy további nyolcad.'},{question:'Miben más a tipikus 6/8 és a 3/4?',answer:'A 6/8 gyakran két háromrészes lüktetési egységként, a 3/4 három kétrészes egységként hallható.'}],
-  sources:[{title:'Open Music Theory – Meter and Rhythmic Values',url:openTheory,note:'Mérő, ritmusértékek, metrum és szinkópa.'},{title:'University of Edinburgh – Fundamentals of Music Theory',url:edinburgh,note:'Ritmus és időbeli szerveződés, nyílt oktatási forrás.'}]
+  sources:[{title:'Ének-zene 1–2. – magyar nyelvű tanítói kézikönyv (NKP)',url:nkpLower,note:'Ritmikai készségfejlesztés, közös éneklés és mozgásos-játékos tanulás.'},{title:'Ének-zene 5. – magyar nyelvű tanári kézikönyv (NKP)',url:nkpUpper,note:'Ritmuselemek, mérő, ritmushangszer és csoportos gyakorlatok.'}]
  },
  {chapterId:'hangok-kulcsok',
   objectives:['A G- és F-kulcsban a hangok helyének pontos azonosítása.','A törzshang, módosított hang és enharmonikus hang megkülönböztetése.','A hangnem előjegyzésének és a helyi módosítójel érvényének értelmezése.'],
@@ -69,7 +68,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   guidedPractice:['Nevezd meg a G-kulcs öt vonalát és négy vonalközét alulról felfelé.','Olvasd le F-kulcsban a középső C helyét, majd rajzold meg a G-kulcsban is.','Írd fel D-dúr előjegyzését, és keresd meg a módosított fokokat.','Mutass be azonos megszólalású, de eltérő hangnevű enharmonikus hangpárt.'],
   commonMistakes:['A magyar H és B betűt összekeverjük az angolszász B és B-flat elnevezéssel.','Minden vonal hangját azonosnak gondoljuk különböző kulcsokban.','Az ütem elején álló előjegyzést azonosítjuk minden ütemen belüli módosítójel funkciójával.'],
   selfCheck:[{question:'Mi a G-kulcs második vonalának hangja?',answer:'G4 (egyvonalas g).'}, {question:'Melyik két módosított hang szerepel D-dúrban?',answer:'Fisz és Cisz.'}],
-  sources:[{title:'Open Music Theory – Basic Notation and Pitches',url:openTheory,note:'Kottaolvasás, kulcsok, hangmagasság és módosítójelek.'},{title:'Music Theory for the 21st-Century Classroom – Basic Concepts',url:hutchinson,note:'A hangmagasságok és a zenei hangírás alapfogalmai.'}]
+  sources:[{title:'Ének-zene 1–2. – magyar nyelvű tanítói kézikönyv (NKP)',url:nkpLower,note:'Hang és zenei jel összekapcsolása; szolmizáció és kottaolvasási előkészítés.'},{title:'Zeneelméleti követelmények – Nemzeti Jogszabálytár',url:syllabus,note:'Kulcsok, módosítójelek és hangnemek magyar megnevezése a követelményekben.'}]
  },
  {chapterId:'szolmizacio-hangkozok',
   objectives:['A relatív szolmizációs fokok hangzó felismerése és transzponálása.','A hangköz számának és minőségének önálló meghatározása.','Az összhangzó és disszonáns megszólalás történetileg változó értelmezésének felismerése.'],
@@ -94,7 +93,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   guidedPractice:['Énekeld a dó–ré–mi–fá–szó sort C-, majd G-dúrban.','Számold meg a C–Esz és C–E hangközök félhangjait, és nevezd meg őket.','Fordítsd meg az E–G kis tercet, majd nevezd meg a keletkező hangközt.','Hallgass két hangot előbb egymás után, majd egyszerre, és írd le a különbséget.'],
   commonMistakes:['A hangközszámot pusztán a félhangok számának tekintjük.','Az enharmonikus hangok hangközhelyesírását figyelmen kívül hagyjuk.','A szolmizációt minden esetben fix hangneveknek használjuk.'],
   selfCheck:[{question:'Hány félhang a nagy terc és a tiszta kvint?',answer:'Nagy terc: 4 félhang, tiszta kvint: 7 félhang.'},{question:'Mi a nagy terc fordítása?',answer:'Kis szext.'}],
-  sources:[{title:'Open Music Theory – Intervals',url:openTheory,note:'Hangközszám, minőség és fordítás.'},{title:'Music Theory for the 21st-Century Classroom – Intervals',url:hutchinson,note:'Hagyományos hangköz-meghatározás és alkalmazások.'}]
+  sources:[{title:'Zeneelméleti követelmények – Nemzeti Jogszabálytár',url:syllabus,note:'Tiszta, kis és nagy hangközök, azok lejegyzése és gyakorlása.'},{title:'Kodály HUB – magyar nyelvű módszertani segédanyagok',url:kodalyHub,note:'Hallásfejlesztés, aktív énekes zenei tevékenységek és szolmizációs módszertan.'}]
  },
  {chapterId:'hangkeszletek',
   objectives:['A hangkészlet és a hangsor fogalmának elkülönítése.','Két-, három-, négy-, öt- és hatfokú dallamkészlet felismerése.','Dallamalkotás és gyermekdal-elemzés adott hangkészlet alapján.'],
@@ -119,7 +118,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   guidedPractice:['Gyűjts össze három ismert gyermekdalt, és írd le mindegyik különböző hangjait.','Hasonlíts össze egy nem szomszédos háromhangú és egy szomszédos háromhangú dallammotívumot.','Alkoss kétütemes kérdést a C–D–E–G–A készletből, majd készíts válaszmotívumot.','Külön nevezd meg a dal hangkészletét és legmélyebb-legmagasabb hangját.'],
   commonMistakes:['Az ismételt hangokat többször számoljuk a hangkészletben.','A hangkészlet és a hangsor kifejezést minden összefüggésben felcseréljük.','A hangkészletből bizonyíték nélkül nemzeti vagy történeti eredetre következtetünk.'],
   selfCheck:[{question:'Hány különböző hangot tartalmaz a C–E–G–C–G dallam?',answer:'Hármat: C, E és G.'},{question:'Mi a különbség a hangterjedelem és a hangkészlet között?',answer:'A hangterjedelem a legmélyebb és legmagasabb hang közét, a hangkészlet a használt különböző hangokat írja le.'}],
-  sources:[{title:'Open Music Theory – Scales and Scale Degrees',url:openTheory,note:'Hangsorok és a zenei hangkészletek rendszerezése.'},{title:'Integrated Music Theory – Modes and Pentatonics',url:'https://intmus.github.io/inttheory/',note:'Móduszok és pentaton hangkészletek elemzése.'}]
+  sources:[{title:'Ének-zene 1–2. – magyar nyelvű tanítói kézikönyv (NKP)',url:nkpLower,note:'Gyermekdalok, népi játékdalok, kis hangkészletű dallamok tanítása.'},{title:'Kodály HUB – magyar nyelvű Zenegyűjtemény',url:'https://kodalyhub.hu/',note:'Gyermekdalok taníthatóságának életkor és zenei készlet szerinti elemzése.'}]
  },
  {chapterId:'hetfoku-hangsorok',
   objectives:['A dúr és moll hangsorok hangközrendjének megkülönböztetése.','A kvintkör és az előjegyzések gyakorlati használata.','Dúr, moll és szűkített hármashangzat építése, felismerése.'],
@@ -144,6 +143,6 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   guidedPractice:['Írd fel C-dúr és a-moll hangjait, és jelöld a közös előjegyzést.','Énekeld a természetes, harmonikus és melodikus a-moll hangsorokat; jelöld a módosított fokokat.','A kvintkör alapján írd fel G-, D-, F- és B-dúr előjegyzését.','Építs C-dúr, c-moll és c-szűkített hármashangzatot, majd nevezd meg a tercek sorrendjét.'],
   commonMistakes:['A melodikus moll klasszikus felfelé–lefelé sémáját minden kortárs zenére kiterjesztjük.','A párhuzamos mollt az azonos alaphangú mollal keverjük.','A kvintkörben a lefelé irányt is keresztek növekedéseként írjuk le.'],
   selfCheck:[{question:'Mi C-dúr párhuzamos mollja?',answer:'a-moll, mindkettőnek nincs előjegyzése.'},{question:'Miből áll a dúr és moll hármashangzat?',answer:'Dúr: nagy terc + kis terc; moll: kis terc + nagy terc.'}],
-  sources:[{title:'Open Music Theory – Key Signatures, Scales and Triads',url:openTheory,note:'Dúr/moll hangsorok, kvintkör, hármashangzatok.'},{title:'Music Theory for the 21st-Century Classroom',url:hutchinson,note:'Hangsorok, előjegyzések, hangközök és hármashangzatok.'}]
+  sources:[{title:'Zeneelméleti követelmények – Nemzeti Jogszabálytár',url:syllabus,note:'Hangnemek, kvintkör, hármashangzatok, dúr és moll hangsorok követelményei.'},{title:'Ének-zene 5. – magyar nyelvű tanári kézikönyv (NKP)',url:nkpUpper,note:'Ismert dallami anyagból épített összetettebb zenei ismeretek.'}]
  }
 ];
