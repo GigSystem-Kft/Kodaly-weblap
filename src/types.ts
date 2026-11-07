@@ -55,6 +55,7 @@ export interface QuizAttempt {
   correct: number;
   total: number;
   at: string;
+  wrongQuestionIds?: string[]; // at most 12 question IDs from the latest attempt
 }
 
 export interface UserProgress {
