@@ -7,25 +7,25 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | Prioritás | ID | Téma | Állapot |
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva, 13 JPG helyben előállítva; a bináris oldalképek GitHubba való felvétele még hátra |
-| P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Javítás commitolva, CI még nem igazolta |
+| P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás és CI build/tesztek sikeresek; élő magyar kereső-E2E még hátra |
 | P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision; MySQL integrációs teszt CI-sikeres, valódi többeszközös böngészős próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt; a hivatalos PDF URL jelenleg hibás választ ad, a 13 lokálisan generált kép GitHubba való felvétele szükséges |
-| P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Javítás commitolva, CI még nem igazolta |
+| P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
-| P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Fejezetszám 9-re módosítva; regresszió hátra |
+| P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Kódjavítás és PHP forrásteszt sikeres; éles tudásindex hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Mód pontosan felcímkézve; szakmai validáció hátra |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP CI szerepkörteszt (student/teacher/admin) és fiókéletút sikeres; valódi böngészős és éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Vizsgálat hátra |
-| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | Nyitott |
+| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62 tétel célzottan átsorolva, 945 helyett 883 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | Nyitott |
-| P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | Validálás hátra |
-| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | Validálás hátra |
+| P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt; további kotta- és lejátszás-E2E hátra |
+| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | Automatikus HTTPS/forrás/licenc-metaadat szerkezeti ellenőrzés megírva; élő URL és jogi validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
-| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozás-lista (pont, helyes/összes, témakör) implementálva, kérdésenkénti hibák/időtartam továbbra is nyitott |
+| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások és legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés; válaszidő és teljes kérdésenkénti analitika hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva, teljes mátrixvizsgálat hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
@@ -37,7 +37,13 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 - A-03: 04/05 fejezet kategóriáinak hozzáadása; a lista kizárja azokat a kategóriákat, amelyekben nincs kérdés.
 - A-01/A-18: `php-release.yml` ellenőrzi, hogy a `release/ritmikai/p001.jpg` – `p013.jpg` mind létező, nem üres fájl-e; a jelenlegi hiány esetén a build megáll, nem ad ki hibás ZIP-et.
 
-**Negyedik javítási egység:** A-23 első akadálymentességi javítás: a fejléc főoldalra visszalépő eleme billentyűzettel is aktiválható. A teljes WCAG és mobil ellenőrzés továbbra is hátra.\n\n**Harmadik javítási egység:** A-08 élő PHP-lefedettség és statikus buildleltár különválasztása; A-09 Tanársegéd üzemmód egyértelműsítése; A-12 négy bővített modul manuális teljesítési jelölése; A-16 XP-max tájékoztató.\n\n**Második javítási egység:** A-04/A-05/A-07 kódjavítás, valamint A-06 verzióazonosítós feltételes szervermentés, 409-es konfliktusválasz és böngészős összevezetés. A késznek minősítéshez CI, valódi párhuzamos eszközös teszt, PHP kompatibilitás és éles adatmegőrzési próba szükséges.\n\n**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. Korábbi CI-kör: a TypeScript/egységteszt/PHP/build lépések sikeresek, a ZIP-összeállítás a hiányzó 13 ritmikai kép miatt elbukik. Az új commitok aktuális CI státuszát külön kell ellenőrizni.
+**Negyedik javítási egység:** A-23 első akadálymentességi javítás: a fejléc főoldalra visszalépő eleme billentyűzettel is aktiválható. A teljes WCAG és mobil ellenőrzés továbbra is hátra.
+
+**Harmadik javítási egység:** A-08 élő PHP-lefedettség és statikus buildleltár különválasztása; A-09 Tanársegéd üzemmód egyértelműsítése; A-12 négy bővített modul manuális teljesítési jelölése; A-16 XP-max tájékoztató.
+
+**Második javítási egység:** A-04/A-05/A-07 kódjavítás, valamint A-06 verzióazonosítós feltételes szervermentés, 409-es konfliktusválasz és böngészős összevezetés. A késznek minősítéshez CI, valódi párhuzamos eszközös teszt, PHP kompatibilitás és éles adatmegőrzési próba szükséges.
+
+**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. Korábbi CI-kör: a TypeScript/egységteszt/PHP/build lépések sikeresek, a ZIP-összeállítás a hiányzó 13 ritmikai kép miatt elbukik. Az új commitok aktuális CI státuszát külön kell ellenőrizni.
 
 ## Ötödik javítási egység (2026-11-07)
 
@@ -65,6 +71,15 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 
 - A-11: az XP kizárólag játékos gyakorlási pont, nem hitelesített kompetenciaérték; a profil ezt világosan kommunikálja. A szerveroldali anti-cheat és egységes pontszabályzat továbbra is nyitott.
 - CI bizonyíték: GitHub Actions 42409475820 futásban a TypeScript, egységteszt, PHP ellenőrzés, MySQL fiók- és szerepkörteszt, frontend build sikeres, a hiányzó ritmikai JPG-k miatt a PHP telepítő ZIP blokkban meghiúsult. Ez nem jelenti a teljes produkció megfelelőségét.
+
+## Tizedik javítási egység (2026-11-07)
+
+- A-10: a 1793 címszavas glosszárium 62 egyértelmű, a definíciója alapján biztosan besorolható tételét átvezettük két új és három meglévő kategóriába. Minden címszó, eredeti meghatározás és stabil ID megmaradt. A feladatbankok új kategóriaelemei a régebbi gyakorlatok sorrendjének megtartásával bővültek. Az első CI-regresszió új kategóriás kártyahiányt jelzett, ezt a korlát és sorrend javításával kezeltük; a legújabb futás ellenőrizendő.
+- A-14: a Web Audio motorban B3, B4 és B5 tévesen H természetes frekvenciáján szólt. Most a magyar B nemzetközi B♭-ként, a H természetes B-ként szól. Oktávonkénti regressziós teszt készült.
+- A-15: történeti médiaforrásoknál HTTPS-t, képi forrásoldalt, licencmegjegyzést, történeti korszak-ID-t és videók elérhetőségi tájékoztatását automatikusan ellenőrizzük. A konkrét videók elérhetőségét nem igazolja az offline teszt.
+- A-17: a kvíznapló már legfeljebb 12 elrontott kérdés azonosítóját is megőrizheti próbálkozásonként, és a profil ezeket a feladatbankban szereplő kérdésszöveggel jeleníti meg. Többeszközös összevezetés és PHP-validáció kiterjesztve, új regresszióval.
+- A-13/A-20: a struktúraellenőrzés nem helyettesíti a teljes tartalmi és zenetörténeti lektorálást.
+- A-01 továbbra is P0 blokkoló: a 13 JPG helyben elkészült, de GitHubba történő feltöltésük nincs igazolva. A telepítő nem adható ki hiányos képekkel.
 
 ## Lezárási feltételek
 
