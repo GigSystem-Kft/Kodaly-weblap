@@ -51,7 +51,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
               </button>
             );
           })}
-          <div className="relative group" onKeyDown={(event) => { if (event.key === 'Escape') setTextbooksOpen(false); }}>
+          <div className="relative"
+            onMouseEnter={() => setTextbooksOpen(true)}
+            onMouseLeave={() => setTextbooksOpen(false)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setTextbooksOpen(false);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                setTextbooksOpen(false);
+                event.stopPropagation();
+              }
+            }}>
             <button
               type="button"
               aria-expanded={textbooksOpen}
@@ -65,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
             >
               07. Tankönyvek ▾
             </button>
-            <div id="textbook-navigation" className={`absolute left-0 top-full pt-2 z-40 ${textbooksOpen ? 'block' : 'hidden group-hover:block group-focus-within:block'}`}>
+            <div id="textbook-navigation" className={`absolute left-0 top-full pt-2 z-40 ${textbooksOpen ? 'block' : 'hidden'}`}>
               <div className="bg-white border border-[#1c1c1c]/15 shadow-md min-w-44 flex flex-col">
                 {TEXTBOOKS.map((t) => (
                   <button
