@@ -53,25 +53,25 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
         </p>
       </div>
 
-      {/* Category Filter */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => {
-              setSelectedCategory(cat);
-              setCurrentIndex(0);
-              setIsFlipped(false);
-            }}
-            className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-              selectedCategory === cat
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
-                : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-            }`}
-          >
-            {cat === 'all' ? 'Összes kategória' : cat}
-          </button>
-        ))}
+      {/* Compact category filter: keep the flashcards visible without long button grids. */}
+      <div className="max-w-xl mx-auto mb-8">
+        <label htmlFor="flashcards-category" className="block text-sm font-semibold text-slate-200 mb-2">Szókártyák témaköre</label>
+        <select
+          id="flashcards-category"
+          aria-label="Szókártyák témaköre"
+          value={selectedCategory}
+          onChange={(event) => {
+            setSelectedCategory(event.target.value);
+            setCurrentIndex(0);
+            setIsFlipped(false);
+          }}
+          className="w-full rounded-xl border border-indigo-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          {categories.map((cat) => (
+            <option value={cat} key={cat}>{cat === 'all' ? 'Összes kategória' : cat}</option>
+          ))}
+        </select>
+        <p className="text-xs text-slate-400 mt-2">{filteredCards.length} szókártya a kiválasztott témakörben</p>
       </div>
 
       {/* Flashcard Box */}
