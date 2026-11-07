@@ -81,7 +81,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
               <li key={attempt.id} className="py-3 text-sm">
                 <div className="flex flex-wrap justify-between gap-2">
                   <span className="font-medium text-slate-800">{attempt.chapterId === 'vegyes-gyakorlas' ? 'Vegyes gyakorlás' : attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
-                  <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}</span>
+                  <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}{attempt.durationSeconds !== undefined ? ` · ${Math.floor(attempt.durationSeconds / 60)} perc ${attempt.durationSeconds % 60} mp` : ''}</span>
                 </div>
                 {(attempt.wrongQuestionIds?.length ?? 0)>0 && <details className="mt-2">
                   <summary className="text-indigo-700 cursor-pointer">Átismétlendő kérdések ({attempt.wrongQuestionIds?.length})</summary>
