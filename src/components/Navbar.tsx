@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TEXTBOOKS } from './TextbookView';
 import { BookOpen, Award, Layers, Volume2, Flame, Sparkles, HelpCircle, Image as ImageIcon, Table } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak, isAdmin = false }) => {
+  const [textbooksOpen, setTextbooksOpen] = useState(false);
   const navItems = [
     { id: 'chapters', label: '01. Tananyag' },
     { id: 'flashcards', label: '02. Szókártyák' },
@@ -50,8 +51,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
               </button>
             );
           })}
-          <div className="relative group">
+          <div className="relative group" onKeyDown={(event) => { if (event.key === 'Escape') setTextbooksOpen(false); }}>
             <button
+              type="button"
+              aria-expanded={textbooksOpen}
+              aria-controls="textbook-navigation"
+              onClick={() => setTextbooksOpen(value => !value)}
               className={`all-unset text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer transition-colors ${
                 activeTab.startsWith('textbook-')
                   ? 'text-[#4a54e1] font-semibold underline underline-offset-4'
@@ -60,12 +65,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
             >
               07. Tankönyvek ▾
             </button>
-            <div className="absolute left-0 top-full pt-2 hidden group-hover:block group-focus-within:block z-40">
+            <div id="textbook-navigation" className={`absolute left-0 top-full pt-2 z-40 ${textbooksOpen ? 'block' : 'hidden group-hover:block group-focus-within:block'}`}>
               <div className="bg-white border border-[#1c1c1c]/15 shadow-md min-w-44 flex flex-col">
                 {TEXTBOOKS.map((t) => (
                   <button
                     key={t.id}
-                    onClick={() => setActiveTab(`textbook-${t.id}`)}
+                    onClick={() => { setActiveTab(`textbook-${t.id}`); setTextbooksOpen(false); }}
                     className="all-unset text-left px-3 py-2 text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer hover:bg-[#4a54e1]/10"
                   >
                     {t.title}
