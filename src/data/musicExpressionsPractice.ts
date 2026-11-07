@@ -5,6 +5,7 @@ const categories=[
  'Tempó és időkezelés','Dinamika és karakter','Ritmus és hangértékek',
  'Hangsorok és harmóniák','Hangszer és játéktechnika','Éneklés és kórus',
  'Zenei műfajok és formák','Kottaírás és jelölések','Zenetörténet és stílus',
+ 'Díszítések és ornamentika','Előadásmód és artikuláció',
  'Egyéb szakkifejezések'
 ];
 const preferred=new Set([
@@ -20,7 +21,7 @@ const preferred=new Set([
 type Expression=typeof MUSIC_EXPRESSIONS[number];
 const clean=(item:Expression)=>!item.term.includes(',') && !item.term.includes('…') &&
  item.term.length<=42 && item.definition.length>=9&&item.definition.length<=120 &&
- !/^d+./.test(item.definition)&&!/(mHz|nemzetközileg megállapított|őse)/i.test(item.definition);
+ !/^\d+\./.test(item.definition)&&!/\b(mHz|nemzetközileg megállapított|őse)\b/i.test(item.definition);
 const unique=(list:Expression[])=>{
  const seen=new Set<string>();return list.filter(item=>{
   const key=item.definition.toLocaleLowerCase('hu-HU').trim();
