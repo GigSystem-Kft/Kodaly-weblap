@@ -23,4 +23,11 @@ $reply=lessonReply($hits,'mit jelent az hogy hexachord?',true);
 ensureTutorSearch(str_contains($reply,'hat hangú'),'concrete definition survives fallback reply');
 ensureTutorSearch(str_contains($reply,'Forrás'),'source attribution present');
 ensureTutorSearch(rankLessons('Hogyan készül a tritónusz?', $entries)===[],'no unrelated fake answer');
+$coverage=tutorSourceAudit([
+ ['source'=>'Fogalomtár', 'label'=>'09. Zenei kifejezések', 'text'=>'Allegro'],
+ ['source'=>'Tananyag', 'label'=>'08. Ének-zene tantárgy-pedagógia', 'text'=>'Kodály'],
+]);
+ensureTutorSearch(count($coverage['chapters'])===9,'all nine curriculum chapters audited');
+ensureTutorSearch(($coverage['chapters']['9']??0)===1,'ninth chapter coverage counted');
+ensureTutorSearch(($coverage['chapters']['8']??0)===1,'eighth chapter coverage counted');
 fwrite(STDOUT,"Hungarian tutor search regression tests passed\n");
