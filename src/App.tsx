@@ -120,6 +120,21 @@ export default function App() {
     return () => window.clearTimeout(handle);
   }, [progress, account, accountReady, saveTick]);
 
+  // A failed request must not silently strand a logged-in user's pending changes.
+  // Retries are bounded by the periodic check; only unsaved snapshots trigger a PUT.
+  useEffect(() => {
+    if (!accountReady || !account || !syncError) return;
+    const retry = () => setSaveTick(tick => tick + 1);
+    const interval = window.setInterval(retry, 15_000);
+    window.addEventListener('online', retry);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('online', retry);
+    };
+  }, [accountReady, account, syncError]);
+
+  const retrySync = () => setSaveTick(tick => tick + 1);
+
   const signIn = async (user: AccountUser) => {
     const response = await apiFetch('/api/progress');
     if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
@@ -328,6 +343,7 @@ export default function App() {
                 onSignedOut={signOut}
                 onImportLocal={importLocal}
                 syncError={syncError}
+                onRetrySync={retrySync}
               />
             </div>
             <ProgressDashboard progress={progress} signedIn={!!account} onOpenModule={(tab) => {setActiveTab(tab); window.scrollTo({top:0,behavior:'smooth'});}} />
