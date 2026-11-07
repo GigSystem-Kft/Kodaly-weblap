@@ -532,12 +532,18 @@ try {
                     $stmt=$pdo->prepare('UPDATE zm_progress SET progress_json=? WHERE user_id=?');
                 }
                 $stmt->execute($current===false?[$user['id'],$text]:[$text,$user['id']]);
+                // MySQL JSON columns may canonicalize key order and whitespace. Always
+                // hash the stored representation, not the incoming request string.
+                $storedStmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=?');
+                $storedStmt->execute([$user['id']]);
+                $stored=(string)$storedStmt->fetchColumn();
+                $storedRevision=hash('sha256',$stored);
                 $pdo->commit();
             } catch (Throwable $e) {
                 if ($pdo->inTransaction()) $pdo->rollBack();
                 throw $e;
             }
-            answer(200,['success'=>true,'revision'=>hash('sha256',$text)]);
+            answer(200,['success'=>true,'revision'=>$storedRevision]);
 
         case 'chat/status':
             method('GET');
