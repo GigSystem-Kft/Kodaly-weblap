@@ -13,7 +13,7 @@ export const CuratedMediaPanel:React.FC<{chapterNumber:number;compact?:boolean}>
   <h3 className="font-serif-cormorant text-2xl font-semibold text-slate-900 mb-2">Szemléltető képek és videóforrások</h3>
   <p className="text-sm text-slate-600 mb-5">
    Az ábrák és a videógyűjtemények pontos forrásmegjelöléssel érhetők el.
-   A képre kattintva nagyíthatod; a videókat jogszerűen a forrásoldalon nyithatod meg.
+   A képre kattintva nagyíthatod; az igazoltan beágyazható lejátszót közvetlenül itt is megnyithatod, a többi videót a forrásoldalán.
    A képek egy része eredeti, angol vagy latin feliratozású történeti forrás, magyar magyarázattal.
   </p>
   {images.length>0&&<div className={`grid grid-cols-1 sm:grid-cols-2 ${compact?'lg:grid-cols-3':'lg:grid-cols-3'} gap-4 mb-6`}>
@@ -37,15 +37,21 @@ export const CuratedMediaPanel:React.FC<{chapterNumber:number;compact?:boolean}>
    </figure>)}
   </div>}
   {videos.length>0&&<div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-   {videos.map(item=><a href={item.url} key={item.id} target="_blank" rel="noreferrer noopener"
-      className="flex items-start gap-3 border border-indigo-100 bg-indigo-50/30 rounded-xl p-4 hover:border-indigo-400">
-     <span className="rounded-lg bg-indigo-100 p-2 text-indigo-700"><Play className="w-5 h-5"/></span>
-     <span className="flex-1">
-      <strong className="block text-sm text-slate-900 mb-1">{item.title} ↗</strong>
-      <span className="block text-xs text-slate-600 leading-relaxed">{item.note}</span>
-      {item.access&&<span className="block text-xs text-amber-800 mt-2">{item.access}</span>}
-     </span>
-    </a>)}
+   {videos.map(item=><article key={item.id} className="border border-indigo-100 bg-indigo-50/30 rounded-xl p-4">
+     {item.embedUrl && /^https:\/\/www\.youtube-nocookie\.com\/embed\/[a-zA-Z0-9_-]{11}$/.test(item.embedUrl) &&
+      <div className="aspect-video overflow-hidden rounded-lg mb-3 bg-slate-900">
+        <iframe title={item.title} src={item.embedUrl} loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen className="w-full h-full border-0"/>
+      </div>}
+     <div className="flex items-start gap-3">
+       <span className="rounded-lg bg-indigo-100 p-2 text-indigo-700"><Play className="w-5 h-5"/></span>
+       <div className="flex-1">
+         <strong className="block text-sm text-slate-900 mb-1">{item.title}</strong>
+         <span className="block text-xs text-slate-600 leading-relaxed">{item.note}</span>
+         {item.access&&<span className="block text-xs text-amber-800 mt-2">{item.access}</span>}
+         <a href={item.url} target="_blank" rel="noreferrer noopener" className="text-xs text-indigo-700 underline mt-3 inline-flex items-center gap-1">Videó megnyitása az eredeti oldalon <ExternalLink className="w-3 h-3"/></a>
+       </div>
+     </div>
+   </article>)}
   </div>}
   {zoom&&<div role="dialog" aria-modal="true" aria-label={zoom.title} onClick={()=>setZoom(null)}
    className="fixed inset-0 z-[110] bg-black/85 flex flex-col items-center justify-center p-4">
