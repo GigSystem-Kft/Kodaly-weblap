@@ -21,15 +21,16 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
     {
       id: 'pentaton-gyakorlat',
       title: '4.3 Ötfokúság és dallamalkotás',
-      summary: 'Pentaton hangkészlet, hangkészlet és hangsor különbsége.',
+      summary: 'Öt eredeti hangzó pentaton motívum: emelkedő, ereszkedő, ugrásos, hullámzó és kérdés–felelet.'
       content: [
         'A hangkészlet az adott dallamban előforduló különböző hangok összessége; a hangsor e hangok rendezett sorozata.',
         'Az anhemiton pentaton hangsort öt hang alkotja, félhanglépés nélkül. Dó-pentaton példája: dó–ré–mi–szó–lá.',
         'C-alapú példa: C–D–E–G–A. A hangokból rövid motívumok, kérdés–felelet dallampárok építhetők.',
         'Nem minden öt különböző hangból álló dallam anhemiton pentaton: ellenőrizni kell a hangközöket is.',
-        'Gyakorlat: alkoss kétütemes dallamot csak dó, ré, mi, szó, lá hangokból, majd válaszolj rá egy újabb kétütemes motívummal.'
+        'Gyakorlat: hallgasd meg és kövesd a kottán az öt saját pentaton mintát: emelkedő, ereszkedő, ugrásos, hullámzó, valamint kérdés–felelet. Mindegyik az összes dó, ré, mi, szó, lá hangot használja.',
+        'Alkoss kétütemes dallamot csak az öt megadott hangból, majd válaszolj rá egy második kétütemes pentaton motívummal.'
       ],
-      examples: [{ title: 'C-pentaton hangjai', description: 'C, D, E, G, A – félhang nélküli ötfokú hangsor.', audioNotes: ['C4','D4','E4','G4','A4'] }]
+
     }
   ],
   'hetfoku-hangsorok': [
