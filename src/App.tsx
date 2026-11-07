@@ -22,7 +22,7 @@ import { RhythmResearchBookView } from './components/RhythmResearchBookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
-import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress } from './progress';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './progress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -178,7 +178,7 @@ export default function App() {
   };
 
   const addXp = (amount: number) => {
-    setProgress(prev => recordActivity(prev, amount));
+    setProgress(prev => recordEarTrainingActivity(prev, amount));
   };
 
   const completeChapter = (chapterId: string) => {
