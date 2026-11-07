@@ -170,23 +170,26 @@ export const MUSIC_CHAPTERS: Chapter[] = [
     subchapters: [
       {
         id: 'ton-hangkeszlet',
-        title: '4.1 Non-ton (nem szomszédos) hangkészletek',
-        summary: 'Olyan hangok, amelyek nem egymás után következnek, nélkülözik a kis szekundot.',
+        title: '4.1 Hiányos és pentaton hangkészletek',
+        summary: 'Biton, triton, tetraton és pentaton. A különböző hangok száma és hangközviszonyai alapján értelmezzük őket.',
         content: [
-          '• Biton: Két nem szomszédos hang (pl. s-m, Csigabiba bácsi).',
-          '• Triton: Három nem szomszédos hang (pl. l-s-m, Borsót főztem).',
-          '• Tetraton: Négy nem szomszédos hang (pl. s-m-r-d).',
-          '• Pentaton: Öt nem szomszédos hang, a magyar népzene alapja.'
+          '• Biton: Két különböző hang, például szó–mi. Kapcsolódó dal: Csigabiga bácsi.',
+          '• Triton: Három különböző hang, például lá–szó–mi. Kapcsolódó dal: Borsót főztem.',
+          '• Tetraton: Négy különböző hang, például szó–mi–ré–dó; a ré és dó egymás mellett állnak.',
+          '• Pentaton: Öt különböző hang, például dó–ré–mi–szó–lá. A félhang nélküli pentatónia fontos a magyar népzenében.',
+          'A hangkészletek elnevezése elsősorban a különböző hangok számára utal. Az a kijelentés, hogy a tetraton és a pentaton minden hangja nem szomszédos, általánosságban nem igaz; ez a hangsor jellegétől függ.',
+          'Hallgasd meg a négy külön gyakorlómotívumot, majd nézd meg a helyes kottaképet. A példák nem a megnevezett gyermekdalok pontos dallamai.'
         ]
       },
       {
         id: 'chord-hangkeszlet',
-        title: '4.2 Chord (szomszédos) hangkészletek',
+        title: '4.2 Egymás melletti diatonikus hangok: bichord–hexachord',
         summary: 'Egymás melletti szomszédos hangokból álló láncok.',
         content: [
           '• Bichord: Két szomszédos hang nagy szekund távolságban (s-l).',
           '• Trichord: Három egymás melletti hang (d-r-m, Túrót ettem).',
-          '• Pentachord és Hexachord: 5, illetve 6 egymás melletti diatonikus hang.',
+          '• Pentachord: Öt egymás melletti diatonikus hang (dó–ré–mi–fá–szó).',
+          '• Hexachord: Hat egymás melletti diatonikus hang (dó–ré–mi–fá–szó–lá).',
           'A hexachord a hat egymást követő hangból álló hangsorszakasz. A Guido-féle középkori szolmizációban ut–re–mi–fa–sol–la (egész–egész–fél–egész–egész hangközrend). Természetes: C–D–E–F–G–A; kemény: G–A–H–C–D–E; lágy: F–G–A–B–C–D. A magyar H és B hangneveket külön kell kezelni.',
           'Kapcsolódó magyar szakirodalom: Kelemen Judit, Zempléni Múzsa – Mátyás-korabeli zenei nevelés Sárospatakon a Szalkai-kódex tükrében (hexachord és Guido-kéz).'
         ]
