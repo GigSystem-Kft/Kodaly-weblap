@@ -87,20 +87,20 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
-        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3 border border-indigo-500/30">
+        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold mb-3 border border-indigo-200">
           <Layers className="w-3.5 h-3.5" />
           <span>{initialCategory ? `${initialCategory} párosító` : 'Párosítós Feladat'}</span>
         </span>
-        <h2 className="text-3xl font-extrabold text-white mb-2">
+        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">
           {initialCategory ? `${initialCategory}: párosítsd össze!` : 'Kifejezés & Jelentés Párosítás'}
         </h2>
-        <p className="text-slate-400 text-sm">
+        <p className="text-slate-600 text-sm">
           Kattints egy kifejezésre, majd a hozzá tartozó jelentésre a párok megtalálásához!
         </p>
       </div>
 
       <div className="max-w-xl mx-auto mb-7">
-        <label htmlFor="matching-category" className="block mb-2 text-sm font-semibold text-slate-200">Párosító témaköre</label>
+        <label htmlFor="matching-category" className="block mb-2 text-sm font-semibold text-slate-800">Párosító témaköre</label>
         <select id="matching-category" value={selectedCategory}
           onChange={(event) => setSelectedCategory(event.target.value)}
           className="w-full rounded-xl border border-indigo-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -126,8 +126,8 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
       ) : (
         <div>
           <div className="flex justify-between items-center mb-6">
-            <span className="text-sm font-medium text-slate-300">
-              Megtalált párok: <strong className="text-emerald-400">{matchedPairs.length}</strong> / {terms.length}
+            <span className="text-sm font-medium text-slate-700">
+              Megtalált párok: <strong className="text-emerald-700">{matchedPairs.length}</strong> / {terms.length}
             </span>
             <button
               onClick={initGame}
@@ -141,7 +141,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Terms Column */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Fogalmak / Kifejezések</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Fogalmak / Kifejezések</h4>
               {terms.map((t) => {
                 const isMatched = matchedPairs.includes(t.pairId);
                 const isSelected = selectedTerm === t.id;
@@ -166,7 +166,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
 
             {/* Matches Column */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Jelentések / Példák</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Jelentések / Példák</h4>
               {matches.map((m) => {
                 const isMatched = matchedPairs.includes(m.pairId);
                 const isSelected = selectedMatch === m.id;
