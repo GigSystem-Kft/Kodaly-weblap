@@ -11,7 +11,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, háromutas kedvenc-összevezetés, fiókonként elkülönített offline függő mentés-visszaállítás; offline böngészős és migrációs tesztek; valós többeszközös éles próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | MEGOLDVA: a kötelező 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép médiaellenőrzése zöld; 42422196761 PHP ZIP sikeresen összeállt |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
-| P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
+| P1 | A-04 | Alfejezet-teljesítések nem íródnak | Manuális alfejezet- és fejezetjelölés; Chromium E2E navigáció/újranyitás-teszt bekerült; böngészős javítás újrafuttatása hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
 | P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Kódjavítás és PHP forrásteszt sikeres; éles tudásindex hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
@@ -23,11 +23,11 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Párosító 5 XP/új pár (max. 50/kör), hallásfeladat 100 XP/nap, PHP-validált napló és tesztek; az XP továbbra is kliensoldali gyakorlási pont, teljes szerveroldali anti-cheat hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B/H megfeleltetés és G5 (783,99 Hz) javítva; a nagy szeptim hangsor H4-re javítva; teljes 12-TET és 12 hangköz frekvenciateszt bekerült; további lejátszás-E2E hátra |
-| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
+| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | OSZK gyűjtőoldalak korrektül megnevezve; 2026-10-13-án lejárt MédiaKlikk-videó helyett LFZE magyar dokumentumfilm; dátumozott forrásleltár és CI, teljes licencellenőrzés hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil és kedvenc-összevezetés tisztázva; párhuzamos kedvenc törlés háromutas összevezetése; XP-adat történeti eseménynaplója továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, rontott kérdések, helyes válaszok és magyarázatok, gyakorlási idő; trend és pedagógiai értékelés hátra |
-| P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
-| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
+| P2 | A-19 | Teljes menü- és navigációs mátrix | Mobil/keyboard tankönyvmenü és 5 tananyagkártya Enter/Space aktiválása; részletes Chromium navigációs teszt; teljes böngészős bejárás hátra |
+| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Kérdésbank/fejezet/szókártya/párosító strukturális teszt, valamint skálák, ritmusok és ütemmutatók MIDI/számított hangzótesztje; teljes pedagógiai lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
 | P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA CI 42419584013 sikeres: főoldal/kvíz/tankönyv/mobil AI 0 súlyos vagy kritikus hiba; kézi, teljes WCAG-audit hátra |
 
@@ -185,3 +185,10 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-06: bejelentkezett felhasználó függő, szerverre még el nem jutott eredményeit fiókazonosítóval elkülönített helyi böngészőtárolóba írjuk, és a következő azonos fiókbelépésnél a mentett alapállapothoz viszonyított háromutas összevezetéssel állítjuk helyre. A fiókhoz nem tartozó vagy hibás változatot nem emeljük be. Sikeres szervermentéskor kizárólag a ténylegesen továbbított változat ideiglenes helyi másolatát töröljük. Felületi figyelmeztetés és egység-, valamint böngészős regresszió készült. A böngésző helyi tárolója **nem titkosított biztonsági mentés**; érzékeny adatokhoz a közös gépen körültekintés szükséges.
 - A-14/A-20: felfedeztük és javítottuk, hogy a G5 táblázatos frekvenciája 790 Hz volt az A=440 Hz 12-TET szerinti 783,99 Hz helyett; a nagy szeptim hangközprogramban H4 helyett korábban a magyar B4 (B♭) szólt. 39 hangmagasság 12-TET ellenőrzése és mind a 12 hangköz automatikus frekvencia–felirat egyezése bekerült a tesztcsomagba.
 - A teljes projekt még **nem** kiadásra kész, amíg a nyitott tudományos/tartalmi audit, adatkezelési jóváhagyás és az éles jogosultsági/telepítési E2E nincs lezárva. A `main` változatlan.
+
+## Huszonötödik javítási egység – zenei példák és élő magyar források
+
+- A-14/A-20: az `ExtendedEarTraining.tsx` 2/4 ütemmutatójának szövegében a „kétszólamú” hibás megnevezést „kétnegyedes”-re javítottuk. A `scripts/test-extended-ear-music-integrity.ts` külön ellenőrzi a skálák tényleges MIDI hangmagasságait, a ritmikai példák negyedértékben számolt időtartamát, a kétütemes metrikus példák ütemhosszát és a lejátszás eseményeinek sorrendjét.
+- A-04/A-19/A-23: az öt elméleti fejezet kattintható, korábban billentyűzettel nem aktiválható kártyája `role=button`, `tabIndex=0`, Enter/Space és látható fókuszjelölést kapott. A Chromium-tesztbe bekerült a tanulmányozott alfejezet és teljes fejezet állapotának megőrzése oldalváltás után. Az első WCAG-tesztben a kártyák mesterséges `aria-label` felirata ütközött a látható szöveggel; ezért a gombok hozzáférhető neve már a teljes látható címükből származik.
+- A-15: a 2026. július 15-i MédiaKlikk-videó 2026. október 13-ig volt elérhető és november 7-én nem tölthető be. Helyette a Liszt Ferenc Zeneművészeti Egyetem elérhető, magyar nyelvű `Kodály mindenkié!` dokumentumfilm-oldala került a tananyagba. A Mozart K.331 és Erkel Ferenc OSZK-linkeket gyűjtőoldalként pontosítottuk; időponttal ellátott leltár: `docs/media-linkellenorzes-2026-11-07.md`. Ez nem jogi felhasználási tanúsítás.
+- A-01/A-18: 13/13 JPG GitHubban és a teljes PHP ZIP sikeres, a technikai kiadási blokkoló megszűnt. A `main` ágra összevezetés még nincs, mert további tételek nyitottak.
