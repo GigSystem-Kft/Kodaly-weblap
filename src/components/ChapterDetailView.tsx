@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
-import { FOUNDATIONS_GUIDES } from '../data/musicFoundationsGuide';
+import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
 import { ImageLightbox } from './ImageLightbox';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord } from '../utils/audio';
@@ -27,9 +27,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
 
   const currentSub = chapter.subchapters.find((s) => s.id === activeSubId) || chapter.subchapters[0];
   const illustrations = LESSON_ILLUSTRATIONS[currentSub.id] ?? [];
-  const guide = FOUNDATIONS_GUIDES.find(item => item.chapterId === chapter.id);
-  const currentPosition = chapter.subchapters.findIndex(s => s.id === currentSub.id);
-  const showOverview = currentPosition === 0;
+  const guide = getFoundationsSubchapterGuide(chapter.id, currentSub.id);
 
   return (
     <div className="max-w-6xl mx-auto px-5 sm:px-8 lg:px-10 py-10 text-[#1c1c1c]">
@@ -132,13 +130,13 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   </li>)}
                 </ul>
               </div>
-              {showOverview && <div className="mb-7 space-y-6">
-                <h4 className="font-serif-cormorant text-2xl font-semibold">Részletes tananyag – összefüggések</h4>
+              <div className="mb-7 space-y-6">
+                <h4 className="font-serif-cormorant text-2xl font-semibold">Részletes magyarázat – az alfejezethez</h4>
                 {guide.sections.map(section => <article key={section.title}>
                   <h5 className="text-lg font-semibold mb-2">{section.title}</h5>
                   {section.paragraphs.map(paragraph=><p key={paragraph.slice(0,40)} className="text-slate-700 leading-relaxed mb-3 text-sm md:text-base">{paragraph}</p>)}
                 </article>)}
-              </div>}
+              </div>
               <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-5 mb-5">
                 <h4 className="font-semibold mb-3">Próbáld ki – irányított gyakorlatok</h4>
                 <ol className="list-decimal pl-5 space-y-2 text-sm leading-relaxed text-slate-700">
