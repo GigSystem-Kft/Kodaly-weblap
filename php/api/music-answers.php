@@ -24,6 +24,10 @@ function musicKnownAnswer(string $question): ?string {
     $q = musicNormalize($question);
     $short = musicBriefRequested($question);
     $answers = [
+        '/\\b(hexachord|hexakord|hexachordum)[a-z]*\\b/' => [
+            'A **hexachord (hexakord)** hat hangból álló hangsorszakasz. A középkori Guido-féle szolmizációban az ut–re–mi–fa–sol–la hangsort jelenti (egész–egész–fél–egész–egész lépésrend). _Magyar forrás: Kelemen Judit, Zempléni Múzsa: https://zemplenimuzsa.hu/latoter/kelemen-judit-matyas-korabeli-zenei-neveles-sarospatakon-a-szalkai-kodex-tukreben/_',
+            'A **hexachord (hexakord)** hat hangból álló diatonikus hangsorszakasz. A középkori Guido-féle szolmizációban az **ut–re–mi–fa–sol–la** hangsor, lépésrendje egész–egész–fél–egész–egész. Három típusa: **természetes** C–D–E–F–G–A, **kemény** G–A–H–C–D–E, **lágy** F–G–A–B–C–D (a magyar B a H leszállított alakja). A mai gyermekdal-elemzésben a hexachord egyszerűen hat egymás melletti hangot is jelenthet. _Magyar forrás: Kelemen Judit, Zempléni Múzsa: https://zemplenimuzsa.hu/latoter/kelemen-judit-matyas-korabeli-zenei-neveles-sarospatakon-a-szalkai-kodex-tukreben/_'
+        ],
         '/\bkvintkor[a-z]*\b/' => [
             'A **kvintkör** a hangnemeket kvinttávolság szerint rendezi körbe. Az óramutató járásával megegyező irányban haladva mindig eggyel több kereszt, az ellenkező irányban eggyel több bé kerül az előjegyzésbe. Segít eligazodni a hangnemek és rokonságuk között.',
             'A **kvintkör** a hangnemeket kvintlépések szerint rendezi el. C-dúrból az egyik irányban G-, D-, A-, E-, H-dúr következik (egyre több kereszttel), a másikban F-, B-, Esz-, Asz-dúr (egyre több bével). Az egymás melletti hangnemek közeli rokonok; a párhuzamos moll hangnemek is megjeleníthetők a körön.'
