@@ -66,6 +66,7 @@ export interface UserProgress {
   quizAttempts?: QuizAttempt[]; // recent individual attempts, not a verified exam record
   flashcardsMastered: string[];
   matchingCompleted: string[];
+  favoriteExpressions?: string[]; // saved glossary favorites, backward-compatible
   xp: number;
   streak: number;
   lastActiveDate: string;
