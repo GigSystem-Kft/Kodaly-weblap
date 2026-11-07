@@ -18,7 +18,7 @@ test('every figure fills exactly four quarter-note beats, without gaps or overla
    assert.ok(Math.abs(end-4)<1e-9,figure.title);
    assert.deepEqual(pattern.beats.map(x=>x.startSeconds),[0,1,2,3]);
    assert.equal(pattern.beats.filter(x=>x.accent).length,1);
- });
+ }
 });
 test('dotted and reverse dotted use 1.5 + 0.5 / 0.5 + 1.5 beats',()=>{
  assert.deepEqual(rhythmFigurePattern('nyujtott').events.map(x=>x.durationBeats),[1.5,0.5,1.5,0.5]);
