@@ -135,6 +135,18 @@ export default function App() {
 
   const retrySync = () => setSaveTick(tick => tick + 1);
 
+  // Prevent accidental closing while the latest signed-in result has not reached the server.
+  useEffect(() => {
+    if (!accountReady || !account) return;
+    const warnPendingSave = (event: BeforeUnloadEvent) => {
+      if (savedSnapshotRef.current === JSON.stringify(progress)) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warnPendingSave);
+    return () => window.removeEventListener('beforeunload', warnPendingSave);
+  }, [accountReady, account, progress]);
+
   const signIn = async (user: AccountUser) => {
     const response = await apiFetch('/api/progress');
     if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
