@@ -3,6 +3,7 @@ import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
 import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
 import { ImageLightbox } from './ImageLightbox';
+import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord } from '../utils/audio';
 
@@ -243,6 +244,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
           </div>
         </div>
       </div>
+      <CuratedMediaPanel chapterNumber={chapter.number}/>
       {zoom && <ImageLightbox src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} />}
     </div>
   );
