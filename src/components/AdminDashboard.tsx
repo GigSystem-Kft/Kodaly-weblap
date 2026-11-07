@@ -4,11 +4,16 @@ import { apiFetch } from '../api';
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
 type TutorSource = { id: string; title: string; createdAt: string; size: number };
+type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number;
+ sources:{source:string;chunks:number;characters:number;kind:string}[];
+ omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
 
 export const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [sources, setSources] = useState<TutorSource[]>([]);
+  const [coverage, setCoverage] = useState<Coverage | null>(null);
+  const [coverageError, setCoverageError] = useState('');
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceTitle, setSourceTitle] = useState('');
   const [search, setSearch] = useState('');
@@ -32,6 +37,10 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
+    fetch('/source-inventory.json', {cache:'no-store'}).then(async response => {
+      if(!response.ok) throw new Error('Az indexjelentés nem érhető el.');
+      setCoverage(await response.json() as Coverage);
+    }).catch(error=>setCoverageError(error instanceof Error ? error.message : 'Forrásjelentési hiba.'));
   }, [load]);
 
   const uploadSource = async (event: React.FormEvent) => {
@@ -115,6 +124,33 @@ export const AdminDashboard: React.FC = () => {
         </div>
         <p className="text-xs text-slate-500 mt-3">Maximum 100 találat; további kereséshez szűkítsd a keresőkifejezést. Admin jogot itt nem lehet kiosztani.</p>
       </div>
+      <section className="rounded-xl border bg-white p-5 mb-6" aria-label="Forráslefedettség">
+        <h3 className="font-bold text-lg mb-2">Tanársegéd – forráslefedettségi ellenőrzés</h3>
+        <p className="text-sm text-slate-600 mb-4">A telepített csomaghoz készült szövegindex jelentése. A számláló nem jelenti azt, hogy az AI minden kérdésre helyesen válaszol.</p>
+        {coverageError && <p role="alert" className="text-red-700 text-sm">{coverageError}</p>}
+        {!coverage && !coverageError && <p className="text-sm">A forrásjegyzék betöltése...</p>}
+        {coverage && <>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
+            <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.sources.length}</strong>Indexelt forráscsoport</div>
+            <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.indexChunks}</strong>Indexelt szövegrész</div>
+            <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{Math.round(coverage.indexedCharacters/1000)} ezer</strong>Karakter</div>
+            <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{sources.length}</strong>Külön feltöltött forrás (PHP)</div>
+          </div>
+          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. A PHP-adminfelületen feltöltött források külön keresőindexet alkotnak.</p>
+          <details className="mb-3"><summary className="cursor-pointer font-semibold">Indexelt dokumentumok – részletes bontás</summary>
+            <div className="overflow-x-auto mt-2"><table className="w-full text-xs">
+              <thead><tr className="border-b text-left"><th className="p-2">Forrás</th><th className="p-2">Részlet</th><th className="p-2">Karakter</th></tr></thead>
+              <tbody>{coverage.sources.map((item,i)=><tr key={i} className="border-b"><td className="p-2 break-all">{item.source}</td><td className="p-2">{item.chunks}</td><td className="p-2">{item.characters.toLocaleString('hu-HU')}</td></tr>)}</tbody>
+            </table></div></details>
+          {coverage.missing.length>0 && <div className="text-red-800 text-sm mb-3"><strong>Hiányzó kötelező fájlok:</strong> {coverage.missing.join(', ')}</div>}
+          <details className="mb-3" open={coverage.omitted.length>0}><summary className="cursor-pointer font-semibold">Nem indexelt fájlok ({coverage.omitted.length})</summary>
+            {coverage.omitted.map(item=><p key={item.file} className="text-sm mt-2"><strong>{item.file}</strong> – {item.reason}</p>)}
+          </details>
+          <details><summary className="cursor-pointer font-semibold">A jelentés korlátai</summary>
+            <ul className="list-disc pl-6 text-sm mt-2 space-y-1">{coverage.limitations.map(item=><li key={item}>{item}</li>)}</ul>
+          </details>
+        </>}
+      </section>
       <section className="rounded-xl border bg-white p-5 mb-6" aria-label="Tanársegéd tudásforrásai">
         <h3 className="font-bold mb-2">Tanársegéd – további források</h3>
         <p className="text-sm text-slate-600 mb-4">
