@@ -67,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
               type="button"
               aria-expanded={textbooksOpen}
               aria-controls="textbook-navigation"
-              onClick={() => setTextbooksOpen(value => !value)}
+              onClick={() => setTextbooksOpen(true)}
               className={`all-unset text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer transition-colors ${
                 activeTab.startsWith('textbook-')
                   ? 'text-[#4a54e1] font-semibold underline underline-offset-4'
