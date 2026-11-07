@@ -119,7 +119,7 @@ export const ChatAssistant: React.FC = () => {
       {!isOpen && (
         <button
           type="button"
-          aria-label="Tanársegéd megnyitása"
+          aria-label="Tanársegéd AI megnyitása"
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 bg-gradient-to-tr from-indigo-600 to-violet-500 hover:from-indigo-500 hover:to-violet-400 text-white p-4 rounded-full shadow-2xl shadow-indigo-600/40 flex items-center space-x-2 transition-all hover:scale-105"
         >
