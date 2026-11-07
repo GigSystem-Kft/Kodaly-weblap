@@ -8,7 +8,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva, 13 JPG helyben előállítva; a bináris oldalképek GitHubba való felvétele még hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás és CI build/tesztek sikeresek; élő magyar kereső-E2E még hátra |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision; MySQL integrációs teszt CI-sikeres, valódi többeszközös böngészős próba hátra |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés; MySQL CI-sikeres. Hálózati visszakapcsolódáskor és 15 másodpercenként hibajelzés mellett automatikus újrapróba + kézi újrapróbálás. Valódi többeszközös böngészős próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt; a hivatalos PDF URL jelenleg hibás választ ad, a 13 lokálisan generált kép GitHubba való felvétele szükséges |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
@@ -26,10 +26,10 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások és legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés; válaszidő és teljes kérdésenkénti analitika hátra |
-| P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva, teljes mátrixvizsgálat hátra |
+| P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb és tankönyv menü keyboard/touch kezelés javítva; teljes audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet és játék fókusz/állapotjelölés javítva; teljes WCAG/mobil audit hátra |
 
 ## Első javítási csomag
 
@@ -88,6 +88,13 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A 62 kategóriaátvezetés után a korábbi gyakorlóbankok előnyben részesített sorrendje helyreállt, a kártya- és párosítóbank pedig a két új csoportot is felveszi.
 - A-15: az OSZK Zeneműtár és négy Commons-portré forrásoldala hozzáférhető volt webes ellenőrzéskor; a YouTube/archív videók tényleges lejátszhatóságát nem bizonyítja a webes metadata-lekérés.
 - **Nincs release-teljesítés, nincs main merge.**
+
+## Tizenkettedik javítási egység (2026-11-07)
+
+- A-06: hálózati mentési hiba után a bejelentkezett fiók nyitott oldalán 15 másodpercenként megismétlődik az elmaradt mentés; online állapot visszatérésekor azonnali próbálkozás történik. A fiókpanel kézi újrapróbálási gombot is kínál. A korábban megvalósított revision/409 összevezetési védelem változatlan. **A bezárt böngészőnél vagy éles többeszközös esetben a teljes adatbiztonság nem bizonyított.**
+- A-19: automatikus teszt vizsgálja a főmenü oldalazonosítóit, az 5 tankönyv nézetét és a négy bővített modulhoz tartozó útvonalat.
+- A-23: szókártyák megfordítása Enterrel és szóközzel is működik; hiányzó témakörben nem omlik össze a szókártya és a párosító nézet; a már megtanult kártya nem hirdet újabb XP-bónuszt, a párosító gombok kijelölési állapotot jeleznek a segítő technológiáknak.
+- A késznek minősítés továbbra is csak a teljes, bizonyított éles E2E és P0 kiadási folyamat után lehetséges.
 
 ## Lezárási feltételek
 
