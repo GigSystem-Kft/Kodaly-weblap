@@ -97,7 +97,7 @@ export const MUSIC_CHAPTERS: Chapter[] = [
         examples: [
           {
             title: 'Alaphangok skála',
-            description: 'C4, D4, E4, F4, G4, A4, H4, C5',
+            description: 'C′, D′, E′, F′, G′, A′, H′, C″ — mindegyik hang negyed értékben, 60 BPM tempóban.',
             audioNotes: ['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'H4', 'C5']
           }
         ]
