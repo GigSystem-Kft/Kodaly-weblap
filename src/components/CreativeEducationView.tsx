@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CREATIVE_SOURCE, CREATIVE_THEMES, CREATIVE_PRACTICES } from '../data/creativeEducation';
+import { CREATIVE_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Users, Clock, Target, X, ZoomIn } from 'lucide-react';
 
 interface CreativeEducationViewProps {
