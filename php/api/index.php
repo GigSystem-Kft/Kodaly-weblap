@@ -139,6 +139,14 @@ function progressOk(mixed $p): bool {
             count($p[$key]) > 10000) return false;
         foreach ($p[$key] as $v) if (!is_string($v) || strlen($v) > 120) return false;
     }
+    if (array_key_exists('earTrainingDailyXp', $p)) {
+        if (!is_array($p['earTrainingDailyXp']) ||
+            count($p['earTrainingDailyXp']) > 366) return false;
+        foreach ($p['earTrainingDailyXp'] as $day => $points) {
+            if (!is_string($day) || !preg_match('/^\\d{4}-\\d{2}-\\d{2}$/D', $day) ||
+                !is_int($points) || $points < 0 || $points > 100) return false;
+        }
+    }
     if (array_key_exists('favoriteExpressions', $p)) {
         if (!is_array($p['favoriteExpressions']) || !array_is_list($p['favoriteExpressions']) ||
             count($p['favoriteExpressions']) > 1800) return false;
