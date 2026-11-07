@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { playNote, playRhythmPlayback, stopRhythmPlayback } from '../utils/audio';
 import { RHYTHM_SUBDIVISIONS, rhythmPattern, type RhythmSubdivision } from '../utils/rhythmPattern';
+import { trebleStaffY, TREBLE_STAFF_LINES, FIRST_LEDGER_LINE_Y } from '../utils/trebleStaff';
 
 const keys = [
   {note:'C4', name:'C',semi:0},{note:'D4',name:'D',semi:2},
@@ -108,12 +109,14 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
           className={`rounded-b-lg border flex items-end justify-center pb-3 font-bold ${!notes.includes(semi)?'bg-slate-100 text-slate-400':active===note?'bg-indigo-500 text-white':'bg-white text-indigo-800 border-indigo-300 hover:bg-indigo-50'}`}>{name}</button>)}
       </div>
       <svg viewBox="0 0 440 135" role="img" aria-label="A kiválasztott hangsor kottavonalon szemléltetve" className="w-full max-w-xl rounded-lg bg-indigo-50">
-        {[35,51,67,83,99].map(y=><line key={y} x1="18" y1={y} x2="422" y2={y} stroke="#64748b" strokeWidth="1.2"/>)}
+        {TREBLE_STAFF_LINES.map(y=><line key={y} x1="18" y1={y} x2="422" y2={y} stroke="#64748b" strokeWidth="1.2"/>)}
         {notes.map((semi,i)=>{
           const x=38+i*48;
           const step=[0,2,4,5,7,9,11,12].indexOf(semi);
-          const y=107-step*8;
-          return <g key={semi}><ellipse cx={x} cy={y} rx="8" ry="5.5" transform={`rotate(-18 ${x} ${y})`} fill="#4338ca"/>
+          const y=trebleStaffY(keys.find(k=>k.semi===semi)?.note ?? 'C4');
+          return <g key={semi}>
+            {step===0 && <line x1={x-16} y1={FIRST_LEDGER_LINE_Y} x2={x+16} y2={FIRST_LEDGER_LINE_Y} stroke="#64748b" strokeWidth="1.2"/>}
+            <ellipse cx={x} cy={y} rx="8" ry="5.5" transform={`rotate(-18 ${x} ${y})`} fill="#4338ca"/>
             <line x1={x+7} y1={y} x2={x+7} y2={y-31} stroke="#4338ca" strokeWidth="1.6"/>
             <text x={x} y="124" textAnchor="middle" fontSize="12" fill="#312e81">{keys.find(k=>k.semi===semi)?.name}</text>
           </g>;
