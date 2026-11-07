@@ -24,5 +24,18 @@ test('quiz chapter uses one dropdown and resets the score and question when chan
  assert.match(code,/setSelectedChapter\(event.target.value\); restartQuiz\(\)/);
  assert.match(code,/id:'zenei-kifejezesek'/);
  assert.match(code,/id:'zenetortenet'/);
+ assert.match(code,/id:'hangkeszletek'/);
+ assert.match(code,/id:'hetfoku-hangsorok'/);
+ assert.match(code,/QUIZ_QUESTIONS.some\(q => q.chapterId === item.id\)/);
  assert.ok(!code.includes('Chapter Filter'));
+});
+
+test('subchapter and matching completions are wired into persistent user progress',()=>{
+ const app=readFileSync('src/App.tsx','utf8');
+ const lesson=readFileSync('src/components/ChapterDetailView.tsx','utf8');
+ const game=readFileSync('src/components/MatchingGame.tsx','utf8');
+ assert.match(app,/onCompleteSubchapter=\{completeSubchapter\}/);
+ assert.match(app,/onCompleted=\{completeMatching\}/);
+ assert.match(lesson,/completedSubchapters.includes\(currentSub.id\)/);
+ assert.match(game,/onCompleted\(newMatched\)/);
 });
