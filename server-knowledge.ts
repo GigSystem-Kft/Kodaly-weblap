@@ -38,7 +38,9 @@ const normalize = (value: string) =>
   value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 function tokenize(value: string): string[] {
-  return (normalize(value).match(/[a-z0-9]{3,}/g) ?? [])
+  // 1.13, 2.18 és 3.9 ritmuspéldák: megőrzött, önálló keresőazonosítók.
+  const withRhythmIds=normalize(value).replace(/\\b([123])\\.(\\d{1,2})\\b/g, 'ritmuspeldax$1x$2');
+  return (withRhythmIds.match(/[a-z0-9]{3,}/g) ?? [])
     .map(word => ['hexakord','hexachordum','hexachord'].includes(word) ? 'hexachord' : word.slice(0, 6))
     .filter(word => !STOPWORDS.has(word));
 }
