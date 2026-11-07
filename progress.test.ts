@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress } from './src/progress';
+import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress } from './src/progress';
 
 test('a new learner starts with zero experience and no fabricated days', () => {
   const progress = createEmptyProgress();
@@ -124,4 +124,32 @@ test('glossary starred terms are retained on profile migration and account impor
   assert.deepEqual(merged.favoriteExpressions,['term-1','term-2']);
   assert.deepEqual(migrateProgress(JSON.parse(JSON.stringify(merged))).favoriteExpressions,['term-1','term-2']);
   assert.deepEqual(migrateProgress({...local,favoriteExpressions:undefined}).favoriteExpressions,[]);
+});
+
+test('concurrent sync respects local removal while preserving remote additions', () => {
+  const base=createEmptyProgress();
+  base.favoriteExpressions=['old','keep'];
+  const remote=createEmptyProgress();
+  remote.favoriteExpressions=['old','keep','remote-added'];
+  const local=createEmptyProgress();
+  local.favoriteExpressions=['keep','local-added'];
+  const result=mergeConcurrentProgress(remote,local,base);
+  assert.deepEqual(new Set(result.favoriteExpressions),new Set(['keep','remote-added','local-added']));
+  assert.ok(!result.favoriteExpressions?.includes('old'));
+});
+test('concurrent sync preserves remote favorite removal when local did not edit it', () => {
+  const base=createEmptyProgress();
+  base.favoriteExpressions=['old','keep'];
+  const remote=createEmptyProgress();
+  remote.favoriteExpressions=['keep'];
+  const local=createEmptyProgress();
+  local.favoriteExpressions=['old','keep'];
+  assert.deepEqual(mergeConcurrentProgress(remote,local,base).favoriteExpressions,['keep']);
+});
+test('guest account import still unions favorites without silent deletion', () => {
+  const account=createEmptyProgress();
+  account.favoriteExpressions=['saved'];
+  const guest=createEmptyProgress();
+  guest.favoriteExpressions=['local'];
+  assert.deepEqual(mergeProgress(account,guest).favoriteExpressions,['saved','local']);
 });
