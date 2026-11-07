@@ -71,3 +71,13 @@ test('floating AI assistant is constrained to small mobile viewport width and he
  assert.match(chat,/w-\[calc\(100vw-1\.5rem\)\]/);
  assert.match(chat,/max-h-\[calc\(100dvh-1\.5rem\)\]/);
 });
+
+test('glossary favorites are controlled by saved profile and not reset on view navigation',()=>{
+  const app=readFileSync('src/App.tsx','utf8');
+  const glossary=readFileSync('src/components/MusicExpressionsView.tsx','utf8');
+  assert.match(app,/favoriteIds=\{progress\.favoriteExpressions \?\? \[\]\}/);
+  assert.match(app,/onFavoriteChange=\{\(ids\) => setProgress/);
+  assert.match(glossary,/favoriteIds\?:string\[\]/);
+  assert.match(glossary,/onFavoriteChange\?\./);
+  assert.ok(!glossary.includes('useState<string[]>([])'),'Glossary favorites should not be reset on remount');
+});
