@@ -23,7 +23,7 @@ const cards:[string,string,string,string][]=[
 ['Anhemiton pentatónia','Félhanglépés nélküli ötfokú hangsor.','Hangkészletek','hangkeszletek'],
 ['Dó-pentaton','Dó–ré–mi–szó–lá hangkészlet.','Hangkészletek','hangkeszletek'],
 ['Hangkészlet-felmérés','Csak a különböző megszólaló hangmagasságokat számoljuk.','Hangkészletek','hangkeszletek'],
-['Dúr hangsor','Egész–egész–fél–egész–egész–egész–fél lépésekből áll.','Hangsorok','hangsorok'],
+['Dúr hangsor','Egész–egész–fél–egész–egész–egész–fél lépésekből áll.','Hangsorok','hetfoku-hangsorok'],
 ['Harmonikus moll','A természetes moll hetedik fokát felemeli.','Hangsorok','hangsorok'],
 ['Melodikus moll','Klasszikus felmenő alakban a hatodik és hetedik fok módosul.','Hangsorok','hangsorok'],
 ['Kvintkör','Kvintlépésekben kapcsolódó hangnemek és előjegyzések rendszere.','Hangsorok','hangsorok'],
