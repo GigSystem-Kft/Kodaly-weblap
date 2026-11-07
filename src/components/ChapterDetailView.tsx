@@ -66,7 +66,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
           {!isCompleted ? (
             <button
               onClick={() => onCompleteChapter(chapter.id)}
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30"
             >
               <CheckCircle className="w-4 h-4" />
               <span>Fejezet Teljesítése</span>
@@ -127,7 +127,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 <span className="text-sm text-emerald-700 inline-flex gap-1 items-center"><CheckCircle className="w-4 h-4"/> Tanulmányozottnak jelölve</span>
               ) : (
                 <button type="button" onClick={() => onCompleteSubchapter(currentSub.id)}
-                  className="rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 text-sm font-medium">
+                  className="rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2 text-sm font-medium">
                   Alfejezet tanulmányozva
                 </button>
               )}
@@ -263,7 +263,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <div key={qIdx} className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 my-6 flex items-start space-x-4">
                 <Quote className="w-8 h-8 text-[#4a54e1] shrink-0 opacity-70" />
                 <div>
-                  <p className="text-slate-200 italic font-medium mb-2">„{q.text}”</p>
+                  <p className="text-slate-800 italic font-medium mb-2">„{q.text}”</p>
                   <span className="text-xs font-bold text-[#4a54e1]">— {q.source}</span>
                 </div>
               </div>
