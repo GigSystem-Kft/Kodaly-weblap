@@ -30,19 +30,6 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
         'Az oktávszám a magassági fekvést rögzíti: C5 egy oktávval C4 fölött szól.'
       ]
     },
-    {
-      id: 'elojegyzes-feloldas',
-      title: '2.4 Előjegyzés és feloldójel alkalmazása',
-      summary: 'A hangnem előjegyzése és az ütemen belüli módosítás különbsége.',
-      content: [
-        'A kereszt (♯) félhanggal emeli, a bé (♭) félhanggal csökkenti, a feloldójel (♮) pedig visszaállítja a természetes hangmagasságot.',
-        'Az előjegyzés a kottasor elején áll, és rendszerint a teljes darabban érvényes addig, amíg a hangnem nem változik.',
-        'Az ütemen belüli módosítójel általában ugyanarra a hangmagasságra és oktávra érvényes az ütem végéig; az átkötött hang külön eset.',
-        'A keresztek szokásos sorrendje: Fisz, Cisz, Gisz, Disz, Aisz, Eisz, Hisz. A bék sorrendje: B, Esz, Asz, Desz, Gesz, Cesz, Fesz.',
-        'G-dúrban Fisz az előjegyzés, F-dúrban B. D-dúrban Fisz és Cisz szerepel.',
-        'Gyakorlat: nevezd meg a D-dúr előjegyzését, majd magyarázd meg, mi történik, ha egy Fisz elé az adott ütemben feloldójelet teszünk.'
-      ]
-    }
   ],
   'szolmizacio-hangkozok': [
     {
