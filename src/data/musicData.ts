@@ -199,42 +199,57 @@ export const MUSIC_CHAPTERS: Chapter[] = [
   {
     id: 'hetfoku-hangsorok',
     number: 5,
-    title: 'Hétfokú Hangsorok, Dúr-Moll és Kvintkör',
-    description: 'Ion, líd, mixolíd, természetes, összhangzatos és dallamos moll, valamint a kvintkör és hármashangzatok.',
+    title: 'Dúr és moll hangsorok, hármashangzatok és kvintkör',
+    description: 'Öt dúr hangsor, háromféle moll, a négy hármashangzat és fordításaik, részletes magyar kvintkör.',
     iconName: 'Compass',
     subchapters: [
       {
         id: 'dúr-es-modalis',
-        title: '5.1 Dúr és modális hétfokú hangsorok',
-        summary: 'A dúr hangsor szerkezete (2 egész, 1 fél, 3 egész, 1 fél lépés). Modális hangsorok (líd, mixolíd).',
+        title: '5.1 Dúr hangsorok, előjegyzések és a kvintkör alapjai',
+        summary: 'C-dúr, G-dúr, D-dúr, F-dúr, B-dúr: öt hangzó hangsor magyar hangnevekkel és a kvintkör kapcsolataival.',
         content: [
-          'Dúr hangsor szerkezete: n2 + n2 + k2 + n2 + n2 + n2 + k2 (dó-tól dó-ig).',
-          'G-dúr: 1 kereszt (#) - Fisz.',
-          'D-dúr: 2 kereszt (#) - Fisz, Cisz.',
-          'F-dúr: 1 bé (b) - B.',
-          'Modális hangsorok: Ion (dúr), Líd (bővített kvart), Mixolíd (kis szeptim).'
+          'A dúr hangsor hét különböző hangot és az oktávzáró alaphangot tartalmaz. Egész- és félhanglépései: egész–egész–fél–egész–egész–egész–fél.',
+          'C-dúr: C–D–E–F–G–A–H–C; nincs előjegyzése.',
+          'G-dúr: G–A–H–C–D–E–Fisz–G; egy keresztje Fisz.',
+          'D-dúr: D–E–Fisz–G–A–H–Cisz–D; két keresztje Fisz és Cisz.',
+          'F-dúr: F–G–A–B–C–D–E–F; egy béje B, vagyis leszállított H.',
+          'B-dúr: B–C–D–Esz–F–G–A–B; két béje B és Esz. A magyar B nem a természetes H hang!',
+          'A kvintkör a dúr hangnemeket felfelé haladó tiszta kvintlépések szerint rendezi: C–G–D–A–E–H–Fisz, a másik irányban C–F–B–Esz–Asz–Desz–Gesz.',
+          'A keresztek sorrendje Fisz–Cisz–Gisz–Disz–Aisz–Eisz–Hisz; a béké B–Esz–Asz–Desz–Gesz–Cesz–Fesz.',
+          'A kvintkör segítségével megállapítható az előjegyzés, a rokon hangnemek közelsége és a párhuzamos moll: C-dúr–a-moll, G-dúr–e-moll, D-dúr–h-moll, F-dúr–d-moll, B-dúr–g-moll.',
+          'Gyakorlat: hallgasd meg az öt dúr hangsor hangjait 60 BPM mellett, figyeld meg a módosított fokokat, majd keresd meg mind az öt hangnemet a kvintkörben!'
         ]
       },
       {
         id: 'moll-hangsorok',
-        title: '5.2 Moll hangsorok fajtái',
-        summary: 'Természetes moll (aelol), összhangzatos moll (felemelt 7. fokkal), és dallamos moll.',
+        title: '5.2 Természetes, harmonikus és melodikus moll',
+        summary: 'A természetes, harmonikus és melodikus a-moll hangzó mintái magyar ABC-s hangnevekkel.',
         content: [
-          'A moll hangsor a dúr hangsor 6. fokára épül (la- hangsor, kis terc az alaphangon).',
-          '• Természetes moll: Változatlan hangok (pl. a-moll).',
-          '• Összhangzatos moll: A 7. fok felemelve (vezetőhang, szi).',
-          '• Dallamos moll: A 6. és 7. fok felemelve a felfelé menő menetben.'
+          'A moll hangsor jellegzetessége az alaphang és a harmadik fok közötti kis terc. A relatív dúr és a természetes moll azonos előjegyzésű lehet, de más alaphangra épül.',
+          'Természetes a-moll: A–H–C–D–E–F–G–A; nincs előjegyzése. A hetedik fok G.',
+          'Harmonikus a-moll: A–H–C–D–E–F–Gisz–A; az emelt hetedik fok vezetőhangot képez. F és Gisz között bővített szekund van.',
+          'Melodikus a-moll felfelé: A–H–C–D–E–Fisz–Gisz–A. A hatodik és hetedik fok emelkedik.',
+          'A klasszikus melodikus moll lefelé rendszerint a természetes moll hangjaira tér vissza: A–G–F–E–D–C–H–A.',
+          'Gyakorlat: hallgasd meg mindhárom alakot és nevezd meg az emelt hangokat! Hasonlítsd össze a G–Gisz és F–Fisz különbségét.',
+          'A harmonikus és a melodikus moll változatai nem külön előjegyzést jelentenek: a módosításokat az adott hang előtt jelöljük.'
         ]
       },
       {
         id: 'harmashangzatok',
-        title: '5.3 Hármashangzatok leltára',
-        summary: 'Dúr (nagy+kis terc), moll (kis+nagy terc), szűkített (kis+kis terc) és bővített (nagy+nagy terc) hármashangzatok.',
+        title: '5.3 Hármashangzatok, akkordfajták és fordításaik',
+        summary: 'Dúr, moll, szűkített, bővített hármashangzat; alapállás, szextakkord és kvartszextakkord.',
         content: [
-          'Dúr hármashangzat (D): Nagy terc alul, kis terc felül.',
-          'Moll hármashangzat (m): Kis terc alul, nagy terc felül.',
-          'Szűkített hármashangzat (sz): Két kis terc.',
-          'Bővített hármashangzat (B): Két nagy terc.'
+          'A hármashangzat tercenként építkező három különböző hangból áll. A hangzat minőségét az egymásra helyezett tercek szabják meg.',
+          'Dúr hármashangzat: C–E–G, alul nagy, felül kis terc. Hangolása és karaktere különbözik a mollétól.',
+          'moll hármashangzat: C–Esz–G, alul kis, felül nagy terc.',
+          'Szűkített hármashangzat: C–Esz–Gesz, két kis terc; a külső hangköz szűkített kvint.',
+          'Bővített hármashangzat: C–E–Gisz, két nagy terc; a külső hangköz bővített kvint.',
+          'Alapállás: a hangzat alaphangja a basszusban van, például C–E–G.',
+          'Első fordítás (szextakkord): a terc a basszusban, például E–G–C. Második fordítás (kvartszextakkord): a kvint a basszusban, például G–C–E.',
+          'A fordítás megváltoztatja a basszushangot és a hangköz-elrendezést, de nem a hármashangzat dúr vagy moll minőségét.',
+          'A G-dúr hármashangzat G–H–D, első fordítása H–D–G, második fordítása D–G–H.',
+          'Hangzó gyakorlat: válaszd ki a négy hangzatfajtát és a C-dúr három állását; hallgasd meg a hangokat egyszerre, majd egymás után!',
+          'Önellenőrzés: milyen tercpárokból áll a négy hangzat? Melyik hang szerepel a basszusban a szextakkordban és a kvartszextakkordban?'
         ]
       }
     ]
