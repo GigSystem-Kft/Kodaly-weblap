@@ -333,3 +333,27 @@ export function playMeterExample(id:MeterId,bpm=60):{durationMs:number;stop:()=>
   return {durationMs:pattern.totalDurationSeconds*1000,
     stop:()=>{if(rhythmSound===playback)stopRhythmPlayback();}};
 }
+
+
+/**
+ * Lágy, felhangdús hangszínnel játszott kromatikus hangsor.
+ * A böngésző hangórája biztosítja az egyenletes, 60 BPM-es negyedeket.
+ * Az aktuális lejátszás gombnyomásra és alfejezetváltáskor leállítható.
+ */
+export function playChromaticSequence(notes:readonly string[],bpm=60):{durationMs:number;stop:()=>void}{
+  if(!Number.isFinite(bpm)||bpm<=0||bpm>240)throw new Error('Érvénytelen tempó');
+  if(!notes.length||notes.length>24)throw new Error('Érvénytelen hanglista');
+  const frequencies=notes.map(note=>{
+    const freq=NOTE_FREQUENCIES[note];
+    if(!freq)throw new Error('Ismeretlen hang: '+note);
+    return freq;
+  });
+  stopEarTrainingInterval();
+  const ctx=getAudioContext();
+  const start=ctx.currentTime+0.045;
+  const beatSeconds=60/bpm;
+  for(let i=0;i<frequencies.length;i++){
+    scheduleWarmTone(ctx,frequencies[i],start+i*beatSeconds,beatSeconds*0.93);
+  }
+  return {durationMs:frequencies.length*beatSeconds*1000,stop:stopEarTrainingInterval};
+}
