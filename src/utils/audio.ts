@@ -1,3 +1,4 @@
+import { rhythmPattern, type RhythmSubdivision } from './rhythmPattern';
 // Web Audio API synthesizer for music theory learning and ear training
 
 let audioCtx: AudioContext | null = null;
@@ -146,4 +147,58 @@ export function playEarTrainingMelody(notes: readonly string[]): void {
   } catch(error) {
     console.error('Hangkészletlejátszási hiba:',error);
   }
+}
+
+
+/** One four-beat measure, with pitch repeated precisely at the selected note-value attacks. */
+let rhythmSound: {oscillators: OscillatorNode[]; gains: GainNode[]} | null=null;
+
+export function stopRhythmPlayback(): void {
+  const playback=rhythmSound;
+  rhythmSound=null;
+  if(!playback)return;
+  for(const gain of playback.gains){
+    try {
+      gain.gain.cancelScheduledValues(0);
+      gain.gain.setValueAtTime(0,0);
+    } catch { /* context may be closed */ }
+  }
+  for(const osc of playback.oscillators) {
+    try { osc.stop(); } catch { /* completed voice */ }
+  }
+}
+
+export function playRhythmPlayback(divisions: RhythmSubdivision, bpm=60): {durationMs:number;stop:()=>void} {
+  stopRhythmPlayback();
+  const pattern=rhythmPattern(divisions,bpm);
+  const ctx=getAudioContext();
+  const start=ctx.currentTime+0.04;
+  const oscillators:OscillatorNode[]=[];
+  const gains:GainNode[]=[];
+  for(const note of pattern.notes){
+    const at=start+note.startSeconds;
+    const until=at+note.durationSeconds;
+    const gain=ctx.createGain();
+    const osc=ctx.createOscillator();
+    // A warm, rounded tone remains audible even for a whole note held for four beats.
+    osc.type='triangle';
+    osc.frequency.setValueAtTime(261.63,at);
+    const attack=Math.min(0.02,note.durationSeconds*0.16);
+    const release=Math.min(0.045,note.durationSeconds*0.22);
+    gain.gain.setValueAtTime(0.0001,at);
+    gain.gain.linearRampToValueAtTime(0.23,at+attack);
+    gain.gain.setValueAtTime(0.23,until-release);
+    gain.gain.linearRampToValueAtTime(0.0001,until);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(at);
+    osc.stop(until+0.01);
+    osc.onended=()=>{osc.disconnect();gain.disconnect();};
+    oscillators.push(osc);
+    gains.push(gain);
+  }
+  const playback={oscillators,gains};
+  rhythmSound=playback;
+  return {durationMs:pattern.totalSeconds*1000,
+    stop:()=>{if(rhythmSound===playback)stopRhythmPlayback();}};
 }
