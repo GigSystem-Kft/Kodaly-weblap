@@ -29,8 +29,8 @@ export const CURATED_MEDIA:CuratedMedia[]=[
  {
   id:'guido-keze',chapters:[3,4,7,8],title:'A középkori Guido-kéz',
   note:'A történeti szolmizáció ut–re–mi–fa–sol–la hangjait szemléltető kéziratos forrás. Hexachordhoz különösen ajánlott.',
-  kind:'kep',url:commons+'Guidonian_hand.jpg',imageUrl:fileImage('Guidonian_hand.jpg'),
-  license:'Közkincs – 15. századi kézirat, Wikimedia Commons'
+  kind:'kep',url:commons+'The_Hand_of_Guido.jpg',imageUrl:fileImage('The Hand of Guido.jpg'),
+  license:'Közkincs – középkori kézirat 1274-ből, Wikimedia Commons'
  },
  {
   id:'gregorian',chapters:[2,7,8],title:'Gregorián négyvonalas kottaírás',
@@ -49,6 +49,11 @@ export const CURATED_MEDIA:CuratedMedia[]=[
   note:'Fontos: az ábra angolszász hangneveket használhat; a magyar H/B hangneveket a tananyag szövegében ellenőrizd.',
   kind:'kep',url:commons+'Circle_of_5ths_(fifths).svg',
   imageUrl:fileImage('Circle of 5ths (fifths).svg'),license:'CC0 – TYalaA, Wikimedia Commons'
+ },
+ {
+  id:'kep-furulya-german',chapters:[2,3,8],title:'Germán fogású szopránfurulya ujjrendtáblázata',
+  note:'Szopránfurulya fogástáblázat, C hangról indulva. A magyar tananyagban mindig ellenőrizd a germán és barokk fogásrendszer különbségét.',
+  kind:'kep',url:'https://folkfluteworld.com/free_fingering_charts/free_fingering_charts.html'
  },
  {
   id:'video-kodaly-liszt',chapters:[7],title:'Liszt Ferenc munkássága – magyar vonatkozások',
