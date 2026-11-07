@@ -87,7 +87,7 @@ try {
       return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
     });
     await accountPage.goto(root,{waitUntil:'domcontentloaded'});
-    await accountPage.getByRole('button',{name:/06\\. Profil/}).click();
+    await accountPage.getByRole('button',{name:/06\. Profil/}).click();
     await accountPage.getByText('Próbafiók').first().waitFor();
     const adminButton=accountPage.getByRole('button',{name:'Admin',exact:true});
     if(role==='admin' && await adminButton.count()!==1) throw new Error('Admin navigation missing for admin role');
