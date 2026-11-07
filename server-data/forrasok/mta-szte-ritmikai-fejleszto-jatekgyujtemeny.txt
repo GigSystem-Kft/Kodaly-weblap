@@ -1,58 +1,348 @@
-# MTA-SZTE Ének-zene Szakmódszertani Kutatócsoport — Ritmikai fejlesztőprogram: Játékgyűjtemény
-# Oldalszámozott, ellenőrzött tartalomkeresési kivonat a felhasználó által feltöltött 13 oldalas PDF alapján.
-# A játékok eredeti témáit, feladatmeneteit és oldalhivatkozásait megőrzi, de NEM szó szerinti teljes átírás.
-# Képen rögzített ritmustáblázatok: 10–12. oldal; szöveges leírásuk nem helyettesíti az eredeti kottaképet.
-# A 13. oldal csak fejlécet tartalmaz. A kutatási célokat ne értelmezzük igazolt hatásként.
+# MTA-SZTE Ének-zene Szakmódszertani Kutatócsoport – Ritmikai fejlesztőprogram, Játékgyűjtemény
+# Az eredeti PDF oldalakra bontott KINYERT szövege (a szövegrétegből). A 10–12. oldal kottaábráihoz emberileg ellenőrzött tárgymutató.
+# Forrás: felhasználó által feltöltött 13 oldalas PDF. A PDF kottaképei nem a szövegréteg részei.
 
 --- 1. oldal ---
-Ritmikai fejlesztőprogram – Játékgyűjtemény
-MTA-SZTE Ének-zene Szakmódszertani Kutatócsoport. Ritmikai fejlesztőprogram. Játékgyűjtemény. Címlap.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+
+
+
+ Ritmikai fejlesztőprogram
+     Játékgyűjtemény
+
 
 --- 2. oldal ---
-A program bemutatása, alapelvek
-Három hónapos ritmikai fejlesztőprogram általános iskolai első osztályban. Az énekórákon, a már tanult dalanyaghoz kapcsolva napi 10–15 perc játék alkalmazható. A gyermekek örömmel, aktívan vegyenek részt, szabadon és kreatívan alkothassanak. A cél a ritmikai készségek fejlődése és a lehetséges transzferhatások, különösen pszichomotoros, hallási és figyelmi területen. A program elő- és utómérést tervez a zenei képességek és végrehajtó funkciók területén; nem bizonyított hatásról, hanem kutatási célkitűzésről ír. Az ének-zene tanórákba épített játékok segítik a ritmus írását, olvasását, a ritmusképletek tudatosítását. Testhangszerek: csettintés, taps, mellkasütés, combütés, dobbantás; eszközök: tikfa, cintányér, csörgő, dob. A mozdulatok elsajátítása nagymozgásra és finommotorikára ható gyakorlás.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+
+1. A program bemutatása
+A három hónapos fejlesztőprogramunk során az énekórákon nagyobb súlyt szeretnénk
+fektetni a ritmikai fejlesztésre. Elképzeléseink szerint az ajánlott ritmikai játékok a már tanult
+dalanyaghoz kapcsolva, tetszés szerint kiválogatva, minden órán 10-15 percben kerülhetnének
+felhasználásra. A legfontosabb, távolabbi célunk, hogy a gyerekek számára ezek az órák
+élvezetesebbé, játékosabbá váljanak. Örömmel, aktívan vegyenek részt a feladatokban és az
+énekórákon szabadon, kreatívan, élvezettel alkothassanak. A játékok újfajta zenei élményt
+adnak, rajtuk keresztül a diákok képességei sokoldalúan fejleszthetőek. A zenei képességek
+fejlődése mellett a zenetanulás lehetséges transzferhatásait is elő szeretnénk segíteni. A
+program épp ezért a tanulók végrehajtó funkcióinak és a zenei képességeinek fejlettségi
+szintjének mérését követően indul, majd három hónap elteltével ugyanezen tesztek felvételét
+követően a fejlesztés hatásainak kimutatása történik meg.
+
+
+2. A ritmikai fejlesztés alapelvei
+           Ritmikai fejlesztőprogramunk olyan tartalomhoz kötött fejlesztés, mely az ének-zene
+tanórákba beépülve motivációbeli és teljesítménybeli növekedést szeretne előidézni. Ezen
+változásoktól a három hónapos fejlesztés során különböző transzferhatások megjelenését is
+várjuk, melyek elsősorban a pszichomotoros készségek, a hallási készségek és a figyelem
+területét érintik. A választott korcsoport, az általános iskola 1. évfolyama optimális mind a
+zenei képességek, mind az iskolai képességek kialakulásának szenzitív időszakát illetően.
+Emellett a fejlesztés ilyen korai életkorban való megkezdése is annak hatékonyságát segíti
+elő.
+       A program célja, hogy a ritmikai készségeket játékos formában, ritmikai játékokon
+keresztül fejlesszük, elősegítve a feladatokban előforuló ritmusképletek tudatosítását,
+hozzájáruljunk a ritmus írás és olvasás fejlődéséhez. A játékokban elsősorban a
+testhangszerekre - csettintés, taps, mellkasütés, combütés, dobbantás - építünk, de emellett
+lehetőség van arra is, hogy a gyerekek felfedezzék, mi mindenben lakozik még "zene", a
+környezetük tárgyai milyen hangot adnak ki. A játékokban kisebb ritmushangszerek – tikfa,
+cintányér, csörgők, dobok - is felhasználhatóak.
+
+          A testhangszerek, kisebb ritmushangszerek megszólaltatása, a pontos mozdulatok
+           elsajátítása fejleszti mozgási képességeiket (nagymozgás, finommotorika).
+
 
 --- 3. oldal ---
-Ritmikai fejlesztés pedagógiai alapelvei
-A tanulók előbb a tanító mozdulatait utánozzák, később a pontos cselekvés automatizálódhat. A tevékenységek a pszichomotoros, kognitív és affektív területekre, a figyelemre, koncentrációra, együttműködésre és szociális készségekre irányulnak. A ritmusok alkalmat adnak önálló improvizációra. Alapelvek: cselekvésorientáltság, újszerűség, fokozatosság, élményközpontúság, attitűdök formálása, motiválás. Fontos a külső és belső motiváció, a teljesítmény- és elsajátítási motiváció, a szorongás csökkentése, az önbizalom, az érdeklődés, a pozitív attitűdök.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+       Ezen készségek tanulása során először a gyerekek utánozzák a tanító mozdulatait,
+       kontrollálják saját tevékenységüket, később a gyakorlásnak köszönhetően mozdulataik
+       letisztultakká, automatikusakká válnak.
+      A fejlesztésben szereplő játékokat úgy állítottuk össze, hogy a gyermekek
+       pszichomotoros, kognitív és affektív készségeinek fejlődését egyaránt elősegíthessük.
+      A játékok során figyelmük, koncenctrációjuk fejlődik.
+      A tanítóval, a társakkal való együttműködés, játék segíti a szociális képességeik
+       fejlődését.
+      A megismert ritmusokkal a játékok során alkalom nyílik önálló improvizációra
+
+A program összeállításánál szem előtt tartottuk, hogy a feladatok újszerűek, élményt adóak
+legyenek, együttműködésre, alkotásra késztessenek. Az egyes játékoknál arra is törekedtünk,
+hogy több, egyre nehezebb variációt is leírjunk, így az egyes készségek, képességek
+fokozatosan fejleszthetőek. Célunk, hogy ezek a feladatok felkeltsék a tanulók érdeklődését és
+újabb zenei ismeretek szerzésére motiválják őket. Az összeállítás fő szempontjai:
+
+      cselekvés-orientáltság
+      újszerűség
+      fokozatosság
+      élményközpontúság
+      attitűdök formálása
+      motiválásra törekvés
+
+Az affektív terület pozitív irányú változása szolgál a minél hatékonyabb fejlesztés, a kitűzött
+célok megvalósításának alapjául. A különböző affektív feltételek közül a következőkre
+szeretnénk építeni:
+
+      külső és belső motiváció
+      teljesítménymotiváció
+      elsajátítási motiváció
+      szorongás csökkentése
+      önbizalom elősegítése
+      érdeklődés
+      pozitív attitűdök kialakítása, megerősítése.
+
 
 --- 4. oldal ---
-Fejlesztő visszajelzés
-A tanulók tevékenységére irányuló folyamatos visszajelzés megnevezi a gyermek aktuális állapotát és az elérendő célhoz vezető utat. MTA-SZTE Ének-zene Szakmódszertani Kutatócsoport.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+Ennek érdekében fontos a tanulók tevékenységére irányuló folyamatos visszajelzés, mely
+egyben az aktuális állapot mellett az elérendő célhoz vezető utat is megnevezi.
+
 
 --- 5. oldal ---
-Mi lehet hangszer? Érezd a lüktetést! Stop játék
-1. Mi lehet hangszer? Kísérletezés testhangszerrel. Csukott szemmel a környezet hangjainak hallgatása és megnevezése, teremben található tárgyak hangszerré tétele. A tanító gyors ritmusokat játszik a testen, a gyerekek utánozzák. Helyszínek: fejtető, arc, mellkas, has, comb, láb. Változat: hirtelen váltás, halk-hangos utánzás. Ritmustáblázat 1.1, 1.4, 1.10, 1.13. 2. Érezd a lüktetést! Stop játék. Katonás járás 1-2-3-4 számolásra, tempóváltoztatás; menetelés ismert zenére (például Star Wars: Imperial March), hangerőre indulás és megállás.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+
+3. Játékok a ritmikai fejlesztéshez
+
+1. Mi lehet hangszer? Kísérletezés testhangszerrel
+
+Instrukciók a gyerekeknek: Csukd be a szemed és hallgasd a környezeted hangjait! (néhány
+perc csend) Milyen hangokat hallottál, nevezd meg! Ezek a hangok is lehetnek zenei hangok.
+Keress olyan tárgyakat a teremben, amiket tudunk hangszerként használni. Most próbáld ki a
+saját testedet, melyik testrészed, milyen hangot ad ki?
+
+Közös játék: Kövess! Ott játssz te is, ahol én! A tanár gyors ritmusokat játszik a testén, a
+gyerekek lekövetik. Akkor lehet más testrészre továbbhaladni, ha már mindenki ugyanott
+játszik, ahol a tanár. Testrészek: fejtető, arc, mellkas, has, comb, láb ütése két kézzel.
+
+Variációk: gyors váltás a testrészek között, hangerő figyelembe vétele (ha halkan ütöm, a
+gyerekeknek is halkan kell, ha hangosan, a gyerekeknek is hangosan)
+
+       Ritmuspéldák:
+
+
+
+
+       további ajánlott ritmusok: 1.1, 1.4, 1.10, 1.13
+
+
+
+2. Érezd a lüktetést! (Később Stop játék)
+A gyerekek mérőérzetének javítására szolgáló játék. Különböző módokon és fokozatokban
+erősítjük a készségeiket:
+
+   1. Játszunk katonásat! Én számolok úgy, hogy 1-2-3-4, nektek ütemre kell járni. Ki
+       tudná bemutatni? Rajta! 1-2-3-4! Most az egész osztály! 1-2-3-4-1-2-3-4...
+       Addig érdemes játszani, amíg mindenki belejön és egyszerre lépnek. Később gyerek is
+       számolhat a többieknek. Variáció: a tempót lehet változtatni.
+
+   2. Zenére járás: Hallgassátok a zenét, vegyük fel az induló tempóját (először
+       mindenképpen tanári segítséggel, pl taps)
+       Zenei anyag például: Star Wars: Imperial March
+       Variáció: Ha hangos a zene, a gyerekek menetelnek, ha halk, abbahagyják. A tanító
+       változtatja a hangerőt (stop játék).
+
 
 --- 6. oldal ---
-Ének mérővel, belső hallás; Utánzós játék és Utánzás körben
-A tanult dal éneklése közben menetelés és mérőtaps. Halk éneknél elhagyható a mérő, hangos éneknél visszatér; a tanító kézjellel vezeti a hangerőt. Nehezítés: néma ének belül, a mérő tovább hallható, majd jelre visszatér az ének, dallambújtatás és belső hallás. 3. Utánzós játék: a tanár kétütemes ritmust tapsol, a tanulók visszatapsolják; négyütemes változat, más testrészek, dobon vagy asztalon utánzás; az egyszerű ritmusoktól a tizenhatodig, szinkópáig, trioláig fokozatosan. Kapcsolódó táblázatok 1.1–1.15, 2.1–2.18 és 3.1–3.9. 4. Utánzás körben: körben ülve minden gyermek két ütemes ritmusmintát alkot, az osztály közösen utánozza. A helyes kétütemes szerkezetre figyelni kell.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+    3. Ének mérővel: A gyerekek éneklik az órán tanult dalt, közben menetelnek, mérőt
+        tapsolnak.
+        Variáció: mint az előzőnél, halk ének esetén nincs mérő, hangos ének esetén van. A
+        tanító a kezével jelzi a hangerőt.
+        Nehezítés: teljesen néma az ének, de fejben tovább énekelnek, a mérő marad. Jelre
+        visszatér a dal (dallambújtatás, belső hallás).
+
+       Ritmuspéldák:
+
+
+
+
+       A számolás 1-2, vagy a négy hangot egy ütemben értelmezve 1-2-3-4.
+
+
+
+3. Utánzós játék
+
+A tanár eltapsol egy 2 ütemes ritmust, amit a gyerekek visszaismételnek szintén tapssal.
+
+Variációk: hosszabb ritmusok (4 ütem), illetve mikor nem taps, hanem a test különböző
+pontjain szólal meg a ritmussor (lásd 1. feladat). Ehhez kiválasztunk egy gyereket, aki játszik
+a többieknek. Például a tanár tapsolhat, a gyerekek az asztalt üthetik, a tanár egy dobon ütheti
+a ritmust stb.
+A ritmusok esetén fontos a fokozatosság betartása.
+
+       Ritmuspéldák: lásd Ritmustáblázat 1.1-1.15, 2.1-2.18
+
+Később lehet nem tanult ritmusokat is kipróbálni (tizenhatodok, szinkópa, triola) pusztán az
+utánzás szintjén, nem kell megnevezni azokat.
+
+       Ritmuspéldák: lásd Ritmustáblázat 3.1-3.9
+
+
+
+4. Utánzás körben
+
+Alapja az előző játék, csak ezúttal körbe ülünk. A tanár kezdi egy kétütemes ritmus
+eltapsolásával, a gyerekek megismétlik. Majd a tőle balra levő gyerek játszik egy kétütemes
+ritmust, a gyerekek közösen azt is megismétlik. És így tovább, amíg vissza nem ér a sor a
+tanárra. Ha a gyerekek nem kétszer két ütemes ritmust játszottak, javítsuk ki.
+
 
 --- 7. oldal ---
-Ritmustelefon és nyolcadfordulós körjáték
-5. Ritmustelefon: 3–4 csoport egymás mögött ülve; a leghátsó hátára leütött négyütemes ritmust egymás hátán továbbítják. Nem szabad visszakérdezni vagy kimondani a ritmusneveket. Az első gyermek leírja az üzenetet, és az eredetivel összehasonlítják. Kapcsolódó ritmustáblázatok 1.1–1.15 és 2.1–2.18, összefűzve. 6. Nyolcadfordulós játék, Sáry László Kreatív zenei gyakorlatok alapján: körben egyenletes negyedek; egy nyolcadpár megfordítja a haladási irányt. Gyorsítható, kézkeresztezéssel nehezíthető, a pontos lüktetés és figyelem megőrzésével.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+          Ritmuspéldák: lásd Ritmustáblázat 1.1-1.15, 2.1-2.18
+
+
+
+5. Ritmustelefon
+A gyerekeket úgy osztjuk el, hogy három vagy négy csoportot alkossanak, egyenlő számú
+csoporttagokkal. Az egy csoportba tartozó gyerekeket egymás mögé ültetjük. A leghátsó
+gyermek hátán leütök egy négyütemes ritmust, ugyanezt megismétlem a többi csoport
+leghátul ülő tagjának hátán. Amint megkapta az üzenetet, továbbítania kell a neki háttal ülő
+legközelebbi csapattársának hátára, és így tovább. Tilos megismételtetni a ritmust, ha nem
+értette pontosan, akkor azt adja tovább, amit kiértett. Némán játszunk, tehát tilos kimondani
+közben a ritmusneveket. Amikor az utolsó, vagyis a sorban legelöl ülő gyerek megkapta az
+„üzenetet”, egy papírra írja le a ritmussort. A végén összehasonlítjuk a kapott ritmusokat. Aki
+a legpontosabban adta vissza a kapott ritmust, az a csapat győz.
+
+          Ritmuspéldák: lásd Ritmustáblázat 1.1-1.15, 2.1-2.18 (két példát 4 ütemessé
+          összefűzve)
+
+
+
+6. Nyolcadfordulós játék (Sáry László: Kreatív zenei gyakorlatok)
+Körben ülünk. A tanár kezdi, egy negyedet játszik tapsolva, utána a tőle balra ülő gyermek, és
+így tovább, halad a kör egyenletes negyedek lüktetésével. Ha valamelyik gyerek negyed
+helyett nyolcadpárt játszik, fordul a kör, a folyamat megfordul és visszafele halad.
+Kiesés: ha megfordult kör esetén az előző gyerek nem veszi észre, hogy ő következik, vagy a
+nyolcadpárt ütő gyerek után következő véletlenül beletapsol. Egészen addig lehet játszani,
+még kettő gyermek nem marad. Igyekezzünk a negyedek lüktetésével egy egyenletes tempót
+elérni.
+Nehezítés: gyorsabb tempót adunk meg, vagy:
+nyolcadfordulós kézkeresztezéssel: a gyerekek a jobb kezüket a tőlük jobb oldalt ülő gyerek
+combjára rakják, bal kezüket a bal oldalt ülő combjára. Így a kezek sorrendje összekeveredik,
+nagy koncentrációt igényel. Szabályok ugyanazok, mint a fent leírtak.
+
+          Ritmus:
+
 
 --- 8. oldal ---
-Lüktetés körben; Páros játék; Hangszerpakolós; Osztinátó
-7. Lüktetés körben: egy-kettő-három-négy számolás körben; egy hangsúlyos, a többi halk. Később csak taps, az egyes ütemrészen combütés; mondókával is összeköthető: An-tan-té-nusz. 8. Páros játék: ismert dal ritmusát a gyermekek egymás tenyerébe ütik; változatként a mérőt, saját és társ tenyere között váltva vagy vállérintéssel. 9. Hangszerpakolós: csörgő hangszerek átadása mindig az egyes ütemrészén, négyes vagy kettes metrumra, ismert dal lüktetésében. 10. Osztinátó: a tanár rövid, visszatérő ritmust tapsol, az osztály átveszi, majd tempón belül változtat.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+
+7. Lüktetés körben
+Körben ülünk. Négyes ütem számolásával kezdjük. A tanár kimondja az „egy” szót, a tőle
+balra levő gyerek a „kettőt”, utána „három”, végül „négy”. A következő gyerek kezdi elölről:
+„egy” és így tovább. Később az „egy” szót meghangsúlyozzuk, hangosan mondjuk ki, míg a
+többit hangsúlytalanul, halkan. Ezután a számolás közben tapsolhatunk a kezünkkel, csak az,
+aki éppen a számot mondja ki. A tapsra ugyanaz érvényes, mint a számolásra: „egy” hangos, a
+többi halk”. A végén elhagyhatjuk a hangos számolást, csak a taps marad, a gyerekeknek
+ekkor is hangsúlyozni kell, az „egy” a hangsúlyos, a többi hangsúlytalan.
+Nehezítés: Az „egyet” nem tapsolja, hanem a combján üti, a többi marad tenyéren.
+Összevonható iskolás mondókákkal, pl.:
+            An-tan-té-nusz Szó-raka-té-nusz, Szó-raka-tiki-taka-ala-bala-bam-busz-ka!
+            1 - 2 - 3 - 4 – 1 - 2 - 3 - 4 – stb.
+
+
+
+8. Páros Játék
+A gyerekek egymással szemben párba rendeződnek. Egy tanult dal ritmusát egymás tenyerébe
+ütve játsszák, a dal éneklése közben. Variációk:
+      Nem a ritmust ütik, hanem az egyenletes mérőt.
+      Az egyenletes mérőt felváltva ütik, egyet a saját tenyerébe, egyet a másikéba.
+      Egymás vállára helyezik a kezüket, a ritmust játsszák a másik vállát ütve.
+
+
+
+9. Hangszerpakolós
+Hasonló a lüktetés körben játékhoz. A gyerekek körben helyezkednek el, szétosztunk
+közöttük csörgő hangot adó ritmushangszereket (shaker, rumbatök, csörgő, csengő, kisharang
+stb.), amit számolás közben (1-2-3-4) „egyre” a másik ölébe kell rakni, ezzel hangot keltve.
+Így a hangsúly mindig az „egyen” lesz. Lehet kettes ütemekben is gondolkodni, így kétszer
+olyan gyorsan vált gazdát a hangszer.
+Variáció: valamelyik tanult dal lüktetésére igazítani a játékot.
+
+
+
+10. Osztinátó (makacsul ismétlődő ritmus)
+1. verzió: A tanár folyamatosan tapsolja ugyanazt a ritmust, amit átvesz az osztály is, míg
+végül együtt játszanak (pl. tá tá titi tá). Ha egyenletes, mindenki pontosan játssza, a tanár vált
+(tempón belül), az osztály pedig próbálja átvenni az új ritmussort. Ezt ismételjük el többször
+
 
 --- 9. oldal ---
-Osztinátó szólamépítés és testhangszerek
-Az osztinátó második változatában különböző csoportok eltérő szólamokat kapnak; egymás után belépve együtt épül fel a zenei folyamat. Példák: padütés, combütés, kéttujjas taps, kopogás asztalon. A ritmushangoztatás a testen: taps tenyérrel vagy két-három ujjal; ujjkoppantás, csettintés; lépés, járás, dobbantás, ugrás; fejtető, arc, mellkas, has, comb, térd, lábszár ütése. A játékok a NAT kulcskompetenciáihoz és fejlesztési feladataihoz kapcsolhatók.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+egymás után. Nehezíthető, ha nem csak ritmussort változtatunk, hanem testhangszert is (pl.
+taps helyett combon kezdjük ütni a következő ritmussort). Célszerű a gyerekeknek csak két
+ujjal tapsolni, ezzel az ő hangerejük csendesebb lesz.
+
+2. verzió: Csoportokat alakítunk. Különböző szólamokat osztunk ki, egy csoport egy szólam.
+Építkezve egy komplett zenei darabot játszunk el (a csoportok egymás után lépnek be), a
+tempót tartva.
+
+
+Például:
+1.      szólam:                                     3. szólam:
+ (padot      üt)                                    (comb)
+
+
+2.      szólam:                                     4. szólam
+(kéttujjas taps)                                    (kopogás
+                                                    asztalon egy
+                                                    kézzel)
+
+
+
+
+Kiegészítés:
+A ritmushangoztatás lehetőségei testen:
+            taps (tenyérrel, 2 vagy 3 ujjal)
+            koppantás (3. ujjal, ujjbeggyel)
+            csettintés
+            lépés, járás, dobbantás, ugrás
+            fejtető ütése
+            arcbőr ütése (száj nyitogatásával változtatható a hangmagasság)
+            mellkas ütése
+            has ütése
+            combütés
+            térdütés
+            lábszárütés
+
+A ritmikai fejlesztésben felsorolt játékok kapcsolódhatnak a Nemzeti Alaptantervben
+meghatározott kulcskompetenciaterületekhez, annak kiemelt fejlesztési feladataihoz, valamint
+a tantárgyi fejlesztési szükségletekre is kiterjedhetnek.
+
 
 --- 10. oldal ---
-Ritmustáblázat 1 – Negyed-nyolcad variációk
-Kottaképként ábrázolt 15 kétszer 2/4-es negyed–nyolcad gyakorlóritmus az 1.1–1.15 azonosítókkal. Ritmusértékek: tá = negyed, ti-ti = két nyolcad. A tábla fokozatos kombinációkat ad: 1.1 csak negyedek; 1.2 és 1.3 egy nyolcadpár; 1.4–1.6 két vagy három nyolcadpár; 1.7–1.15 sűrűbb variációk. A kottaábra nem szöveges karakterekkel van tárolva az eredeti PDF-ben. Keresőszavak: ritmustáblázat 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 1.10 1.11 1.12 1.13 1.14 1.15.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+
+          RITMUSTÁBLÁZAT
+            1. Negyed-nyolcad variációk
+
+KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt ritmusképletek, negyed–nyolcad variációk: 1.1–1.15. Ritmusértékek: tá = negyed, ti-ti = nyolcadpár. Ezen az oldalon a kottapéldák képi tartalma nincs a PDF szövegrétegében; az eredeti ábra megtekintése szükséges a teljes ritmikai szerkezet ellenőrzéséhez.
+
 
 --- 11. oldal ---
-Ritmustáblázat 2 – Negyed-nyolcad variációk szünettel
-Kottaképként ábrázolt 18 kétszer 2/4-es gyakorlóritmus 2.1–2.18 azonosítókkal. Negyedek, nyolcadpárok, negyedszünetek különféle sorrendben. A szün = negyedszünet, a tá = negyed, a ti-ti = két nyolcad; egy-egy sor 2/4 ütemeken belül halad. Keresőszavak: ritmustáblázat 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 2.10 2.11 2.12 2.13 2.14 2.15 2.16 2.17 2.18.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+        2. Negyed-nyolcad variációk szünettel
+
+KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt negyed–nyolcad variációk negyedszünettel: 2.1–2.18. Tá = negyed, ti-ti = nyolcadpár, szün = negyedszünet. Az eredeti kottaképek a PDF szövegrétegéből nem olvashatók ki gépileg.
+
 
 --- 12. oldal ---
-Ritmustáblázat 3 – Példák utánzásos feladatokhoz
-Kottaképként ábrázolt 9 kétszer 2/4-es ritmusképlet 3.1–3.9 azonosítókkal. Összetettebb példák nyolcadokkal, tizenhatodokkal, pontozott ritmusokkal és triolákkal utánzásra. Nem szükséges a ritmusok elméleti elnevezése a kezdeti utánzás során. Keresőszavak: ritmustáblázat 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+          3. Példák utánzásos feladatokhoz
+
+KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt utánzásos ritmusgyakorlatok: 3.1–3.9. Eltérő ritmusértékek, köztük tizenhatodok, pontozott értékek és triolák; a pontos zenei lejegyzést az eredeti PDF képe tartalmazza.
+
 
 --- 13. oldal ---
-Záró oldal
-Az eredeti tizenharmadik oldal az MTA-SZTE Ének-zene Szakmódszertani Kutatócsoport fejlécén kívül nem tartalmaz további szöveges vagy kottaképi elemet.
+MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
+
+KOTTAKÉPI TÁRGYMUTATÓ: Az oldal a kutatócsoport fejlécén kívül üres.
 
