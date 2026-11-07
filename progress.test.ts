@@ -114,3 +114,14 @@ test('quiz practice timing is preserved but rejects invalid or excessive duratio
    assert.equal(invalid.quizAttempts?.length,0);
  }
 });
+
+test('glossary starred terms are retained on profile migration and account import',()=>{
+  const server=createEmptyProgress();
+  server.favoriteExpressions=['term-1'];
+  const local=createEmptyProgress();
+  local.favoriteExpressions=['term-2'];
+  const merged=mergeProgress(server,local);
+  assert.deepEqual(merged.favoriteExpressions,['term-1','term-2']);
+  assert.deepEqual(migrateProgress(JSON.parse(JSON.stringify(merged))).favoriteExpressions,['term-1','term-2']);
+  assert.deepEqual(migrateProgress({...local,favoriteExpressions:undefined}).favoriteExpressions,[]);
+});
