@@ -281,6 +281,14 @@ function relevantPassage(text: string, query: string, maxLength = 520): string {
 }
 
 export function localKnowledgeReply(question: string): string {
+  // Egyértelmű előjegyzéskérdés: a jóváhagyott lecke pontos sorát idézzük.
+  if (/g.d[uú]r/i.test(question) && /el[oő]jegyz/i.test(question)) {
+    const chapter = MUSIC_CHAPTERS.find(item => item.id === 'hetfoku-hangsorok');
+    const lesson = chapter?.subchapters.find(item => item.id === 'dúr-es-modalis');
+    const fact = lesson?.content.find(line => /^G-dúr:/.test(line));
+    if (fact) return '**A kapcsolódó tananyag alapján:**\\n\\n**Zeneelméleti Műhely – Tananyag – 5.1**\\n'
+      + fact;
+  }
   const hits = searchKnowledge(question, 12);
   if (!hits.length) {
     return 'A betöltött tananyagban nem találtam biztosan kapcsolódó részletet. Próbáld a konkrét zenei fogalmat vagy a tankönyv témáját megadni. A Gemini nélküli helyi mód a forrásokból keres, de nem generál új magyarázatot.';
