@@ -356,7 +356,16 @@ export function searchKnowledge(query: string, limit = 6): SearchResult[] {
     const preferred = entry.kind === 'lesson' ? 1.4 : 1;
     const pagePriority = targetSourcePage !== null && /MTA-SZTE|ritmikai-fejleszto/i.test(entry.source) &&
       entry.label.includes(targetSourcePage+'. oldal') ? 20 : 1;
-    return { entry, score: score * (0.55 + coverage) * preferred * pagePriority };
+    // Terminológiai kérdésnél a pontos címszó elsőbbséget kapjon a sok
+    // véletlenül hasonló kifejezést tartalmazó hosszú jegyzet előtt.
+    const labelParts=entry.label.split(' / ');
+    const glossaryTerm=normalize(labelParts.at(-2) ?? '').trim();
+    const wordsInQuestion=normalize(query).replace(/[^a-z0-9à-žáéíóöőúüű-]/g,' ').split(/\\s+/);
+    const exactGlossary=entry.source.startsWith('Zenei kifejezések') &&
+      glossaryTerm.length>2 && wordsInQuestion.join(' ').includes(glossaryTerm) &&
+      (terms.length<4 || query.toLocaleLowerCase('hu-HU').includes('kifejezés'));
+    const glossaryPriority=exactGlossary?18:1;
+    return { entry, score: score * (0.55 + coverage) * preferred * pagePriority * glossaryPriority };
   }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
 
   // Egy forrás hosszú szövege ne nyomja ki a többi releváns forrást.
