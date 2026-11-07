@@ -1,3 +1,4 @@
+import { ModuleCompletionButton } from './ModuleCompletionButton';
 import React, {useMemo, useState} from 'react';
 import {ArrowLeft, BookOpen, Search, Layers, HelpCircle, Gamepad2, ExternalLink, ChevronLeft, ChevronRight} from 'lucide-react';
 import entries from '../data/musicExpressions.json';
@@ -12,8 +13,10 @@ interface Props {
  onFlashcards:(category:string)=>void;
  onMatching:(category:string)=>void;
  onQuiz:()=>void;
+ completed?:boolean;
+ onComplete?:()=>void;
 }
-export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatching,onQuiz})=>{
+export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatching,onQuiz,completed=false,onComplete})=>{
  const [search,setSearch]=useState('');
  const [category,setCategory]=useState('mind');
  const [letter,setLetter]=useState('mind');
@@ -42,6 +45,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
  };
  return <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 text-slate-900">
   <button type="button" onClick={onBack} className="inline-flex items-center gap-2 mb-7 px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold hover:border-indigo-400"><ArrowLeft size={16}/> Vissza a tananyaghoz</button>
+      {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
   <header className="bg-white border border-slate-200 shadow-sm rounded-3xl p-6 md:p-9 mb-7">
    <p className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-2">09. fejezet · kereshető fogalomtár</p>
    <h2 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-3">Zenei kifejezések</h2>
