@@ -147,7 +147,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
                 } else if (idx === selectedOption) {
                   btnStyle = 'bg-rose-950/50 border-rose-500 text-rose-200';
                 } else {
-                  btnStyle = 'bg-slate-900 border-slate-800 text-slate-500 opacity-50';
+                  btnStyle = 'bg-slate-800/60 border-slate-700 text-slate-300';
                 }
               }
 
