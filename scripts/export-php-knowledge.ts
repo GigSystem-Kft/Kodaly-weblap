@@ -12,12 +12,24 @@ import { MUSIC_HISTORY } from '../src/data/musicHistory';
 import { HISTORY_WORKSHOPS } from '../src/data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistoryProfiles';
 import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS, HISTORY_VISUALS, HISTORY_RESOURCES, HISTORY_NOTE_SOURCE } from '../src/data/musicHistorySupplement';
+import MUSIC_EXPRESSIONS from '../src/data/musicExpressions.json';
+import { THEORY_DRILLS } from '../src/data/musicExpressionsPractice';
 
 type Entry = { source: string; label: string; text: string; creativePractice?: {
   id: string; title: string; theme: string; goal: string; materials: string;
   steps: string[]; observation: string; extension: string; page: string;
 } };
 const entries: Entry[] = [];
+for(const item of MUSIC_EXPRESSIONS)entries.push({
+ source:'Zenei kifejezések – saját mellékelt teljes szótár (eredeti fogalommeghatározás)',
+ label:'09. Zenei kifejezések / '+item.category+' / '+item.term+' / eredeti '+item.line+'. sor',
+ text:item.term+' – '+item.definition
+});
+for(const item of THEORY_DRILLS)entries.push({
+ source:'Zeneelméleti Műhely – új ritmus, hangérték, hangsor és akkord gyakorlat',
+ label:'Gyakorlóanyag / '+item.category+' / '+item.term,
+ text:item.meaning+'\\n'+item.why
+});
 for (const concept of VERIFIED_GLOSSARY) {
  entries.push({source:concept.sourceTitle+' – '+concept.sourceUrl,
   label:'Ellenőrzött magyar zeneelméleti fogalomtár / '+concept.term+' ('+concept.keywords.join(', ')+')',
