@@ -8,6 +8,7 @@ root = Path(sys.argv[1] if len(sys.argv) > 1 else "release")
 errors = []
 counts = {"textbook_pages": 0, "notes": 0, "rhythm": 0}
 
+expected_pages = {1: 72, 2: 69, 3: 80, 4: 81}
 for book in range(1, 5):
     directory = root / "tankonyvek" / str(book)
     index = directory / "oldalak.json"
@@ -22,11 +23,17 @@ for book in range(1, 5):
     if not isinstance(pages, list) or not pages:
         errors.append(f"Empty textbook index: {index}")
         continue
+    if len(pages) != expected_pages[book]:
+        errors.append(f"Textbook {book}: expected {expected_pages[book]} indexed pages, found {len(pages)}")
+    seen = set()
     for page in pages:
         number = page.get("oldal") if isinstance(page, dict) else None
         if not isinstance(number, int):
             errors.append(f"Invalid page entry in {index}: {page!r}")
             continue
+        if number in seen:
+            errors.append(f"Duplicate textbook {book} page: {number}")
+        seen.add(number)
         image = directory / f"p{number:03d}.jpg"
         if not image.is_file() or image.stat().st_size == 0:
             errors.append(f"Missing or empty textbook image: {image}")
