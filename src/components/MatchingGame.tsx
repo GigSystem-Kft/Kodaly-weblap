@@ -5,11 +5,11 @@ import { Layers, RotateCcw, Award, CheckCircle2 } from 'lucide-react';
 import { playNote } from '../utils/audio';
 
 interface MatchingGameProps {
-  onAddXp: (amount: number) => void;
+  onCompleted: (pairIds: string[]) => void;
   initialCategory?: string;
 }
 
-export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCategory }) => {
+export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initialCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory ?? 'all');
   const categories = ['all', ...new Set(MATCHING_PAIRS.map(pair => pair.category))];
   const [terms, setTerms] = useState<{ id: string; text: string; pairId: string }[]>([]);
@@ -72,7 +72,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
 
       if (newMatched.length === terms.length) {
         setIsCompleted(true);
-        onAddXp(50);
+        onCompleted(newMatched);
       }
     } else {
       // Incorrect
