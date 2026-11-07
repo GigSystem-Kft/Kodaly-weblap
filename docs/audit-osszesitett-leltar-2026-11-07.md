@@ -17,17 +17,17 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Mód pontosan felcímkézve; szakmai validáció hátra |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
-| P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | Vizsgálat hátra |
+| P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP CI szerepkörteszt (student/teacher/admin) és fiókéletút sikeres; valódi böngészős és éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Vizsgálat hátra |
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | Nyitott |
-| P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Nyitott |
+| P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | Nyitott |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | Validálás hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | Validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozás-lista (pont, helyes/összes, témakör) implementálva, kérdésenkénti hibák/időtartam továbbra is nyitott |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva, teljes mátrixvizsgálat hátra |
-| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt hozzáadva, teljes zenei lektorálás hátra |
+| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
 | P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb és tankönyv menü keyboard/touch kezelés javítva; teljes audit hátra |
 
@@ -55,11 +55,16 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 ## Hetedik javítási egység (2026-11-07)
 
 - A-17: a korábbi `quizScores` legjobb eredmények változatlanul megmaradnak; opcionális, legfeljebb 100 eseményes `quizAttempts` került az adatmodellbe, kliens migrációba, összevezetésbe, PHP-adatellenőrzésbe és személyes profilba. Kvíz-témakör, dátum, eredmény, helyes/összes rögzül, tanulási naplóként, nem hiteles vizsgamérésként. Kérdésenkénti hibák, időtartam és statisztikai trend részletei még fejlesztendők.
-- A-21: tesztkód készült a `teacher` és `student` admin-jogosultságának megtagadására; CI ellenőrzés szükséges.
+- A-21: a `teacher` és `student` admin-jogosultságának megtagadására készült teszt CI-sikeres.
 
 ## Nyolcadik javítási egység (2026-11-07)
 
 - A-20: automatikus tananyagintegritási teszt ellenőrzi az 5 alaptananyag és a 4 bővített modul azonosítóit, az alfejezeti tartalom meglétét, a kérdésbank kategóriakapcsolatait és válaszindexeit, valamint a szókártya- és párosítóazonosítók egyediségét. A teljes szakmai-kottai-zenei egyezés ettől még nem tekinthető lezártnak.
+
+## Kilencedik javítási egység (2026-11-07)
+
+- A-11: az XP kizárólag játékos gyakorlási pont, nem hitelesített kompetenciaérték; a profil ezt világosan kommunikálja. A szerveroldali anti-cheat és egységes pontszabályzat továbbra is nyitott.
+- CI bizonyíték: GitHub Actions 42409475820 futásban a TypeScript, egységteszt, PHP ellenőrzés, MySQL fiók- és szerepkörteszt, frontend build sikeres, a hiányzó ritmikai JPG-k miatt a PHP telepítő ZIP blokkban meghiúsult. Ez nem jelenti a teljes produkció megfelelőségét.
 
 ## Lezárási feltételek
 
