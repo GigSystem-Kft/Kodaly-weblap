@@ -9,6 +9,10 @@ function requireAdmin(PDO $pdo): array {
 }
 function adminApi(PDO $pdo, array $config, string $route): never {
     $admin = requireAdmin($pdo);
+    if ($route === 'admin/source-coverage') {
+        method('GET');
+        answer(200, tutorDetailedCoverage(knowledgeEntries()));
+    }
     if (in_array($route,['admin/sources','admin/source-upload','admin/source-delete'],true)) {
         require_once __DIR__ . '/tutor-sources.php';
         tutorSourcesAdminRoute($config,$route);
