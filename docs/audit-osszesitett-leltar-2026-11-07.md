@@ -17,14 +17,14 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
-| P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP/MySQL CI szerepkörteszt és Chromium-böngészős mockolt student/teacher/admin navigáció sikeres; valódi hitelesített éles próba hátra |
+| P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP/MySQL CI szerepkörteszt és Chromium-böngészős mockolt student/teacher/admin navigáció sikeres; fogalomtárkedvencek profilszinkronja implementálva, valódi hitelesített éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Chromium CI 42415390838 sikeres: vendég, szókártya, párosító, 04 kvíz, keresés, mobil touch/AI, szerepkörös UI; valódi éles hitelesítés/telepítés tesztje hátra |
-| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127=189 tétel definíció alapján átsorolva, 945 helyett 756 Egyéb; maradék kézi lektorálás szükséges |
+| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127+69=258 tétel definíció alapján átsorolva, 945 helyett 687 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt a 42411290126-os CI-ben sikeres; további kotta- és lejátszás-E2E hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
-| P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
+| P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; kedvenc fogalmak most fiókhoz mentődnek, történeti XP-eseménynapló továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés és gyakorlási idő; részletes kérdésenkénti trend és pedagógiai értékelés hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
@@ -150,6 +150,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 
 - A-21/A-24: GitHub Actions `42415390838` Chromium füstteszt **sikeres**. Valódi böngészőben ellenőrzi a vendég menüit, a kvízt, az 1. tankönyv keresését és nagyított oldalát, a szókártyákat, a párosító felületet, a tanulási profilt, a mobilos `hasTouch` tankönyvmenüt és a mobil AI-ablak képernyőn belül maradását. A hallgató/tanár/admin navigációt mockolt API-válaszokkal validálja; a szerver PHP/MySQL-fiók- és jogosultsági regressziója ettől külön fut.
 - A-01/A-18: a hiányzó 13 JPG problémája változatlan; a helyi forrás SHA-256-ellenőrzött importja és kizárólag a fejlesztési ágra történő push előkészítve. A teljes kiadás és main merge még nem engedélyezett.
+
+## Huszonegyedik javítási egység (2026-11-07)
+
+- A-10: további 69, pontosan egyező magyar fogalommeghatározással alátámasztott kifejezést soroltunk át a hangszertechnika, tempó, műfaj, előadásmód, díszítés és kottaírás kategóriáiba. Eddig összesen 258 átsorolás történt, 687 „Egyéb” tétel maradt. Az eredeti fogalmak és definíciók nem módosultak. A teljes szakmai taxonómiai lektorálás ettől még nem kész.
+- A-16/A-21: a fogalomtári kedvencek korábban csak komponenslokális állapotban éltek, és oldalváltás után eltűntek. Opcionális, visszamenőleg kompatibilis `favoriteExpressions` adattal bekerültek a fiók- és vendéghaladásba; szerveroldali korlátozás, migrációs és többeszközös egyesítési teszt készült. A kedvencek eltávolítása párhuzamos konfliktus esetén külön UX-ellenőrzést igényel.
+- A-01: a 13 eredeti oldalkép a jelen futásban elérhető munkakönyvtárban ellenőrzött PDF-ből elkészült, ám a GitHub csatlakozás nem fogad fájlrendszerútvonalat; a bináris GitHub push egyelőre nem történt meg. A kiadási védelem változatlan.
 
 ## Lezárási feltételek
 
