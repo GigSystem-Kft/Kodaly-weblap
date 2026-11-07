@@ -31,7 +31,7 @@ export const RhythmFiguresVisual: React.FC=()=>{
         const eventIndex=pattern.events.findIndex(item=>beatPosition>=item.startBeats &&
           beatPosition<item.startBeats+item.durationBeats);
         setActiveEvent(eventIndex);
-        setActiveBeat(Math.min(3,Math.floor(beatPosition)));
+        setActiveBeat(Math.min(pattern.figure.lengthBeats-1,Math.floor(beatPosition)));
       },35);
       void playback;
     }catch(error){console.error('Ritmusképlet lejátszási hiba:',error);stop();}
@@ -39,8 +39,8 @@ export const RhythmFiguresVisual: React.FC=()=>{
   return <section className="mt-7 rounded-2xl border border-indigo-200 bg-white p-5 md:p-7" aria-label="Ritmusképletek hangzó gyakorlása">
     <h4 className="font-serif-cormorant text-2xl font-semibold mb-2">Próbáld ki és hallgasd meg!</h4>
     <p className="text-slate-700 text-sm mb-4">
-      Válassz ritmusképletet! A példa egy teljes <strong>4/4-es ütemben, 60 BPM</strong> tempóban szól.
-      A hangok külön indulnak, a négy mérőütés külön hallható; az első hangsúlyosabb.
+      Válassz ritmusképletet! A nyújtott, éles és szinkópa <strong>2 negyedig</strong>, a triola <strong>1 negyedig</strong> szól.
+      A tempó <strong>60 BPM</strong>, a metronóm csak a képlet hosszáig kattan.
     </p>
     <div className="flex flex-wrap gap-2 mb-4">
       {RHYTHM_FIGURES.map(item=><button key={item.id} type="button" onClick={()=>choose(item.id)}
@@ -50,7 +50,8 @@ export const RhythmFiguresVisual: React.FC=()=>{
       </button>)}
     </div>
     <p className="text-indigo-800 font-bold mb-2">{pattern.figure.mnemonic}</p>
-    <p className="text-sm text-slate-700 mb-4">{pattern.figure.explanation}</p>
+    <p className="text-sm text-slate-700 mb-1">{pattern.figure.explanation}</p>
+    <p className="text-sm font-semibold text-slate-800 mb-4">Időtartam: {pattern.figure.lengthBeats} negyed = {pattern.totalSeconds.toLocaleString('hu-HU')} másodperc (60 BPM)</p>
     <div className="flex gap-1 mb-4" role="group" aria-label="A ritmusképlet hangjainak időarányos ábrája">
       {pattern.events.map((note,i)=><div key={i}
         aria-label={`${i+1}. hang: ${note.label}, ${note.durationBeats} negyed`}
@@ -68,8 +69,8 @@ export const RhythmFiguresVisual: React.FC=()=>{
       <span className="text-xs text-slate-600">Az első ütés hangsúlyosabb.</span>
     </div>
     <div className="flex gap-2 mb-4" role="group" aria-label="Mérőütésjelző">
-      {[1,2,3,4].map((beat,i)=><div key={beat} aria-label={beat+'. mérőütés'}
-        className={`flex-1 text-center py-2 rounded-lg border font-bold text-xs ${activeBeat===i?'bg-amber-300 text-amber-950 border-amber-500':'bg-slate-50 text-slate-500 border-slate-200'}`}>{beat}</div>)}
+      {pattern.beats.map((beat,i)=><div key={beat.index} aria-label={(beat.index+1)+'. mérőütés'}
+        className={`flex-1 text-center py-2 rounded-lg border font-bold text-xs ${activeBeat===i?'bg-amber-300 text-amber-950 border-amber-500':'bg-slate-50 text-slate-500 border-slate-200'}`}>{beat.index+1}</div>)}
     </div>
     <div className="flex flex-wrap gap-2">
       <button type="button" onClick={start} className="rounded-lg bg-slate-900 text-white px-4 py-2 text-sm">
@@ -77,6 +78,6 @@ export const RhythmFiguresVisual: React.FC=()=>{
       </button>
       {playing&&<button type="button" onClick={stop} className="rounded-lg border border-slate-400 text-slate-900 px-4 py-2 text-sm">Leállítás</button>}
     </div>
-    <p role="status" className="mt-3 text-xs text-slate-600">{playing?'A kiemelt mező az éppen megszólaló hangot mutatja.':'A négynegyedes ütem mindig pontosan négy másodpercig tart.'}</p>
+    <p role="status" className="mt-3 text-xs text-slate-600">{playing?'A kiemelt mező az éppen megszólaló hangot mutatja.':`A kiválasztott ritmusképlet ${pattern.totalSeconds.toLocaleString('hu-HU')} másodpercig szól, ismétlés nélkül.`}</p>
   </section>;
 };
