@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
+import { CREATIVE_WORKSHOPS, PEDAGOGY_WORKSHOPS } from '../src/data/hungarianDidacticWorkshops';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from '../src/data/musicPedagogyDeep';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
@@ -29,7 +30,7 @@ for (const guide of FOUNDATIONS_GUIDES) {
  if (!chapter) continue;
  for (const section of guide.sections) {
   entries.push({
-   source:'Zeneelméleti Műhely – saját zeneelméleti magyarázat; szakmai alap: Open Music Theory, Music Theory for the 21st-Century Classroom',
+   source:'Zeneelméleti Műhely – magyar nyelvű saját magyarázat; szakmai alapok: NKP Ének-zene kézikönyvek, Kodály HUB, magyar zeneelméleti követelmények',
    label:`0${chapter.number}. ${chapter.title} / ${section.title}`,
    text:[...section.paragraphs,'Tanulási célok: '+guide.objectives.join('; '),
     'Gyakorlatok: '+guide.guidedPractice.join('; '),
@@ -56,6 +57,14 @@ for (const practice of CREATIVE_PRACTICES) {
       observation: practice.observation, extension: practice.extension, page: practice.page
     }
   });
+}
+for (const [category,workshops] of [['06. Kreatív zenei nevelés',CREATIVE_WORKSHOPS],['08. Ének-zene tantárgy-pedagógia',PEDAGOGY_WORKSHOPS]] as const) {
+ for (const unit of workshops) {
+  entries.push({source:'Magyar nyelvű módszertani feldolgozás – '+unit.sources.map(source=>source.label+' '+source.url).join('; '),
+   label:category+' / '+unit.id+' / Részletes módszertani műhely',
+   text:[...unit.aims,...unit.explanation,...unit.differentiation,...unit.evidence,
+    ...unit.questions.flatMap(q=>[q.prompt,q.answer])].join('\n\n')});
+ }
 }
 for (const period of MUSIC_HISTORY) {
   entries.push({
