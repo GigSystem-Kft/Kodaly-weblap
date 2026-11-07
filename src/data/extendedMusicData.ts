@@ -8,12 +8,12 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
       title: '2.3 Kottaolvasás a G- és F-kulcsban',
       summary: 'Vonalak, vonalközök, segédvonalak és hangok elhelyezkedése.',
       content: [
-        'A G-kulcs öt vonalán alulról felfelé E4, G4, H4, D5, F5 található. A vonalközök: F4, A4, C5, E5.',
-        'A középső C (C4) a G-kulcs alsó első segédvonalán áll.',
-        'Az F-kulcs negyedik vonala az egyvonalas F alatti F3 hang helyét jelöli. A vonalak alulról: G2, H2, D3, F3, A3; a vonalközök: A2, C3, E3, G3.',
-        'A középső C (C4) az F-kulcs felső első segédvonalán található.',
-        'Gyakorlat: írj öt egymást követő törzshangot a G-kulcs első vonalától indulva, majd nevezd meg az F-kulcs harmadik vonalának hangját.',
-        'Az oktávszám a magassági fekvést rögzíti: C5 egy oktávval C4 fölött szól.'
+        'A violinkulcs (G-kulcs) vonalai alulról fölfelé: E′, G′, H′, D″ és F″. A vonalközök: F′, A′, C″, E″.',
+        'Az egyvonalas C′ a violinkulcs alatti első pótvonalon helyezkedik el. Az ABC-s hangnevek a hang magasságát és oktávját is jelölik.',
+        'A basszuskulcs (F-kulcs) negyedik vonala a kis f hang helyét jelöli. Vonalai alulról: nagy G, nagy H, kis d, kis f, kis a; vonalközei: nagy A, kis c, kis e, kis g.',
+        'Az egyvonalas C′ az F-kulcs feletti első pótvonalon helyezkedik el.',
+        'Gyakorlat: írd le a G-kulcs első öt vonalának hangjait magyar oktávjelöléssel; majd nevezd meg az F-kulcs harmadik vonalát (kis d).',
+        'Az egyvonalas C′ és a kétvonalas C″ között egy oktáv távolság van. Ne a nemzetközi MIDI-számjelölést (C4, C5) használd a tanulói felületen.'
       ]
     },
   ],
