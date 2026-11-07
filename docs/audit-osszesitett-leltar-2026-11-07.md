@@ -9,7 +9,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva, 13 JPG helyben előállítva; a bináris oldalképek GitHubba való felvétele még hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás és CI build/tesztek sikeresek; élő magyar kereső-E2E még hátra |
 | P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés; MySQL CI-sikeres. Hálózati visszakapcsolódáskor és 15 másodpercenként hibajelzés mellett automatikus újrapróba + kézi újrapróbálás. Valódi többeszközös böngészős próba hátra |
-| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt; a hivatalos PDF URL jelenleg hibás választ ad, a 13 lokálisan generált kép GitHubba való felvétele szükséges |
+| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal, 13 ritmikai kép, 64 jegyzetkép JPEG-jelölő és méretellenőrzéssel; a hiányos ZIP blokkolt; az egyetemi PDF alternatív URL-jének SHA-256-ja sem egyezett, a 13 lokális JPG GitHubba való felvétele szükséges |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
@@ -19,9 +19,9 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP CI szerepkörteszt (student/teacher/admin) és fiókéletút sikeres; valódi böngészős és éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Vizsgálat hátra |
-| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62 tétel célzottan átsorolva, 945 helyett 883 Egyéb; maradék kézi lektorálás szükséges |
+| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127=189 tétel definíció alapján átsorolva, 945 helyett 756 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
-| P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | Nyitott |
+| P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt a 42411290126-os CI-ben sikeres; további kotta- és lejátszás-E2E hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
@@ -29,7 +29,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, Tanársegéd mobilablak-méretezés javítva; teljes WCAG/mobil audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, tankönyv nagyítás fókuszcsapda, Tanársegéd mobilablak-méretezés javítva; teljes WCAG/mobil audit hátra |
 
 ## Első javítási csomag
 
@@ -119,6 +119,14 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - 2026-11-07, GitHub Actions `42413149677`: Linux telepítőcsomag **sikeres**.
 - 2026-11-07, GitHub Actions `42413149871`: TypeScript, PHP és MySQL tesztelések, frontend build **sikeresek**; a PHP ZIP végső `Assemble root-ready CloudPanel ZIP` lépése **sikertelen**, mivel a hiányzó ritmikai JPG-k miatt a média-manifeszt blokkolja a kiadást.
 - A P0 médiaszállítás és éles E2E nem teljesült. A #2 PR továbbra is draft; **main merge nem történt**.
+
+## Tizenhatodik javítási egység (2026-11-07)
+
+- A-10: 127 további, magyar definíció alapján teljes biztonsággal felismerhető fogalmat helyeztünk át a tempó, karakter, hangszer/technika, harmónia, műfaj és előadásmód kategóriákba. Összesen 189 ilyen besorolást javítottunk, 756 „Egyéb” elem maradt. Az 1793 eredeti fogalom meghatározásai és ID-jei változatlanok.
+- A-13: az ismételten kimaradó kvízfejezetek elkerülésére a kategóriaválasztó az öt `MUSIC_CHAPTERS` és négy `EXTRA_LEARNING_MODULES` definíciójából épül; nincs külön kézzel szinkronizálandó fejezetlista. Regressziós teszt igazolja a 04/05 és 07/09 témákat.
+- A-18: a kiadási médiaellenőrző az elnevezés/létezés mellett a JPEG fejléceket, zárójelölőket és minimális méretet is ellenőrzi. Ez akadályozza, hogy hibás HTML oldalt képnek álcázva kiadjon.
+- A-23: a tankönyvoldalak nagyított nézetébe belépéskor a bezárógomb fókuszt kap, Tab-bal a párbeszédablakon belül lehet navigálni, és bezáráskor visszatér a megnyitó gombhoz. A keresőmező hozzáférhető címkét kapott.
+- A-01: a második egyetemi PDF-hivatkozásból letöltött fájl SHA-256-ja nem egyezik az eredetivel. A bizonytalan eredetű fájl importját nem folytattuk; a kiadási kapu továbbra is blokkol a 13 GitHubban hiányzó JPG miatt.
 
 ## Lezárási feltételek
 
