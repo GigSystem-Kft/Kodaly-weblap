@@ -8,7 +8,6 @@ const SECTION_MAP: Record<string, number[]> = {
  'abszolutm-hangok':[0,1], 'modositok':[2,3],
  'kottaolvasas':[0,1],
  'szolmizacio-elonyai':[0,3], 'hangkoz-fajtak':[1,2,3],
- 'hangkoz-szamitas':[1,2], 'szolmizacio-alkalmazas':[0,3],
  'ton-hangkeszlet':[0,1,3], 'chord-hangkeszlet':[0,1,3],
  'pentaton-gyakorlat':[1,2,3],
  'dúr-es-modalis':[0,2], 'moll-hangsorok':[1,2],
