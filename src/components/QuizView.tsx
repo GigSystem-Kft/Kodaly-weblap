@@ -58,7 +58,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     } else {
       setIsFinished(true);
       const finalScore = Math.round((correctCount / questions.length) * 100);
-      onSaveQuizScore(selectedChapter, finalScore, correctCount, questions.length, wrongQuestionIds);
+      onSaveQuizScore(selectedChapter === 'all' ? 'vegyes-gyakorlas' : selectedChapter,
+        finalScore, correctCount, questions.length, wrongQuestionIds);
     }
   };
 
