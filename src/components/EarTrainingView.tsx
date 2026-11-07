@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Volume2, Play, Award, CheckCircle2, RotateCcw } from 'lucide-react';
-import { playNote, playChord } from '../utils/audio';
+import { playNote, playEarTrainingInterval, stopEarTrainingInterval } from '../utils/audio';
+import { shuffleEarChallenges } from '../utils/earTraining';
 
 interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
@@ -22,15 +23,18 @@ const EAR_CHALLENGES = [
 ];
 
 export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => {
+  const [round, setRound] = useState(() => shuffleEarChallenges(EAR_CHALLENGES));
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [streak, setStreak] = useState<number>(0);
 
-  const current = EAR_CHALLENGES[currentChallengeIndex];
+  const current = round[currentChallengeIndex];
+
+  useEffect(() => () => stopEarTrainingInterval(), []);
 
   const playChallenge = () => {
-    playChord(current.notes, 700);
+    playEarTrainingInterval(current.notes);
   };
 
   const handleGuess = (title: string) => {
@@ -49,9 +53,15 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   };
 
   const nextChallenge = () => {
+    stopEarTrainingInterval();
     setSelectedAnswer(null);
     setIsCorrect(null);
-    setCurrentChallengeIndex((prev) => (prev + 1) % EAR_CHALLENGES.length);
+    if (currentChallengeIndex === round.length - 1) {
+      setRound(shuffleEarChallenges(EAR_CHALLENGES, current.id));
+      setCurrentChallengeIndex(0);
+    } else {
+      setCurrentChallengeIndex(prev => prev + 1);
+    }
   };
 
   return (
@@ -70,7 +80,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
       <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl text-center">
         <div className="flex items-center justify-between mb-6">
           <span className="text-xs font-bold text-indigo-400">
-            Kihívás {currentChallengeIndex + 1} / {EAR_CHALLENGES.length}
+            Kihívás {currentChallengeIndex + 1} / {round.length} · véletlen sorrend
           </span>
           <span className="text-xs px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 font-medium">
             Sorozat: {streak} helyes
@@ -84,7 +94,8 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
           >
             <Play className="w-10 h-10 fill-white ml-1" />
           </button>
-          <p className="text-sm text-slate-300 mt-4 font-medium">Kattints a hang lejátszásához</p>
+          <p className="text-sm text-slate-300 mt-4 font-medium">Hallgasd meg a két hosszabb, lágy hangot!</p>
+          <p className="text-xs text-slate-400 mt-1">Újrahallgatáshoz kattints ismét a lejátszásra.</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
@@ -125,7 +136,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
               onClick={nextChallenge}
               className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all shadow-lg shadow-indigo-600/30 shrink-0"
             >
-              Következő kihívás
+              {currentChallengeIndex === round.length - 1 ? 'Új, kevert kör indítása' : 'Következő kihívás'}
             </button>
           </div>
         )}
