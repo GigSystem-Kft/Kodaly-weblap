@@ -44,5 +44,7 @@ test('each chapter 1–5 subchapter receives focused, in-depth content with stab
    assert.ok(guide!.sections.every(section=>section.paragraphs.length>=2));
    assert.ok(guide!.guidedPractice.length>=4);
  }
- assert.ok(all.length>=20);
+ assert.ok(all.length>=18,'Foundational chapter coverage unexpectedly diminished after 1.4 and 2.4 consolidation');
+ assert.ok(!FOUNDATIONS_SUBCHAPTER_IDS.includes('ritmus-gyakorlatok'));
+ assert.ok(!FOUNDATIONS_SUBCHAPTER_IDS.includes('elojegyzes-feloldas'));
 });
