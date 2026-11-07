@@ -7,6 +7,7 @@ import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { InteractiveMusicVisual } from './InteractiveMusicVisual';
 import { RhythmFiguresVisual } from './RhythmFiguresVisual';
 import { MeterExamplesVisual } from './MeterExamplesVisual';
+import { ChromaticScaleVisual } from './ChromaticScaleVisual';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
 
@@ -188,7 +189,9 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   : currentSub.id === 'tempo-utem'
                     ? <MeterExamplesVisual key={currentSub.id}/>
                     : null)
-              : <InteractiveMusicVisual chapterId={chapter.id}/>}
+              : currentSub.id === 'modositok'
+                ? <ChromaticScaleVisual key={currentSub.id}/>
+                : <InteractiveMusicVisual chapterId={chapter.id}/>}
 
             {/* Az eredeti Hangértékek galéria releváns ábrái itt, a leckében. */}
             {illustrations.length > 0 && (
