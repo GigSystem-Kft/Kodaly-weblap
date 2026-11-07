@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
+import { DEEP_PEDAGOGY_LESSONS } from '../src/data/musicPedagogyDeep';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 import { MUSIC_HISTORY } from '../src/data/musicHistory';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistoryProfiles';
@@ -94,6 +95,17 @@ for (const unit of PEDAGOGY_UNITS) {
    ].join('\\n')
   });
  }
+}
+for (const deep of DEEP_PEDAGOGY_LESSONS) {
+  const unit = PEDAGOGY_UNITS.find(x=>x.id===deep.unitId);
+  if (!unit) continue;
+  entries.push({
+    source: `${PEDAGOGY_SOURCE.author} (${PEDAGOGY_SOURCE.year}) – részletes egyetemi pedagógiai feldolgozás; ${unit.page} oldal`,
+    label: `08. Ének-zene tantárgy-pedagógia / ${unit.title} / Részletes módszertan`,
+    text: [...deep.explanation, 'Tanítási folyamat: '+deep.lessonPlan.join(' '),
+      'Elkerülendő hibák: '+deep.pitfalls.join(' '),
+      'Forrás: '+PEDAGOGY_SOURCE.originalUrl].join('\\n\\n')
+  });
 }
 const root = resolve('server-data');
 const files = [
