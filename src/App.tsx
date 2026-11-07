@@ -17,6 +17,7 @@ import { ChatAssistant } from './components/ChatAssistant';
 import { NoteGallery } from './components/NoteGallery';
 import { NotationTable } from './components/NotationTable';
 import { TextbookView } from './components/TextbookView';
+import { RhythmResearchBookView } from './components/RhythmResearchBookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
@@ -271,6 +272,11 @@ export default function App() {
 
         {activeTab.startsWith('textbook-') && [1, 2, 3, 4].includes(Number(activeTab.split('-')[1])) && (
           <TextbookView book={Number(activeTab.split('-')[1])} />
+        )}
+        {activeTab === 'textbook-5' && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <RhythmResearchBookView />
+          </div>
         )}
       </main>
 
