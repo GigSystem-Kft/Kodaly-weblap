@@ -2,6 +2,9 @@ name: Zeneelméleti Műhely – PHP telepítő ZIP
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'feature/reszletes-tananyag-tobb-feladat-20261104'
   pull_request:
     branches: [main]
     paths:
