@@ -63,3 +63,28 @@ test('matching and subchapter completions survive a legacy-compatible progress m
  assert.deepEqual(merged.matchingCompleted,['pair-a','pair-b']);
  assert.equal(merged.xp,80);
 });
+
+test('quiz attempt history survives migration and device merge without duplication', () => {
+  const account = createEmptyProgress();
+  account.quizScores.ritmus = 90;
+  account.quizAttempts = [{id:'a1',chapterId:'ritmus',score:90,correct:9,total:10,at:'2026-11-07T10:00:00.000Z'}];
+  const guest = createEmptyProgress();
+  guest.quizAttempts = [
+    {id:'a1',chapterId:'ritmus',score:90,correct:9,total:10,at:'2026-11-07T10:00:00.000Z'},
+    {id:'a2',chapterId:'ritmus',score:80,correct:8,total:10,at:'2026-11-07T11:00:00.000Z'}
+  ];
+  const merged = mergeProgress(account, guest);
+  assert.deepEqual(merged.quizAttempts?.map(a=>a.id), ['a1','a2']);
+  assert.equal(merged.quizScores.ritmus,90);
+  assert.deepEqual(migrateProgress(JSON.parse(JSON.stringify(merged))).quizAttempts,merged.quizAttempts);
+});
+test('invalid and overlong quiz history cannot break legacy progress',()=>{
+  const progress=createEmptyProgress();
+  const raw={...progress, quizAttempts:[
+    {id:'invalid',chapterId:'ritmus',score:200,correct:1,total:10,at:'not-a-date'},
+    ...Array.from({length:150},(_,n)=>({id:'t'+n,chapterId:'ritmus',score:60,correct:6,total:10,at:'2026-11-07T12:00:00.000Z'}))
+  ]};
+  const restored=migrateProgress(raw);
+  assert.equal(restored.quizAttempts?.length,100);
+  assert.ok(restored.quizAttempts?.every(a=>a.score<=100));
+});
