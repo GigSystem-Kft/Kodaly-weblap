@@ -308,3 +308,35 @@ export function knowledgeContext(question: string): string {
     `=== ${hit.source} / ${hit.label} ===\n${hit.text}`
   ).join('\n\n');
 }
+
+/** Forráslefedettségi jelentés: a valóban létrejött keresési indexről, nyers szövegek nélkül. */
+export function sourceCoverageReport() {
+  const groups = new Map<string, { source: string; chunks: number; characters: number; kind: string }>();
+  for (const entry of INDEX) {
+    const key = entry.source;
+    const previous = groups.get(key) ?? { source: key, chunks: 0, characters: 0, kind: entry.kind };
+    previous.chunks++;
+    previous.characters += entry.text.length;
+    groups.set(key, previous);
+  }
+  const files = existsSync(SOURCES_DIR) ? readdirSync(SOURCES_DIR).filter(f => /\.(txt|md)$/i.test(f)).sort() : [];
+  const omitted = files.filter(f => f.startsWith('_') || /kesztler[-_ ]zenei[-_ ]alapismeretek/i.test(f));
+  const missing = ['jegyzet.txt','forrasok/nat2020-enekzene-1.txt','forrasok/nat2020-enekzene-2.txt',
+    'forrasok/nat2020-enekzene-3.txt','forrasok/nat2020-enekzene-4.txt']
+    .filter(name => !existsSync(resolve(DATA_DIR,name)));
+  return {
+    generatedAt: new Date().toISOString(),
+    indexChunks: INDEX.length,
+    indexedCharacters: INDEX.reduce((n,e) => n + e.text.length, 0),
+    sources: [...groups.values()].sort((a,b) => a.source.localeCompare(b.source,'hu')),
+    omitted: omitted.map(file => ({ file, reason: file.startsWith('_') ?
+      'Sablon vagy nem jóváhagyott fájl' : 'Az OCR-átirat szakmai ellenőrzésig szándékosan kizárva' })),
+    missing,
+    limitations: [
+      'Ez a jelentés a szerverbe beépített szöveges indexet méri, nem a teljes fájltárat.',
+      'PDF-képek, kottaábrák és videók tartalma nem automatikusan kereshető.',
+      'A külön feltöltött, privát oktatói dokumentumokat a PHP-kiszolgáló tárolja; azok nem részei ennek a statikus jelentésnek.',
+      'A lekérdezésből való előkerülést és a szakmailag helyes AI-választ külön tesztek ellenőrzik.'
+    ]
+  };
+}
