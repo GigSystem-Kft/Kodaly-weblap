@@ -55,3 +55,12 @@ test('extended module completion is counted separately and reflected on profile'
    assert.ok(readFileSync('src/App.tsx','utf8').includes(`completeChapter('${id}')`));
  }
 });
+
+test('account progress offers retry after transient network outage', () => {
+ const app=readFileSync('src/App.tsx','utf8');
+ const panel=readFileSync('src/components/AccountPanel.tsx','utf8');
+ assert.match(app,/window\.addEventListener\('online', retry\)/);
+ assert.match(app,/window\.setInterval\(retry, 15_000\)/);
+ assert.match(app,/onRetrySync=\{retrySync\}/);
+ assert.match(panel,/Eredmények mentésének újrapróbálása/);
+});
