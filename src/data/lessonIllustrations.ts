@@ -39,15 +39,11 @@ export const LESSON_ILLUSTRATIONS: Record<string, LessonIllustration[]> = {
   ],
   'tempo-utem': [
     illustration('Ütemmutatók I.', 'Egyszerű ütemfajták és hangértékek.', utemmutatok),
-    illustration('Ütemmutatók II.', 'Összetett és további ütemfajták.', utemmutatok2)
+    illustration('Ütemmutatók II.', 'Összetett ütemek, 6/8-os csoportosítás és hangsúlyrend.', utemmutatok2)
   ],
   'ritmus-gyakorlatok': [
     illustration('Ritmusértékek', 'A különböző hangértékek felismerése.', nyolcad),
     illustration('Ritmusképletek', 'Ritmusolvasás összetett képletekkel.', ritmusok)
-  ],
-  'metrum-hangsuly': [
-    illustration('Ütemmutatók', 'Az ütemmutatók összehasonlítása.', utemmutatok),
-    illustration('Összetett ütemek', 'A 6/8-os és más ütemfajták példái.', utemmutatok2)
   ],
   'abszolutm-hangok': [
     illustration('ABC-s hangnevek és oktávok', 'Hangnevek elhelyezkedése a vonalrendszeren.', abc),
