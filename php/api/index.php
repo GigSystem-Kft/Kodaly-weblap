@@ -494,20 +494,47 @@ try {
                 $stmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=?');
                 $stmt->execute([$user['id']]);
                 $value=$stmt->fetchColumn();
-                answer(200,['progress'=>$value===false?null:json_decode((string)$value,true)]);
+                answer(200,[
+                    'progress'=>$value===false?null:json_decode((string)$value,true),
+                    'revision'=>hash('sha256',$value===false?'':(string)$value)
+                ]);
             }
             if ($httpMethod !== 'PUT') { header('Allow: GET, PUT'); fail(405,'Nem támogatott kérés.'); }
             $body=getPayload();
             $progress=$body['progress'] ?? null;
             if (!progressOk($progress)) fail(400,'Érvénytelen tanulási adatok.');
+            $expected=$body['revision'] ?? null;
+            if (!is_string($expected) || !preg_match('/^[a-f0-9]{64}$/D',$expected)) {
+                fail(428,'Az eredménymentéshez előzetes szerververzió szükséges.');
+            }
             $text=json_encode($progress,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
             if (strlen($text)>64000) fail(413,'Túl nagy tanulási napló.');
-            $stmt=$pdo->prepare(
-                'INSERT INTO zm_progress(user_id,progress_json) VALUES(?,?)
-                 ON DUPLICATE KEY UPDATE progress_json=VALUES(progress_json)'
-            );
-            $stmt->execute([$user['id'],$text]);
-            answer(200,['success'=>true]);
+            $pdo->beginTransaction();
+            try {
+                $stmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=? FOR UPDATE');
+                $stmt->execute([$user['id']]);
+                $current=$stmt->fetchColumn();
+                $currentRevision=hash('sha256',$current===false?'':(string)$current);
+                if (!hash_equals($currentRevision,$expected)) {
+                    $pdo->rollBack();
+                    answer(409,[
+                        'error'=>'Másik eszközön frissebb tanulási eredmény található.',
+                        'progress'=>$current===false?null:json_decode((string)$current,true),
+                        'revision'=>$currentRevision
+                    ]);
+                }
+                if ($current===false) {
+                    $stmt=$pdo->prepare('INSERT INTO zm_progress(user_id,progress_json) VALUES(?,?)');
+                } else {
+                    $stmt=$pdo->prepare('UPDATE zm_progress SET progress_json=? WHERE user_id=?');
+                }
+                $stmt->execute($current===false?[$user['id'],$text]:[$text,$user['id']]);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+            }
+            answer(200,['success'=>true,'revision'=>hash('sha256',$text)]);
 
         case 'chat/status':
             method('GET');
