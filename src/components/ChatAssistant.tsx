@@ -162,6 +162,8 @@ export const ChatAssistant: React.FC = () => {
               </div>
             </div>
             <button
+              type="button"
+              aria-label="Tanársegéd bezárása"
               onClick={() => setIsOpen(false)}
               className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
             >
@@ -283,6 +285,7 @@ export const ChatAssistant: React.FC = () => {
             />
             <button
               type="submit"
+              aria-label="Kérdés elküldése"
               disabled={isLoading || !input.trim()}
               className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white transition-all shadow-md shadow-indigo-600/30"
             >
