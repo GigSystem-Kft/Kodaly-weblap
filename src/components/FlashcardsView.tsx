@@ -43,19 +43,19 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3 border border-indigo-500/30">
+        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-semibold mb-3 border border-indigo-200">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Interaktív Szókártyák</span>
         </span>
-        <h2 className="text-3xl font-extrabold text-white mb-2">Zenei Szakkifejezések Gyakorlása</h2>
-        <p className="text-slate-400 text-sm">
+        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Zenei Szakkifejezések Gyakorlása</h2>
+        <p className="text-slate-600 text-sm">
           Kattints a kártyára vagy a gombra a definíció felfedéséhez! Sajátítsd el a fogalmakat és gyűjts XP-t.
         </p>
       </div>
 
       {/* Compact category filter: keep the flashcards visible without long button grids. */}
       <div className="max-w-xl mx-auto mb-8">
-        <label htmlFor="flashcards-category" className="block text-sm font-semibold text-slate-200 mb-2">Szókártyák témaköre</label>
+        <label htmlFor="flashcards-category" className="block text-sm font-semibold text-slate-800 mb-2">Szókártyák témaköre</label>
         <select
           id="flashcards-category"
           aria-label="Szókártyák témaköre"
@@ -71,7 +71,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
             <option value={cat} key={cat}>{cat === 'all' ? 'Összes kategória' : cat}</option>
           ))}
         </select>
-        <p className="text-xs text-slate-400 mt-2">{filteredCards.length} szókártya a kiválasztott témakörben</p>
+        <p className="text-xs text-slate-600 mt-2">{filteredCards.length} szókártya a kiválasztott témakörben</p>
       </div>
 
       {/* Flashcard Box */}
@@ -83,7 +83,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
           <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
             {currentCard.category}
           </span>
-          <span className="text-xs text-slate-400 font-medium">
+          <span className="text-xs text-slate-300 font-medium">
             {currentIndex + 1} / {filteredCards.length}
           </span>
         </div>
@@ -105,7 +105,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
               <p className="text-lg sm:text-xl text-slate-100 font-medium leading-relaxed">
                 {currentCard.definition}
               </p>
-              <p className="text-slate-400 text-xs mt-4">Kattints a visszafordításhoz</p>
+              <p className="text-slate-300 text-xs mt-4">Kattints a visszafordításhoz</p>
             </div>
           )}
         </div>
@@ -123,7 +123,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
               <Volume2 className="w-4 h-4" />
             </button>
           )}
-          <span className="text-xs text-slate-400 group-hover:text-indigo-300 transition-colors">
+          <span className="text-xs text-slate-300 group-hover:text-white transition-colors">
             {isFlipped ? 'Mutasd a kifejezést' : 'Mutasd a jelentést'}
           </span>
         </div>
@@ -159,8 +159,8 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
       </div>
 
       {/* Stats footer */}
-      <div className="mt-8 text-center text-xs text-slate-400">
-        Megtanult kártyák: <span className="font-bold text-emerald-400">{masteredCards.length}</span> / {FLASHCARDS_DATA.length}
+      <div className="mt-8 text-center text-xs text-slate-600">
+        Megtanult kártyák: <span className="font-bold text-emerald-700">{masteredCards.length}</span> / {FLASHCARDS_DATA.length}
       </div>
     </div>
   );
