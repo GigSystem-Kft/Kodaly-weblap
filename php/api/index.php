@@ -158,6 +158,13 @@ function progressOk(mixed $p): bool {
                 $a['correct'] < 0 || $a['correct'] > $a['total'] ||
                 !is_string($a['at']) || strlen($a['at']) > 40 ||
                 strtotime($a['at']) === false) return false;
+            if (array_key_exists('wrongQuestionIds', $a)) {
+                if (!is_array($a['wrongQuestionIds']) || !array_is_list($a['wrongQuestionIds']) ||
+                    count($a['wrongQuestionIds']) > 12) return false;
+                foreach ($a['wrongQuestionIds'] as $id) {
+                    if (!is_string($id) || strlen($id) > 120) return false;
+                }
+            }
         }
     }
     return isset($p['xp']) && is_numeric($p['xp']) &&
