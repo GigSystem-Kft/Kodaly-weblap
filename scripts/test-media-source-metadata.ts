@@ -43,7 +43,7 @@ test('published Hungarian Kodály video and OSZK collections have accurate navig
 });
 
 test('Aquincum reconstruction credits Kaboldy and the exact CC BY-SA 3.0 license',()=>{
-  const aquincum=HISTORY_VISUALS.find(item=>item.imageUrl.includes('Hidraulis_Aquincum1'));
+  const aquincum=HISTORY_VISUALS.find(item=>item.sourceUrl.includes('Hidraulis_Aquincum1'));
   assert.ok(aquincum,'The Aquincum illustration is missing');
   assert.match(aquincum.licenseNote,/Kaboldy/);
   assert.match(aquincum.licenseNote,/CC BY-SA 3\.0/);
