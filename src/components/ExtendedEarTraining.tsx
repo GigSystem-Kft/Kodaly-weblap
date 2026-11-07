@@ -80,14 +80,14 @@ export function playExercise(challenge:Challenge,bpm=60){
 }
 export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp})=>{
  const [mode,setMode]=useState<Mode>('hangsor');
- const [round,setRound]=useState(()=>shuffle(list.hangsor));
+ const [round,setRound]=useState(()=>shuffle(EXTENDED_EAR_DRILLS.hangsor));
  const [index,setIndex]=useState(0);
  const [guess,setGuess]=useState<string|null>(null);
  const [streak,setStreak]=useState(0);
  const [bpm,setBpm]=useState(60);
  const current=round[index];
   useEffect(()=>()=>stopExerciseAudio(),[]);
- const changeMode=(next:Mode)=>{stopExerciseAudio();setMode(next);setRound(shuffle(list[next]));setIndex(0);setGuess(null);setStreak(0);};
+ const changeMode=(next:Mode)=>{stopExerciseAudio();setMode(next);setRound(shuffle(EXTENDED_EAR_DRILLS[next]));setIndex(0);setGuess(null);setStreak(0);};
  const choose=(id:string)=>{if(guess!==null)return;setGuess(id);if(id===current.id){onAddXp(25);setStreak(n=>n+1);}else setStreak(0);};
  const advance=()=>{stopExerciseAudio();setGuess(null);if(index+1>=round.length){setRound(shuffle(EXTENDED_EAR_DRILLS[mode]));setIndex(0);}else setIndex(i=>i+1);};
  return <section className="max-w-3xl mx-auto p-5 sm:p-7 mt-6 text-slate-900">
