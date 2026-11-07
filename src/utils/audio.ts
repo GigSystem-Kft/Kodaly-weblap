@@ -168,7 +168,7 @@ export function stopRhythmPlayback(): void {
   }
 }
 
-export function playRhythmPlayback(divisions: RhythmSubdivision, bpm=60): {durationMs:number;stop:()=>void} {
+export function playRhythmPlayback(divisions: RhythmSubdivision, bpm=60, withMetronome=true): {durationMs:number;stop:()=>void} {
   stopRhythmPlayback();
   const pattern=rhythmPattern(divisions,bpm);
   const ctx=getAudioContext();
@@ -196,6 +196,29 @@ export function playRhythmPlayback(divisions: RhythmSubdivision, bpm=60): {durat
     osc.onended=()=>{osc.disconnect();gain.disconnect();};
     oscillators.push(osc);
     gains.push(gain);
+  }
+  if(withMetronome){
+    // Quarter-note pulse is timed on the same AudioContext clock as the notes.
+    // First beat has a distinct higher click; both are deliberately quieter.
+    for(const beat of pattern.beats){
+      const at=start+beat.startSeconds;
+      const clickLength=0.055;
+      const click=ctx.createOscillator();
+      const envelope=ctx.createGain();
+      click.type='sine';
+      click.frequency.setValueAtTime(beat.accent?1380:920,at);
+      click.frequency.exponentialRampToValueAtTime(beat.accent?780:530,at+clickLength);
+      envelope.gain.setValueAtTime(0.0001,at);
+      envelope.gain.linearRampToValueAtTime(beat.accent?0.12:0.075,at+0.003);
+      envelope.gain.exponentialRampToValueAtTime(0.0001,at+clickLength);
+      click.connect(envelope);
+      envelope.connect(ctx.destination);
+      click.start(at);
+      click.stop(at+clickLength+0.005);
+      click.onended=()=>{click.disconnect();envelope.disconnect();};
+      oscillators.push(click);
+      gains.push(envelope);
+    }
   }
   const playback={oscillators,gains};
   rhythmSound=playback;
