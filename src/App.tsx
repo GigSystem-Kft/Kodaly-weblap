@@ -114,6 +114,20 @@ export default function App() {
       : recordActivity({ ...prev, completedChapters: [...prev.completedChapters, chapterId] }, 50));
   };
 
+  const completeSubchapter = (subchapterId: string) => {
+    setProgress(prev => prev.completedSubchapters.includes(subchapterId)
+      ? prev
+      : recordActivity({ ...prev, completedSubchapters: [...prev.completedSubchapters, subchapterId] }, 15));
+  };
+
+  const completeMatching = (pairIds: string[]) => {
+    setProgress(prev => {
+      const newIds = pairIds.filter(id => !prev.matchingCompleted.includes(id));
+      if (!newIds.length) return prev;
+      return recordActivity({ ...prev, matchingCompleted: [...prev.matchingCompleted, ...newIds] }, 50);
+    });
+  };
+
   const markFlashcard = (id: string) => {
     setProgress(prev => prev.flashcardsMastered.includes(id)
       ? prev
@@ -224,6 +238,8 @@ export default function App() {
             }}
             onOpenQuiz={openQuiz}
             onCompleteChapter={completeChapter}
+            onCompleteSubchapter={completeSubchapter}
+            completedSubchapters={progress.completedSubchapters}
             isCompleted={progress.completedChapters.includes(selectedChapter.id)}
           />
         )}
@@ -233,7 +249,7 @@ export default function App() {
         )}
 
         {activeTab === 'matching' && (
-          <MatchingGame onAddXp={addXp} initialCategory={matchingCategory} />
+          <MatchingGame onCompleted={completeMatching} initialCategory={matchingCategory} />
         )}
 
         {activeTab === 'quiz' && (
