@@ -2,10 +2,10 @@ import type {Flashcard,MatchingPair,QuizQuestion} from '../types';
 import MUSIC_EXPRESSIONS from './musicExpressions.json';
 
 const categories=[
+ 'Díszítések és ornamentika','Előadásmód és artikuláció',
  'Tempó és időkezelés','Dinamika és karakter','Ritmus és hangértékek',
  'Hangsorok és harmóniák','Hangszer és játéktechnika','Éneklés és kórus',
  'Zenei műfajok és formák','Kottaírás és jelölések','Zenetörténet és stílus',
- 'Díszítések és ornamentika','Előadásmód és artikuláció',
  'Egyéb szakkifejezések'
 ];
 const preferred=new Set([
