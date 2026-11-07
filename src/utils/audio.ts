@@ -1,3 +1,4 @@
+import { quarterScaleSchedule } from './noteNotation';
 import { rhythmFigurePattern, type RhythmFigureId } from './rhythmFigures';
 import { rhythmPattern, type RhythmSubdivision } from './rhythmPattern';
 // Web Audio API synthesizer for music theory learning and ear training
@@ -268,4 +269,24 @@ export function playRhythmFigure(id: RhythmFigureId, bpm=60, withMetronome=true)
   rhythmSound=playback;
   return {durationMs:pattern.totalSeconds*1000,
     stop:()=>{if(rhythmSound===playback)stopRhythmPlayback();}};
+}
+
+/** Egységes, lágy hangszínű negyedek: az egyvonalas C-től a kétvonalas C-ig. */
+export function playWarmQuarterScale(noteNames: readonly string[], bpm=60): void {
+  const timeline=quarterScaleSchedule(noteNames,bpm);
+  // Previous scale or ear-training phrase must not continue underneath the new one.
+  stopEarTrainingInterval();
+  try {
+    const ctx=getAudioContext();
+    const start=ctx.currentTime+0.04;
+    for(const event of timeline.notes) {
+      const frequency=NOTE_FREQUENCIES[event.note];
+      if(!frequency)throw new Error('Ismeretlen hang: '+event.note);
+      // Separate quarter-note attacks, warm harmonic timbre and sufficient sustain.
+      scheduleWarmTone(ctx,frequency,start+event.startSeconds,event.durationSeconds*0.94);
+    }
+  } catch (error) {
+    stopEarTrainingInterval();
+    console.error('Negyedes skálalejátszás hiba:',error);
+  }
 }
