@@ -10,6 +10,7 @@ import { MeterExamplesVisual } from './MeterExamplesVisual';
 import { ChromaticScaleVisual } from './ChromaticScaleVisual';
 import { SolfegeScaleVisual } from './SolfegeScaleVisual';
 import { IntervalExamplesVisual } from './IntervalExamplesVisual';
+import { CollectionLessonVisual } from './CollectionLessonVisual';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
 
@@ -199,7 +200,11 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                     : currentSub.id === 'hangkoz-fajtak'
                       ? <IntervalExamplesVisual key={currentSub.id}/>
                       : null
-                  : <InteractiveMusicVisual chapterId={chapter.id}/>}
+                  : chapter.id === 'hangkeszletek'
+                    ? (currentSub.id === 'ton-hangkeszlet'||currentSub.id === 'chord-hangkeszlet'||currentSub.id === 'pentaton-gyakorlat')
+                      ? <CollectionLessonVisual key={currentSub.id} lessonId={currentSub.id}/>
+                      : null
+                    : <InteractiveMusicVisual chapterId={chapter.id}/>}
 
             {/* Az eredeti Hangértékek galéria releváns ábrái itt, a leckében. */}
             {illustrations.length > 0 && (
