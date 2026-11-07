@@ -99,14 +99,18 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
 
       <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-6">
         <h3 className="text-lg font-bold flex gap-2 items-center"><Layers size={20} className="text-indigo-700"/> Bővített tananyagegységek · 06–09.</h3>
-        <p className="text-sm text-slate-600 mt-2 mb-4">Ezek a modulok már szerepelnek a tananyagban, de jelenleg még nincs hozzájuk külön fejezetszintű teljesítési jelölő. Az itt elért kvízeredmények és XP-k ettől függetlenül mentődnek.</p>
+        <p className="text-sm text-slate-600 mt-2 mb-4">A négy bővített modult külön is tanulmányozottnak jelölheted. Ez saját tanulási jelölés, nem vizsgajegy; az itt elért kvízeredmények külön jelennek meg.</p>
         <div className="grid md:grid-cols-2 gap-3">
           {EXTRA_LEARNING_MODULES.map(module=>{
             const score=progress.quizScores[module.quizId];
+            const completed=progress.completedChapters.includes(module.id);
             return <div key={module.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50">
               <div className="flex flex-wrap gap-2 items-start justify-between">
                 <div className="flex-1"><span className="block text-xs font-bold text-indigo-700 mb-1">0{module.number}. TANANYAG</span><h4 className="font-semibold text-slate-900">{module.title}</h4></div>
+                <div className="flex flex-col gap-1 items-end">
+                {completed&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Tanulmányozottnak jelölve</span>}
                 {score!==undefined&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Kvíz: {score}%</span>}
+                </div>
               </div>
               <p className="text-xs text-slate-600 mt-2 mb-3">{module.description}</p>
               {onOpenModule&&<button type="button" onClick={()=>onOpenModule(module.tab)} className="text-sm font-semibold text-indigo-700 inline-flex gap-1 items-center hover:underline">Tananyag megnyitása <ArrowRight size={15}/></button>}
