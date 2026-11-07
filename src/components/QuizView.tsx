@@ -57,6 +57,17 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     setIsFinished(false);
   };
 
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900">
+        <h2 className="text-2xl font-bold mb-3">Ehhez a témakörhöz még nincs kérdés</h2>
+        <p className="mb-4">Válassz egy másik témakört, vagy próbáld ki az összes kérdést.</p>
+        <button type="button" onClick={() => { setSelectedChapter('all'); restartQuiz(); }}
+          className="rounded-lg bg-violet-700 text-white px-4 py-2">Összes kérdés</button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
