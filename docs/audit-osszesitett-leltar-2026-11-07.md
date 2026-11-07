@@ -29,7 +29,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA teszt: főoldal/kvíz/tankönyv 0 jelzés; mobil AI ikon gombok feliratozva, CI még fut; teljes WCAG/manualis audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA CI 42419584013 sikeres: főoldal/kvíz/tankönyv/mobil AI 0 súlyos vagy kritikus hiba; kézi, teljes WCAG-audit hátra |
 
 ## Első javítási csomag
 
@@ -162,8 +162,14 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-06: a kedvencek összevezetése most a legutóbb sikeresen mentett, a szerver új és a kliens új állapota között háromutas; a helyi kedvenc-törlést nem állítja vissza egy másik eszköz új eleme. A vendégeredmények külön, törlés nélküli egyesítést használnak. Kijelentkezés előtt figyelmeztet a rendszer a szerverre még fel nem töltött tanulási eredményekre.
 - A-11: idempotens párosítójutalom minden új páronként 5 XP és körönként maximum 50 XP. Hallásfejlesztés legfeljebb napi 100 XP, a folytatólagos gyakorlás pont nélkül is működik. Visszamenőleg kompatibilis, napi dátumkulcsú napló; a PHP ellenőrzi a mező alakját és korlátját. Nem állítjuk, hogy ez szerveroldali hitelesített vizsga- vagy anti-cheat rendszer.
 - A-17: a korábban hibásan megoldott kvízkérdésekhez a profil a tényleges kérdésbankból kiolvassa a helyes válasz szövegét és magyarázatát, így érdemi felzárkóztató ismétlés lehetséges.
-- A-02/A-23/A-24: a Playwright teszt ékezet/kisbetű/szóköz normalizálási böngészős próbával bővült, és az `@axe-core/playwright` WCAG 2.1 AA súlyos/kritikus szabálysértéseit ellenőrzi. Konkrét hibák nyomán a főoldalon, fejezetlistában, láblécben és tankönyvolvasóban kontrasztjavítás, a látható felirat és az akadálymentes név egyeztetése történt. A `42419439591` tesztben a főoldal/kvíz/tankönyvolvasó 0 WCAG-figyelmeztetést adott, a mobil Tanársegéd két névtelen ikongombját később javítottuk; a legújabb futás eredményét még ellenőrizni kell.
+- A-02/A-23/A-24: a Playwright teszt ékezet/kisbetű/szóköz normalizálási böngészős próbával bővült, és az `@axe-core/playwright` WCAG 2.1 AA súlyos/kritikus szabálysértéseit ellenőrzi. Konkrét hibák nyomán a főoldalon, fejezetlistában, láblécben és tankönyvolvasóban kontrasztjavítás, a látható felirat és az akadálymentes név egyeztetése történt. A `42419439591` tesztben a főoldal/kvíz/tankönyvolvasó 0 WCAG-figyelmeztetést adott, a mobil Tanársegéd két névtelen ikongombját később javítottuk; a `42419584013` futásban mind a négy vizsgált nézet 0 WCAG-figyelmeztetéssel sikeres. Az egész felület kézi WCAG és segédtechnológiás ellenőrzése még hátra.
 - A-01/A-18: a 13 ritmikai képfájl továbbra sem került binárisan GitHubba; a többi 302 tankönyvoldal és 64 jegyzet képellenőrzése sikeres. A teljes kiadás szándékosan blokkolt, main merge nincs.
+
+## Huszonharmadik javítási egység – WCAG elfogadási próba
+
+- A Chromium/axe `42419584013` futás **sikeres**: a főoldal, kvíz, tankönyvolvasó és 390 px széles mobilos Tanársegéd mind 0 automatikusan detektált WCAG 2.1 AA sértéssel zárult. Korábban 30 főoldali és 46 tankönyvoldal-felirati kontraszttal kapcsolatos hibát találtunk, amelyek most nem jelentkeztek. A Tanársegéd ikonikus bezáró és küldő gombjai is akadálymentes nevet kaptak.
+- Linux `42419584031` CI sikeres. PHP/MySQL alaptesztek és a frontend build `42419583981` futásban sikeresek, a ZIP továbbra is szándékosan leáll a 13 hiányzó ritmikai JPG miatt.
+- Az automatikus ellenőrzés nem teljes WCAG-tanúsítvány; kézi fókuszsorrend, kontrasztváltozatok és segédtechnológiás próba még hátra.
 
 ## Lezárási feltételek
 
