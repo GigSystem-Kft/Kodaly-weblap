@@ -267,7 +267,10 @@ try {
     } elseif ($route === 'progress' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'PUT') {
         guardWrite($config);
     }
-    $pdo = database($config);
+    // The publicly accessible lesson search does not use student accounts or progress.
+    // Do not make tutor chat/status depend on MySQL availability: an outage of the
+    // separate student database must not take down the read-only learning assistant.
+    $pdo = in_array($route, ['chat', 'chat/status'], true) ? null : database($config);
 
     if (str_starts_with($route, 'admin/')) {
         require_once __DIR__ . '/admin.php';
@@ -532,7 +535,9 @@ try {
             if (tutorImageRequested($question)) {
                 require_once __DIR__ . '/tutor-image-generation.php';
                 if (tutorImageGenerationEnabled($config)) {
-                    $imageUser = requireUser($pdo);
+                    // Image generation remains restricted to authenticated users.
+                    // Open the database only for this separate privileged feature.
+                    $imageUser = requireUser(database($config));
                     throttle('tutor-image-' . $imageUser['id'], 3);
                     answer(200, generateTutorImage($config, $question, $previousTopic));
                 }
