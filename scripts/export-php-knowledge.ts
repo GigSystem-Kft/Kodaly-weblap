@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { VERIFIED_GLOSSARY } from '../src/data/verifiedMusicGlossary';
+import { CURATED_MEDIA } from '../src/data/curatedMusicMedia';
 import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
 import { CREATIVE_WORKSHOPS, PEDAGOGY_WORKSHOPS } from '../src/data/hungarianDidacticWorkshops';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
@@ -20,6 +21,14 @@ for (const concept of VERIFIED_GLOSSARY) {
  entries.push({source:concept.sourceTitle+' – '+concept.sourceUrl,
   label:'Ellenőrzött magyar zeneelméleti fogalomtár / '+concept.term+' ('+concept.keywords.join(', ')+')',
   text:[concept.definition,...concept.details,'Forrás: '+concept.sourceUrl].join('\\n\\n')});
+}
+for (const media of CURATED_MEDIA) {
+ entries.push({source:'Ellenőrzött szemléltetőanyag-katalógus (a hivatkozott forrásoldal jogosult tartalma)',
+  label:'Szemléltetés / '+media.title+' / '+media.chapters.map(n=>'0'+n).join(', '),
+  text:['Cím: '+media.title,'Magyar ismertető: '+media.note,
+    'Típus: '+media.kind,'Elérhetőség: '+media.url,
+    ...(media.access?['Hozzáférés: '+media.access]:[]),
+    ...(media.license?['Felhasználás: '+media.license]:[])].join('\\n')});
 }
 for (const chapter of MUSIC_CHAPTERS) {
   for (const sub of chapter.subchapters) {
