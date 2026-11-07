@@ -4,8 +4,7 @@ import { FOUNDATIONS_GUIDES } from './musicFoundationsGuide';
  * stable ID and receives its own matching university-level explanation instead of
  * showing all four chapter-wide essays on the first page only. */
 const SECTION_MAP: Record<string, number[]> = {
- 'ritmus-alapok':[0,1], 'ritmuskepsz':[1,3], 'tempo-utem':[0,2],
- 'metrum-hangsuly':[0,2],
+ 'ritmus-alapok':[0,1], 'ritmuskepsz':[1,3], 'tempo-utem':[0,1,2,3],
  'abszolutm-hangok':[0,1], 'modositok':[2,3],
  'kottaolvasas':[0,1],
  'szolmizacio-elonyai':[0,3], 'hangkoz-fajtak':[1,2,3],
