@@ -15,7 +15,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
 | P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Kódjavítás és PHP forrásteszt sikeres; éles tudásindex hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
-| P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Mód pontosan felcímkézve; szakmai validáció hátra |
+| P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP CI szerepkörteszt (student/teacher/admin) és fiókéletút sikeres; valódi böngészős és éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Vizsgálat hátra |
@@ -95,6 +95,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-19: automatikus teszt vizsgálja a főmenü oldalazonosítóit, az 5 tankönyv nézetét és a négy bővített modulhoz tartozó útvonalat.
 - A-23: szókártyák megfordítása Enterrel és szóközzel is működik; hiányzó témakörben nem omlik össze a szókártya és a párosító nézet; a már megtanult kártya nem hirdet újabb XP-bónuszt, a párosító gombok kijelölési állapotot jeleznek a segítő technológiáknak.
 - A késznek minősítés továbbra is csak a teljes, bizonyított éles E2E és P0 kiadási folyamat után lehetséges.
+
+## Tizenharmadik javítási egység (2026-11-07)
+
+- A-09: a PHP Tanársegéd a helyi, ellenőrzött keresés mellett új, **kifejezetten engedélyezhető** generatív szövegválaszt is támogat. A `tutor_text_generation` konfiguráció alapból `enabled=false`, az API-kulcs kizárólag a nem nyilvános PHP-konfigurációban található. A modell fix allowlisten van, a kérdések külső továbbítása csak bejelentkezett hallgatónál, külön throttle mellett történhet. A rendszer a külső modellnek legfeljebb három első félhez tartozó tananyagrészletet küld; elkülönítetten licencelt könyvszöveg vagy személyes előrehaladás nem része a kérésnek. A generatív válasz forráslistája szerveroldalról készül. Hiba vagy hiányzó forrás esetén a meglévő PHP helyi tanársegéd válaszol. `store=false` API-tulajdonságot adunk át a szolgáltatónak.
+- A felület a generatív módnál jelzi a Google-szolgáltatóhoz történő adattovábbítást és a bejelentkezési feltételt. Éles üzem előtt szükséges adatkezelési és szolgáltatási költségkeret jóváhagyása, a nem nyilvános konfiguráció tényleges megadása, modellélőteszt és pedagógiai válaszminták értékelése.
+- Fontos: az új útvonal **nem bekapcsolt éles AI**. A működési állapotot a `chat/status` jelzi, a kód konfiguráció nélkül csak helyi forráskereső marad.
 
 ## Lezárási feltételek
 
