@@ -31,7 +31,7 @@ export const RhythmResearchBookView:React.FC = () => {
   },[open,visible.length]);
   useEffect(()=>{setOpen(null);},[query]);
   const markMissing=(number:number)=>setMissing(old=>old.includes(number)?old:[...old,number]);
-  return <section aria-label="Ritmikai fejlesztőprogram – könyvszerű, kereshető oldalképek"
+  return <section id="rhythm-research-book" aria-label="Ritmikai fejlesztőprogram – könyvszerű, kereshető oldalképek"
     className="mt-8 mb-10 rounded-2xl border border-indigo-200 bg-white p-4 sm:p-6 lg:p-8">
     <div className="mb-5">
       <span className="inline-flex items-center gap-2 font-mono-jetbrains text-[0.7rem] uppercase tracking-widest text-[#4a54e1]">
