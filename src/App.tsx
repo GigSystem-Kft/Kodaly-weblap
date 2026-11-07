@@ -177,13 +177,18 @@ export default function App() {
       : recordActivity({ ...prev, flashcardsMastered: [...prev.flashcardsMastered, id] }, 15));
   };
 
-  const saveQuizScore = (chapterId: string, score: number) => {
+  const saveQuizScore = (chapterId: string, score: number, correct: number, total: number) => {
+    const attempt = {
+      id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
+      chapterId, score, correct, total, at: new Date().toISOString()
+    };
     setProgress(prev => {
       const previousBest = prev.quizScores[chapterId] ?? 0;
       const improved = score > previousBest;
       return recordActivity({
         ...prev,
-        quizScores: { ...prev.quizScores, [chapterId]: Math.max(previousBest, score) }
+        quizScores: { ...prev.quizScores, [chapterId]: Math.max(previousBest, score) },
+        quizAttempts: [...(prev.quizAttempts ?? []), attempt].slice(-100)
       }, improved ? 30 : 0);
     });
   };
