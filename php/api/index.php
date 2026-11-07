@@ -511,6 +511,9 @@ try {
             if (strlen($text)>64000) fail(413,'Túl nagy tanulási napló.');
             $pdo->beginTransaction();
             try {
+                // Serialize first-time writes too, when no progress row exists yet.
+                $lock=$pdo->prepare('SELECT id FROM zm_users WHERE id=? FOR UPDATE');
+                $lock->execute([$user['id']]);
                 $stmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=? FOR UPDATE');
                 $stmt->execute([$user['id']]);
                 $current=$stmt->fetchColumn();
