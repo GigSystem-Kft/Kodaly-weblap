@@ -17,6 +17,7 @@ test('every external history illustration retains source and a specific license 
     assert.ok(item.title.trim() && item.caption.trim() && item.licenseNote.trim(),item.title);
     validExternal(item.imageUrl,item.title);
     validExternal(item.sourceUrl,item.title+' source');
+    if (item.licenseUrl) validExternal(item.licenseUrl,item.title+' license');
   }
 });
 test('every external audio/video/score has an explanatory link and historical context',()=>{
@@ -39,4 +40,12 @@ test('published Hungarian Kodály video and OSZK collections have accurate navig
     assert.match(entry.title,/gyűjtőoldala/);
     assert.match(entry.focus,/gyűjtőoldalon/);
   }
+});
+
+test('Aquincum reconstruction credits Kaboldy and the exact CC BY-SA 3.0 license',()=>{
+  const aquincum=HISTORY_VISUALS.find(item=>item.imageUrl.includes('Hidraulis_Aquincum1'));
+  assert.ok(aquincum,'The Aquincum illustration is missing');
+  assert.match(aquincum.licenseNote,/Kaboldy/);
+  assert.match(aquincum.licenseNote,/CC BY-SA 3\.0/);
+  assert.equal(aquincum.licenseUrl,'https://creativecommons.org/licenses/by-sa/3.0/');
 });
