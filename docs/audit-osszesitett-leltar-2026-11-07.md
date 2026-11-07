@@ -17,8 +17,8 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
-| P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP CI szerepkörteszt (student/teacher/admin) és fiókéletút sikeres; valódi böngészős és éles próba hátra |
-| P1 | A-24 | Valós telepítési E2E és regressziótesztek | Playwright/Chromium PR workflow (42415123945) sikeres: vendég UI, szókártya, párosító, 04-es kvíz, tankönyvkeresés és mobil AI; új touch/profil kiterjesztés CI alatt, éles szerepkörös E2E hátra |
+| P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP/MySQL CI szerepkörteszt és Chromium-böngészős mockolt student/teacher/admin navigáció sikeres; valódi hitelesített éles próba hátra |
+| P1 | A-24 | Valós telepítési E2E és regressziótesztek | Chromium CI 42415390838 sikeres: vendég, szókártya, párosító, 04 kvíz, keresés, mobil touch/AI, szerepkörös UI; valódi éles hitelesítés/telepítés tesztje hátra |
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127=189 tétel definíció alapján átsorolva, 945 helyett 756 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
@@ -145,6 +145,11 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-19/A-24: az első Playwright E2E feltárt egy hibát: asztali egérmutatóval a tankönyvmenü megnyitása után a kattintás bezárta a legördülő menüt, mert a hover és kattintás kétszer kapcsolta ugyanazt az állapotot. A menü nyitási szabályát javítottuk; a `42415123945` Chromium CI ezt és a kvízt, szókártyát, nagyított tankönyvoldalt és mobil AI-panelt sikeresen ellenőrizte.
 - A-24: újabb mobil `isMobile/hasTouch` és vendégprofil E2E kiterjesztés készült, CI-eredmény még ellenőrizendő.
 - A-01 változatlan: a helyben elkészült 13 eredeti PDF-oldalkép még nincs GitHubba beemelve. Biztonságos, SHA-ellenőrzött `scripts/commit-rhythm-original-pages.sh` segédszkript kész a fejlesztési ágon történő beemeléshez, az eredeti PDF a szerkesztő gépén szükséges.
+
+## Huszadik javítási egység (2026-11-07)
+
+- A-21/A-24: GitHub Actions `42415390838` Chromium füstteszt **sikeres**. Valódi böngészőben ellenőrzi a vendég menüit, a kvízt, az 1. tankönyv keresését és nagyított oldalát, a szókártyákat, a párosító felületet, a tanulási profilt, a mobilos `hasTouch` tankönyvmenüt és a mobil AI-ablak képernyőn belül maradását. A hallgató/tanár/admin navigációt mockolt API-válaszokkal validálja; a szerver PHP/MySQL-fiók- és jogosultsági regressziója ettől külön fut.
+- A-01/A-18: a hiányzó 13 JPG problémája változatlan; a helyi forrás SHA-256-ellenőrzött importja és kizárólag a fejlesztési ágra történő push előkészítve. A teljes kiadás és main merge még nem engedélyezett.
 
 ## Lezárási feltételek
 
