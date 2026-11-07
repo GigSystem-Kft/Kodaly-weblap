@@ -6,6 +6,7 @@ import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from '../src/data/musicPedagogyDeep';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 import { MUSIC_HISTORY } from '../src/data/musicHistory';
+import { HISTORY_WORKSHOPS } from '../src/data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistoryProfiles';
 
 type Entry = { source: string; label: string; text: string; creativePractice?: {
@@ -71,6 +72,16 @@ for (const period of MUSIC_HISTORY) {
       'Források: ' + period.sourceLinks.map(link => link.name + ' ' + link.url).join('; ')
     ].join('\\n')
   });
+}
+for (const workshop of HISTORY_WORKSHOPS) {
+ const period=MUSIC_HISTORY.find(item=>item.id===workshop.periodId);
+ if (!period) continue;
+ entries.push({
+  source:'Zenetörténet – önálló részletes korszakfeldolgozás; források: '+period.sourceLinks.map(link=>link.url).join('; '),
+  label:'07. Zenetörténet / '+period.name+' / Tanulási műhely',
+  text:[...workshop.goals,...workshop.context,...workshop.steps,workshop.question,
+    workshop.modelAnswer,workshop.furtherPractice].join('\\n\\n')
+ });
 }
 for (const profile of COMPOSER_BIOGRAPHIES) {
   entries.push({
