@@ -27,8 +27,8 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
   }, [book]);
 
   const normalize = (text: string) => text.toLocaleLowerCase('hu-HU')
-    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
-  const terms = normalize(query.trim()).split(/\\s+/).filter(Boolean);
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const terms = normalize(query.trim()).split(/\s+/).filter(Boolean);
   const visible = terms.length
     ? pages.filter(p => terms.every(term => normalize(p.szoveg).includes(term)))
     : pages;
