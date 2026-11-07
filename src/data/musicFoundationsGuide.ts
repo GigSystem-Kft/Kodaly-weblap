@@ -59,7 +59,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
    ]},
    {title:'Módosítójel és előjegyzés',paragraphs:[
     'A kereszt félhanggal emeli, a bé félhanggal csökkenti a hangot; a feloldójel a hangot az adott hangnév természetes alakjára állítja vissza. Az előjegyzés a kotta elején általános hangmagassági kiindulást ad, a darabon belüli módosítójel viszont meghatározott helyi érvénnyel működik.',
-    'G-dúr egy keresztes, F-dúr egy bés, D-dúr két keresztes hangnem. Az ütemen belüli módosítójel mai közös gyakorlat szerint ugyanazon hangmagasságra és oktávra érvényes az ütemben; a hangazonosságot átkötőív külön is továbbviheti.'
+    'G-dúr előjegyzése egy kereszt, a Fisz; F-dúr előjegyzése egy bé, a B; D-dúr előjegyzése két kereszt, a Fisz és Cisz. Az ütemen belüli módosítójel mai közös gyakorlat szerint ugyanazon hangmagasságra és oktávra érvényes az ütemben; a hangazonosságot átkötőív külön is továbbviheti.'
    ]},
    {title:'Enharmónia és zenei helyesírás',paragraphs:[
     'Egyenletes temperálású hangszeren például Fisz és Gesz rendszerint ugyanazon billentyű megszólalásához vezet, mégsem azonos a kottaolvasásban betöltött szerepük. A hangnév hangnemi, skálabeli és harmóniai összefüggést is hordoz.',
@@ -121,7 +121,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   selfCheck:[{question:'Hány különböző hangot tartalmaz a C–E–G–C–G dallam?',answer:'Hármat: C, E és G.'},{question:'Mi a különbség a hangterjedelem és a hangkészlet között?',answer:'A hangterjedelem a legmélyebb és legmagasabb hang közét, a hangkészlet a használt különböző hangokat írja le.'}],
   sources:[{title:'Open Music Theory – Scales and Scale Degrees',url:openTheory,note:'Hangsorok és a zenei hangkészletek rendszerezése.'},{title:'Integrated Music Theory – Modes and Pentatonics',url:'https://intmus.github.io/inttheory/',note:'Móduszok és pentaton hangkészletek elemzése.'}]
  },
- {chapterId:'hangsorok',
+ {chapterId:'hetfoku-hangsorok',
   objectives:['A dúr és moll hangsorok hangközrendjének megkülönböztetése.','A kvintkör és az előjegyzések gyakorlati használata.','Dúr, moll és szűkített hármashangzat építése, felismerése.'],
   sections:[
    {title:'A dúr hangsor és a modális rendszerek',paragraphs:[
@@ -133,7 +133,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
     'A klasszikus zeneelméleti tanításban a melodikus moll felfelé a hatodik és hetedik fokot emeli, lefelé általában a természetes moll formájában tér vissza. Ez a séma nem minden műfaj és stílus tényleges dallamhasználatának kizárólagos szabálya.'
    ]},
    {title:'A kvintkör logikája',paragraphs:[
-    'A kvintkör a hangnemek kvintlépések szerinti kapcsolatát ábrázolja. C-dúrból felfelé haladva G, D, A, E, H hangnemek következnek, amelyek rendre eggyel több keresztet tartalmaznak; lefelé haladva F, B, Esz, Asz következik, egyre több bével.',
+    'A kvintkör a hangnemek kvintlépések szerinti kapcsolatát ábrázolja. C-dúrból felfelé haladva G, D, A, E, H hangnemek következnek; G-dúr előjegyzése Fisz, azaz egy kereszt, D-dúré Fisz és Cisz, azaz két kereszt; a további kvintlépéseknél rendre eggyel nő a keresztek száma; lefelé haladva F, B, Esz, Asz következik, egyre több bével.',
     'A közeli hangnemeknek rendszerint sok közös hangjuk van, ezért a moduláció és a hangnemi rokonság megértésénél a kvintkör jól használható. A dúrhangnemekhez ugyanannyi előjegyzéssel rendelkező párhuzamos moll társul; C-dúr és a-moll például előjegyzés nélküli.'
    ]},
    {title:'Hármashangzatok és fordítások',paragraphs:[
