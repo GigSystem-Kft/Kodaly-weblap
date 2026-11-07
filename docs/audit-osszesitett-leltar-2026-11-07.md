@@ -19,7 +19,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP/MySQL CI szerepkörteszt és Chromium-böngészős mockolt student/teacher/admin navigáció sikeres; fogalomtárkedvencek profilszinkronja implementálva, valódi hitelesített éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Chromium CI 42415390838 sikeres: vendég, szókártya, párosító, 04 kvíz, keresés, mobil touch/AI, szerepkörös UI; valódi éles hitelesítés/telepítés tesztje hátra |
-| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127+69=258 tétel definíció alapján átsorolva, 945 helyett 687 Egyéb; maradék kézi lektorálás szükséges |
+| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127+69+78=336 tétel definíció alapján átsorolva, 945 helyett 609 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Párosító 5 XP/új pár (max. 50/kör), hallásfeladat 100 XP/nap, PHP-validált napló és tesztek; az XP továbbra is kliensoldali gyakorlási pont, teljes szerveroldali anti-cheat hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B/H megfeleltetés és G5 (783,99 Hz) javítva; a nagy szeptim hangsor H4-re javítva; teljes 12-TET és 12 hangköz frekvenciateszt bekerült; további lejátszás-E2E hátra |
@@ -29,7 +29,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Mobil/keyboard tankönyvmenü és 5 tananyagkártya Enter/Space aktiválása; részletes Chromium navigációs teszt; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Kérdésbank/fejezet/szókártya/párosító strukturális teszt, valamint skálák, ritmusok és ütemmutatók MIDI/számított hangzótesztje; teljes pedagógiai lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA CI 42419584013 sikeres: főoldal/kvíz/tankönyv/mobil AI 0 súlyos vagy kritikus hiba; kézi, teljes WCAG-audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA CI sikeres a főoldalon/kvíz/tankönyv/mobil AI nézeten; alapfejezet/profil/fogalomtár új bővített WCAG CI tesztje ellenőrzés alatt; kézi audit hátra |
 
 ## Első javítási csomag
 
@@ -192,3 +192,9 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-04/A-19/A-23: az öt elméleti fejezet kattintható, korábban billentyűzettel nem aktiválható kártyája `role=button`, `tabIndex=0`, Enter/Space és látható fókuszjelölést kapott. A Chromium-tesztbe bekerült a tanulmányozott alfejezet és teljes fejezet állapotának megőrzése oldalváltás után. Az első WCAG-tesztben a kártyák mesterséges `aria-label` felirata ütközött a látható szöveggel; ezért a gombok hozzáférhető neve már a teljes látható címükből származik.
 - A-15: a 2026. július 15-i MédiaKlikk-videó 2026. október 13-ig volt elérhető és november 7-én nem tölthető be. Helyette a Liszt Ferenc Zeneművészeti Egyetem elérhető, magyar nyelvű `Kodály mindenkié!` dokumentumfilm-oldala került a tananyagba. A Mozart K.331 és Erkel Ferenc OSZK-linkeket gyűjtőoldalként pontosítottuk; időponttal ellátott leltár: `docs/media-linkellenorzes-2026-11-07.md`. Ez nem jogi felhasználási tanúsítás.
 - A-01/A-18: 13/13 JPG GitHubban és a teljes PHP ZIP sikeres, a technikai kiadási blokkoló megszűnt. A `main` ágra összevezetés még nincs, mert további tételek nyitottak.
+
+## Huszonhatodik javítási egység – licencfeltételek és további fogalmak
+
+- A-15: a Wikimedia Commons `Hidraulis_Aquincum1.JPG` képéhez a korábban túl általános licencszöveg helyett **Kaboldy szerzői megjelölés és CC BY-SA 3.0 Unported** licencközlés került. A weboldalon külön, közvetlen `https://creativecommons.org/licenses/by-sa/3.0/` link jelenik meg a Commons forrásoldal mellett. Automatikus metaadat/regressziós teszt készült. A többi képre vonatkozó teljes jogi ellenőrzés még nincs lezárva.
+- A-10: további 78, a magyar definícióhoz illeszkedő hangszer, játéktechnika, műfaj, előadásmód, dinamika, ornamentika és kottaírási fogalom került szakszerűbb kategóriába. A 1793 eredeti tételből immár 336 javított besorolás történt; az „Egyéb szakkifejezések” 945-ről **609-re csökkent**. Minden eredeti term, definíció és stabil ID megmaradt; a fennmaradó 609 kézi lektorálásra szorul.
+- A-23: a Chromium axe súlyos/kritikus WCAG 2.1 AA tesztje a korábbi négy nézeten túl az alfejezetet, tanulási profilt és fogalomtárat is átvizsgálja. Az új CI eredménye még ellenőrizendő.
