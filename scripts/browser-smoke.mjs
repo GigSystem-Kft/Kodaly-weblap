@@ -1,14 +1,27 @@
 import { chromium } from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
 
 const browser = await chromium.launch({headless:true});
 const root='http://127.0.0.1:4173/';
 const page=await browser.newPage({viewport:{width:1280,height:900}});
 const failures=[];
+async function checkAccessibility(page, label) {
+  const results = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .analyze();
+  const serious = results.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
+  if (serious.length) {
+    const details = serious.map(v => `${v.id}: ${v.nodes.length} elem – ${v.help}`).join('; ');
+    throw new Error(`WCAG ${label}: ${details}`);
+  }
+  console.log(`Accessibility ${label}: ${results.violations.length} total findings, ${serious.length} serious/critical`);
+}
 
 try {
   await page.goto(root,{waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'Zeneelméleti Műhely'}).waitFor();
   console.log('Guest: landing page loaded');
+  await checkAccessibility(page, 'főoldal');
 
   await page.getByRole('button',{name:/02\. Szókártyák/}).click();
   await page.getByRole('heading',{name:'Zenei Szakkifejezések Gyakorlása'}).waitFor();
@@ -31,6 +44,7 @@ try {
   await category.selectOption('hangkeszletek');
   await page.getByText(/Kérdés 1 \/ /).waitFor();
   console.log('Guest: chapter 04 quiz loaded');
+  await checkAccessibility(page, 'kvíz');
 
   await page.getByRole('button',{name:/07\. Tankönyvek/}).click();
   await page.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
@@ -44,6 +58,7 @@ try {
   await page.getByRole('button',{name:'Bezár'}).click();
   if(await page.getByRole('dialog').count()!==0) throw new Error('Textbook lightbox did not close');
   console.log('Guest: textbook search and lightbox OK');
+  await checkAccessibility(page, 'tankönyv');
 
   await page.getByRole('button',{name:/06\. Profil/}).click();
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
@@ -78,6 +93,7 @@ try {
   if(!bounds || bounds.x < -1 || bounds.x+bounds.width>391 ||
       bounds.y< -1 || bounds.y+bounds.height>845) throw new Error('Tutor panel overflows mobile viewport');
   console.log('Mobile: assistant remains inside screen');
+  await checkAccessibility(page, 'mobil Tanársegéd');
   // UI role visibility tests use intercepted API responses; the real PHP
   // authorization is independently tested against the disposable MySQL server.
   for(const role of ['student','teacher','admin']){
