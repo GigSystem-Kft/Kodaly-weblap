@@ -46,7 +46,7 @@ try {
   console.log('Guest: textbook search and lightbox OK');
 
   await page.setViewportSize({width:390,height:844});
-  await page.getByRole('button',{name:/Tanársegéd AI/}).click();
+  await page.getByRole('button',{name:'Tanársegéd megnyitása'}).click();
   await page.getByRole('heading',{name:'Zeneelmélet Tanársegéd'}).waitFor();
   const panel=page.locator('div.fixed').filter({has:page.getByRole('heading',{name:'Zeneelmélet Tanársegéd'})}).first();
   const bounds=await panel.boundingBox();
