@@ -15,15 +15,16 @@ interface Props {
  onQuiz:()=>void;
  completed?:boolean;
  onComplete?:()=>void;
+ favoriteIds?:string[];
+ onFavoriteChange?:(ids:string[])=>void;
 }
-export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatching,onQuiz,completed=false,onComplete})=>{
+export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatching,onQuiz,completed=false,onComplete,favoriteIds=[],onFavoriteChange})=>{
  const [search,setSearch]=useState('');
  const [category,setCategory]=useState('mind');
  const [letter,setLetter]=useState('mind');
  const [page,setPage]=useState(0);
  const [expanded,setExpanded]=useState<string[]>([]);
  const [onlyFavorites,setOnlyFavorites]=useState(false);
- const [favoriteIds,setFavoriteIds]=useState<string[]>([]);
  const letters=[...new Set(entries.map(item=>item.letter))].sort((a,b)=>a.localeCompare(b,'hu'));
  const filtered=useMemo(()=>{
   const terms=normalize(search.trim()).split(/\s+/).filter(Boolean);
@@ -93,7 +94,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
         <button type="button" aria-expanded={open} onClick={()=>setExpanded(list=>open?list.filter(id=>id!==item.id):[...list,item.id])}
           className="text-left flex-1"><strong className="text-base text-slate-900">{item.term}</strong>
           <span className="block mt-1 text-xs text-indigo-700">{item.category}</span></button>
-        <button type="button" aria-label={favorite?'Kedvenc eltávolítása':'Kedvencekhez adás'} aria-pressed={favorite} onClick={()=>setFavoriteIds(prev=>favorite?prev.filter(id=>id!==item.id):[...prev,item.id])}
+        <button type="button" aria-label={favorite?'Kedvenc eltávolítása':'Kedvencekhez adás'} aria-pressed={favorite} onClick={()=>onFavoriteChange?.(favorite?favoriteIds.filter(id=>id!==item.id):[...favoriteIds,item.id])}
           className={`rounded-lg px-3 py-2 text-lg ${favorite?'text-amber-600 bg-amber-50':'text-slate-400 bg-white'}`}>★</button>
        </div>
        <p className={`text-sm mt-3 leading-relaxed text-slate-700 ${open?'':'line-clamp-3'}`}>{item.definition}</p>
