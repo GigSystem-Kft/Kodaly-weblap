@@ -28,3 +28,15 @@ test('every external audio/video/score has an explanatory link and historical co
     if(item.kind==='video') assert.ok(item.availabilityNote?.trim(),item.title+' requires availability notice');
   }
 });
+
+test('published Hungarian Kodály video and OSZK collections have accurate navigational labels',()=>{
+  const kodaly=HISTORY_RESOURCES.find(item=>item.title.includes('Kodály mindenkié'));
+  assert.equal(kodaly?.url,'https://lfze.hu/videok/kodaly-mindenkie-119270');
+  assert.ok(!HISTORY_RESOURCES.some(item=>item.url.includes('/2026/07/15/retro/legyen-a-zene-mindenkie-2-resz')),
+    'The time-limited 2026 television recording expired in October and must not be promoted');
+  for(const entry of HISTORY_RESOURCES.filter(item=>
+    item.url==='https://oszk.hu/category/virtualis-kiallitasok/zene')){
+    assert.match(entry.title,/gyűjtőoldala/);
+    assert.match(entry.focus,/gyűjtőoldalon/);
+  }
+});
