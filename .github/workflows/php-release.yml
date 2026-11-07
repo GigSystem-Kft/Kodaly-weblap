@@ -81,6 +81,8 @@ jobs:
           php scripts/test-php-tutor-image-generation.php
           php -l deploy/zeneelmelet-private.example.php
           node --check scripts/create-invitation.mjs
+      - name: Test tutor chat and status without account MySQL
+        run: bash scripts/test-php-chat-no-database.sh
       - name: Test invitation signup against MySQL
         run: bash scripts/test-php-invitations.sh
       - name: Build frontend for PHP API
