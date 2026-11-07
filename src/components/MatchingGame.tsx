@@ -124,7 +124,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
             <CheckCircle2 className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-bold text-white mb-2">Gratulálok! Sikeres Párosítás!</h3>
-          <p className="text-slate-300 mb-6">Minden párt sikeresen megtaláltál. A teljesítésedet rögzítjük; XP csak az újonnan teljesített párokért jár.</p>
+          <p className="text-slate-300 mb-6">Minden párt sikeresen megtaláltál. A teljesítésedet rögzítjük. Minden új pár 5 gyakorlási XP-t ér, egy körben legfeljebb 50-et; a már megtanult párok ismétléséért nem jár új XP.</p>
           <button
             onClick={initGame}
             className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition-all shadow-lg shadow-indigo-600/30 flex items-center space-x-2 mx-auto"
