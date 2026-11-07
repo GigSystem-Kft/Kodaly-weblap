@@ -101,3 +101,16 @@ test('quiz mistake IDs survive account merge, while oversized diagnostics are di
  const bad={...server,quizAttempts:[{...attempt,wrongQuestionIds:Array.from({length:13},(_,i)=>'q-'+i)}]};
  assert.deepEqual(migrateProgress(bad).quizAttempts,[]);
 });
+
+test('quiz practice timing is preserved but rejects invalid or excessive durations',()=>{
+ const progress=createEmptyProgress();
+ const base={id:'timed-quiz',chapterId:'ritmus',score:80,correct:4,total:5,at:'2026-11-07T20:00:00Z',durationSeconds:95};
+ progress.quizAttempts=[base];
+ const restored=migrateProgress(progress);
+ assert.equal(restored.quizAttempts?.[0]?.durationSeconds,95);
+ assert.equal(mergeProgress(restored,createEmptyProgress()).quizAttempts?.[0]?.durationSeconds,95);
+ for(const duration of [-1,36001,1.5]){
+   const invalid=migrateProgress({...progress,quizAttempts:[{...base,durationSeconds:duration}]});
+   assert.equal(invalid.quizAttempts?.length,0);
+ }
+});
