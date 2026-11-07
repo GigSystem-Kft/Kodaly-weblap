@@ -79,5 +79,5 @@ test('glossary favorites are controlled by saved profile and not reset on view n
   assert.match(app,/onFavoriteChange=\{\(ids\) => setProgress/);
   assert.match(glossary,/favoriteIds\?:string\[\]/);
   assert.match(glossary,/onFavoriteChange\?\./);
-  assert.ok(!glossary.includes('useState<string[]>([])'),'Glossary favorites should not be reset on remount');
+  assert.ok(!glossary.includes('setFavoriteIds'),'Glossary favorites should not be reset on remount');
 });
