@@ -1,3 +1,4 @@
+import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './src/pendingProgress';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './src/progress';
@@ -176,4 +177,41 @@ test('daily XP caps survive import and reject forged daily counter shapes', () =
   assert.deepEqual(merged.earTrainingDailyXp,{'2026-11-07':75,'2026-11-08':25});
   const migrated=migrateProgress({...local,earTrainingDailyXp:{'invalid-date':1000,'2026-11-07':120,'2026-11-08':25}});
   assert.deepEqual(migrated.earTrainingDailyXp,{'2026-11-08':25});
+});
+
+test('offline unsaved scores survive a reload only for their own account', () => {
+  const cache = new Map<string,string>();
+  const storage = {
+    getItem: (key:string) => cache.get(key) ?? null,
+    setItem: (key:string,value:string) => { cache.set(key,value); },
+    removeItem: (key:string) => { cache.delete(key); }
+  };
+  const base = createEmptyProgress();
+  base.quizScores.ritmus = 20;
+  const local = migrateProgress(base);
+  local.quizScores.ritmus = 90;
+  local.favoriteExpressions=['favorite-new'];
+  savePendingProgress(storage,'user-A',base,local);
+  assert.equal(loadPendingProgress(storage,'user-B'),null);
+  const remote=migrateProgress(base);
+  remote.quizScores.hangok = 60;
+  const restored=recoverPendingProgress(remote,loadPendingProgress(storage,'user-A'));
+  assert.equal(restored.quizScores.ritmus,90);
+  assert.equal(restored.quizScores.hangok,60);
+  assert.deepEqual(restored.favoriteExpressions,['favorite-new']);
+  clearSavedPendingProgress(storage,'user-A',base);
+  assert.ok(loadPendingProgress(storage,'user-A'));
+  clearSavedPendingProgress(storage,'user-A',local);
+  assert.equal(loadPendingProgress(storage,'user-A'),null);
+});
+test('offline favorite removal is honored without deleting remote additions', () => {
+  const cache = new Map<string,string>();
+  const storage = {getItem:(key:string)=>cache.get(key)??null,setItem:(key:string,value:string)=>{cache.set(key,value);},removeItem:(key:string)=>{cache.delete(key);}};
+  const base=createEmptyProgress();base.favoriteExpressions=['keep','remove'];
+  const offline=createEmptyProgress();offline.favoriteExpressions=['keep'];
+  savePendingProgress(storage,'account',base,offline);
+  const remote=createEmptyProgress();remote.favoriteExpressions=['keep','remove','new-device'];
+  const restored=recoverPendingProgress(remote,loadPendingProgress(storage,'account'));
+  assert.deepEqual(restored.favoriteExpressions,['keep','new-device']);
+  assert.equal(loadPendingProgress(storage,'other-account'),null);
 });
