@@ -8,7 +8,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva, 13 JPG helyben előállítva; a bináris oldalképek GitHubba való felvétele még hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás és CI build/tesztek sikeresek; élő magyar kereső-E2E még hátra |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés; MySQL CI-sikeres. Hálózati visszakapcsolódáskor és 15 másodpercenként hibajelzés mellett automatikus újrapróba + kézi újrapróbálás. Valódi többeszközös böngészős próba hátra |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés; háromutas kedvenc-összevezetés és kijelentkezés előtti mentetlenségfigyelmeztetés, regressziós tesztek. MySQL CI-sikeres; valódi többeszközös böngészős próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal, 13 ritmikai kép, 64 jegyzetkép JPEG-jelölő és méretellenőrzéssel; a hiányos ZIP blokkolt; az egyetemi PDF alternatív URL-jének SHA-256-ja sem egyezett, a 13 lokális JPG GitHubba való felvétele szükséges |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
@@ -20,16 +20,16 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP/MySQL CI szerepkörteszt és Chromium-böngészős mockolt student/teacher/admin navigáció sikeres; fogalomtárkedvencek profilszinkronja implementálva, valódi hitelesített éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Chromium CI 42415390838 sikeres: vendég, szókártya, párosító, 04 kvíz, keresés, mobil touch/AI, szerepkörös UI; valódi éles hitelesítés/telepítés tesztje hátra |
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127+69=258 tétel definíció alapján átsorolva, 945 helyett 687 Egyéb; maradék kézi lektorálás szükséges |
-| P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
+| P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Párosító 5 XP/új pár (max. 50/kör), hallásfeladat 100 XP/nap, PHP-validált napló és tesztek; az XP továbbra is kliensoldali gyakorlási pont, teljes szerveroldali anti-cheat hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt a 42411290126-os CI-ben sikeres; további kotta- és lejátszás-E2E hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
-| P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; kedvenc fogalmak most fiókhoz mentődnek, történeti XP-eseménynapló továbbra sincs |
-| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés és gyakorlási idő; részletes kérdésenkénti trend és pedagógiai értékelés hátra |
+| P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil és kedvenc-összevezetés tisztázva; párhuzamos kedvenc törlés háromutas összevezetése; XP-adat történeti eseménynaplója továbbra sincs |
+| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, rontott kérdések, helyes válaszok és magyarázatok, gyakorlási idő; trend és pedagógiai értékelés hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, tankönyvnagyítás fókuszcsapda, mobil AI-nyitó hozzáférhető neve; Chromium smoke részleges, teljes WCAG/mobil audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA teszt: főoldal/kvíz/tankönyv 0 jelzés; mobil AI ikon gombok feliratozva, CI még fut; teljes WCAG/manualis audit hátra |
 
 ## Első javítási csomag
 
@@ -156,6 +156,14 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-10: további 69, pontosan egyező magyar fogalommeghatározással alátámasztott kifejezést soroltunk át a hangszertechnika, tempó, műfaj, előadásmód, díszítés és kottaírás kategóriáiba. Eddig összesen 258 átsorolás történt, 687 „Egyéb” tétel maradt. Az eredeti fogalmak és definíciók nem módosultak. A teljes szakmai taxonómiai lektorálás ettől még nem kész.
 - A-16/A-21: a fogalomtári kedvencek korábban csak komponenslokális állapotban éltek, és oldalváltás után eltűntek. Opcionális, visszamenőleg kompatibilis `favoriteExpressions` adattal bekerültek a fiók- és vendéghaladásba; szerveroldali korlátozás, migrációs és többeszközös egyesítési teszt készült. A kedvencek eltávolítása párhuzamos konfliktus esetén külön UX-ellenőrzést igényel.
 - A-01: a 13 eredeti oldalkép a jelen futásban elérhető munkakönyvtárban ellenőrzött PDF-ből elkészült, ám a GitHub csatlakozás nem fogad fájlrendszerútvonalat; a bináris GitHub push egyelőre nem történt meg. A kiadási védelem változatlan.
+
+## Huszonkettedik javítási egység (2026-11-07)
+
+- A-06: a kedvencek összevezetése most a legutóbb sikeresen mentett, a szerver új és a kliens új állapota között háromutas; a helyi kedvenc-törlést nem állítja vissza egy másik eszköz új eleme. A vendégeredmények külön, törlés nélküli egyesítést használnak. Kijelentkezés előtt figyelmeztet a rendszer a szerverre még fel nem töltött tanulási eredményekre.
+- A-11: idempotens párosítójutalom minden új páronként 5 XP és körönként maximum 50 XP. Hallásfejlesztés legfeljebb napi 100 XP, a folytatólagos gyakorlás pont nélkül is működik. Visszamenőleg kompatibilis, napi dátumkulcsú napló; a PHP ellenőrzi a mező alakját és korlátját. Nem állítjuk, hogy ez szerveroldali hitelesített vizsga- vagy anti-cheat rendszer.
+- A-17: a korábban hibásan megoldott kvízkérdésekhez a profil a tényleges kérdésbankból kiolvassa a helyes válasz szövegét és magyarázatát, így érdemi felzárkóztató ismétlés lehetséges.
+- A-02/A-23/A-24: a Playwright teszt ékezet/kisbetű/szóköz normalizálási böngészős próbával bővült, és az `@axe-core/playwright` WCAG 2.1 AA súlyos/kritikus szabálysértéseit ellenőrzi. Konkrét hibák nyomán a főoldalon, fejezetlistában, láblécben és tankönyvolvasóban kontrasztjavítás, a látható felirat és az akadálymentes név egyeztetése történt. A `42419439591` tesztben a főoldal/kvíz/tankönyvolvasó 0 WCAG-figyelmeztetést adott, a mobil Tanársegéd két névtelen ikongombját később javítottuk; a legújabb futás eredményét még ellenőrizni kell.
+- A-01/A-18: a 13 ritmikai képfájl továbbra sem került binárisan GitHubba; a többi 302 tankönyvoldal és 64 jegyzet képellenőrzése sikeres. A teljes kiadás szándékosan blokkolt, main merge nincs.
 
 ## Lezárási feltételek
 
