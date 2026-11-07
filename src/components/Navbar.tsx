@@ -24,7 +24,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
 
   return (
     <header className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
-      <button type="button" className="brand cursor-pointer mb-4 md:mb-0 text-left" onClick={() => setActiveTab('chapters')} aria-label="Zeneelméleti Műhely – Zenei Ismeretek & Oktatási Portál – vissza a tananyag főoldalára">
+      <button type="button" className="brand cursor-pointer mb-4 md:mb-0 text-left" onClick={() => setActiveTab('chapters')} title="Vissza a tananyag főoldalára">
         <h1 className="font-serif-cormorant text-3xl md:text-4xl italic font-semibold leading-none mb-1 text-[#1c1c1c]">
           Zeneelméleti Műhely
         </h1>
