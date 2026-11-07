@@ -60,6 +60,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
             : 'Vendégként az eredményeidet ez a böngésző tárolja. Bejelentkezve a fiókod eredményei jelennek meg; a helyi adatok átvitele külön művelet.'}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+          <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Kedvenc fogalmak</span><strong className="block mt-1">{progress.favoriteExpressions?.length ?? 0}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Tanulási napok</span><strong className="block mt-1">{stats.studyDays}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Megtanult szókártyák</span><strong className="block mt-1">{stats.masteredCards} / {stats.totalCards}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Alfejezetek</span><strong className="block mt-1">{stats.completedSubchapters} / {stats.totalSubchapters}</strong></div>
