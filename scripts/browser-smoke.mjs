@@ -53,7 +53,14 @@ try {
   await search.waitFor();
   await search.fill('ének');
   await page.waitForTimeout(200);
-  if(await page.locator('article').count()===0) throw new Error('Textbook search returned no matches');
+  const accentCount = await page.locator('article').count();
+  if (accentCount === 0) throw new Error('Textbook search returned no matches');
+  for (const variant of ['ÉNEK', 'enek', '  eNeK   ']) {
+    await search.fill(variant);
+    await page.waitForTimeout(100);
+    const count = await page.locator('article').count();
+    if (count !== accentCount) throw new Error(`Accent/case/whitespace search mismatch for "${variant}": ${count} vs ${accentCount}`);
+  }
   await page.locator('article button').first().click();
   await page.getByRole('dialog').waitFor();
   await page.getByRole('button',{name:'Bezár'}).click();
