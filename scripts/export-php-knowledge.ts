@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { VERIFIED_GLOSSARY } from '../src/data/verifiedMusicGlossary';
 import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
 import { CREATIVE_WORKSHOPS, PEDAGOGY_WORKSHOPS } from '../src/data/hungarianDidacticWorkshops';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
@@ -15,6 +16,11 @@ type Entry = { source: string; label: string; text: string; creativePractice?: {
   steps: string[]; observation: string; extension: string; page: string;
 } };
 const entries: Entry[] = [];
+for (const concept of VERIFIED_GLOSSARY) {
+ entries.push({source:concept.sourceTitle+' – '+concept.sourceUrl,
+  label:'Ellenőrzött magyar zeneelméleti fogalomtár / '+concept.term+' ('+concept.keywords.join(', ')+')',
+  text:[concept.definition,...concept.details,'Forrás: '+concept.sourceUrl].join('\\n\\n')});
+}
 for (const chapter of MUSIC_CHAPTERS) {
   for (const sub of chapter.subchapters) {
     const text = [sub.summary, ...sub.content].filter(Boolean).join('\n\n');
