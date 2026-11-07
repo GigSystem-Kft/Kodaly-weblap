@@ -99,18 +99,15 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onAddXp, initialCate
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2 justify-center mb-7" aria-label="Párosító témakör">
-        {categories.map(category => (
-          <button key={category} type="button"
-            onClick={() => setSelectedCategory(category)}
-            className={`px-3 py-2 rounded-xl border text-xs transition-colors ${
-              selectedCategory === category
-                ? 'border-indigo-400 bg-indigo-600 text-white'
-                : 'border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800'
-            }`}>
-            {category === 'all' ? 'Összes téma' : category}
-          </button>
-        ))}
+      <div className="max-w-xl mx-auto mb-7">
+        <label htmlFor="matching-category" className="block mb-2 text-sm font-semibold text-slate-200">Párosító témaköre</label>
+        <select id="matching-category" value={selectedCategory}
+          onChange={(event) => setSelectedCategory(event.target.value)}
+          className="w-full rounded-xl border border-indigo-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          {categories.map(category=>(
+            <option key={category} value={category}>{category==='all'?'Összes téma':category}</option>
+          ))}
+        </select>
       </div>
       {isCompleted ? (
         <div className="bg-slate-900/90 border border-emerald-500/40 rounded-3xl p-8 text-center shadow-2xl">
