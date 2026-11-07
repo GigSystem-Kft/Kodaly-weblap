@@ -144,6 +144,22 @@ function progressOk(mixed $p): bool {
     foreach ($p['quizScores'] as $key => $score) {
         if (strlen((string)$key) > 120 || !is_numeric($score) || $score < 0 || $score > 100) return false;
     }
+    if (array_key_exists('quizAttempts',$p)) {
+        if (!is_array($p['quizAttempts']) || !array_is_list($p['quizAttempts']) ||
+            count($p['quizAttempts']) > 100) return false;
+        foreach ($p['quizAttempts'] as $a) {
+            if (!is_array($a) || array_is_list($a) ||
+                !isset($a['id'],$a['chapterId'],$a['score'],$a['correct'],$a['total'],$a['at']) ||
+                !is_string($a['id']) || strlen($a['id']) > 120 ||
+                !is_string($a['chapterId']) || strlen($a['chapterId']) > 120 ||
+                !is_numeric($a['score']) || $a['score'] < 0 || $a['score'] > 100 ||
+                !is_int($a['correct']) || !is_int($a['total']) ||
+                $a['total'] < 1 || $a['total'] > 1000 ||
+                $a['correct'] < 0 || $a['correct'] > $a['total'] ||
+                !is_string($a['at']) || strlen($a['at']) > 40 ||
+                strtotime($a['at']) === false) return false;
+        }
+    }
     return isset($p['xp']) && is_numeric($p['xp']) &&
         $p['xp'] >= 0 && $p['xp'] <= 100000000;
 }
