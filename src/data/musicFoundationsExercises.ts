@@ -24,10 +24,10 @@ const cards:[string,string,string,string][]=[
 ['Dó-pentaton','Dó–ré–mi–szó–lá hangkészlet.','Hangkészletek','hangkeszletek'],
 ['Hangkészlet-felmérés','Csak a különböző megszólaló hangmagasságokat számoljuk.','Hangkészletek','hangkeszletek'],
 ['Dúr hangsor','Egész–egész–fél–egész–egész–egész–fél lépésekből áll.','Hangsorok','hetfoku-hangsorok'],
-['Harmonikus moll','A természetes moll hetedik fokát felemeli.','Hangsorok','hangsorok'],
-['Melodikus moll','Klasszikus felmenő alakban a hatodik és hetedik fok módosul.','Hangsorok','hangsorok'],
-['Kvintkör','Kvintlépésekben kapcsolódó hangnemek és előjegyzések rendszere.','Hangsorok','hangsorok'],
-['Dúr hármashangzat','Alul nagy, fölötte kis terc; az alaphangtól tiszta kvintig.','Hangsorok','hangsorok']
+['Harmonikus moll','A természetes moll hetedik fokát felemeli.','Hangsorok','hetfoku-hangsorok'],
+['Melodikus moll','Klasszikus felmenő alakban a hatodik és hetedik fok módosul.','Hangsorok','hetfoku-hangsorok'],
+['Kvintkör','Kvintlépésekben kapcsolódó hangnemek és előjegyzések rendszere.','Hangsorok','hetfoku-hangsorok'],
+['Dúr hármashangzat','Alul nagy, fölötte kis terc; az alaphangtól tiszta kvintig.','Hangsorok','hetfoku-hangsorok']
 ];
 export const FOUNDATIONS_FLASHCARDS:Flashcard[]=cards.map(([term,definition,category],i)=>({
  id:'foundations-f'+String(i+1).padStart(2,'0'),term,definition,category
@@ -56,11 +56,11 @@ const q:[string,string,string,string,string,string,string][]=[
  ['hangkeszletek','Melyik a C-alapú dó-pentaton?','C–D–E–G–A','C–D–E–F–G','C–D–F–G–H','C–Cisz–D–Disz–E','A dó–ré–mi–szó–lá készlet C alapon C–D–E–G–A.'],
  ['hangkeszletek','Mi különbözteti meg a hangterjedelmet a hangkészlettől?','A szélső hangok távolsága, illetve a használt hangok halmaza','A hangszerek gyártási éve','A ritmusnevek sorrendje','A kottaoldalak száma','A hangterjedelem a szélső hangok közét, a hangkészlet a hangokat írja le.'],
  ['hangkeszletek','Melyik állítás igaz a hangkészlet elemszámára?','Az ismétlődő hang csak egyszer számít','Minden C hang különböző új hang','Csak a ritmusértékek számítanak','Az ütemek száma határozza meg','A hangkészletet a különböző hangmagasságok alkotják.'],
- ['hangsorok','Mi a dúr hangsor két félhanglépése?','3–4. és 7–8. fok között','1–2. és 5–6. között','2–3. és 4–5. között','Minden fok között','A dúr hangsor félhangjai a mi–fá és ti–dó kapcsolatok.'],
- ['hangsorok','Mit módosít a harmonikus moll?','Felemeli a hetedik fokot','Leszállítja a második fokot','Minden fokot félhanggal emel','Eltörli a hatodik fokot','A harmonikus moll jellegzetes vezetőhangja az emelt hetedik fok.'],
- ['hangsorok','Mi C-dúr párhuzamos mollja?','a-moll','c-moll','d-moll','f-moll','A párhuzamos moll ugyanannyi előjegyzést használ, C-dúrnál a-mollt.'],
- ['hangsorok','Hová jutunk C-dúrból egy kvinttel felfelé?','G-dúrba','F-dúrba','Esz-dúrba','Asz-dúrba','C–G tiszta kvint; G-dúr egy keresztes hangnem.'],
- ['hangsorok','Milyen tercsorrendű a moll hármashangzat?','Kis terc majd nagy terc','Nagy terc majd kis terc','Két nagy terc','Két tiszta kvart','Az alaphelyzetű moll hármashangzat alul kis, felül nagy tercből áll.']
+ ['hetfoku-hangsorok','Mi a dúr hangsor két félhanglépése?','3–4. és 7–8. fok között','1–2. és 5–6. között','2–3. és 4–5. között','Minden fok között','A dúr hangsor félhangjai a mi–fá és ti–dó kapcsolatok.'],
+ ['hetfoku-hangsorok','Mit módosít a harmonikus moll?','Felemeli a hetedik fokot','Leszállítja a második fokot','Minden fokot félhanggal emel','Eltörli a hatodik fokot','A harmonikus moll jellegzetes vezetőhangja az emelt hetedik fok.'],
+ ['hetfoku-hangsorok','Mi C-dúr párhuzamos mollja?','a-moll','c-moll','d-moll','f-moll','A párhuzamos moll ugyanannyi előjegyzést használ, C-dúrnál a-mollt.'],
+ ['hetfoku-hangsorok','Hová jutunk C-dúrból egy kvinttel felfelé?','G-dúrba','F-dúrba','Esz-dúrba','Asz-dúrba','C–G tiszta kvint; G-dúr egy keresztes hangnem.'],
+ ['hetfoku-hangsorok','Milyen tercsorrendű a moll hármashangzat?','Kis terc majd nagy terc','Nagy terc majd kis terc','Két nagy terc','Két tiszta kvart','Az alaphelyzetű moll hármashangzat alul kis, felül nagy tercből áll.']
 ];
 export const FOUNDATIONS_QUIZZES:QuizQuestion[]=q.map(([chapterId,question,correct,a,b,c,explanation],i)=>{
  const options=[correct,a,b,c],shift=(i+2)%4;
