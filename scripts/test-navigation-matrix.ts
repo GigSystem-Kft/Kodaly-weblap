@@ -37,3 +37,12 @@ test('textbook dropdown visibility and aria-expanded are derived from the same s
  assert.match(nav,/onMouseLeave=\{\(\) => setTextbooksOpen\(false\)\}/);
  assert.match(nav,/event\.key === 'Escape'/);
 });
+
+test('textbook reader has accessible search and keyboard-trapped image lightbox',()=>{
+ const book=readFileSync('src/components/TextbookView.tsx','utf8');
+ assert.match(book,/htmlFor="textbook-search"/);
+ assert.match(book,/role="dialog" aria-modal="true"/);
+ assert.match(book,/onKeyDown=\{trapDialogTab\}/);
+ assert.match(book,/ref=\{closeButtonRef\}/);
+ assert.match(book,/originatingButtonRef\.current = event\.currentTarget/);
+});
