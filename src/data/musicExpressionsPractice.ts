@@ -1,5 +1,5 @@
 import type {Flashcard,MatchingPair,QuizQuestion} from '../types';
-import {MUSIC_EXPRESSIONS} from '../components/MusicExpressionsView';
+import MUSIC_EXPRESSIONS from './musicExpressions.json';
 
 const categories=[
  'Tempó és időkezelés','Dinamika és karakter','Ritmus és hangértékek',
