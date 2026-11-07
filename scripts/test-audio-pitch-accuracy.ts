@@ -35,7 +35,7 @@ test('ear-training named intervals produce their actual announced semitone dista
   };
   assert.equal(EAR_CHALLENGES.length,12);
   for (const challenge of EAR_CHALLENGES) {
-    const match=challenge.title.match(/\\(([tnk]\\d)\\)/);
+    const match=challenge.title.match(/\(([tnk]\d)\)/);
     assert.ok(match,'Unknown interval label: '+challenge.title);
     const code=match[1];
     const base=noteFrequencyHz(challenge.notes[0]);
