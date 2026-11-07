@@ -177,10 +177,10 @@ export default function App() {
       : recordActivity({ ...prev, flashcardsMastered: [...prev.flashcardsMastered, id] }, 15));
   };
 
-  const saveQuizScore = (chapterId: string, score: number, correct: number, total: number) => {
+  const saveQuizScore = (chapterId: string, score: number, correct: number, total: number, wrongQuestionIds: string[]) => {
     const attempt = {
       id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
-      chapterId, score, correct, total, at: new Date().toISOString()
+      chapterId, score, correct, total, at: new Date().toISOString(), wrongQuestionIds
     };
     setProgress(prev => {
       const previousBest = prev.quizScores[chapterId] ?? 0;
