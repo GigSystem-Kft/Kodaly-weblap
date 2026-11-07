@@ -29,6 +29,7 @@ export function createEmptyProgress(): UserProgress {
     quizAttempts: [],
     flashcardsMastered: [],
     matchingCompleted: [],
+    favoriteExpressions: [],
     xp: 0,
     streak: 0,
     lastActiveDate: '',
@@ -64,6 +65,7 @@ export function migrateProgress(raw: unknown): UserProgress {
     quizAttempts,
     flashcardsMastered: strings(value.flashcardsMastered),
     matchingCompleted: strings(value.matchingCompleted),
+    favoriteExpressions: strings(value.favoriteExpressions).slice(0, 1800),
     // Historical XP cannot be reconstructed; keep the saved value, but never grant the old default 100 to new users.
     xp: typeof value.xp === 'number' && Number.isFinite(value.xp) ? Math.max(0, value.xp) : 0,
     streak: consecutiveDays(activityDays),
@@ -108,6 +110,7 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     ).values()].sort((a, b) => a.at.localeCompare(b.at)).slice(-100),
     flashcardsMastered: union(account.flashcardsMastered, guest.flashcardsMastered),
     matchingCompleted: union(account.matchingCompleted, guest.matchingCompleted),
+    favoriteExpressions: union(account.favoriteExpressions ?? [], guest.favoriteExpressions ?? []).slice(0,1800),
     xp: Math.max(account.xp, guest.xp),
     activityDays: days,
     lastActiveDate: days.at(-1) ?? '',
