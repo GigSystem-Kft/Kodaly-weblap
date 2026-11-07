@@ -29,7 +29,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Vizsgálat hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Vizsgálat hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Vizsgálat hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Navigációs márkagomb billentyűzettel is elérhető; teljes audit hátra |
 
 ## Első javítási csomag
 
@@ -37,7 +37,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 - A-03: 04/05 fejezet kategóriáinak hozzáadása; a lista kizárja azokat a kategóriákat, amelyekben nincs kérdés.
 - A-01/A-18: `php-release.yml` ellenőrzi, hogy a `release/ritmikai/p001.jpg` – `p013.jpg` mind létező, nem üres fájl-e; a jelenlegi hiány esetén a build megáll, nem ad ki hibás ZIP-et.
 
-**Harmadik javítási egység:** A-08 élő PHP-lefedettség és statikus buildleltár különválasztása; A-09 Tanársegéd üzemmód egyértelműsítése; A-12 négy bővített modul manuális teljesítési jelölése; A-16 XP-max tájékoztató.\n\n**Második javítási egység:** A-04/A-05/A-07 kódjavítás, valamint A-06 verzióazonosítós feltételes szervermentés, 409-es konfliktusválasz és böngészős összevezetés. A késznek minősítéshez CI, valódi párhuzamos eszközös teszt, PHP kompatibilitás és éles adatmegőrzési próba szükséges.\n\n**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. Korábbi CI-kör: a TypeScript/egységteszt/PHP/build lépések sikeresek, a ZIP-összeállítás a hiányzó 13 ritmikai kép miatt elbukik. Az új commitok aktuális CI státuszát külön kell ellenőrizni.
+**Negyedik javítási egység:** A-23 első akadálymentességi javítás: a fejléc főoldalra visszalépő eleme billentyűzettel is aktiválható. A teljes WCAG és mobil ellenőrzés továbbra is hátra.\n\n**Harmadik javítási egység:** A-08 élő PHP-lefedettség és statikus buildleltár különválasztása; A-09 Tanársegéd üzemmód egyértelműsítése; A-12 négy bővített modul manuális teljesítési jelölése; A-16 XP-max tájékoztató.\n\n**Második javítási egység:** A-04/A-05/A-07 kódjavítás, valamint A-06 verzióazonosítós feltételes szervermentés, 409-es konfliktusválasz és böngészős összevezetés. A késznek minősítéshez CI, valódi párhuzamos eszközös teszt, PHP kompatibilitás és éles adatmegőrzési próba szükséges.\n\n**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. Korábbi CI-kör: a TypeScript/egységteszt/PHP/build lépések sikeresek, a ZIP-összeállítás a hiányzó 13 ritmikai kép miatt elbukik. Az új commitok aktuális CI státuszát külön kell ellenőrizni.
 
 ## Lezárási feltételek
 
