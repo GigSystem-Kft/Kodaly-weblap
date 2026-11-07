@@ -5,6 +5,7 @@ import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import { readFileSync, readdirSync, existsSync } from 'fs';
+import { MUSIC_CHAPTERS } from './src/data/musicData';
 
 dotenv.config({ path: ['.env.local', '.env'] });
 
@@ -48,12 +49,30 @@ function splitSource(file: string, raw: string): Chunk[] {
     });
 }
 
-const CHUNKS: Chunk[] = existsSync(SOURCES_DIR)
-  ? readdirSync(SOURCES_DIR)
+const LESSON_TEXT = MUSIC_CHAPTERS.flatMap((chapter) =>
+  chapter.subchapters.map((part) =>
+    [chapter.title, part.title, part.summary, ...(part.content ?? []),
+      ...(part.examples ?? []).map((example) => [example.title, example.description].join(': '))]
+      .join('\n')
+  )
+).join('\n\n');
+
+const CHUNKS: Chunk[] = [
+  ...splitSource('Bartáné Góhér Edit – egyetemi jegyzet', NOTES_TEXT),
+  ...MUSIC_CHAPTERS.flatMap((chapter) =>
+    chapter.subchapters.flatMap((part) => splitSource(
+      'Zeneelméleti Műhely – tananyag',
+      [chapter.title, part.title, part.summary, ...(part.content ?? []),
+        ...(part.examples ?? []).map((e) => [e.title, e.description].join(': '))].join('\n')
+    ))
+  ),
+  ...(existsSync(SOURCES_DIR)
+    ? readdirSync(SOURCES_DIR)
       .filter((f) => /\.(txt|md)$/i.test(f) && !f.startsWith('_'))
       .sort()
       .flatMap((f) => splitSource(f, readFileSync(resolve(SOURCES_DIR, f), 'utf-8')))
-  : [];
+    : []),
+];
 
 const DOC_FREQ = new Map<string, number>();
 for (const c of CHUNKS) for (const t of c.terms.keys()) DOC_FREQ.set(t, (DOC_FREQ.get(t) ?? 0) + 1);
@@ -96,12 +115,15 @@ async function startServer() {
   }) : null;
 
   app.get('/api/chat/status', (_req, res) => {
-    res.json({ mode: ai ? 'gemini' : 'fallback' });
+    res.json({ mode: ai ? 'gemini' : 'fallback', indexedChunks: CHUNKS.length, indexedSources: [...new Set(CHUNKS.map(c => c.source))] });
   });
 
   // Intelligent fallback music theory knowledge base
   function getKnowledgeBaseReply(msg: string): string {
     const lower = msg.toLowerCase();
+    if (normalize(msg).includes('hexachord') || normalize(msg).includes('hexakord')) {
+      return '**Hexachord**: hat egymást követő diatonikus hangból álló hangkészlet. A középkori szolmizációban Guido d’Arezzo hat szótagja (ut–re–mi–fa–sol–la) kapcsolódik hozzá. Példa: C–D–E–F–G–A. A történeti hexachordrendszer és a mai pedagógiai hatfokú hangkészlet fogalma nem teljesen azonos. Forrás: Bartáné Góhér Edit jegyzete, valamint a Hangkészletek fejezet.';
+    }
     if (lower.includes('g-dúr') || lower.includes('gdúr') || (lower.includes('g') && lower.includes('előjegyzés'))) {
       return 'A G-dúr hangsorban **1 kereszt (#)** az előjegyzés, mégpedig a **Fisz**. Mivel a dúr hangsor szerkezete 2 egész, 1 fél, 3 egész és 1 fél lépésből áll (n2+n2+k2+n2+n2+n2+k2), a 7. hangot (F) fel kell emelnünk Fisz-re. Szolmizálva a G hang a dó!';
     }
@@ -109,7 +131,7 @@ async function startServer() {
       return 'A D-dúr hangsorban **2 kereszt (#)** az előjegyzés: a **Fisz** és a **Cisz**. Így biztosítható a dúr hangsor alapszerkezete D kezdőhangról indulva.';
     }
     if (lower.includes('f-dúr') || lower.includes('fdúr') || lower.includes('f-dúrban')) {
-      return 'Az F-dúr hangsorban **1 bé (b)** az előjegyzés: az **Esz** (vagy B hang rendszertől függően F-dúrban a B-t és Esz-t érinti). Bartáné Góhér Edit jegyzete alapján az F hangra épülő dúr hangsor 4. hangját szállítjuk le.';
+      return 'Az F-dúr hangsorban **1 bé (♭)** az előjegyzés: a **B** (leszállított H). Bartáné Góhér Edit jegyzete alapján az F hangra épülő dúr hangsor 4. hangját szállítjuk le.';
     }
     if (lower.includes('ritmus') || lower.includes('tá') || lower.includes('ti-ti') || lower.includes('szinkópa')) {
       return 'A ritmus a zenében a hangok sorának időbeli rendje, egymáshoz való időértékviszonya [Böhm, 2000]. Legfontosabb értékeink: egész (tá-á-á-á), fél (tá-á), negyed (tá), nyolcad pár (ti-ti). A szinkópa [TI-TÁ-TI] két nyolcad értékből és egy középső negyed értékből áll.';
@@ -123,7 +145,9 @@ async function startServer() {
     if (lower.includes('hangköz') || lower.includes('intervallum') || lower.includes('terc') || lower.includes('kvint')) {
       return 'A hangköz vagy intervallum két hang egymástól való távolsága. Legfontosabbak: prím (t1, azonos hangok), szekund (k2, n2), terc (k3, n3), kvart (t4), kvint (t5, tiszta konszonáns hangköz), szext, szeptim és oktáv.';
     }
-    return `Zeneelmélet Tanársegéd vagyok (Bartáné Góhér Edit 2013-as egyetemi jegyzete alapján). Örömmel segítek elmagyarázni a ritmust, szolmizációt, hangközöket, dúr-moll hangsorokat vagy a furulyázást. Kérlek, kérdezz konkrétan a témák valamelyikéről (pl. „Mi a G-dúr előjegyzése?”, „Hogyan épül fel a szinkópa?”)!`;
+    const found = retrieve(msg, 3, 2500);
+    if (found.length) return `A helyi forrásokban ezt találtam a kérdésedhez:\n\n${found.map(c => `**${c.source} – ${c.label}**\n${c.text.slice(0, 750)}`).join('\n\n')}\n\n*(Korlátozott helyi keresési mód; a részletek értelmezéséhez kapcsold be a Gemini API-t.)*`;
+    return 'A jelenleg indexelt helyi forrásokban nem találtam megbízható részletet erről. A Tanársegéd most korlátozott helyi módban működik; kérlek, jelezd az oktatónak a hiányzó fogalmat.';
   }
 
   // API endpoint for chatbot
@@ -137,20 +161,13 @@ async function startServer() {
       return res.json({ reply: getKnowledgeBaseReply(message), mode: 'fallback' });
     }
 
-    const extra = retrieve(message)
+    const extra = retrieve(message, 8, 18000)
       .map((c) => `=== ${c.source}, ${c.label} ===\n${c.text}`)
       .join('\n\n');
-    const systemInstruction = `Te egy barátságos, türelmes és szakmailag precíz zeneelmélet tanársegéd vagy egyetemi hallgatók számára. A tudásod forrásai: (1) Bartáné Góhér Edit: Zenei ismeretek, alapozó készségfejlesztés, furulyagyakorlatok (2013) jegyzete, (2) Kesztler: Zenei alapismeretek, (3) az 1–4. osztályos NAT 2020 Ének-zene tankönyvek (a kérdéshez kikeresett részletei a KIEGÉSZÍTŐ FORRÁSOK között).
+    const systemInstruction = `Te egy magyar nyelvű, pontos zeneelméleti tanársegéd vagy. A válaszhoz az alább visszakeresett helyi jegyzetet, a Zeneelméleti Műhely fejezeteit és a feltöltött magyar nyelvű forrásokat használd. Ne állítsd, hogy a fogalom hiányzik, amíg a visszakeresett forrásokat át nem nézted. Ha van találat, magyarázd el a fogalmat, adj hangneves vagy szolmizációs példát, és nevezd meg a hivatkozott forrást. Ha a forrás nem elég a pontos válaszhoz, különítsd el az általános zeneelméleti ismeretet a helyi anyagból igazolt állításoktól. Ne találj ki forrásoldalt vagy idézetet. A történeti fogalmakat (például hexachord) is magyarázd meg. Válaszolj magyarul, áttekinthetően. A jegyzet ábrájára csak ténylegesen releváns és létező 1–64. oldalszám esetén hivatkozz [[kep:N]] jelöléssel.
 
-Szabályok:
-- Kizárólag a fenti források (jegyzet és kiegészítő források, köztük az 1–4. osztályos tankönyvek) alapján válaszolj. Ha a kérdés általános iskolai ének-zenéről, daltanításról, dalokról vagy tankönyvi anyagról szól, elsősorban a kiegészítő forrásokból válaszolj, és add meg a tankönyv számát (évfolyam) és az oldalt. A fogalmakat, szabályokat, ujjrendet, jelöléseket és példákat a jegyzet szerint add meg, és ahol lehet, idézz belőle szó szerint idézőjelben, a szakasz címének megjelölésével.
-- A jegyzet germán hangolású szoprán furulyát használ; ettől ne térj el, és ne említs barokk fogást, ha a jegyzet nem teszi.
-- Csak akkor mondd, hogy a források nem tárgyalják, ha sem a jegyzetben, sem a kiegészítő forrásokban nincs válasz, és ne találj ki részleteket. Ha általános zenei tudással egészíted ki, jelöld egyértelműen.
-- A jegyzet szövege oldalakra van bontva ([OLDAL N] jelölés). Amikor egy válaszhoz a jegyzet oldalán ábra, kotta, ujjrend-rajz vagy táblázat tartozik, szúrd be a sor végére a [[kep:N]] jelölést (N az oldalszám); az oldal ezt képként jeleníti meg a válasz alatt. Használj minél több szemléltető képet: egy válaszban akár 1-4 releváns oldalt is megjelölhetsz, kifejezetten az ábrát tartalmazó oldalakat részesítsd előnyben. A jelölést csak létező oldalszámmal (1-64) használd. Említsd meg szövegben is, hogy melyik oldalon találja a hallgató.
-- Válaszolj magyarul, tömören. Ne köszönj minden válasz elején. Ne használj LaTeX-et vagy dollárjeles képleteket (ütemmutató: 2/4). Csak egyszerű Markdownt használj (félkövér, felsorolás).
-
-A JEGYZET TELJES SZÖVEGE:
-${NOTES_TEXT}${extra ? `\n\nKIEGÉSZÍTŐ FORRÁSOK – a kérdéshez kikeresett részletek (OCR-ból származnak, ezért lehetnek benne félreolvasott szavak; hivatkozz a fájlnévre és oldalra, ha belőlük idézel; ezekhez ne használj [[kep:N]] jelölést):\n${extra}` : ''}`;
+VISSZAKERESett TANANYAGOK:
+${extra || 'Nincs releváns szöveges találat a helyi indexben.'}`
 
     // Overloaded (5xx/429) or slow models fall through to the next one.
     const models = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
