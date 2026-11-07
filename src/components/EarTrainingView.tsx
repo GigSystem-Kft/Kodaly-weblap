@@ -9,7 +9,7 @@ interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
 }
 
-const EAR_CHALLENGES = [
+export const EAR_CHALLENGES = [
   { id: 1, title: 'Tiszta Prím (t1)', notes: ['C4','C4'], description: '0 félhang: két azonos hang.' },
   { id: 2, title: 'Kis Szekund (k2)', notes: ['C4','C#4'], description: '1 félhang, például C–Desz.' },
   { id: 3, title: 'Nagy Szekund (n2)', notes: ['C4','D4'], description: '2 félhang: C–D.' },
@@ -20,7 +20,7 @@ const EAR_CHALLENGES = [
   { id: 8, title: 'Kis Szext (k6)', notes: ['C4','G#4'], description: '8 félhang: C–Asz.' },
   { id: 9, title: 'Nagy Szext (n6)', notes: ['C4','A4'], description: '9 félhang: C–A.' },
   { id: 10, title: 'Kis Szeptim (k7)', notes: ['C4','A#4'], description: '10 félhang: C–B.' },
-  { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','B4'], description: '11 félhang: C–H.' },
+  { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','H4'], description: '11 félhang: C–H.' },
   { id: 12, title: 'Tiszta Oktáv (t8)', notes: ['C4','C5'], description: '12 félhang: C–C.' }
 ];
 
