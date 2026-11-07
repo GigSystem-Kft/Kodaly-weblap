@@ -56,6 +56,7 @@ export interface QuizAttempt {
   total: number;
   at: string;
   wrongQuestionIds?: string[]; // at most 12 question IDs from the latest attempt
+  durationSeconds?: number; // practice duration, not an exam-time limit
 }
 
 export interface UserProgress {
