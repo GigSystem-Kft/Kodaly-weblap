@@ -49,14 +49,6 @@ function splitSource(file: string, raw: string): Chunk[] {
     });
 }
 
-const LESSON_TEXT = MUSIC_CHAPTERS.flatMap((chapter) =>
-  chapter.subchapters.map((part) =>
-    [chapter.title, part.title, part.summary, ...(part.content ?? []),
-      ...(part.examples ?? []).map((example) => [example.title, example.description].join(': '))]
-      .join('\n')
-  )
-).join('\n\n');
-
 const CHUNKS: Chunk[] = [
   ...splitSource('Bartáné Góhér Edit – egyetemi jegyzet', NOTES_TEXT),
   ...MUSIC_CHAPTERS.flatMap((chapter) =>
@@ -167,7 +159,7 @@ async function startServer() {
     const systemInstruction = `Te egy magyar nyelvű, pontos zeneelméleti tanársegéd vagy. A válaszhoz az alább visszakeresett helyi jegyzetet, a Zeneelméleti Műhely fejezeteit és a feltöltött magyar nyelvű forrásokat használd. Ne állítsd, hogy a fogalom hiányzik, amíg a visszakeresett forrásokat át nem nézted. Ha van találat, magyarázd el a fogalmat, adj hangneves vagy szolmizációs példát, és nevezd meg a hivatkozott forrást. Ha a forrás nem elég a pontos válaszhoz, különítsd el az általános zeneelméleti ismeretet a helyi anyagból igazolt állításoktól. Ne találj ki forrásoldalt vagy idézetet. A történeti fogalmakat (például hexachord) is magyarázd meg. Válaszolj magyarul, áttekinthetően. A jegyzet ábrájára csak ténylegesen releváns és létező 1–64. oldalszám esetén hivatkozz [[kep:N]] jelöléssel.
 
 VISSZAKERESett TANANYAGOK:
-${extra || 'Nincs releváns szöveges találat a helyi indexben.'}`
+${extra || 'Nincs releváns szöveges találat a helyi indexben.'}`;
 
     // Overloaded (5xx/429) or slow models fall through to the next one.
     const models = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
