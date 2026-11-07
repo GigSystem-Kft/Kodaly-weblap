@@ -44,7 +44,9 @@ test('each chapter 1–5 subchapter receives focused, in-depth content with stab
    assert.ok(guide!.sections.every(section=>section.paragraphs.length>=2));
    assert.ok(guide!.guidedPractice.length>=4);
  }
- assert.ok(all.length>=18,'Foundational chapter coverage unexpectedly diminished after 1.4 and 2.4 consolidation');
+ assert.ok(all.length>=16,'Foundational chapter coverage unexpectedly diminished after requested chapter consolidations');
+ assert.ok(!FOUNDATIONS_SUBCHAPTER_IDS.includes('hangkoz-szamitas'));
+ assert.ok(!FOUNDATIONS_SUBCHAPTER_IDS.includes('szolmizacio-alkalmazas'));
  assert.ok(!FOUNDATIONS_SUBCHAPTER_IDS.includes('ritmus-gyakorlatok'));
  assert.ok(!FOUNDATIONS_SUBCHAPTER_IDS.includes('elojegyzes-feloldas'));
 });
