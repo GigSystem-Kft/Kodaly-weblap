@@ -46,20 +46,6 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
         'A moll párhuzam a dúr hangsor hatodik fokán kezdődik. A két hangnemnek más az alaphangja, hiába közös a hangkészlet.',
         'Gyakorlat: határozd meg D-dúr, B-dúr és e-moll előjegyzését.'
       ]
-    },
-    {
-      id: 'hangzat-forditas',
-      title: '5.5 Hármashangzatok és fordításaik',
-      summary: 'Alapállás, szextakkord, kvartszextakkord és hangzatminőség.',
-      content: [
-        'A hármashangzat tercenként épülő három különböző hangból áll. Dúr: nagy terc + kis terc; moll: kis terc + nagy terc.',
-        'C-dúr: C–E–G; c-moll: C–Esz–G; szűkített: C–Esz–Gesz; bővített: C–E–Gisz.',
-        'Alapállásban az alaphang van legalul. Első fordításban a terc kerül a basszusba (szextakkord); másodikban a kvint (kvartszextakkord).',
-        'Példa C-dúrra: alapállás C–E–G, első fordítás E–G–C, második fordítás G–C–E.',
-        'A fordítás önmagában nem változtatja meg a hármashangzat dúr vagy moll minőségét.',
-        'Gyakorlat: írd le a G–H–D dúr hármashangzat két fordítását.'
-      ],
-      examples: [{ title: 'Dúr hármashangzat', description: 'C–E–G: nagy terc + kis terc.', audioNotes: ['C4','E4','G4'] }]
     }
   ]
 };
@@ -130,7 +116,7 @@ const definitions: Array<[string,string,string]> = [
   ['Kvartszextakkord','Hármashangzat második fordítása, a kvint a basszusban.','Hármashangzatok'],
   ['Szűkített hármashangzat','Két kis tercből álló háromhangú akkord.','Hármashangzatok'],
   ['Bővített hármashangzat','Két nagy tercből álló háromhangú akkord.','Hármashangzatok'],
-  ['Összhangzatos moll','Moll hangsor felemelt hetedik fokkal.','Hangsorok'],
+  ['Összhangzatos moll','moll hangsor felemelt hetedik fokkal.','Hangsorok'],
   ['Dallamos moll','Felfelé a 6. és 7. fok emelt; klasszikus alakjában lefelé természetes moll.','Hangsorok']
 ];
 export const ADDITIONAL_FLASHCARDS: Flashcard[] = definitions.map(([term, definition, category], i) => ({id: `extra-f-${i+1}`, term, definition, category}));
