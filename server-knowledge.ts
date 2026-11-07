@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
+import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from './src/data/musicPedagogy';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
 import { MUSIC_HISTORY } from './src/data/musicHistory';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './src/data/musicHistoryProfiles';
@@ -117,6 +118,17 @@ function buildIndex(): KnowledgeChunk[] {
     const chunk=makeChunk('Zenetörténet – irányított műelemzés',
       study.title,summary,'lesson');
     if (chunk) entries.push(chunk);
+  }
+  for (const unit of PEDAGOGY_UNITS) {
+    for (const section of unit.sections) {
+      const chunk = makeChunk(
+        `${PEDAGOGY_SOURCE.author} (${PEDAGOGY_SOURCE.year}): ${PEDAGOGY_SOURCE.title}, ${unit.page} oldal – saját tananyag-feldolgozás`,
+        `08. Ének-zene tantárgy-pedagógia / ${unit.title} / ${section.heading}`,
+        [unit.goal,section.text,...unit.concepts,...unit.seminar,...unit.reflection].join('\\n'),
+        'lesson'
+      );
+      if (chunk) entries.push(chunk);
+    }
   }
   const sources: { file: string; path: string }[] = [
     { file: 'Bartáné Góhér Edit – egyetemi jegyzet', path: resolve(DATA_DIR, 'jegyzet.txt') }
