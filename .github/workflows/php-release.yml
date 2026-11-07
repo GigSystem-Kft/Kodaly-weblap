@@ -97,6 +97,8 @@ jobs:
             curl -kfLSs --retry 3 --connect-timeout 15 --max-time 120 \
               'https://www2.u-szeged.hu/ezk/wp-content/uploads/2017/09/Ritmikai-fejleszt%C5%91program_3h%C3%B3_honlapra.pdf' \
               -o /tmp/ritmikai-original.pdf
+            sha256sum /tmp/ritmikai-original.pdf
+            pdfinfo /tmp/ritmikai-original.pdf | grep -E 'Pages:|Page size:'
             echo 'eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa  /tmp/ritmikai-original.pdf' | sha256sum -c -
             bash scripts/render-rhythm-research-pages.sh /tmp/ritmikai-original.pdf
           fi
