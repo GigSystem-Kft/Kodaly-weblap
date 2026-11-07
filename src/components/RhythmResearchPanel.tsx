@@ -19,7 +19,7 @@ export const RhythmResearchPanel:React.FC=()=>{
   <h3 className="font-serif-cormorant text-3xl md:text-4xl font-bold text-slate-900 mb-3">Ritmikai fejlesztőprogram – Játékgyűjtemény</h3>
   <p className="text-sm text-slate-700 leading-relaxed mb-3">Az első osztályosoknak készült három hónapos program tíz módszertani játéka és mind a 13 eredeti PDF-oldal szövegrétege külön-külön kereshető. A 10–12. oldalon az eredeti kották képek: a ritmusazonosítók és a táblák címei kereshetők, de a jegyek teljes gépi lejegyzése még nem ellenőrzött.</p>
   <p className="text-xs text-slate-600 mb-4">Forrás: {RHYTHM_RESEARCH_SOURCE}. Az oldalanként megjelenő szöveg a feltöltött PDF szövegrétegéből származik; nem AI által kitalált idézet. A fejlesztési célok nem tekinthetők automatikusan bizonyított kutatási eredménynek.</p>
-  <a href={RHYTHM_RESEARCH_ORIGINAL_URL} target="_blank" rel="noopener noreferrer" className="inline-block text-indigo-700 underline text-sm mb-5">Eredeti egyetemi PDF megnyitása (külső forrás) ↗</a>
+  <a href={RHYTHM_PROGRAM_ORIGINAL_URL} target="_blank" rel="noopener noreferrer" className="inline-block text-indigo-700 underline text-sm mb-5">Eredeti egyetemi PDF megnyitása (külső forrás) ↗</a>
   <h4 className="text-xl font-bold text-slate-900 mb-3">Játékok, differenciálással és megfigyelési szempontokkal</h4>
   <div className="grid md:grid-cols-2 gap-3 mb-8">
    {RESEARCH_RHYTHM_GAMES.map((g,i)=><article key={g.id} className="rounded-2xl bg-white border border-slate-200 overflow-hidden">
