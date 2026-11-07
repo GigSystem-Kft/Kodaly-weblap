@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Volume2, Play, Award, CheckCircle2, RotateCcw } from 'lucide-react';
 import { playNote, playEarTrainingInterval, stopEarTrainingInterval } from '../utils/audio';
 import { shuffleEarChallenges } from '../utils/earTraining';
+import { PitchCollectionTraining } from './PitchCollectionTraining';
 
 interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
@@ -23,6 +24,7 @@ const EAR_CHALLENGES = [
 ];
 
 export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => {
+  const [trainingTab,setTrainingTab] = useState<'intervals'|'collections'>('intervals');
   const [round, setRound] = useState(() => shuffleEarChallenges(EAR_CHALLENGES));
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -65,6 +67,14 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   };
 
   return (
+    <>
+    <nav aria-label="Hallásfeladatok típusa" className="max-w-3xl mx-auto px-4 pt-8 flex gap-3 flex-wrap">
+      <button type="button" aria-pressed={trainingTab==='intervals'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('intervals')}}
+        className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='intervals'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangközök felismerése</button>
+      <button type="button" aria-pressed={trainingTab==='collections'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('collections')}}
+        className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='collections'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangkészletek és párosítás</button>
+    </nav>
+    {trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
         <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold mb-3 border border-indigo-500/30">
@@ -141,6 +151,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
           </div>
         )}
       </div>
-    </div>
+    </div>)}
+    </>
   );
 };
