@@ -20,12 +20,12 @@ test "$status" = 200
 saved="$(revision)"
 get_progress
 test "$(revision)" = "$saved"
-updated='{"completedChapters":["ritmus","hangok-kulcsok"],"completedSubchapters":["hangok-1"],"quizScores":{"ritmus":90},"quizAttempts":[{"id":"attempt-1","chapterId":"ritmus","score":90,"correct":9,"total":10,"at":"2026-11-07T12:00:00Z"}],"flashcardsMastered":[],"matchingCompleted":[],"xp":50,"streak":0,"lastActiveDate":"","activityDays":[]}'
+updated='{"completedChapters":["ritmus","hangok-kulcsok"],"completedSubchapters":["hangok-1"],"quizScores":{"ritmus":90},"favoriteExpressions":["favorite-a"],"earTrainingDailyXp":{"2026-11-07":75},"quizAttempts":[{"id":"attempt-1","chapterId":"ritmus","score":90,"correct":9,"total":10,"at":"2026-11-07T12:00:00Z"}],"flashcardsMastered":[],"matchingCompleted":[],"xp":50,"streak":0,"lastActiveDate":"","activityDays":[]}'
 status="$(put_progress "{\"progress\":$updated,\"revision\":\"$saved\"}")"
 test "$status" = 200
 status="$(put_progress "{\"progress\":$payload,\"revision\":\"$saved\"}")"
 test "$status" = 409
 php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["quizScores"]["ritmus"]??null)!==90)exit(1);'
 get_progress
-php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["xp"]??null)!==50 || count($j["progress"]["quizAttempts"]??[])!==1)exit(1);'
+php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["xp"]??null)!==50 || count($j["progress"]["quizAttempts"]??[])!==1 || ($j["progress"]["earTrainingDailyXp"]["2026-11-07"]??null)!==75 || ($j["progress"]["favoriteExpressions"][0]??null)!=="favorite-a")exit(1);'
 echo 'PHP progress revision and stale-write protection passed'
