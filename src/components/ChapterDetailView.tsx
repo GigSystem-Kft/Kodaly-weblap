@@ -131,6 +131,37 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 </div>
                 <p className="text-xs text-slate-600 mt-3">Hat egymás után következő diatonikus hang: a történeti hexachord egyik alapvető példája. Az ábra a hangsorok és szolmizáció tanulásához kapcsolódik.</p>
               </div>}
+              {chapter.id === 'ritmus' && <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 p-5">
+                <h4 className="font-semibold mb-3">Ritmusértékek – szemléltető ábra</h4>
+                <div className="space-y-3">
+                  {[
+                    { label: 'Egész', units: 1 },
+                    { label: 'Fél', units: 2 },
+                    { label: 'Negyed', units: 4 },
+                    { label: 'Nyolcad', units: 8 },
+                  ].map((row) => (
+                    <div key={row.label} className="grid grid-cols-[5rem_1fr] gap-3 items-center">
+                      <span className="text-sm font-medium">{row.label}</span>
+                      <div className="flex gap-1 h-8">{Array.from({ length: row.units }, (_, i) => (
+                        <div key={i} className="flex-1 rounded bg-indigo-500" title={`${row.label} érték`} />
+                      ))}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs text-slate-600">Ugyanannyi időtartam négyféle ritmusértékkel felosztva.</p>
+              </div>}
+              {chapter.id === 'hetfoku-hangsorok' && <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 p-5">
+                <h4 className="font-semibold mb-3">Dúr hangsor – egész- és félhanglépések</h4>
+                <div className="grid grid-cols-7 gap-1">
+                  {['C–D','D–E','E–F','F–G','G–A','A–H','H–C'].map((interval, i) => (
+                    <div key={interval} className={`min-w-0 rounded-lg p-2 text-center ${i === 2 || i === 6 ? 'bg-amber-100 border border-amber-400' : 'bg-indigo-100 border border-indigo-300'}`}>
+                      <div className="text-xs font-semibold">{interval}</div>
+                      <div className="text-lg font-bold">{i === 2 || i === 6 ? '½' : '1'}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs text-slate-600">A C-dúr hét lépése; a félhangok az E–F és H–C között találhatók.</p>
+              </div>}
               <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/30 p-5">
                 <h4 className="font-semibold text-indigo-200 mb-2">Magyar nyelvű oktatóvideók keresése</h4>
                 <p className="text-sm text-slate-300 mb-3">Az alfejezet címére szabott YouTube-keresés; a találatokat a tanárnak érdemes ellenőriznie felhasználás előtt.</p>
