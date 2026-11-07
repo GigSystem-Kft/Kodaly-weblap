@@ -81,3 +81,11 @@ test('glossary favorites are controlled by saved profile and not reset on view n
   assert.match(glossary,/onFavoriteChange\?\./);
   assert.ok(!glossary.includes('setFavoriteIds'),'Glossary favorites should not be reset on remount');
 });
+
+test('signout must warn before discarding unsynchronized student results',()=>{
+ const app=readFileSync('src/App.tsx','utf8');
+ const account=readFileSync('src/components/AccountPanel.tsx','utf8');
+ assert.match(app,/hasUnsavedProgress=\{account !== null/);
+ assert.match(account,/if \(hasUnsavedProgress && !window\.confirm/);
+ assert.match(account,/Ha most kijelentkezel, ezek elveszhetnek/);
+});
