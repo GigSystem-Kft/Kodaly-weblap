@@ -8,6 +8,16 @@ root = Path(sys.argv[1] if len(sys.argv) > 1 else "release")
 errors = []
 counts = {"textbook_pages": 0, "notes": 0, "rhythm": 0}
 
+def valid_jpeg(path: Path) -> bool:
+    """An expected image must be a real JPEG, not an HTML error page or placeholder."""
+    if not path.is_file() or path.stat().st_size < 1024:
+        return False
+    with path.open("rb") as stream:
+        if stream.read(3) != b"\\xff\\xd8\\xff":
+            return False
+        stream.seek(-2, 2)
+        return stream.read(2) == b"\\xff\\xd9"
+
 expected_pages = {1: 72, 2: 69, 3: 80, 4: 81}
 for book in range(1, 5):
     directory = root / "tankonyvek" / str(book)
@@ -35,7 +45,7 @@ for book in range(1, 5):
             errors.append(f"Duplicate textbook {book} page: {number}")
         seen.add(number)
         image = directory / f"p{number:03d}.jpg"
-        if not image.is_file() or image.stat().st_size == 0:
+        if not valid_jpeg(image):
             errors.append(f"Missing or empty textbook image: {image}")
         else:
             counts["textbook_pages"] += 1
@@ -48,7 +58,7 @@ for number in range(1, 14):
         counts["rhythm"] += 1
 
 notes = list((root / "assets" / "jegyzet").glob("*.jpg"))
-counts["notes"] = len([p for p in notes if p.stat().st_size > 0])
+counts["notes"] = len([p for p in notes if valid_jpeg(p)])
 if counts["notes"] < 64:
     errors.append(f"Expected 64 note images, found {counts['notes']}")
 
