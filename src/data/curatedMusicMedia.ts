@@ -7,7 +7,7 @@
  */
 export interface CuratedMedia {
  id:string; chapters:number[]; title:string; note:string; kind:'kep'|'video'|'hanganyag';
- url:string; imageUrl?:string; embedUrl?:string; license?:string; access?:string;
+ url:string; imageUrl?:string; embedUrl?:string; license?:string; access?:string; linkLabel?:string;
 }
 const commons='https://commons.wikimedia.org/wiki/File:';
 const fileImage=(name:string)=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(name);
@@ -49,6 +49,16 @@ export const CURATED_MEDIA:CuratedMedia[]=[
   note:'Fontos: az ábra angolszász hangneveket használhat; a magyar H/B hangneveket a tananyag szövegében ellenőrizd.',
   kind:'kep',url:commons+'Circle_of_5ths_(fifths).svg',
   imageUrl:fileImage('Circle of 5ths (fifths).svg'),license:'CC0 – TYalaA, Wikimedia Commons'
+ },
+ {
+  id:'furulya-magus-magyar',chapters:[2,3,8],
+  title:'Furulya Mágus – magyar furulyatanulási felület',
+  note:'Furulyához kapcsolódó magyar nyelvű digitális tanulóoldal. A mellette látható kottás-furulyás rajz saját szerkesztésű szemléltetés, nem a külső honlap képernyőképe.',
+  kind:'kep',
+  url:'https://furulya.digitaliskottatar.hu/',
+  imageUrl:'/assets/furulya-tanulasi-attekintes.svg',
+  license:'Saját készítésű szemléltető grafika',
+  linkLabel:'Furulya Mágus weboldal megnyitása'
  },
  {
   id:'kep-furulya-german',chapters:[2,3,8],title:'Germán fogású szopránfurulya ujjrendtáblázata',
