@@ -28,7 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
         <h1 className="font-serif-cormorant text-3xl md:text-4xl italic font-semibold leading-none mb-1 text-[#1c1c1c]">
           Zeneelméleti Műhely
         </h1>
-        <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/60 font-medium">
+        <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/75 font-medium">
           Zenei Ismeretek & Oktatási Portál
         </p>
       </button>
@@ -44,7 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
                 className={`all-unset text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer transition-colors ${
                   isActive
                     ? 'text-[#4a54e1] font-semibold underline underline-offset-4'
-                    : 'text-[#1c1c1c]/60 hover:text-[#1c1c1c]'
+                    : 'text-[#1c1c1c]/75 hover:text-[#1c1c1c]'
                 }`}
               >
                 {item.label}
@@ -71,7 +71,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
               className={`all-unset text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer transition-colors ${
                 activeTab.startsWith('textbook-')
                   ? 'text-[#4a54e1] font-semibold underline underline-offset-4'
-                  : 'text-[#1c1c1c]/60 hover:text-[#1c1c1c]'
+                  : 'text-[#1c1c1c]/75 hover:text-[#1c1c1c]'
               }`}
             >
               07. Tankönyvek ▾
@@ -93,9 +93,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
         </nav>
 
         {/* Stats */}
-        <div className="flex items-center gap-3 text-[0.7rem] font-medium tracking-wide text-[#1c1c1c]/70">
+        <div className="flex items-center gap-3 text-[0.7rem] font-medium tracking-wide text-[#1c1c1c]/80">
           <div className="bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded">
-            STREAK: <b className="text-amber-600">{streak} NAP</b>
+            STREAK: <b className="text-amber-800">{streak} NAP</b>
           </div>
           <div className="bg-[#4a54e1]/10 border border-[#4a54e1]/30 px-2.5 py-1 rounded">
             XP: <b className="text-[#4a54e1]">{xp} XP</b>
