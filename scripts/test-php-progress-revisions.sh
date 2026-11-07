@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Invoked by test-php-invitations.sh with test PHP server and admin cookies running.
+set -euo pipefail
+url='http://127.0.0.1:8000/api/index.php?route=progress'
+get_progress() { curl -fsS -b /tmp/zm-admin-cookies "$url" > /tmp/zm-progress-response.json; }
+revision() { php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);echo $j["revision"]??"";'; }
+put_progress() {
+  curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-progress-response.json -w '%{http_code}' -X PUT "$url" \
+    -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+    -H 'Content-Type: application/json' --data "$1"
+}
+get_progress
+old="$(revision)"
+test "${#old}" = 64
+payload='{"completedChapters":["ritmus"],"completedSubchapters":[],"quizScores":{"ritmus":80},"flashcardsMastered":[],"matchingCompleted":[],"xp":30,"streak":0,"lastActiveDate":"","activityDays":[]}'
+status="$(put_progress "{\"progress\":$payload}")"
+test "$status" = 428
+status="$(put_progress "{\"progress\":$payload,\"revision\":\"$old\"}")"
+test "$status" = 200
+saved="$(revision)"
+get_progress
+test "$(revision)" = "$saved"
+updated='{"completedChapters":["ritmus","hangok-kulcsok"],"completedSubchapters":["hangok-1"],"quizScores":{"ritmus":90},"flashcardsMastered":[],"matchingCompleted":[],"xp":50,"streak":0,"lastActiveDate":"","activityDays":[]}'
+status="$(put_progress "{\"progress\":$updated,\"revision\":\"$saved\"}")"
+test "$status" = 200
+status="$(put_progress "{\"progress\":$payload,\"revision\":\"$saved\"}")"
+test "$status" = 409
+php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["quizScores"]["ritmus"]??null)!==90)exit(1);'
+get_progress
+php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["xp"]??null)!==50)exit(1);'
+echo 'PHP progress revision and stale-write protection passed'
