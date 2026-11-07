@@ -1,0 +1,262 @@
+# Zeneelméleti Műhely – PHP telepítés CloudPanelben
+
+## Elkészült kiszolgáló
+
+- React + Vite frontend, kizárólag statikus fájlként publikálva
+- PHP 8.4/8.5 backend a `/api/index.php?route=...` címen
+- Percona/MySQL 8, meglévő `zm_users`, `zm_sessions`, `zm_progress` táblák
+- CloudPanel generikus PHP webhely: `zeneelmelet.digitaliskottatar.hu`
+- Éles gépen **nem kell Node.js / Docker / SSH** a futtatáshoz
+- Regisztráció alapesetben zárva; a meghívásos pilotot külön kell aktiválni.
+
+## 1. GitHub Actions ZIP
+
+A `php-release.yml` GitHub Actions workflow Ubuntu alatt építi meg a weboldalt:
+`npm install`, `npm test`, `npm run lint`, `VITE_PHP_API=1 npm run build`;
+majd a lefordított `dist/` tartalmát és a `php/api/index.php` fájlt egy ZIP-be gyűjti.
+
+Az eredmény neve: `zeneelmeleti-muhely-php.zip`. GitHub Actions Artifacts alatt
+a ZIP külön ZIP csomagolásban is megjelenhet: előbb csomagold ki a letöltött
+Actions csomagot, majd a benne lévő telepítési ZIP-et töltsd fel.
+
+## 2. Feltöltés
+
+CloudPanel → Webhelyek → `zeneelmelet.digitaliskottatar.hu` → Fájlkezelő.
+
+Cél: **a webhely gyökérkönyvtára**, amelyben a `.well-known/` mappa van.
+
+A ZIP felépítése:
+```
+index.html
+assets/
+api/index.php
+api/knowledge.php
+...```
+
+A ZIP-et ebbe a gyökérkönyvtárba bontsd ki. **NE** egy új `zeneelmeleti-muhely-php/`
+alkönyvtárban hagyd. A `.well-known/` mappát és a SSL-tanúsítványt őrizd meg.
+
+## 3. Bizalmas adatbázis-konfiguráció
+
+A webhely-felhasználó a képernyőképek szerint `zeneelmeletadmin`.
+Hozd létre a config fájlt a felhasználó saját mappájában, **nem a htdocs alatt**:
+
+```
+/home/zeneelmeletadmin/zeneelmelet-private.php
+```
+
+A mintát a `deploy/zeneelmelet-private.example.php` fájl tartalmazza.
+Állítsd be a valódi DB jelszót, és ügyelj arra, hogy csak a megfelelő
+Linux-felhasználó olvashassa. A mintában az `invite_registration=false`;
+így a webhely az első telepítéskor nem vesz fel nyilvános hallgatókat.
+
+A PHP `pdo_mysql`, `json`, `openssl` és `password_hash` funkciókat
+használja; PHP 8.4/8.5 alatt ellenőrizendők. A webhelynek a valódi DB eléréséhez
+jogosultságokkal kell rendelkeznie.
+
+**NE** töltsd a valós konfigurációt a webhely gyökerébe, GitHubra vagy csevegésbe.
+
+## 4. Tesztelés
+
+1. `https://zeneelmelet.digitaliskottatar.hu/` – tananyag és teljes UI
+2. `https://zeneelmelet.digitaliskottatar.hu/api/index.php?route=health` – egészségellenőrzés
+3. `https://zeneelmelet.digitaliskottatar.hu/api/index.php?route=auth/status` – elérhető adatbázis; `available: true`
+4. Profil oldal: zárt regisztráció; bejelentkezés csak már létező fiókkal.
+5. Zárt pilothoz `invite_registration=true`, miután a meghívó- és e-mail-migrációt telepítettük.
+
+**Az előző Node.js kód által scrypt-tel készített jelszóhash-eket a PHP password_verify
+nem tudja ellenőrizni.** Ha ilyen korábbi felhasználói fiókok vannak, élesítés
+előtt migráció vagy biztonságos jelszó-visszaállítás szükséges.
+
+## Korlátok
+
+- A PHP API támogatja a regisztrációt, bejelentkezést, kijelentkezést és a profil eredménymentését.
+- A Tanársegéd PHP-kiadása a telepítőcsomagban található, lecke- és forrásrészletekből álló **helyi keresőmóddal** működik. Nem használ külső Gemini API-t és nem fogalmaz önálló AI-magyarázatot.
+- E-mail-megerősítés, jelszó-visszaállítás és jelszócsere megvalósult, de valós e-mail-kézbesítéssel és éles használattal még ellenőrizni kell. Fióktörlés és végleges adatvédelmi tájékoztató még hiányzik.
+- Az IP-alapú belépésvédelem a PHP szerver ideiglenes könyvtárát használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
+- **Nyilvános regisztráció ne induljon az üzemeltetési és adatvédelmi ellenőrzésekig.**
+
+## Meghívásos regisztráció (új kiadás)
+
+A már működő `zeneelmelet` adatbázist **nem kell törölni vagy újratelepíteni**.
+
+1. phpMyAdmin → `zeneelmelet` adatbázis → Importálás: `database/V002__one_time_invitations.sql`. Ezzel létrejön a `zm_invitations` tábla, a korábbi három tábla változatlan marad.
+2. A Macen, a projekt könyvtárában egyetlen címzettnek generálj meghívót:
+
+   ```bash
+   node scripts/create-invitation.mjs cimzett@pelda.hu
+   ```
+
+   A parancs megjelenít egy **titkos kódot** és egy **SQL INSERT** utasítást. Az utóbbit futtasd a megfelelő adatbázis phpMyAdmin SQL lapján. A kódot biztonságos csatornán add át a címzettnek, és ne küldd ide a beszélgetésbe.
+3. A privát `/home/zeneelmeletadmin/zeneelmelet-private.php` konfigurációba írd be:
+
+   ```php
+   'invite_registration' => true,
+   ```
+
+   A régi `allow_registration` opciót a PHP API már **nem használja**; ezt törölheted.
+4. Töltsd fel a **legfrissebb PHP telepítő ZIP** tartalmát a webhely gyökérkönyvtárába; őrizd meg a `.well-known` mappát. Ne töltsd fel a privát konfigurációt a webhely alá.
+5. A Profil oldalon megjelenik a **Meghívókód** mező. Az új hallgatónak ugyanazt az e-mail-címet kell megadnia, amelyhez a meghívót létrehoztad.
+6. Ellenőrizd, hogy ugyanaz a kód második regisztrációra már nem használható. Próbáld ki a bejelentkezést, a kvízeredmény szerveroldali mentését és az újra bejelentkezés utáni visszatöltést.
+
+**Biztonság:** csak a kód SHA-256 hash-e szerepel a MySQL-ben; a nyers meghívó nem. A kód 32 bájt kriptográfiai véletlenből készül, 64 hexadecimális karakter hosszú; 7 napig érvényes, és adatbázis-tranzakcióban pontosan egyszer használható. A meghívó nem helyettesíti a tényleges e-mail megerősítését. Nyilvános regisztráció továbbra sincs.
+
+**Régi jelszavak:** a korábbi Node.js scrypt-hash nem kompatibilis a PHP Argon2id ellenőrzésével. A régi fiókokhoz külön migráció/jelszó-visszaállítás szükséges.
+
+## V003 – E-mail-cím ellenőrzése és jelszó-helyreállítás
+
+**Telepítés előtt készíts biztonsági mentést a `zeneelmelet` adatbázisról.**
+A V003 nem törli a meglévő tanulási eredményeket. A már regisztrált pilotfiókokat migrációkor ellenőrzöttnek jelöli; az ezután létrejövő új fiókok csak megerősítés után léphetnek be.
+
+1. A `zeneelmelet` adatbázisban egyszer importáld:
+   `database/V003__account_email_verification_reset.sql`.
+   A script a `zm_users.email_verified_at` oszlopot és a `zm_account_tokens` táblát hozza létre.
+   **Ne importáld másodszor**, mert az oszlop már létezik.
+2. Töltsd fel a legújabb GitHub Actions **PHP telepítő ZIP** tartalmát a webhely gyökérkönyvtárába, felülírva a régi API-t, React indexet és a megfelelő asseteket.
+3. A webhely nyilvános könyvtárán kívüli `/home/zeneelmeletadmin/zeneelmelet-private.php` fájlban a meglévő `db` és `app_origin` mellé szükséges:
+
+   ```php
+   'invite_registration' => true,
+   'mail_enabled' => false,
+   'mail_from' => 'noreply@zeneelmelet.digitaliskottatar.hu',
+   ```
+
+   **Először maradjon `mail_enabled=false`!** Ekkor a rendszer nem vesz fel új felhasználókat, ha nem tud megerősítő levelet küldeni.
+
+4. A szerveradminnal egyeztesd a kimenő levelezést. A PHP API a `mail()` függvényt használja; ehhez a PHP-folyamatnak működő, megbízható és helyesen hitelesített helyi mail transport (MTA/SMTP relay) szükséges. A `mail()` sikeres visszatérése **nem bizonyítja a címzetthez történő kézbesítést**. Be kell állítani a feladó-domain SPF, DKIM és DMARC rekordjait és ellenőrizni a levél sikeres megérkezését.
+5. A rendszergazda által **tesztelt** e-mail-küldés után állítsd `mail_enabled=true` értékre. Ne oszd meg a mail-/DB-jelszavakat és a tokeneket.
+6. Zárt meghívós próba: új meghívó + fiók → levélben érkező megerősítés (24 óra) → bejelentkezés → „Elfelejtetted a jelszavad?” → e-mailben küldött 30 perces visszaállító link → új jelszó → bejelentkezés. A jelszócsere minden meglévő munkamenetet érvénytelenít.
+
+**Fontos:** a meghívó továbbra is egyszer használható, az e-mail megerősítő és jelszó-visszaállító tokeneket az adatbázis csak SHA-256 lenyomatként tárolja, a linkek egyszer használhatók. A nyilvános, meghívó nélküli regisztráció továbbra sincs bekapcsolva.
+
+A PHP CI valós MySQL 8 tesztadatbázissal és teszt e-mail-átvevővel ellenőrzi a folyamatot. Ez nem helyettesíti a valódi CloudPaneles kézbesítési próbát, a biztonsági auditot és az adatvédelmi dokumentáció elkészítését.
+
+## Rackhost SMTP – dedikált feladó (2026-11)
+
+A dedikált postafiók: `noreply@digitaliskottatar.hu`.
+A webmailbe való bejelentkezés önmagában **nem bizonyítja**, hogy a CloudPanel szerverről kimenő SMTP elérhető.
+
+Az alkalmazás PHPMailert használ hitelesített SMTP-vel, implicit TLS-sel (`smtp.rackhost.hu:465`).
+A telepítő ZIP már tartalmazza a szükséges Composer `vendor` könyvtárat;
+**a CloudPanelre sem Composer, sem SSH nem szükséges**.
+
+A `/home/zeneelmeletadmin/zeneelmelet-private.php` fájlban, a `return [` tömbben legyen:
+
+```php
+'mail_enabled' => false,
+'mail_transport' => 'smtp',
+'mail_from' => 'noreply@digitaliskottatar.hu',
+'smtp' => [
+    'host' => 'smtp.rackhost.hu',
+    'port' => 465,
+    'user' => 'noreply@digitaliskottatar.hu',
+    'password' => 'IDE_IRD_A_POSTAFIOK_JELSZAVAT',
+],
+```
+
+Ezt a fájlt a **htdocs-on kívül** kell tárolni, megfelelő fájljogosultsággal.
+Ne töltsd fel GitHubra, és ne oszd meg a jelszót a beszélgetésben.
+A gyártási útvonalon `mail()` helyett a hitelesített SMTP használatos;
+a `local-test` opció kizárólag `http://localhost:8000` alatt engedélyezett.
+
+Telepítés utáni lépések:
+1. Frissítsd az `api/index.php` fájlt és az `api/vendor/` mappát az új ZIP-ből.
+2. Ellenőrizd a V003 migrációt, az API státuszt, a meglévő felhasználó bejelentkezését.
+3. Egyeztess az üzemeltetővel: a CloudPanel szerver kimenő `smtp.rackhost.hu:465` forgalma engedélyezett-e. A Rackhost MX-rekordjaihoz vagy a már működő weboldal DNS A-rekordjaihoz most nem kell hozzányúlni. Az SPF/DKIM/DMARC legyen beállítva a választott feladói domainen.
+4. A tesztfiókhoz egy új meghívóval, szűk tesztidőszakban `mail_enabled=true` és `invite_registration=true` mellett próbálj regisztrálni. A megerősítő levél **valós kézbesítését** ellenőrizd. Hiba esetén vissza `mail_enabled=false`, és nézd meg a CloudPanel PHP error logot titkok megosztása nélkül.
+5. Sikeres levélküldés után ellenőrizd a megerősítést és a jelszó-visszaállítást.
+
+**Ne állítsd éles nyilvános regisztrációra a weboldalt**, amíg a kézbesítés és az adatvédelmi folyamatok nem lettek ellenőrizve.
+
+## Tanársegéd: ellenőrzött források és külön képgenerálás (2026-11)
+
+A hibásan felismert `kesztler-zenei-alapismeretek.txt` OCR-szöveget **kivettük**
+a `server-data/forrasok/` könyvtárból. Az exportáló és a PHP betöltő
+egyaránt szűri a Kesztler-féle forráscímkéket; a következő kiadás
+`api/knowledge.php` állománya sem tartalmazza. Ez **nem a könyv szakmai
+minőségének** megítélése, kizárólag a hibás digitális átirat kizárása.
+
+Az Admin felület új *Tanársegéd – további források* részében ellenőrzött
+`.txt` vagy `.md` szövegek tölthetők fel (UTF-8, maximum 300 KB/fájl,
+maximum 25 dokumentum). Az alkalmazás privát mappában tárolja őket:
+`/home/zeneelmeletadmin/zeneelmelet-ai-sources/` — nem a `htdocs` alatt.
+Feltöltés vagy eltávolítás után a PHP kereső azonnal az új állományból dolgozik;
+ehhez nincs szükség új GitHub-csomagra. PDF, fényképezett könyvoldal vagy
+nyers OCR-átirat közvetlen feltöltése nem engedélyezett. Előbb ellenőrizd
+és alakítsd pontos, jogszerűen használható UTF-8 szöveggé.
+
+A Gemini **képgenerálás a régi, előre rögzített képek megjelenítésétől külön
+funkció**, amelyet csak a szerveroldali privát konfigurációval lehet aktiválni:
+
+```php
+'tutor_image_generation' => [
+    'enabled' => false, // true csak ellenőrzött API-számlázás és keret után
+    'model' => 'gemini-2.5-flash-image',
+    'api_key' => 'A_GOOGLE_AI_STUDIO_API_KULCSOD',
+],
+```
+
+A PHP a `generativelanguage.googleapis.com` hivatalos API-ját hívja.
+Az API-kulcs soha nem kerül a böngészőbe vagy a GitHubba. Bekapcsolás esetén
+a képgenerálás **bejelentkezéshez kötött**, a kéréslimit 3/15 perc/felhasználó
+és IP kombinációval. A kép csak a kérés válaszában, átmenetileg jelenik meg,
+az alkalmazás nem menti el a szerverre. A rövid PHP API-kérés előbb is
+megszakadhat, ha a szolgáltató nagyon lassú, így élesítéskor próbát igényel.
+A generált képekben a kotta és a hangközök pontatlanok lehetnek.
+
+**Költségek:** képgeneráláshoz a Google API fizetős modellkerete
+szükséges lehet. A `enabled=false` beállítás mellett nem történik képgenerálási
+API-hívás és nincs ilyen költség. A szerver kimenő HTTPS-kapcsolatát
+és a Google AI Studio projekt kvótáit előbb ellenőrizni kell.
+Egyidejű sokfelhasználós használat előtt központi, havi költségkeret,
+nyomon követés és szigorúbb kvótakezelés szükséges.
+
+## Kreatív zenei nevelés – 6. fejezet és kézikönyvi képek
+
+A Kreatív zenei nevelés a Tananyag kezdőoldalán a **6. fejezet**, nem külön felső menüpont.
+A jógyakorlatok a Szirányi Borbála (2021): *Kreatív énekes-játékok ritmikus mozgással*
+című tanári kézikönyv alapján készült, önálló szerkesztésű pedagógiai vázlatok.
+
+A felhasználó által adott PDF-ből három, **eredeti forrásrészletet** kivágtunk
+(nem generált AI-képek). Ezek **külön képcsomagban** érkeznek, a GitHub
+telepítő ZIP jelenleg nem tartalmazza a bináris állományokat.
+
+CloudPanel Fájlkezelőben a képcsomagot a PHP webhely gyökérkönyvtárába
+kell kibontani, az útvonalak változtatása nélkül:
+- `images/kreativ/szunet-testritmus.webp` – 47. nyomtatott oldal, PDF 48.
+- `images/kreativ/szinkopa-testritmus.webp` – 48. nyomtatott oldal, PDF 49.
+- `images/kreativ/egesz-hang-testritmus.webp` – 49. nyomtatott oldal, PDF 50.
+
+A fájlok alatt az oldalnak meg kell jelölnie a forrást:
+Szirányi Borbála (2021): *Kreatív énekes-játékok ritmikus mozgással*,
+az adott nyomtatott oldalszám. Mivel a kézikönyv szerzői jogi védelem
+alatt áll, **nyilvános közzététel előtt meg kell győződni az ábrák
+újraközlésére vonatkozó engedélyről**. A részleteket ne terjeszd tovább
+jogosultság nélkül. Az alkalmazás működik a képek nélkül is; sikertelen
+képbetöltéskor eltünteti az érintett képhelyet.
+
+## 2026-11-06 – teljes Kreatív kézikönyv visszavonása
+
+A Szirányi Borbála-féle teljes 71 oldalas, nyilvános könyvmásolatot kivettük
+a `07. Tankönyvek` menüből. A régi `textbook-5` felületet a React-alkalmazás
+többé nem nyitja meg. A `06. Kreatív zenei nevelés` önálló, saját
+megfogalmazású módszertani feldolgozása megmarad és **21 feladatra bővült**.
+
+**Fontos: a menüpont elrejtése nem törli a már feltöltött fájlokat.**
+A CloudPanel Fájlkezelőben, a megfelelő webhely
+`/home/zeneelmeletadmin/htdocs/zeneelmelet.digitaliskottatar.hu/`
+gyökérkönyvtárából **töröld kizárólag a `tankonyvek/5/` mappát teljes
+tartalmával** (`oldalak.json` és `p001.jpg` … `p071.jpg`).
+A `tankonyvek/1/` … `tankonyvek/4/` mappákat NE töröld.
+Ez biztosítja, hogy a régi közvetlen könyvoldal-URL-ek se működjenek.
+
+Törlés után ellenőrizd például ezt a címet:
+`https://zeneelmelet.digitaliskottatar.hu/tankonyvek/5/p001.jpg`.
+Ennek HTTP 404-et kell adnia, nem könyvborítót vagy indexoldalt.
+Nginx/Varnish vagy CDN gyorstárból is töröld a régi oldalakat, ha továbbra
+is láthatók.
+
+A `Kreatív` módszertani oldalon külön létező 3 eredeti illusztrációhoz
+a felhasználási jogot külön kell tisztázni. Engedély hiányában az
+`images/kreativ/` alatt tárolt eredeti képrészleteket se terjeszd nyilvánosan.
+A szöveges, önálló összefoglalók nem igénylik az eredeti PDF közzétételét.

@@ -1,12 +1,18 @@
+import { apiFetch } from './api';
 import React, { useState, useEffect } from 'react';
+import { AdminDashboard } from './components/AdminDashboard';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
+import { CreativeEducationView } from './components/CreativeEducationView';
+import { MusicHistoryView } from './components/MusicHistoryView';
+import { MusicPedagogyView } from './components/MusicPedagogyView';
 import { ChapterDetailView } from './components/ChapterDetailView';
 import { FlashcardsView } from './components/FlashcardsView';
 import { MatchingGame } from './components/MatchingGame';
 import { QuizView } from './components/QuizView';
 import { EarTrainingView } from './components/EarTrainingView';
 import { ProgressDashboard } from './components/ProgressDashboard';
+import { AccountPanel, type AccountUser } from './components/AccountPanel';
 import { ChatAssistant } from './components/ChatAssistant';
 import { NoteGallery } from './components/NoteGallery';
 import { NotationTable } from './components/NotationTable';
@@ -14,6 +20,7 @@ import { TextbookView } from './components/TextbookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress } from './progress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -22,57 +29,104 @@ export default function App() {
   const [flashcardCategory, setFlashcardCategory] = useState<string>();
   const [matchingCategory, setMatchingCategory] = useState<string>();
 
-  const [progress, setProgress] = useState<UserProgress>(() => {
-    const saved = localStorage.getItem('kodaly_progress');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch {
-        // fallback
-      }
-    }
-    return {
-      completedChapters: [],
-      completedSubchapters: [],
-      quizScores: {},
-      flashcardsMastered: [],
-      matchingCompleted: [],
-      xp: 100,
-      streak: 3,
-      lastActiveDate: new Date().toISOString()
-    };
-  });
+  const [progress, setProgress] = useState<UserProgress>(readProgress);
+  const [account, setAccount] = useState<AccountUser | null>(null);
+  const [accountReady, setAccountReady] = useState(false);
+  const [syncError, setSyncError] = useState('');
 
   useEffect(() => {
-    localStorage.setItem('kodaly_progress', JSON.stringify(progress));
-  }, [progress]);
+    let active = true;
+    const initialize = async () => {
+      try {
+        const response = await apiFetch('/api/auth/me');
+        if (!response.ok) throw new Error('Nem elérhető a fiókszolgáltatás.');
+        const data = await response.json();
+        if (data.user) {
+          const progressResponse = await apiFetch('/api/progress');
+          if (!progressResponse.ok) throw new Error('Nem sikerült betölteni a mentett eredményeket.');
+          const saved = await progressResponse.json();
+          if (active) {
+            setProgress(migrateProgress(saved.progress));
+            setAccount(data.user as AccountUser);
+          }
+        }
+      } catch (error) {
+        if (active) setSyncError(error instanceof Error ? error.message : 'Fiókbetöltési hiba.');
+      } finally {
+        if (active) setAccountReady(true);
+      }
+    };
+    void initialize();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!accountReady) return;
+    if (!account) {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+      return;
+    }
+    const handle = window.setTimeout(async () => {
+      try {
+        const response = await apiFetch('/api/progress', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ progress })
+        });
+        if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
+        setSyncError('');
+      } catch (error) {
+        setSyncError(error instanceof Error ? error.message : 'Mentési hiba.');
+      }
+    }, 600);
+    return () => window.clearTimeout(handle);
+  }, [progress, account, accountReady]);
+
+  const signIn = async (user: AccountUser) => {
+    const response = await apiFetch('/api/progress');
+    if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
+    const saved = await response.json();
+    setProgress(migrateProgress(saved.progress));
+    setSyncError('');
+    setAccount(user);
+    setAccountReady(true);
+  };
+
+  const signOut = () => {
+    setAccount(null);
+    setProgress(readProgress());
+    setSyncError('');
+  };
+
+  const importLocal = () => {
+    setProgress(previous => mergeProgress(previous, readProgress()));
+  };
 
   const addXp = (amount: number) => {
-    setProgress((prev) => ({
-      ...prev,
-      xp: prev.xp + amount
-    }));
+    setProgress(prev => recordActivity(prev, amount));
   };
 
   const completeChapter = (chapterId: string) => {
-    if (!progress.completedChapters.includes(chapterId)) {
-      setProgress((prev) => ({
-        ...prev,
-        completedChapters: [...prev.completedChapters, chapterId],
-        xp: prev.xp + 50
-      }));
-    }
+    setProgress(prev => prev.completedChapters.includes(chapterId)
+      ? prev
+      : recordActivity({ ...prev, completedChapters: [...prev.completedChapters, chapterId] }, 50));
+  };
+
+  const markFlashcard = (id: string) => {
+    setProgress(prev => prev.flashcardsMastered.includes(id)
+      ? prev
+      : recordActivity({ ...prev, flashcardsMastered: [...prev.flashcardsMastered, id] }, 15));
   };
 
   const saveQuizScore = (chapterId: string, score: number) => {
-    setProgress((prev) => ({
-      ...prev,
-      quizScores: {
-        ...prev.quizScores,
-        [chapterId]: Math.max(prev.quizScores[chapterId] || 0, score)
-      },
-      xp: prev.xp + 30
-    }));
+    setProgress(prev => {
+      const previousBest = prev.quizScores[chapterId] ?? 0;
+      const improved = score > previousBest;
+      return recordActivity({
+        ...prev,
+        quizScores: { ...prev.quizScores, [chapterId]: Math.max(previousBest, score) }
+      }, improved ? 30 : 0);
+    });
   };
 
   const handleSelectChapter = (chapter: Chapter) => {
@@ -111,8 +165,9 @@ export default function App() {
           setActiveTab(tab);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
+        isAdmin={account?.role === 'admin'}
         xp={progress.xp}
-        streak={progress.streak}
+        streak={consecutiveDays(progress.activityDays ?? [])}
       />
 
       <main className="flex-1 pb-16">
@@ -120,7 +175,32 @@ export default function App() {
           <ChapterListView
             onSelectChapter={handleSelectChapter}
             progress={progress}
+            onOpenCreative={() => { setActiveTab('creative'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onOpenHistory={() => { setActiveTab('musicHistory'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onOpenPedagogy={() => { setActiveTab('musicPedagogy'); window.scrollTo({top:0,behavior:'smooth'}); }}
           />
+        )}
+
+        {activeTab === 'musicPedagogy' && (
+          <MusicPedagogyView
+            onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onQuiz={() => openQuiz('pedagogia')}
+            onFlashcards={() => openFlashcards('Ének-zene tantárgy-pedagógia')}
+            onMatching={() => openMatchingGame('Ének-zene tantárgy-pedagógia')}
+          />
+        )}
+
+        {activeTab === 'musicHistory' && (
+          <MusicHistoryView
+            onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onQuiz={() => openQuiz('zenetortenet')}
+            onFlashcards={() => openFlashcards('Zenetörténet')}
+            onMatching={() => openMatchingGame('Zenetörténet')}
+          />
+        )}
+
+        {activeTab === 'creative' && (
+          <CreativeEducationView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
         )}
 
         {activeTab === 'chapterDetail' && selectedChapter && (
@@ -137,7 +217,7 @@ export default function App() {
         )}
 
         {activeTab === 'flashcards' && (
-          <FlashcardsView onAddXp={addXp} initialCategory={flashcardCategory} />
+          <FlashcardsView onMasterCard={markFlashcard} masteredCards={progress.flashcardsMastered} initialCategory={flashcardCategory} />
         )}
 
         {activeTab === 'matching' && (
@@ -146,7 +226,6 @@ export default function App() {
 
         {activeTab === 'quiz' && (
           <QuizView
-            onAddXp={addXp}
             onSaveQuizScore={saveQuizScore}
             initialChapterId={quizChapterId}
           />
@@ -156,8 +235,21 @@ export default function App() {
           <EarTrainingView onAddXp={addXp} />
         )}
 
+        {activeTab === 'admin' && account?.role === 'admin' && <AdminDashboard />}
+
         {activeTab === 'dashboard' && (
-          <ProgressDashboard progress={progress} />
+          <>
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+              <AccountPanel
+                user={account}
+                onSignedIn={signIn}
+                onSignedOut={signOut}
+                onImportLocal={importLocal}
+                syncError={syncError}
+              />
+            </div>
+            <ProgressDashboard progress={progress} signedIn={!!account} />
+          </>
         )}
 
         {activeTab === 'gallery' && (
@@ -177,7 +269,7 @@ export default function App() {
           />
         )}
 
-        {activeTab.startsWith('textbook-') && (
+        {activeTab.startsWith('textbook-') && [1, 2, 3, 4].includes(Number(activeTab.split('-')[1])) && (
           <TextbookView book={Number(activeTab.split('-')[1])} />
         )}
       </main>

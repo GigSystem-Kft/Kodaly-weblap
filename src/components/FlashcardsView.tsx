@@ -4,15 +4,15 @@ import { Sparkles, RotateCw, Check, ArrowRight, ArrowLeft, Volume2 } from 'lucid
 import { playNote } from '../utils/audio';
 
 interface FlashcardsViewProps {
-  onAddXp: (amount: number) => void;
+  onMasterCard: (id: string) => void;
+  masteredCards: string[];
   initialCategory?: string;
 }
 
-export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onAddXp, initialCategory }) => {
+export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, masteredCards, initialCategory }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || 'all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isFlipped, setIsFlipped] = useState<boolean>(false);
-  const [masteredCards, setMasteredCards] = useState<string[]>([]);
 
   const categories = ['all', ...Array.from(new Set(FLASHCARDS_DATA.map((f) => f.category)))];
 
@@ -34,8 +34,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onAddXp, initial
 
   const handleMaster = () => {
     if (!masteredCards.includes(currentCard.id)) {
-      setMasteredCards([...masteredCards, currentCard.id]);
-      onAddXp(15);
+      onMasterCard(currentCard.id);
     }
     handleNext();
   };
@@ -112,16 +111,18 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onAddXp, initial
         </div>
 
         <div className="flex items-center justify-between">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              playNote('C5', 400);
-            }}
-            className="p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700"
-            title="Hang lejátszása"
-          >
-            <Volume2 className="w-4 h-4" />
-          </button>
+          {!['Kreatív zenei nevelés','Zenetörténet','Zenetörténet – alkotók'].includes(currentCard.category) && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                playNote('C5', 400);
+              }}
+              className="p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700"
+              title="Példahang lejátszása (C5)"
+            >
+              <Volume2 className="w-4 h-4" />
+            </button>
+          )}
           <span className="text-xs text-slate-400 group-hover:text-indigo-300 transition-colors">
             {isFlipped ? 'Mutasd a kifejezést' : 'Mutasd a jelentést'}
           </span>

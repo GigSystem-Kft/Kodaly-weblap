@@ -4,97 +4,21 @@ import { dirname, resolve } from 'path';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
-import { readFileSync, readdirSync, existsSync } from 'fs';
-import { MUSIC_CHAPTERS } from './src/data/musicData';
+import { knowledgeContext, knowledgeStatus, localKnowledgeReply } from './server-knowledge';
+import { installAccountRoutes } from './server-auth';
 
 dotenv.config({ path: ['.env.local', '.env'] });
 
-const NOTES_TEXT = readFileSync(resolve(process.cwd(), 'server-data/jegyzet.txt'), 'utf-8');
-const SOURCES_DIR = resolve(process.cwd(), 'server-data/forrasok');
-
-interface Chunk { source: string; label: string; text: string; terms: Map<string, number>; }
-
-const normalize = (s: string) =>
-  s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-const tokenize = (s: string) => normalize(s).match(/[a-z0-9]{3,}/g) ?? [];
-// Hungarian is agglutinative: compare word prefixes so inflected forms still match.
-const stem = (w: string) => w.slice(0, 6);
-
-function splitSource(file: string, raw: string): Chunk[] {
-  const pageParts = raw.split(/^-{3}\s*(\d+)\.\s*oldal\s*-{3}\s*$/m);
-  const pieces: { label: string; text: string }[] = [];
-  if (pageParts.length > 1) {
-    for (let i = 1; i < pageParts.length; i += 2) {
-      pieces.push({ label: `${pageParts[i]}. oldal`, text: pageParts[i + 1] });
-    }
-  } else {
-    let n = 0;
-    let buf = '';
-    for (const para of raw.split(/\n\s*\n/)) {
-      buf += `${para}\n\n`;
-      if (buf.length > 1500) { pieces.push({ label: `rész ${++n}`, text: buf }); buf = ''; }
-    }
-    if (buf.trim()) pieces.push({ label: `rész ${++n}`, text: buf });
-  }
-  return pieces
-    .map((p) => ({ ...p, text: p.text.trim() }))
-    .filter((p) => p.text.length > 40)
-    .map((p) => {
-      const terms = new Map<string, number>();
-      for (const w of tokenize(p.text)) {
-        const s = stem(w);
-        terms.set(s, (terms.get(s) ?? 0) + 1);
-      }
-      return { source: file, label: p.label, text: p.text, terms };
-    });
-}
-
-const CHUNKS: Chunk[] = [
-  ...splitSource('Bartáné Góhér Edit – egyetemi jegyzet', NOTES_TEXT),
-  ...MUSIC_CHAPTERS.flatMap((chapter) =>
-    chapter.subchapters.flatMap((part) => splitSource(
-      'Zeneelméleti Műhely – tananyag',
-      [chapter.title, part.title, part.summary, ...(part.content ?? []),
-        ...(part.examples ?? []).map((e) => [e.title, e.description].join(': '))].join('\n')
-    ))
-  ),
-  ...(existsSync(SOURCES_DIR)
-    ? readdirSync(SOURCES_DIR)
-      .filter((f) => /\.(txt|md)$/i.test(f) && !f.startsWith('_'))
-      .sort()
-      .flatMap((f) => splitSource(f, readFileSync(resolve(SOURCES_DIR, f), 'utf-8')))
-    : []),
-];
-
-const DOC_FREQ = new Map<string, number>();
-for (const c of CHUNKS) for (const t of c.terms.keys()) DOC_FREQ.set(t, (DOC_FREQ.get(t) ?? 0) + 1);
-
-function retrieve(query: string, limit = 6, maxChars = 14000): Chunk[] {
-  const q = [...new Set(tokenize(query).map(stem))];
-  if (!q.length || !CHUNKS.length) return [];
-  const scored = CHUNKS.map((c) => {
-    let score = 0;
-    for (const t of q) {
-      const tf = c.terms.get(t);
-      if (tf) score += (1 + Math.log(tf)) * Math.log(1 + CHUNKS.length / (DOC_FREQ.get(t) ?? 1));
-    }
-    return { c, score };
-  }).filter((x) => x.score > 0).sort((a, b) => b.score - a.score);
-  const picked: Chunk[] = [];
-  let total = 0;
-  for (const { c } of scored) {
-    if (picked.length >= limit || total + c.text.length > maxChars) continue;
-    picked.push(c);
-    total += c.text.length;
-  }
-  return picked;
-}
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 async function startServer() {
   const app = express();
-  app.use(express.json());
+  // CloudPanel nginx operates as a local reverse proxy; only trust local forwarded addresses.
+  app.set('trust proxy', 'loopback');
+  app.use(express.json({ limit: '100kb' }));
+  installAccountRoutes(app);
+  app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'zeneelmeleti-muhely' }));
 
   const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
   const ai = apiKey ? new GoogleGenAI({
@@ -107,40 +31,8 @@ async function startServer() {
   }) : null;
 
   app.get('/api/chat/status', (_req, res) => {
-    res.json({ mode: ai ? 'gemini' : 'fallback', indexedChunks: CHUNKS.length, indexedSources: [...new Set(CHUNKS.map(c => c.source))] });
+    res.json({ mode: ai ? 'gemini' : 'fallback', knowledge: knowledgeStatus() });
   });
-
-  // Intelligent fallback music theory knowledge base
-  function getKnowledgeBaseReply(msg: string): string {
-    const lower = msg.toLowerCase();
-    if (normalize(msg).includes('hexachord') || normalize(msg).includes('hexakord')) {
-      return '**Hexachord**: hat egymást követő diatonikus hangból álló hangkészlet. A középkori szolmizációban Guido d’Arezzo hat szótagja (ut–re–mi–fa–sol–la) kapcsolódik hozzá. Példa: C–D–E–F–G–A. A történeti hexachordrendszer és a mai pedagógiai hatfokú hangkészlet fogalma nem teljesen azonos. Forrás: Bartáné Góhér Edit jegyzete, valamint a Hangkészletek fejezet.';
-    }
-    if (lower.includes('g-dúr') || lower.includes('gdúr') || (lower.includes('g') && lower.includes('előjegyzés'))) {
-      return 'A G-dúr hangsorban **1 kereszt (#)** az előjegyzés, mégpedig a **Fisz**. Mivel a dúr hangsor szerkezete 2 egész, 1 fél, 3 egész és 1 fél lépésből áll (n2+n2+k2+n2+n2+n2+k2), a 7. hangot (F) fel kell emelnünk Fisz-re. Szolmizálva a G hang a dó!';
-    }
-    if (lower.includes('d-dúr') || lower.includes('ddúr') || lower.includes('d-dúrban')) {
-      return 'A D-dúr hangsorban **2 kereszt (#)** az előjegyzés: a **Fisz** és a **Cisz**. Így biztosítható a dúr hangsor alapszerkezete D kezdőhangról indulva.';
-    }
-    if (lower.includes('f-dúr') || lower.includes('fdúr') || lower.includes('f-dúrban')) {
-      return 'Az F-dúr hangsorban **1 bé (♭)** az előjegyzés: a **B** (leszállított H). Bartáné Góhér Edit jegyzete alapján az F hangra épülő dúr hangsor 4. hangját szállítjuk le.';
-    }
-    if (lower.includes('ritmus') || lower.includes('tá') || lower.includes('ti-ti') || lower.includes('szinkópa')) {
-      return 'A ritmus a zenében a hangok sorának időbeli rendje, egymáshoz való időértékviszonya [Böhm, 2000]. Legfontosabb értékeink: egész (tá-á-á-á), fél (tá-á), negyed (tá), nyolcad pár (ti-ti). A szinkópa [TI-TÁ-TI] két nyolcad értékből és egy középső negyed értékből áll.';
-    }
-    if (lower.includes('szolmizáció') || lower.includes('dó') || lower.includes('ré') || lower.includes('mi')) {
-      return 'A szolmizáció nem a hangok abszolút magasságát, hanem egy hangnemen belüli funkciót és relatív magasságot jelöl (dó, ré, mi, fá, szó, lá, ti). Kodály Zoltán elve szerint „könnyebb félhang nélkül tisztán énekelni”, ezért a kisgyermekeknek félhang nélküli dallamokat (pentatónia, hexachord) tanítunk.';
-    }
-    if (lower.includes('furulya') || lower.includes('ujjrend')) {
-      return 'A segédanyagban használt hangszer szoprán furulya, germán hangolású. Új hang indításakor „tü” hangzóval fújjuk meg hosszan vagy röviden. A lyukakat lazán, de pontosan fedjük be a ujjpárnákkal. Bal kéz van felül, jobb kéz alul.';
-    }
-    if (lower.includes('hangköz') || lower.includes('intervallum') || lower.includes('terc') || lower.includes('kvint')) {
-      return 'A hangköz vagy intervallum két hang egymástól való távolsága. Legfontosabbak: prím (t1, azonos hangok), szekund (k2, n2), terc (k3, n3), kvart (t4), kvint (t5, tiszta konszonáns hangköz), szext, szeptim és oktáv.';
-    }
-    const found = retrieve(msg, 3, 2500);
-    if (found.length) return `A helyi forrásokban ezt találtam a kérdésedhez:\n\n${found.map(c => `**${c.source} – ${c.label}**\n${c.text.slice(0, 750)}`).join('\n\n')}\n\n*(Korlátozott helyi keresési mód; a részletek értelmezéséhez kapcsold be a Gemini API-t.)*`;
-    return 'A jelenleg indexelt helyi forrásokban nem találtam megbízható részletet erről. A Tanársegéd most korlátozott helyi módban működik; kérlek, jelezd az oktatónak a hiányzó fogalmat.';
-  }
 
   // API endpoint for chatbot
   app.post('/api/chat', async (req, res) => {
@@ -150,16 +42,21 @@ async function startServer() {
     }
 
     if (!ai) {
-      return res.json({ reply: getKnowledgeBaseReply(message), mode: 'fallback' });
+      return res.json({ reply: localKnowledgeReply(message), mode: 'fallback' });
     }
 
-    const extra = retrieve(message, 8, 18000)
-      .map((c) => `=== ${c.source}, ${c.label} ===\n${c.text}`)
-      .join('\n\n');
-    const systemInstruction = `Te egy magyar nyelvű, pontos zeneelméleti tanársegéd vagy. A válaszhoz az alább visszakeresett helyi jegyzetet, a Zeneelméleti Műhely fejezeteit és a feltöltött magyar nyelvű forrásokat használd. Ne állítsd, hogy a fogalom hiányzik, amíg a visszakeresett forrásokat át nem nézted. Ha van találat, magyarázd el a fogalmat, adj hangneves vagy szolmizációs példát, és nevezd meg a hivatkozott forrást. Ha a forrás nem elég a pontos válaszhoz, különítsd el az általános zeneelméleti ismeretet a helyi anyagból igazolt állításoktól. Ne találj ki forrásoldalt vagy idézetet. A történeti fogalmakat (például hexachord) is magyarázd meg. Válaszolj magyarul, áttekinthetően. A jegyzet ábrájára csak ténylegesen releváns és létező 1–64. oldalszám esetén hivatkozz [[kep:N]] jelöléssel.
+    const indexedContext = knowledgeContext(message);
+    const systemInstruction = `Te egy szakmailag pontos, segítőkész magyar nyelvű zeneelméleti tanársegéd vagy.
+A válaszokat elsősorban a kereséssel kiválasztott, alább megadott forrásrészletek alapján állítsd össze.
+A források között a Zeneelméleti Műhely leckéi, Bartáné Góhér Edit zenei jegyzete, Kesztler Zenei alapismeretek című anyaga és a NAT 2020 1–4. osztályos ének-zene tankönyvek vannak.
+A válaszban nevezz meg legalább egy konkrét forrást, lehetőleg leckecímmel vagy oldalszámmal.
+Ha a kapott részletekből nem állapítható meg a válasz, mondd el ezt; ne találj ki idézetet, tankönyvoldalt, hangzó példát vagy adatot.
+A források szövegének egy része gépi kinyerésből származik, lehetnek benne hibák; a szakmailag ellentmondásos adatot ne ismételd ellenőrzés nélkül.
+A kapcsolódó kottaképekhez a Bartáné-jegyzet létező 1–64. oldalaira [[kep:N]] jelöléssel hivatkozhatsz, de csak akkor, ha a megadott jegyzetrészletben valóban szerepel a szükséges oldalszám.
+Válaszolj érthetően, magyarul, és ahol segít, adj rövid lépésenkénti magyarázatot vagy gyakorlati példát. Ne használj LaTeX-et.
 
-VISSZAKERESett TANANYAGOK:
-${extra || 'Nincs releváns szöveges találat a helyi indexben.'}`;
+KIKERESETT FORRÁSRÉSZLETEK:
+${indexedContext || 'Ehhez a kérdéshez nem találtam biztosan releváns részletet.'}`;
 
     // Overloaded (5xx/429) or slow models fall through to the next one.
     const models = ['gemini-3.6-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'];
@@ -215,6 +112,11 @@ ${extra || 'Nincs releváns szöveges találat a helyi indexben.'}`;
     }
   });
 
+  app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    console.error('API request failed:', error);
+    if (!res.headersSent) res.status(503).json({ error: 'A szerveroldali szolgáltatás átmenetileg nem érhető el.' });
+  });
+
   // Vite middleware for development
   const isProd = process.env.NODE_ENV === 'production';
   if (!isProd) {
@@ -230,9 +132,10 @@ ${extra || 'Nincs releváns szöveges találat a helyi indexben.'}`;
     });
   }
 
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+  const port = Number(process.env.PORT || 3000);
+  const host = process.env.HOST || '127.0.0.1';
+  app.listen(port, host, () => {
+    console.log(`Server running on http://${host}:${port}`);
   });
 }
 

@@ -1,0 +1,10 @@
+# Zeneelméleti Műhely: helyi konfiguráció és generált állományok
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+.DS_Store
+*.log
+*.pem
+*.key

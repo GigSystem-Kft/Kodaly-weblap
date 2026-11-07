@@ -1,0 +1,18 @@
+# Az eredeti repository tartalmazhat korábban felvett Mac-es függőségeket.
+.git
+.github
+node_modules
+dist
+release
+*.tar
+*.tar.gz
+*.zip
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+*.pem
+*.key
+*.sqlite
+coverage

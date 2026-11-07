@@ -1,0 +1,28 @@
+# Saját privát Registry, NEM GitHub Container Registry.
+# Linux host hálózata: a CloudPanel nginx és a MySQL jelenleg 127.0.0.1-en érhető el.
+# FONTOS: host networking kevesebb hálózati izolációt ad; az admin hagyja jóvá.
+services:
+  zeneelmeleti-muhely:
+    image: ${ZENEELMELET_IMAGE:?Add meg a saját registry image címét a compose .env fájlban}
+    container_name: zeneelmeleti-muhely
+    network_mode: host
+    restart: unless-stopped
+    init: true
+    environment:
+      NODE_ENV: production
+      HOST: 127.0.0.1
+      PORT: '3100'
+      APP_ORIGIN: https://zeneelmelet.digitaliskottatar.hu
+      DB_HOST: 127.0.0.1
+      DB_PORT: '3306'
+      DB_NAME: zeneelmelet
+      DB_USER: zeneelmelet
+      DB_PASSWORD: ${DB_PASSWORD:?A saját szerveren biztonságosan add meg a DB_PASSWORD változót}
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    pids_limit: 150

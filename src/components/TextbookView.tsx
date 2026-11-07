@@ -18,14 +18,19 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
 
   useEffect(() => {
     setPages([]); setError(false); setOpen(null); setQuery('');
+    if (!TEXTBOOKS.some(textbook => textbook.id === book)) { setError(true); return; }
     fetch(`/tankonyvek/${book}/oldalak.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then(setPages)
       .catch(() => setError(true));
   }, [book]);
 
-  const q = query.trim().toLowerCase();
-  const visible = q ? pages.filter((p) => p.szoveg.toLowerCase().includes(q)) : pages;
+  const normalize = (text: string) => text.toLocaleLowerCase('hu-HU')
+    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
+  const terms = normalize(query.trim()).split(/\\s+/).filter(Boolean);
+  const visible = terms.length
+    ? pages.filter(p => terms.every(term => normalize(p.szoveg).includes(term)))
+    : pages;
   const img = (n: number) => `/tankonyvek/${book}/p${String(n).padStart(3, '0')}.jpg`;
   const current = open !== null ? visible[open] : null;
 
@@ -50,8 +55,7 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
         </span>
         <h2 className="font-serif-cormorant text-4xl italic font-semibold mt-1">{title}</h2>
         <p className="text-sm text-[#1c1c1c]/70 mt-2 max-w-2xl">
-          A tankönyv oldalai kottaképekkel és a hozzájuk tartozó szöveges ismeretanyaggal. Kattints az oldalra a nagyításhoz.
-          Személyes tanulási célra.
+          A tankönyv oldalai kottaképekkel és a hozzájuk tartozó szöveges ismeretanyaggal. Kattints az oldalra a nagyításhoz. Személyes tanulási célra.
         </p>
       </div>
 
@@ -63,7 +67,7 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
       />
 
       {error && <p className="text-sm text-red-700">A tankönyv nem tölthető be.</p>}
-      <p className="font-mono-jetbrains text-[0.7rem] uppercase mb-4">{visible.length} oldal</p>
+      <p className="font-mono-jetbrains text-[0.7rem] uppercase mb-4">{visible.length} oldal{terms.length ? ' találat' : ''}</p>
 
       <div className="grid sm:grid-cols-2 gap-6">
         {visible.map((p, idx) => (

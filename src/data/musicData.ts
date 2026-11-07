@@ -1,4 +1,10 @@
 import { Chapter, Flashcard, QuizQuestion, MatchingPair } from '../types';
+import { ADDITIONAL_LESSONS, ADDITIONAL_QUESTIONS, ADDITIONAL_FLASHCARDS, ADDITIONAL_MATCHING } from './extendedMusicData';
+import { NEW_FLASHCARDS, NEW_QUIZZES, NEW_MATCHING } from './curriculum67Practice';
+import { PORTRAIT_FLASHCARDS, PORTRAIT_MATCHING, PORTRAIT_QUIZZES } from './musicHistoryExerciseBank';
+import { PEDAGOGY_FLASHCARDS, PEDAGOGY_MATCHING, PEDAGOGY_QUIZZES } from './musicPedagogyExercises';
+import { FOUNDATIONS_FLASHCARDS, FOUNDATIONS_MATCHING, FOUNDATIONS_QUIZZES } from './musicFoundationsExercises';
+import { HUNGARIAN_FLASHCARDS, HUNGARIAN_MATCHING, HUNGARIAN_QUIZZES } from './hungarianWorkshopsExerciseBank';
 
 export const MUSIC_CHAPTERS: Chapter[] = [
   {
@@ -43,7 +49,7 @@ export const MUSIC_CHAPTERS: Chapter[] = [
         content: [
           'Szinkópa [TI-TÁ-TI]: Két nyolcad értékből, s középen negyed értékből áll. Négy nyolcadból jön létre.',
           'Éles ritmus [TI-TÁM / TI-TÁI]: Nyolcad + pontozott negyed.',
-          'Nyújtott ritmus [TÁM-TI / TÁI-TI]: Pontozott nyegyed + nyolcad.',
+          'Nyújtott ritmus [TÁM-TI / TÁI-TI]: Pontozott negyed + nyolcad.',
           'Triola: Ha egy negyed érték megszólalásának ideje alatt egyenletesen oszlik el három kisebb érték.',
           'Szünetjelek: Egész szünet (-), fél szünet ([SZÜ-NET]), negyed szünet ([SZÜN]), nyolcad szünet ([SZÜ]).'
         ],
@@ -180,7 +186,9 @@ export const MUSIC_CHAPTERS: Chapter[] = [
         content: [
           '• Bichord: Két szomszédos hang nagy szekund távolságban (s-l).',
           '• Trichord: Három egymás melletti hang (d-r-m, Túrót ettem).',
-          '• Pentachord és Hexachord: 5 illetve 6 egymás melletti hang.'
+          '• Pentachord és Hexachord: 5, illetve 6 egymás melletti diatonikus hang.',
+          'A hexachord a hat egymást követő hangból álló hangsorszakasz. A Guido-féle középkori szolmizációban ut–re–mi–fa–sol–la (egész–egész–fél–egész–egész hangközrend). Természetes: C–D–E–F–G–A; kemény: G–A–H–C–D–E; lágy: F–G–A–B–C–D. A magyar H és B hangneveket külön kell kezelni.',
+          'Kapcsolódó magyar szakirodalom: Kelemen Judit, Zempléni Múzsa – Mátyás-korabeli zenei nevelés Sárospatakon a Szalkai-kódex tükrében (hexachord és Guido-kéz).'
         ]
       }
     ]
@@ -200,7 +208,7 @@ export const MUSIC_CHAPTERS: Chapter[] = [
           'Dúr hangsor szerkezete: n2 + n2 + k2 + n2 + n2 + n2 + k2 (dó-tól dó-ig).',
           'G-dúr: 1 kereszt (#) - Fisz.',
           'D-dúr: 2 kereszt (#) - Fisz, Cisz.',
-          'F-dúr: 1 bé (♭) – B (leszállított H).',
+          'F-dúr: 1 bé (b) - B.',
           'Modális hangsorok: Ion (dúr), Líd (bővített kvart), Mixolíd (kis szeptim).'
         ]
       },
@@ -578,3 +586,27 @@ export const MATCHING_PAIRS: MatchingPair[] = [
   { id: 'm22', term: 'H', match: 'A természetes B hang magyar neve', category: 'ABC-s hangok' },
   { id: 'm23', term: 'B', match: 'A leszállított H hang magyar neve (B♭)', category: 'ABC-s hangok' }
 ];
+
+// Kiegészítő leckék és feladatok: az eredeti azonosítók megtartásával.
+for (const chapter of MUSIC_CHAPTERS) {
+  chapter.subchapters.push(...(ADDITIONAL_LESSONS[chapter.id] ?? []));
+}
+FLASHCARDS_DATA.push(...ADDITIONAL_FLASHCARDS);
+QUIZ_QUESTIONS.push(...ADDITIONAL_QUESTIONS);
+MATCHING_PAIRS.push(...ADDITIONAL_MATCHING);
+// Additive banks: keep all previous IDs and recorded student results intact.
+FLASHCARDS_DATA.push(...NEW_FLASHCARDS);
+QUIZ_QUESTIONS.push(...NEW_QUIZZES);
+MATCHING_PAIRS.push(...NEW_MATCHING);
+FLASHCARDS_DATA.push(...PORTRAIT_FLASHCARDS);
+MATCHING_PAIRS.push(...PORTRAIT_MATCHING);
+QUIZ_QUESTIONS.push(...PORTRAIT_QUIZZES);
+FLASHCARDS_DATA.push(...PEDAGOGY_FLASHCARDS);
+MATCHING_PAIRS.push(...PEDAGOGY_MATCHING);
+QUIZ_QUESTIONS.push(...PEDAGOGY_QUIZZES);
+FLASHCARDS_DATA.push(...FOUNDATIONS_FLASHCARDS);
+MATCHING_PAIRS.push(...FOUNDATIONS_MATCHING);
+QUIZ_QUESTIONS.push(...FOUNDATIONS_QUIZZES);
+FLASHCARDS_DATA.push(...HUNGARIAN_FLASHCARDS);
+MATCHING_PAIRS.push(...HUNGARIAN_MATCHING);
+QUIZ_QUESTIONS.push(...HUNGARIAN_QUIZZES);

@@ -6,28 +6,26 @@ interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   xp: number;
+  isAdmin?: boolean;
   streak: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak }) => {
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak, isAdmin = false }) => {
   const navItems = [
-    { id: 'chapters', label: '01. Fejezetek' },
-    { id: 'gallery', label: '02. Hangértékek' },
-    { id: 'notationTable', label: '03. Jelölések' },
-    { id: 'solfege', label: '04. Szolmizáció' },
-    { id: 'abcNotes', label: '05. ABC-s hangok' },
-    { id: 'flashcards', label: '06. Szókártyák' },
-    { id: 'matching', label: '07. Játék' },
-    { id: 'quiz', label: '08. Teszt' },
-    { id: 'eartraining', label: '09. Hallás' },
-    { id: 'dashboard', label: '10. Profil' },
+    { id: 'chapters', label: '01. Tananyag' },
+    { id: 'flashcards', label: '02. Szókártyák' },
+    { id: 'matching', label: '03. Játék' },
+    { id: 'quiz', label: '04. Teszt' },
+    { id: 'eartraining', label: '05. Hallás' },
+    { id: 'dashboard', label: '06. Profil' },
+    ...(isAdmin ? [{ id: 'admin', label: 'Admin' }] : []),
   ];
 
   return (
     <header className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
       <div className="brand cursor-pointer mb-4 md:mb-0" onClick={() => setActiveTab('chapters')}>
         <h1 className="font-serif-cormorant text-3xl md:text-4xl italic font-semibold leading-none mb-1 text-[#1c1c1c]">
-          Kodály Zenei Műhely
+          Zeneelméleti Műhely
         </h1>
         <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/60 font-medium">
           Zenei Ismeretek & Oktatási Portál
@@ -60,7 +58,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
                   : 'text-[#1c1c1c]/60 hover:text-[#1c1c1c]'
               }`}
             >
-              11. Tankönyvek ▾
+              07. Tankönyvek ▾
             </button>
             <div className="absolute left-0 top-full pt-2 hidden group-hover:block group-focus-within:block z-40">
               <div className="bg-white border border-[#1c1c1c]/15 shadow-md min-w-44 flex flex-col">

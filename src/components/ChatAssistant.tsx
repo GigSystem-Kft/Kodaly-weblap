@@ -1,3 +1,5 @@
+import { apiFetch } from '../api';
+import { TUTOR_VISUALS } from '../data/tutorVisuals';
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { MessageSquare, Send, Bot, User, Sparkles, X, Minimize2, Maximize2 } from 'lucide-react';
@@ -5,6 +7,8 @@ import { MessageSquare, Send, Bot, User, Sparkles, X, Minimize2, Maximize2 } fro
 interface Message {
   role: 'user' | 'model';
   text: string;
+  visuals?: string[];
+  generatedImage?: string;
 }
 
 const PAGE_IMG = (n: number) => `/assets/jegyzet/oldal-${n}.jpg`;
@@ -24,6 +28,8 @@ type AiMode = 'checking' | 'gemini' | 'fallback' | 'error';
 export const ChatAssistant: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [zoomPage, setZoomPage] = useState<number | null>(null);
+  const [zoomVisual, setZoomVisual] = useState<string | null>(null);
+  const [zoomGenerated, setZoomGenerated] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'model',
@@ -33,14 +39,16 @@ export const ChatAssistant: React.FC = () => {
   const [input, setInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [aiMode, setAiMode] = useState<AiMode>('checking');
+  const [knowledgeSummary, setKnowledgeSummary] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    fetch('/api/chat/status')
+    apiFetch('/api/chat/status')
       .then(async (res) => {
         if (!res.ok) throw new Error('Chat status request failed');
         const data = await res.json();
         setAiMode(data.mode === 'gemini' ? 'gemini' : 'fallback');
+        if (data.knowledge) setKnowledgeSummary(`${data.knowledge.indexedSources} forrás, ${data.knowledge.lessonChunks} tananyagrészlet`);
       })
       .catch(() => setAiMode('error'));
   }, []);
@@ -60,15 +68,16 @@ export const ChatAssistant: React.FC = () => {
     if (!input.trim() || isLoading) return;
 
     const userMsg = input.trim();
+    const previousTopic = [...messages].reverse().find(m => m.role === 'user' && !/k[eé]p|[aá]bra|illusztr/i.test(m.text))?.text || '';
     setInput('');
     setMessages((prev) => [...prev, { role: 'user', text: userMsg }]);
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await apiFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg }),
+        body: JSON.stringify({ message: userMsg, previousTopic }),
         signal: AbortSignal.timeout(90000)
       });
       const data = await res.json();
@@ -76,13 +85,13 @@ export const ChatAssistant: React.FC = () => {
         setAiMode('error');
         setMessages((prev) => [...prev, { role: 'model', text: data.error || 'Nem sikerült választ kapni az AI-tól.' }]);
       } else if (data.reply) {
-        const isFallback = data.mode === 'fallback';
+        const isFallback = data.mode !== 'gemini';
         setAiMode(isFallback ? 'fallback' : 'gemini');
         setMessages((prev) => [...prev, {
           role: 'model',
-          text: isFallback
-            ? `ℹ️ Helyi, korlátozott tudásbázisból származó válasz (Gemini API-kulcs nincs beállítva).\n\n${data.reply}`
-            : data.reply,
+          text: data.reply,
+          visuals: Array.isArray(data.visuals) ? data.visuals.filter((id: unknown) => typeof id === 'string' && Object.prototype.hasOwnProperty.call(TUTOR_VISUALS, id)).slice(0, 3) : [],
+          generatedImage: typeof data.generatedImage === 'string' && /^data:image\/(png|jpeg|webp);base64,[a-zA-Z0-9+/=]+$/.test(data.generatedImage) && data.generatedImage.length < 10000000 ? data.generatedImage : undefined,
         }]);
       } else {
         setAiMode('error');
@@ -136,10 +145,11 @@ export const ChatAssistant: React.FC = () => {
                   <span>
                     {aiMode === 'checking' && 'AI állapotának ellenőrzése...'}
                     {aiMode === 'gemini' && 'Gemini konfigurálva'}
-                    {aiMode === 'fallback' && 'Helyi mód (hiányzó API-kulcs)'}
+                    {aiMode === 'fallback' && 'Helyi tanársegéd – ellenőrzött fogalmak'}
                     {aiMode === 'error' && 'AI-kapcsolati hiba'}
                   </span>
                 </p>
+                {knowledgeSummary && <p className="text-[10px] text-slate-400 mt-0.5">{knowledgeSummary}</p>}
               </div>
             </div>
             <button
@@ -186,6 +196,40 @@ export const ChatAssistant: React.FC = () => {
                         >
                           {clean}
                         </ReactMarkdown>
+                        {m.generatedImage && (
+                          <figure className="mt-3 overflow-hidden rounded-xl bg-white border border-slate-600">
+                            <button type="button" className="w-full cursor-zoom-in"
+                              onClick={() => setZoomGenerated(m.generatedImage ?? null)}
+                              aria-label="AI által készített ábra nagyítása">
+                              <img src={m.generatedImage} alt="AI által készített zeneelméleti szemléltető kép"
+                                className="w-full max-h-80 object-contain" />
+                            </button>
+                            <figcaption className="p-2 text-xs text-slate-700">
+                              Újonnan generált kép · A kottaképet és a hangközöket érdemes ellenőrizni.
+                            </figcaption>
+                          </figure>
+                        )}
+                        {m.visuals && m.visuals.length > 0 && (
+                          <div className="mt-3 space-y-3">
+                            {m.visuals.map(id => {
+                              const visual = TUTOR_VISUALS[id];
+                              if (!visual) return null;
+                              return (
+                                <figure key={id} className="overflow-hidden rounded-xl bg-white border border-slate-600">
+                                  <button type="button" className="block w-full cursor-zoom-in"
+                                    onClick={() => setZoomVisual(id)} aria-label={visual.title + ' nagyítása'}>
+                                    <img src={visual.image} alt={visual.title} loading="lazy" className="w-full h-auto max-h-80 object-contain" />
+                                  </button>
+                                  <figcaption className="px-3 py-2 text-xs text-slate-700">
+                                    <strong className="block">{visual.title}</strong>
+                                    <span className="block">{visual.description}</span>
+                                    <span className="block text-slate-500 mt-1">Forrás: {visual.source}</span>
+                                  </figcaption>
+                                </figure>
+                              );
+                            })}
+                          </div>
+                        )}
                         {pages.length > 0 && (
                           <div className="mt-3 grid grid-cols-2 gap-2">
                             {pages.map((n) => (
@@ -235,6 +279,26 @@ export const ChatAssistant: React.FC = () => {
               <Send className="w-4 h-4" />
             </button>
           </form>
+        </div>
+      )}
+      {zoomGenerated && (
+        <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-5"
+          role="dialog" aria-modal="true" aria-label="Generált ábra nagyítása"
+          onClick={() => setZoomGenerated(null)}>
+          <button type="button" aria-label="Bezárás" onClick={() => setZoomGenerated(null)}
+            className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white"><X className="w-5 h-5" /></button>
+          <img src={zoomGenerated} alt="AI által generált ábra" className="max-w-full max-h-full rounded-lg bg-white object-contain" onClick={e=>e.stopPropagation()} />
+        </div>
+      )}
+      {zoomVisual && TUTOR_VISUALS[zoomVisual] && (
+        <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-5"
+          role="dialog" aria-modal="true" aria-label="Kottakép nagyítása"
+          onClick={() => setZoomVisual(null)}>
+          <button type="button" aria-label="Bezárás" onClick={() => setZoomVisual(null)}
+            className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white"><X className="w-5 h-5" /></button>
+          <img src={TUTOR_VISUALS[zoomVisual].image} alt={TUTOR_VISUALS[zoomVisual].title}
+            className="max-w-full max-h-full rounded-lg bg-white object-contain"
+            onClick={e => e.stopPropagation()} />
         </div>
       )}
       {zoomPage !== null && (

@@ -5,12 +5,11 @@ import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from '
 import { playNote } from '../utils/audio';
 
 interface QuizViewProps {
-  onAddXp: (amount: number) => void;
   onSaveQuizScore: (chapterId: string, score: number) => void;
   initialChapterId?: string;
 }
 
-export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, initialChapterId }) => {
+export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChapterId }) => {
   const [selectedChapter, setSelectedChapter] = useState<string>(initialChapterId || 'all');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -33,7 +32,6 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, in
     if (isCorrect) {
       playNote('C5', 300);
       setCorrectCount((prev) => prev + 1);
-      onAddXp(20);
     } else {
       playNote('C3', 300);
     }
@@ -46,10 +44,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, in
       setCurrentIndex((prev) => prev + 1);
     } else {
       setIsFinished(true);
-      const finalScore = Math.round(((correctCount + (selectedOption === currentQ.correctIndex ? 1 : 0)) / questions.length) * 100);
-      if (selectedChapter !== 'all') {
-        onSaveQuizScore(selectedChapter, finalScore);
-      }
+      const finalScore = Math.round((correctCount / questions.length) * 100);
+      onSaveQuizScore(selectedChapter, finalScore);
     }
   };
 
@@ -90,6 +86,15 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, in
           Összes kérdés
         </button>
         <button
+          onClick={() => { setSelectedChapter('pedagogia'); restartQuiz(); }}
+          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+            selectedChapter === 'pedagogia'
+              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+          }`}>
+          08. Tantárgy-pedagógia
+        </button>
+        <button
           onClick={() => {
             setSelectedChapter('ritmus');
             restartQuiz();
@@ -128,6 +133,20 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddXp, onSaveQuizScore, in
         >
           Szolmizáció & Hangközök
         </button>
+        {[
+          { id: 'kreativ', label: '06. Kreatív zenei nevelés' },
+          { id: 'zenetortenet', label: '07. Zenetörténet' }
+        ].map(category => (
+          <button key={category.id}
+            onClick={() => { setSelectedChapter(category.id); restartQuiz(); }}
+            className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
+              selectedChapter === category.id
+                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
+                : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
+            }`}>
+            {category.label}
+          </button>
+        ))}
         <button
           onClick={() => {
             setSelectedChapter('solfege');

@@ -1,0 +1,115 @@
+name: Zeneelméleti Műhely – PHP telepítő ZIP
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'feature/reszletes-tananyag-tobb-feladat-20261104'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'php/**'
+      - 'database/**'
+      - 'scripts/create-invitation.mjs'
+      - 'scripts/test-php-invitations.sh'
+      - 'scripts/export-php-knowledge.ts'
+      - 'server-data/**'
+      - 'deploy/php-telepites.md'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'index.html'
+      - '.github/workflows/php-release.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  php-release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test-only-password
+          MYSQL_DATABASE: zeneelmelet
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest-only-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Clean Linux dependencies
+        run: |
+          rm -rf node_modules
+          npm install --no-audit --no-fund
+      - name: TypeScript and unit tests
+        run: |
+          npm test
+          npm run lint
+      - name: Install PHP mail transport
+        run: |
+          cd php/api
+          composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+      - name: PHP syntax check
+        run: |
+          php -v
+          php -l php/api/index.php
+          php -l php/api/admin.php
+          php -l php/api/music-answers.php
+          php -l php/api/creative-answers.php
+          php scripts/test-php-creative-answers.php
+          php scripts/test-php-music-answers.php
+          php -l php/api/tutor-visuals.php
+          php scripts/test-php-tutor-visuals.php
+          php -l php/api/tutor-image-generation.php
+          php -l php/api/tutor-sources.php
+          php -l php/api/tutor-search.php
+          php scripts/test-php-tutor-search.php
+          php scripts/test-php-tutor-sources.php
+          php scripts/test-php-tutor-image-generation.php
+          php -l deploy/zeneelmelet-private.example.php
+          node --check scripts/create-invitation.mjs
+      - name: Test invitation signup against MySQL
+        run: bash scripts/test-php-invitations.sh
+      - name: Build frontend for PHP API
+        env:
+          VITE_PHP_API: '1'
+        run: npm run build
+      - name: Assemble root-ready CloudPanel ZIP
+        run: |
+          set -euo pipefail
+          mkdir -p release/api
+          cp -a dist/. release/
+          cp php/api/index.php release/api/index.php
+          cp php/api/admin.php release/api/admin.php
+          cp php/api/music-answers.php release/api/music-answers.php
+          cp php/api/creative-answers.php release/api/creative-answers.php
+          cp php/api/tutor-visuals.php release/api/tutor-visuals.php
+          cp php/api/tutor-image-generation.php release/api/tutor-image-generation.php
+          cp php/api/tutor-sources.php release/api/tutor-sources.php
+          cp php/api/tutor-search.php release/api/tutor-search.php
+          cp -a php/api/vendor release/api/vendor
+          node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
+          php -r 'require "php/api/creative-answers.php"; $k=require "release/api/knowledge.php"; $a=creativePracticeAnswer("Ajánlj játékos módszert a ritmusérzék fejlesztésére!",$k); if(!is_string($a)||!str_contains($a,"Szirányi Borbála")||!str_contains($a,"**Forrás:**")) {fwrite(STDERR,"Creative tutor integration failed\\n"); exit(1);} echo "Creative tutor integration passed\\n";'
+          php -r '$a=require "release/api/knowledge.php"; foreach($a as $e){if(stripos($e["source"]??"", "kesztler")!==false) {fwrite(STDERR,"Excluded OCR text found in index\\n"); exit(1);}} echo "Source blacklist verified\\n";'
+          cd release
+          zip -q -r ../zeneelmeleti-muhely-php.zip .
+      - name: Upload deploy ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: zeneelmeleti-muhely-php
+          path: zeneelmeleti-muhely-php.zip
+          retention-days: 14
+          if-no-files-found: error
