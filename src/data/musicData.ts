@@ -104,12 +104,16 @@ export const MUSIC_CHAPTERS: Chapter[] = [
       },
       {
         id: 'modositok',
-        title: '2.2 Módosító jelek és előjegyzések',
-        summary: 'Kereszt (#) felemel (-isz végződés), bé (b) leszállít (-esz / b végződés). Előjegyzések a kottasor elején.',
+        title: '2.2 Módosító jelek, előjegyzések és feloldójel',
+        summary: 'Kereszt, bé, feloldójel; az előjegyzés és az ütemen belüli módosítás eltérő érvénye, magyar hangnevekkel.',
         content: [
-          'Kereszt (#): A hang magasságát fél hanggal (kis szekunddal) felemeli. Törzshang neve + „-isz” (Cisz, Disz, Eisz, Fisz, Gisz, Áisz Hisz).',
-          'Bé (b): A hang magasságát fél hanggal (kis szekunddal) leszállítja. Név + „-esz” (Cesz, Desz, Esz, Fesz, Gesz, Ász, B).',
-          'Előjegyzés: A kulcs utáni módosító jelek az egész zeneműre érvényesek.'
+          'A kereszt (♯) a hangot félhanggal emeli: Cisz, Disz, Eisz, Fisz, Gisz, Aisz, Hisz. A bé (♭) félhanggal leszállítja: Cesz, Desz, Esz, Fesz, Gesz, Asz, B (leszállított H). A magyar hangrendszerben a H és a B nem azonos.',
+          'A feloldójel (♮) megszünteti az adott hangra vonatkozó korábbi kereszt vagy bé hatását, és a törzshang természetes magasságát állítja vissza. Például Fisz után F♮ = F.',
+          'Az előjegyzés a kulcs után, az ütemmutató előtt áll. Általában a darab egészében, minden oktávban érvényes az azonos nevű hangokra, amíg más előjegyzés nem következik.',
+          'Az ütemen belüli módosítójel ezzel szemben rendszerint az adott hangnév ugyanazon oktávjára vonatkozik az ütem végéig. Átkötés esetén a módosított hangmagasság a következő ütemben is fennmaradhat az átkötött hangon.',
+          'A keresztek szokásos sorrendje: Fisz–Cisz–Gisz–Disz–Aisz–Eisz–Hisz. A bék sorrendje: B–Esz–Asz–Desz–Gesz–Cesz–Fesz.',
+          'Példák: C-dúrban nincs előjegyzés; G-dúrban Fisz, D-dúrban Fisz és Cisz, F-dúrban B szerepel. Ha D-dúrban egy Fisz elé feloldójelet teszünk, ugyanabban az ütemben az adott oktáv F hangja természetes lesz.',
+          'Önellenőrzés: nevezd meg a D-dúr és F-dúr előjegyzését! Magyarázd meg, mi a különbség a kulcs melletti B előjegyzés és az ütemen belüli B módosítójel között!'
         ]
       }
     ]
