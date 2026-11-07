@@ -84,6 +84,15 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
     }
   };
 
+  if (selectedCategory !== 'all' && !MATCHING_PAIRS.some(pair => pair.category === selectedCategory)) {
+    return <div className="max-w-4xl mx-auto px-4 py-8 text-slate-900">
+      <h2 className="text-xl font-bold mb-3">Ehhez a témakörhöz még nincs párosító feladat</h2>
+      <p className="mb-4">Válassz másik témakört a párosító gyakorláshoz.</p>
+      <button type="button" onClick={() => setSelectedCategory('all')}
+        className="rounded-lg bg-indigo-700 px-4 py-2 font-semibold text-white">Összes párosító feladat</button>
+    </div>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
@@ -147,6 +156,9 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                 const isSelected = selectedTerm === t.id;
                 return (
                   <button
+                    type="button"
+                    aria-pressed={isSelected}
+                    aria-label={`Fogalom: ${t.text}`}
                     key={t.id}
                     disabled={isMatched}
                     onClick={() => handleSelectTerm(t.id, t.pairId)}
@@ -172,6 +184,9 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                 const isSelected = selectedMatch === m.id;
                 return (
                   <button
+                    type="button"
+                    aria-pressed={isSelected}
+                    aria-label={`Jelentés: ${m.text}`}
                     key={m.id}
                     disabled={isMatched}
                     onClick={() => handleSelectMatch(m.id, m.pairId)}
