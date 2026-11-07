@@ -1,3 +1,4 @@
+import { meterPattern, type MeterId } from './meterPatterns';
 import { quarterScaleSchedule } from './noteNotation';
 import { rhythmFigurePattern, type RhythmFigureId } from './rhythmFigures';
 import { rhythmPattern, type RhythmSubdivision } from './rhythmPattern';
@@ -289,4 +290,46 @@ export function playWarmQuarterScale(noteNames: readonly string[], bpm=60): void
     stopEarTrainingInterval();
     console.error('Negyedes skálalejátszás hiba:',error);
   }
+}
+
+
+/**
+ * Two-bar metrical example using the same AudioContext timeline.
+ * Three distinct dynamic layers make main, secondary and unstressed beats audible.
+ */
+export function playMeterExample(id:MeterId,bpm=60):{durationMs:number;stop:()=>void}{
+  stopRhythmPlayback();
+  const pattern=meterPattern(id,bpm);
+  const ctx=getAudioContext();
+  const start=ctx.currentTime+0.04;
+  const oscillators:OscillatorNode[]=[];
+  const gains:GainNode[]=[];
+  for(const pulse of pattern.pulses){
+    const at=start+pulse.startSeconds;
+    const duration=pulse.durationSeconds;
+    const amplitude=pulse.accent==='fo'?0.28:pulse.accent==='mellek'?0.19:0.105;
+    const freq=pulse.accent==='fo'?392:pulse.accent==='mellek'?349.23:329.63;
+    const osc=ctx.createOscillator();
+    const lowpass=ctx.createBiquadFilter();
+    const gain=ctx.createGain();
+    osc.type='triangle';
+    osc.frequency.setValueAtTime(freq,at);
+    lowpass.type='lowpass';
+    lowpass.frequency.value=2400;
+    gain.gain.setValueAtTime(0.0001,at);
+    gain.gain.linearRampToValueAtTime(amplitude,at+0.012);
+    gain.gain.setValueAtTime(amplitude*0.65,at+Math.min(duration*0.30,0.15));
+    gain.gain.exponentialRampToValueAtTime(0.0001,at+duration*0.91);
+    osc.connect(lowpass);
+    lowpass.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(at);
+    osc.stop(at+duration*0.92);
+    osc.onended=()=>{osc.disconnect();lowpass.disconnect();gain.disconnect();};
+    oscillators.push(osc);gains.push(gain);
+  }
+  const playback={oscillators,gains};
+  rhythmSound=playback;
+  return {durationMs:pattern.totalDurationSeconds*1000,
+    stop:()=>{if(rhythmSound===playback)stopRhythmPlayback();}};
 }
