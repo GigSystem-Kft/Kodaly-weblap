@@ -60,19 +60,19 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
-        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-violet-500/20 text-violet-300 text-xs font-semibold mb-3 border border-violet-500/30">
+        <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-semibold mb-3 border border-violet-200">
           <HelpCircle className="w-3.5 h-3.5" />
           <span>Tudáspróba & Kvíz</span>
         </span>
-        <h2 className="text-3xl font-extrabold text-white mb-2">Interaktív Ellenőrző Teszt</h2>
-        <p className="text-slate-400 text-sm">
+        <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Interaktív Ellenőrző Teszt</h2>
+        <p className="text-slate-600 text-sm">
           Ellenőrizd zeneelméleti tudásodat fejezetenként vagy az összes kérdés áttekintésével!
         </p>
       </div>
 
       {/* One accessible dropdown replaces the growing button cloud. */}
       <div className="max-w-xl mx-auto mb-8">
-        <label htmlFor="quiz-chapter" className="block mb-2 text-sm font-semibold text-slate-200">Teszt témaköre</label>
+        <label htmlFor="quiz-chapter" className="block mb-2 text-sm font-semibold text-slate-800">Teszt témaköre</label>
         <select id="quiz-chapter" value={selectedChapter}
           onChange={(event) => { setSelectedChapter(event.target.value); restartQuiz(); }}
           className="w-full rounded-xl border border-violet-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
@@ -89,7 +89,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
             {id:'abc-hangok', label:'ABC-s hangok'},
           ].map(item=><option value={item.id} key={item.id}>{item.label}</option>)}
         </select>
-        <p className="text-xs text-slate-400 mt-2">{questions.length} kérdés a kiválasztott témakörben</p>
+        <p className="text-xs text-slate-600 mt-2">{questions.length} kérdés a kiválasztott témakörben</p>
       </div>
 
       {isFinished ? (
