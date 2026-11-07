@@ -182,7 +182,12 @@ export default function App() {
         )}
 
         {activeTab === 'musicPedagogy' && (
-          <MusicPedagogyView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
+          <MusicPedagogyView
+            onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
+            onQuiz={() => openQuiz('pedagogia')}
+            onFlashcards={() => openFlashcards('Ének-zene tantárgy-pedagógia')}
+            onMatching={() => openMatchingGame('Ének-zene tantárgy-pedagógia')}
+          />
         )}
 
         {activeTab === 'musicHistory' && (
