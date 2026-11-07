@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserProgress } from '../types';
-import { MUSIC_CHAPTERS } from '../data/musicData';
+import { MUSIC_CHAPTERS, QUIZ_QUESTIONS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES, learningProgressSummary } from '../data/learningProgressSummary';
 import { consecutiveDays } from '../progress';
 import { Award, Sparkles, CheckCircle2, BookOpen, Trophy, ArrowRight, Layers, CalendarDays, ListChecks } from 'lucide-react';
@@ -78,9 +78,19 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
         ) : (
           <ul className="divide-y divide-slate-200">
             {[...(progress.quizAttempts ?? [])].reverse().slice(0, 5).map(attempt => (
-              <li key={attempt.id} className="flex flex-wrap justify-between gap-2 py-2 text-sm">
-                <span className="font-medium text-slate-800">{attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
-                <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}</span>
+              <li key={attempt.id} className="py-3 text-sm">
+                <div className="flex flex-wrap justify-between gap-2">
+                  <span className="font-medium text-slate-800">{attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
+                  <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}</span>
+                </div>
+                {(attempt.wrongQuestionIds?.length ?? 0)>0 && <details className="mt-2">
+                  <summary className="text-indigo-700 cursor-pointer">Átismétlendő kérdések ({attempt.wrongQuestionIds?.length})</summary>
+                  <ul className="list-disc pl-5 mt-2 text-slate-700 space-y-1">
+                    {attempt.wrongQuestionIds?.map(id => <li key={id}>
+                      {QUIZ_QUESTIONS.find(q=>q.id===id)?.question ?? 'Korábbi kérdés (már nem szerepel a feladatbankban)'}
+                    </li>)}
+                  </ul>
+                </details>}
               </li>
             ))}
           </ul>
