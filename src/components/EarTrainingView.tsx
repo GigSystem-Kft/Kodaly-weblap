@@ -77,6 +77,11 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
       <button type="button" aria-pressed={trainingTab==='extended'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('extended')}}
         className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='extended'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangsorok, ritmusok, hangértékek</button>
     </nav>
+    <p className="max-w-3xl mx-auto px-4 mt-3 text-sm text-slate-600">
+      Hallásfejlesztési gyakorlásért naponta összesen legfeljebb 100 XP gyűjthető.
+      A további ismétlések korlátozás nélkül gyakorolhatók, de már nem adnak új XP-t.
+      Az XP játékos gyakorlási pont, nem vizsgajegy.
+    </p>
     {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
     <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangközök felismerése">
       <div className="text-center mb-6">
