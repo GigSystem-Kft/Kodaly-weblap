@@ -3,6 +3,7 @@
 set -euo pipefail
 ROOT="$(mktemp -d)"
 trap '[[ -n "${SERVER_PID:-}" ]] && kill "$SERVER_PID" 2>/dev/null || true; rm -rf "$ROOT"' EXIT
+trap 'echo "PHP offline-chat test failed; sanitized local server log:" >&2; tail -n 50 "$ROOT/php-server.log" >&2 || true' ERR
 SITE="$ROOT/owner/htdocs/example.test"
 mkdir -p "$SITE/api"
 cp php/api/{index.php,tutor-search.php,tutor-sources.php,tutor-visuals.php,creative-answers.php,music-answers.php,tutor-image-generation.php} "$SITE/api/"
@@ -29,9 +30,9 @@ for i in $(seq 1 40); do
   sleep .2
 done
 BASE='http://127.0.0.1:8000/api/index.php?route='
-curl -fsS "${BASE}auth/status" | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(!is_array($x) || $x["available"]!==false)exit(1);'
-curl -fsS "${BASE}chat/status" | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="fallback" || ($x["knowledge"]["indexedChunks"]??0)<1)exit(1);'
-curl -fsS -X POST "${BASE}chat" \
+echo 'Checking auth/status with unreachable MySQL'; curl -fsS "${BASE}auth/status" | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(!is_array($x) || $x["available"]!==false)exit(1);'
+echo 'Checking chat/status with unreachable MySQL'; curl -fsS "${BASE}chat/status" | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="fallback" || ($x["knowledge"]["indexedChunks"]??0)<1)exit(1);'
+echo 'Checking chat reply with unreachable MySQL'; curl -fsS -X POST "${BASE}chat" \
   -H 'Content-Type: application/json' \
   -H 'X-Requested-With: XMLHttpRequest' \
   --data '{"message":"Mit jelent a príma vista?"}' \
