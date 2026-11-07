@@ -16,7 +16,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
   const trueStreak = consecutiveDays(progress.activityDays ?? []);
 
   const metrics = [
-    { title:'Elérhető tananyagegységek', value:String(stats.curriculumModules), foot:'5 alapfejezet + 4 bővített témakör', Icon:BookOpen,  },
+    { title:'Tanulmányozottnak jelölt egységek', value:`${stats.completedModules} / ${stats.curriculumModules}`, foot:'5 alapfejezet + 4 bővített témakör · saját jelölés', Icon:BookOpen,  },
     { title:'Teljesített alapfejezetek', value:`${stats.completedCoreChapters} / ${stats.coreChapters}`, foot:`${stats.corePercentage}% · csak a követett alapfejezetek`, Icon:CheckCircle2,  },
     { title:'Kvízek átlagos legjobb eredménye', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy,  },
     { title:'Összesített XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos tanulási sorozat`, Icon:Sparkles,  },
