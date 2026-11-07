@@ -186,7 +186,9 @@ export const MUSIC_CHAPTERS: Chapter[] = [
         content: [
           '• Bichord: Két szomszédos hang nagy szekund távolságban (s-l).',
           '• Trichord: Három egymás melletti hang (d-r-m, Túrót ettem).',
-          '• Pentachord és Hexachord: 5 illetve 6 egymás melletti hang.'
+          '• Pentachord és Hexachord: 5, illetve 6 egymás melletti diatonikus hang.',
+          'A hexachord a hat egymást követő hangból álló hangsorszakasz. A Guido-féle középkori szolmizációban ut–re–mi–fa–sol–la (egész–egész–fél–egész–egész hangközrend). Természetes: C–D–E–F–G–A; kemény: G–A–H–C–D–E; lágy: F–G–A–B–C–D. A magyar H és B hangneveket külön kell kezelni.',
+          'Kapcsolódó magyar szakirodalom: Kelemen Judit, Zempléni Múzsa – Mátyás-korabeli zenei nevelés Sárospatakon a Szalkai-kódex tükrében (hexachord és Guido-kéz).'
         ]
       }
     ]
