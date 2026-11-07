@@ -1,6 +1,8 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
+import { VERIFIED_GLOSSARY } from './src/data/verifiedMusicGlossary';
+import { CURATED_MEDIA } from './src/data/curatedMusicMedia';
 import { FOUNDATIONS_GUIDES } from './src/data/musicFoundationsGuide';
 import { CREATIVE_WORKSHOPS, PEDAGOGY_WORKSHOPS } from './src/data/hungarianDidacticWorkshops';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from './src/data/musicPedagogy';
@@ -24,7 +26,8 @@ const STOPWORDS = new Set([
   'hogy', 'milyen', 'miert', 'hogyan', 'mikor', 'mirol', 'melyik', 'mennyi',
   'vagy', 'van', 'volt', 'lesz', 'egy', 'meg', 'nem', 'ami', 'amit', 'ennek',
   'annak', 'azok', 'ezek', 'kozott', 'kulonbseg', 'kulonbsege', 'szerint',
-  'kerlek', 'mondj', 'lehet', 'tudnal', 'tudok', 'tananyag', 'zeneelmelet'
+  'kerlek', 'mondj', 'lehet', 'tudnal', 'tudok', 'tananyag', 'zeneelmelet',
+  'mit','jelent','jelentese','azt','fogalma','magyarazd','nekem','miert','hogyan'
 ]);
 
 const normalize = (value: string) =>
@@ -32,7 +35,7 @@ const normalize = (value: string) =>
 
 function tokenize(value: string): string[] {
   return (normalize(value).match(/[a-z0-9]{3,}/g) ?? [])
-    .map(word => word.slice(0, 6))
+    .map(word => ['hexakord','hexachordum','hexachord'].includes(word) ? 'hexachord' : word.slice(0, 6))
     .filter(word => !STOPWORDS.has(word));
 }
 
@@ -78,6 +81,19 @@ function splitLongText(text: string, maxLength = 1300): string[] {
 
 function buildIndex(): KnowledgeChunk[] {
   const entries: KnowledgeChunk[] = [];
+  for (const term of VERIFIED_GLOSSARY) {
+    const chunk=makeChunk(term.sourceTitle+' – '+term.sourceUrl,
+      'Magyar zeneelméleti fogalomtár / '+term.term+' / '+term.keywords.join(', '),
+      [term.definition,...term.details,term.sourceUrl].join('\\n\\n'),'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for (const media of CURATED_MEDIA) {
+    const chunk=makeChunk('Ellenőrzött médiaforrás – '+media.url,
+      'Szemléltetés / '+media.title,
+      [media.note,media.kind,...media.chapters.map(n=>'0'+n+'. fejezet'),
+       media.access??''].join('\\n'),'source');
+    if(chunk)entries.push(chunk);
+  }
   for (const chapter of MUSIC_CHAPTERS) {
     for (const sub of chapter.subchapters) {
       // A lecke rövid és részletes szövege együtt kereshető, az eredeti fejezetnévvel.
