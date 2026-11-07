@@ -61,7 +61,7 @@ export function migrateProgress(raw: unknown): UserProgress {
   const earTrainingDailyXp = value.earTrainingDailyXp &&
     typeof value.earTrainingDailyXp === 'object' && !Array.isArray(value.earTrainingDailyXp)
     ? Object.fromEntries(Object.entries(value.earTrainingDailyXp)
-        .filter(([day, points]) => /^\\d{4}-\\d{2}-\\d{2}$/.test(day) &&
+        .filter(([day, points]) => /^\d{4}-\d{2}-\d{2}$/.test(day) &&
           Number.isInteger(points) && (points as number) >= 0 && (points as number) <= 100)
         .sort(([a],[b])=>a.localeCompare(b)).slice(-366))
     : {};
