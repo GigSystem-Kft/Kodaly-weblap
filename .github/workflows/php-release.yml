@@ -71,6 +71,8 @@ jobs:
           php scripts/test-php-tutor-visuals.php
           php -l php/api/tutor-image-generation.php
           php -l php/api/tutor-sources.php
+          php -l php/api/tutor-search.php
+          php scripts/test-php-tutor-search.php
           php scripts/test-php-tutor-sources.php
           php scripts/test-php-tutor-image-generation.php
           php -l deploy/zeneelmelet-private.example.php
@@ -93,6 +95,7 @@ jobs:
           cp php/api/tutor-visuals.php release/api/tutor-visuals.php
           cp php/api/tutor-image-generation.php release/api/tutor-image-generation.php
           cp php/api/tutor-sources.php release/api/tutor-sources.php
+          cp php/api/tutor-search.php release/api/tutor-search.php
           cp -a php/api/vendor release/api/vendor
           node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
           php -r 'require "php/api/creative-answers.php"; $k=require "release/api/knowledge.php"; $a=creativePracticeAnswer("Ajánlj játékos módszert a ritmusérzék fejlesztésére!",$k); if(!is_string($a)||!str_contains($a,"Szirányi Borbála")||!str_contains($a,"**Forrás:**")) {fwrite(STDERR,"Creative tutor integration failed\\n"); exit(1);} echo "Creative tutor integration passed\\n";'
