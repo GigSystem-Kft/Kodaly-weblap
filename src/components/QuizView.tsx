@@ -5,7 +5,7 @@ import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from '
 import { playNote } from '../utils/audio';
 
 interface QuizViewProps {
-  onSaveQuizScore: (chapterId: string, score: number, correct: number, total: number) => void;
+  onSaveQuizScore: (chapterId: string, score: number, correct: number, total: number, wrongQuestionIds: string[]) => void;
   initialChapterId?: string;
 }
 
@@ -16,6 +16,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [wrongQuestionIds, setWrongQuestionIds] = useState<string[]>([]);
 
   const questions = selectedChapter === 'all'
     ? QUIZ_QUESTIONS
@@ -33,6 +34,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
       playNote('C5', 300);
       setCorrectCount((prev) => prev + 1);
     } else {
+      setWrongQuestionIds(previous => [...previous, currentQ.id].slice(0, 12));
       playNote('C3', 300);
     }
   };
@@ -45,7 +47,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     } else {
       setIsFinished(true);
       const finalScore = Math.round((correctCount / questions.length) * 100);
-      onSaveQuizScore(selectedChapter, finalScore, correctCount, questions.length);
+      onSaveQuizScore(selectedChapter, finalScore, correctCount, questions.length, wrongQuestionIds);
     }
   };
 
@@ -55,6 +57,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     setIsAnswered(false);
     setCorrectCount(0);
     setIsFinished(false);
+    setWrongQuestionIds([]);
   };
 
   if (questions.length === 0) {
