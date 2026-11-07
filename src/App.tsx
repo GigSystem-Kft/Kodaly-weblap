@@ -83,6 +83,7 @@ export default function App() {
       if (savingRef.current) return;
       savingRef.current = true;
       const generation = accountGenerationRef.current;
+      let reschedule = false;
       try {
         const response = await apiFetch('/api/progress', {
           method: 'PUT',
@@ -97,11 +98,13 @@ export default function App() {
           savedSnapshotRef.current = JSON.stringify(serverProgress);
           setProgress(previous => mergeProgress(serverProgress, previous));
           setSyncError('Másik eszköz eredményeit összevezettük. Az új mentést újrapróbáljuk.');
+          reschedule = true;
           return;
         }
         if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
         revisionRef.current = result.revision;
         savedSnapshotRef.current = snapshot;
+        reschedule = true;
         setSyncError('');
       } catch (error) {
         if (generation === accountGenerationRef.current) {
@@ -109,7 +112,9 @@ export default function App() {
         }
       } finally {
         savingRef.current = false;
-        setSaveTick(previous => previous + 1);
+        if (reschedule && generation === accountGenerationRef.current) {
+          setSaveTick(previous => previous + 1);
+        }
       }
     }, 600);
     return () => window.clearTimeout(handle);
