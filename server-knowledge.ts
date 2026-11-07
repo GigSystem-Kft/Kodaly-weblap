@@ -6,6 +6,7 @@ import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from './src/data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from './src/data/musicPedagogyDeep';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
 import { MUSIC_HISTORY } from './src/data/musicHistory';
+import { HISTORY_WORKSHOPS } from './src/data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './src/data/musicHistoryProfiles';
 
 interface KnowledgeChunk {
@@ -120,6 +121,17 @@ function buildIndex(): KnowledgeChunk[] {
       period.name + ' / ' + period.period, summary, 'lesson'
     );
     if (chunk) entries.push(chunk);
+  }
+  for (const workshop of HISTORY_WORKSHOPS) {
+    const period=MUSIC_HISTORY.find(item=>item.id===workshop.periodId);
+    if (!period) continue;
+    const text=[...workshop.goals,...workshop.context,...workshop.steps,
+      workshop.question,workshop.modelAnswer,workshop.furtherPractice].join('\\n\\n');
+    for(const part of splitLongText(text,1200)){
+      const chunk=makeChunk('Zenetörténet – forrásmegjelölt, önálló tanulási műhely; '+period.sourceLinks.map(x=>x.url).join(', '),
+        '07. Zenetörténet / '+period.name,part,'lesson');
+      if(chunk) entries.push(chunk);
+    }
   }
   for (const person of COMPOSER_BIOGRAPHIES) {
     const summary=[person.dates,person.significance,...person.keywords,
