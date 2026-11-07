@@ -16,6 +16,8 @@ import { MUSIC_HISTORY } from './src/data/musicHistory';
 import { HISTORY_WORKSHOPS } from './src/data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './src/data/musicHistoryProfiles';
 import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS, HISTORY_VISUALS, HISTORY_RESOURCES, HISTORY_NOTE_SOURCE } from './src/data/musicHistorySupplement';
+import MUSIC_EXPRESSIONS from './src/data/musicExpressions.json';
+import { THEORY_DRILLS } from './src/data/musicExpressionsPractice';
 
 interface KnowledgeChunk {
   source: string;
@@ -88,6 +90,20 @@ function splitLongText(text: string, maxLength = 1300): string[] {
 
 function buildIndex(): KnowledgeChunk[] {
   const entries: KnowledgeChunk[] = [];
+  // Structured expression bank: exact term, category and original source line.
+  // The complete supplied source is ALSO indexed independently from server-data/forrasok.
+  for(const item of MUSIC_EXPRESSIONS){
+    const chunk=makeChunk('Zenei kifejezések – mellékelt, nem minden címszóban lektorált teljes szótár',
+      '09. Zenei kifejezések / '+item.category+' / '+item.term+' / eredeti '+item.line+'. sor',
+      item.term+' – '+item.definition,'source');
+    if(chunk)entries.push(chunk);
+  }
+  for(const item of THEORY_DRILLS){
+    const chunk=makeChunk('Zeneelméleti Műhely – ellenőrzött zenei gyakorlati összefoglalók',
+      'Gyakorlás / '+item.category+' / '+item.term,
+      [item.meaning,item.why].join('\\n'),'lesson');
+    if(chunk)entries.push(chunk);
+  }
   for (const term of VERIFIED_GLOSSARY) {
     const chunk=makeChunk(term.sourceTitle+' – '+term.sourceUrl,
       'Magyar zeneelméleti fogalomtár / '+term.term+' / '+term.keywords.join(', '),
@@ -419,7 +435,8 @@ export function sourceCoverageReport() {
   const missing = ['jegyzet.txt','forrasok/nat2020-enekzene-1.txt','forrasok/nat2020-enekzene-2.txt',
     'forrasok/nat2020-enekzene-3.txt','forrasok/nat2020-enekzene-4.txt',
     'forrasok/mta-szte-ritmikai-fejleszto-jatekgyujtemeny.txt',
-    'forrasok/sajat-zenetorteneti-jegyzet-16-oldal.txt']
+    'forrasok/sajat-zenetorteneti-jegyzet-16-oldal.txt',
+    'forrasok/zenei-kifejezesek-teljes-szotar.txt']
     .filter(name => !existsSync(resolve(DATA_DIR,name)));
   return {
     generatedAt: new Date().toISOString(),
