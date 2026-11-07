@@ -1,3 +1,4 @@
+import { rhythmFigurePattern, type RhythmFigureId } from './rhythmFigures';
 import { rhythmPattern, type RhythmSubdivision } from './rhythmPattern';
 // Web Audio API synthesizer for music theory learning and ear training
 
@@ -218,6 +219,49 @@ export function playRhythmPlayback(divisions: RhythmSubdivision, bpm=60, withMet
       click.onended=()=>{click.disconnect();envelope.disconnect();};
       oscillators.push(click);
       gains.push(envelope);
+    }
+  }
+  const playback={oscillators,gains};
+  rhythmSound=playback;
+  return {durationMs:pattern.totalSeconds*1000,
+    stop:()=>{if(rhythmSound===playback)stopRhythmPlayback();}};
+}
+
+
+/** Ritmusképlet: négynegyedes, pontos időzítésű hangok és opcionális mérőütések. */
+export function playRhythmFigure(id: RhythmFigureId, bpm=60, withMetronome=true): {durationMs:number;stop:()=>void} {
+  stopRhythmPlayback();
+  const pattern=rhythmFigurePattern(id,bpm);
+  const ctx=getAudioContext();
+  const start=ctx.currentTime+0.04;
+  const oscillators: OscillatorNode[]=[];
+  const gains: GainNode[]=[];
+  const tone=(at:number, duration:number, frequency:number, amplitude:number, click=false)=>{
+    const osc=ctx.createOscillator();
+    const gain=ctx.createGain();
+    osc.type=click?'sine':'triangle';
+    osc.frequency.setValueAtTime(frequency,at);
+    if(click)osc.frequency.exponentialRampToValueAtTime(frequency*0.61,at+duration);
+    const attack=click?0.003:Math.min(0.016,duration*0.14);
+    const release=click?duration-attack:Math.min(0.035,duration*0.2);
+    gain.gain.setValueAtTime(0.0001,at);
+    gain.gain.linearRampToValueAtTime(amplitude,at+attack);
+    if(!click)gain.gain.setValueAtTime(amplitude,at+duration-release);
+    gain.gain.exponentialRampToValueAtTime(0.0001,at+duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(at);
+    osc.stop(at+duration+0.005);
+    osc.onended=()=>{osc.disconnect();gain.disconnect();};
+    oscillators.push(osc); gains.push(gain);
+  };
+  for(const event of pattern.events){
+    tone(start+event.startBeats*pattern.beatSeconds,
+      event.durationBeats*pattern.beatSeconds,261.63,0.22);
+  }
+  if(withMetronome){
+    for(const beat of pattern.beats){
+      tone(start+beat.startSeconds,0.052,beat.accent?1380:920,beat.accent?0.12:0.075,true);
     }
   }
   const playback={oscillators,gains};
