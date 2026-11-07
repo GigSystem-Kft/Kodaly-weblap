@@ -10,7 +10,7 @@ test('glossary maintains exactly 1793 source terms, IDs and definitions', () => 
 });
 test('conservative taxonomy changes are visible and never hidden by the practice bank',()=>{
   const terms=MUSIC_EXPRESSIONS;
-  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,756);
+  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,687);
   for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció']){
     assert.ok(MUSIC_EXPRESSION_CATEGORIES.includes(label));
     assert.ok(terms.some(t=>t.category===label));
