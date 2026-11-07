@@ -362,6 +362,7 @@ export default function App() {
                 onSignedOut={signOut}
                 onImportLocal={importLocal}
                 syncError={syncError}
+                hasUnsavedProgress={account !== null && savedSnapshotRef.current !== JSON.stringify(progress)}
                 onRetrySync={retrySync}
               />
             </div>
