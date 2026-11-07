@@ -58,17 +58,12 @@ export const LESSON_ILLUSTRATIONS: Record<string, LessonIllustration[]> = {
     illustration('ABC-s hangnevek', 'Oktávok és betűnevek szemléltetése.', abc)
   ],
   'szolmizacio-elonyai': [
-    illustration('Hangsor és szolmizáció', 'A C-dúr skála hangnevei és szolmizációja.', hangsor)
+    illustration('Hangsor és szolmizáció', 'A C-dúr skála hangnevei és szolmizációja.', hangsor),
+    illustration('Dúr hangnemek', 'A relatív szolmizáció és transzponálás különböző hangnemekben.', durok)
   ],
   'hangkoz-fajtak': [
-    illustration('Hangközök', 'Prím, szekund, terc, kvart, kvint, szext, szeptim és oktáv.', hangkozok)
-  ],
-  'hangkoz-szamitas': [
-    illustration('Hangközök összehasonlítása', 'Hangközszámok és -minőségek kottapéldákkal.', hangkozok)
-  ],
-  'szolmizacio-alkalmazas': [
-    illustration('Hangsor és fokok', 'A relatív szolmizáció kiindulópontja.', hangsor),
-    illustration('Dúr hangnemek', 'Különböző hangnemek szolmizációs hangjai.', durok)
+    illustration('Hangközök', 'Prím, szekund, terc, kvart, kvint, szext, szeptim és oktáv.', hangkozok),
+    illustration('Hangközök fordítása és számítása', 'Hangközszámok és -minőségek kottapéldákkal.', hangkozok)
   ],
   'dúr-es-modalis': [
     illustration('Hangsor lépései', 'Egész- és félhanglépések a dúr hangsorban.', hangsor),
