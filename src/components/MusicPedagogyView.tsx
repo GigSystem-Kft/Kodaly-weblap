@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from '../data/musicPedagogyDeep';
+import { PEDAGOGY_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 
 export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlashcards:()=>void;onMatching:()=>void}> = ({onBack,onQuiz,onFlashcards,onMatching}) => {
