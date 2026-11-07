@@ -116,7 +116,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
 
             {/* Interactive topic illustration and Hungarian video discovery */}
             <section className="my-7 space-y-4" aria-label="Vizuális és videós szemléltetés">
-              <div className="rounded-2xl bg-white p-5 text-slate-900 border border-slate-200">
+              {(chapter.id === "hangkeszletek" || chapter.id === "szolmizacio-hangkozok" || chapter.id === "solfege") && <div className="rounded-2xl bg-white p-5 text-slate-900 border border-slate-200">
                 <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
                   <h4 className="font-semibold text-base">Hangok és hangközök – vizuális szemléltetés</h4>
                   <span className="text-xs text-slate-500">Interaktív hangkészlet-ábra</span>
@@ -130,7 +130,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   ))}
                 </div>
                 <p className="text-xs text-slate-600 mt-3">Hat egymás után következő diatonikus hang: a történeti hexachord egyik alapvető példája. Az ábra a hangsorok és szolmizáció tanulásához kapcsolódik.</p>
-              </div>
+              </div>}
               <div className="rounded-2xl border border-indigo-500/30 bg-indigo-950/30 p-5">
                 <h4 className="font-semibold text-indigo-200 mb-2">Magyar nyelvű oktatóvideók keresése</h4>
                 <p className="text-sm text-slate-300 mb-3">Az alfejezet címére szabott YouTube-keresés; a találatokat a tanárnak érdemes ellenőriznie felhasználás előtt.</p>
