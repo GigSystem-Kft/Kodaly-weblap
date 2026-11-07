@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from './src/data/musicPedagogy';
+import { DEEP_PEDAGOGY_LESSONS } from './src/data/musicPedagogyDeep';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
 import { MUSIC_HISTORY } from './src/data/musicHistory';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './src/data/musicHistoryProfiles';
@@ -126,6 +127,19 @@ function buildIndex(): KnowledgeChunk[] {
         `08. Ének-zene tantárgy-pedagógia / ${unit.title} / ${section.heading}`,
         [unit.goal,section.text,...unit.concepts,...unit.seminar,...unit.reflection].join('\\n'),
         'lesson'
+      );
+      if (chunk) entries.push(chunk);
+    }
+  }
+  for (const deep of DEEP_PEDAGOGY_LESSONS) {
+    const unit=PEDAGOGY_UNITS.find(x=>x.id===deep.unitId);
+    if (!unit) continue;
+    const text=[...deep.explanation,...deep.lessonPlan,...deep.pitfalls].join('\\n');
+    for (const piece of splitLongText(text,1200)) {
+      const chunk=makeChunk(
+        `${PEDAGOGY_SOURCE.author} (${PEDAGOGY_SOURCE.year}), ${unit.page} oldal – részletes didaktikai feldolgozás`,
+        '08. Ének-zene tantárgy-pedagógia / '+unit.title,
+        piece,'lesson'
       );
       if (chunk) entries.push(chunk);
     }
