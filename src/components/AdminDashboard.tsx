@@ -37,10 +37,18 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
-    fetch('/source-inventory.json', {cache:'no-store'}).then(async response => {
-      if(!response.ok) throw new Error('Az indexjelentés nem érhető el.');
+    apiFetch('/api/admin/source-coverage').then(async response => {
+      if(!response.ok) throw new Error('A PHP forrásjelentés nem érhető el.');
       setCoverage(await response.json() as Coverage);
-    }).catch(error=>setCoverageError(error instanceof Error ? error.message : 'Forrásjelentési hiba.'));
+    }).catch(async () => {
+      try {
+        const response=await fetch('/source-inventory.json',{cache:'no-store'});
+        if(!response.ok) throw new Error('Nincs helyi forrásjelentés.');
+        setCoverage(await response.json() as Coverage);
+      } catch(error) {
+        setCoverageError(error instanceof Error ? error.message : 'Forrásjelentési hiba.');
+      }
+    });
   }, [load]);
 
   const uploadSource = async (event: React.FormEvent) => {
@@ -126,7 +134,7 @@ export const AdminDashboard: React.FC = () => {
       </div>
       <section className="rounded-xl border bg-white p-5 mb-6" aria-label="Forráslefedettség">
         <h3 className="font-bold text-lg mb-2">Tanársegéd – forráslefedettségi ellenőrzés</h3>
-        <p className="text-sm text-slate-600 mb-4">A telepített csomaghoz készült szövegindex jelentése. A számláló nem jelenti azt, hogy az AI minden kérdésre helyesen válaszol.</p>
+        <p className="text-sm text-slate-600 mb-4">Elsősorban az éppen futó PHP Tanársegéd keresőindexének élő kimutatása (helyi fejlesztéskor csomagjelentés). A számláló nem jelenti azt, hogy az AI minden kérdésre helyesen válaszol.</p>
         {coverageError && <p role="alert" className="text-red-700 text-sm">{coverageError}</p>}
         {!coverage && !coverageError && <p className="text-sm">A forrásjegyzék betöltése...</p>}
         {coverage && <>
@@ -136,7 +144,7 @@ export const AdminDashboard: React.FC = () => {
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{Math.round(coverage.indexedCharacters/1000)} ezer</strong>Karakter</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{sources.length}</strong>Külön feltöltött forrás (PHP)</div>
           </div>
-          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. A PHP-adminfelületen feltöltött források külön keresőindexet alkotnak.</p>
+          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. A külön feltöltött források is bekerülnek az élő PHP-jelentésbe; fejlesztői módban eltérhet a statikus csomagindex.</p>
           <details className="mb-3"><summary className="cursor-pointer font-semibold">Indexelt dokumentumok – részletes bontás</summary>
             <div className="overflow-x-auto mt-2"><table className="w-full text-xs">
               <thead><tr className="border-b text-left"><th className="p-2">Forrás</th><th className="p-2">Részlet</th><th className="p-2">Karakter</th></tr></thead>
