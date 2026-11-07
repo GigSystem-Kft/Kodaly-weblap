@@ -52,9 +52,9 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
      Forrás: a szerző által mellékelt szótár, eredeti meghatározásokkal. Régi vagy pontatlan szóhasználat is előfordulhat; a Tanársegéd a szakmailag ellenőrzött tananyagokkal összevetve értelmezi. A kategóriák kulcsszavas, tanulást segítő csoportosítások.
    </p>
    <div className="grid sm:grid-cols-3 gap-3 mt-6">
-     <button type="button" onClick={()=>onFlashcards('Zenei kifejezések – előadási utasítások')}
+     <button type="button" onClick={()=>onFlashcards('Zenei kifejezések – Tempó és időkezelés')}
        className="rounded-xl bg-indigo-700 text-white font-semibold p-4 flex items-center justify-center gap-2 hover:bg-indigo-800"><Layers size={18}/> Szókártyák</button>
-     <button type="button" onClick={()=>onMatching('Zenei kifejezések – előadási utasítások')}
+     <button type="button" onClick={()=>onMatching('Zenei kifejezések – Tempó és időkezelés')}
        className="rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-800 font-semibold p-4 flex items-center justify-center gap-2 hover:bg-indigo-100"><Gamepad2 size={18}/> Párosító játék</button>
      <button type="button" onClick={onQuiz} className="rounded-xl border border-slate-200 bg-white text-slate-800 font-semibold p-4 flex items-center justify-center gap-2 hover:bg-slate-50"><HelpCircle size={18}/> Tudáspróba</button>
    </div>
