@@ -23,6 +23,7 @@ import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
 import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './progress';
+import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './pendingProgress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -54,11 +55,20 @@ export default function App() {
           const saved = await progressResponse.json();
           if (active) {
             const restored = migrateProgress(saved.progress);
+            const user = data.user as AccountUser;
+            const pending = loadPendingProgress(localStorage, user.id);
+            const recovered = recoverPendingProgress(restored, pending);
             savedSnapshotRef.current = JSON.stringify(restored);
             revisionRef.current = saved.revision;
             accountGenerationRef.current++;
-            setProgress(restored);
-            setAccount(data.user as AccountUser);
+            if (pending && JSON.stringify(restored) === JSON.stringify(recovered)) {
+              clearSavedPendingProgress(localStorage, user.id, restored);
+            }
+            setProgress(recovered);
+            setAccount(user);
+            if (pending && JSON.stringify(restored) !== JSON.stringify(recovered)) {
+              setSyncError('A korábban offline maradt tanulási eredményeidet helyreállítottuk; mentés folyamatban.');
+            }
           }
         }
       } catch (error) {
@@ -79,6 +89,15 @@ export default function App() {
     }
     const snapshot = JSON.stringify(progress);
     if (savedSnapshotRef.current === snapshot || revisionRef.current === null) return;
+    try {
+      savePendingProgress(
+        localStorage, account.id,
+        migrateProgress(savedSnapshotRef.current ? JSON.parse(savedSnapshotRef.current) : null),
+        progress
+      );
+    } catch {
+      setSyncError('Nem sikerült helyi biztonsági másolatot menteni. A szervermentést továbbra is megpróbáljuk.');
+    }
     const handle = window.setTimeout(async () => {
       if (savingRef.current) return;
       savingRef.current = true;
@@ -107,6 +126,7 @@ export default function App() {
         if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
         revisionRef.current = result.revision;
         savedSnapshotRef.current = snapshot;
+        clearSavedPendingProgress(localStorage, account.id, progress);
         reschedule = true;
         setSyncError('');
       } catch (error) {
@@ -155,11 +175,15 @@ export default function App() {
     if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
     const saved = await response.json();
     const restored = migrateProgress(saved.progress);
+    const pending = loadPendingProgress(localStorage, user.id);
+    const recovered = recoverPendingProgress(restored, pending);
     accountGenerationRef.current++;
     savedSnapshotRef.current = JSON.stringify(restored);
     revisionRef.current = saved.revision;
-    setProgress(restored);
-    setSyncError('');
+    setProgress(recovered);
+    setSyncError(pending && JSON.stringify(restored) !== JSON.stringify(recovered)
+      ? 'Korábban mentetlen eredményeket állítottunk helyre; szinkronizálás folyamatban.'
+      : '');
     setAccount(user);
     setAccountReady(true);
   };
