@@ -11,7 +11,7 @@ const SECTION_MAP: Record<string, number[]> = {
  'ton-hangkeszlet':[0,1,3], 'chord-hangkeszlet':[0,1,3],
  'pentaton-gyakorlat':[1,2,3],
  'dúr-es-modalis':[0,2], 'moll-hangsorok':[1,2],
- 'harmashangzatok':[3], 'kvintkor':[2], 'hangzat-forditas':[3]
+ 'harmashangzatok':[3], 'kvintkor':[2]
 };
 export function getFoundationsSubchapterGuide(chapterId:string, subchapterId:string) {
  const guide=FOUNDATIONS_GUIDES.find(item=>item.chapterId===chapterId);
