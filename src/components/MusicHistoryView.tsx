@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MUSIC_HISTORY } from '../data/musicHistory';
+import { HISTORY_WORKSHOPS } from '../data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../data/musicHistoryProfiles';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 
@@ -17,7 +18,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
   const query = normalize(search.trim());
   const visible = MUSIC_HISTORY.filter(period =>
     !query || normalize([period.name,period.lead,period.period,
-      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title),...COMPOSER_BIOGRAPHIES.filter(item => item.periodId === period.id).flatMap(item => [item.name,item.significance,...item.works])].join(' ')).includes(query)
+      ...period.features,...period.genres,...period.figures,...(period.sections ?? []).flatMap(section => [section.title,...section.paragraphs]),...(period.listening ?? []).map(item => item.title),...(HISTORY_WORKSHOPS.find(workshop=>workshop.periodId===period.id)?.context ?? []),...COMPOSER_BIOGRAPHIES.filter(item => item.periodId === period.id).flatMap(item => [item.name,item.significance,...item.works])].join(' ')).includes(query)
   );
 
   return (
@@ -106,6 +107,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
         {visible.length === 0 && <p className="text-sm text-slate-600">Nincs találat. Próbálj másik keresőkifejezést.</p>}
         {visible.map((period, index) => {
           const expanded=selectedId===period.id || Boolean(query);
+          const workshop=HISTORY_WORKSHOPS.find(item=>item.periodId===period.id);
           return (
             <article key={period.id} className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
               <button type="button" aria-expanded={expanded}
@@ -130,6 +132,36 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
                       </div>
                     </section>
                   ))}
+                  {workshop && <section className="mb-7 space-y-5" aria-label="Részletes zenetörténeti műhely">
+                    <div className="border border-indigo-100 rounded-xl bg-indigo-50/40 p-5">
+                      <h4 className="font-semibold mb-2">Tanulási célok</h4>
+                      <ul className="list-disc pl-5 text-sm text-slate-700 space-y-2">
+                        {workshop.goals.map(goal=><li key={goal}>{goal}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-serif-cormorant font-semibold text-xl md:text-2xl mb-3">Történeti összefüggések – részletesebb magyarázat</h4>
+                      {workshop.context.map(paragraph=><p key={paragraph.slice(0,36)}
+                       className="text-sm md:text-base leading-relaxed text-slate-700 mb-3">{paragraph}</p>)}
+                    </div>
+                    <div className="border border-slate-200 rounded-xl p-5">
+                      <h4 className="font-semibold mb-3">Irányított zenehallgatás és alkalmazás</h4>
+                      <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-700">
+                        {workshop.steps.map(step=><li key={step}>{step}</li>)}
+                      </ol>
+                      <p className="text-sm text-slate-700 mt-4"><strong>Továbbgondolás:</strong> {workshop.furtherPractice}</p>
+                    </div>
+                    <div className="border border-indigo-200 rounded-xl p-5">
+                      <h4 className="font-semibold mb-2">Önellenőrzés – ellenőrizhető mintaválasszal</h4>
+                      <p className="text-sm text-slate-700 mb-3">{workshop.question}</p>
+                      <button type="button" aria-expanded={revealedAnswers.includes(period.id)}
+                       onClick={()=>setRevealedAnswers(current=>current.includes(period.id)?current.filter(id=>id!==period.id):[...current,period.id])}
+                       className="text-sm text-[#4a54e1] font-semibold hover:underline">
+                        {revealedAnswers.includes(period.id) ? 'Mintaválasz elrejtése' : 'Mintaválasz megtekintése'}
+                      </button>
+                      {revealedAnswers.includes(period.id) && <p className="text-sm leading-relaxed text-slate-700 mt-3">{workshop.modelAnswer}</p>}
+                    </div>
+                  </section>}
                   <div className="grid md:grid-cols-2 gap-7">
                     <div>
                       <h4 className="font-semibold mb-2">Jellegzetességek</h4>
