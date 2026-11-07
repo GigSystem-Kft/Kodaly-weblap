@@ -8,8 +8,8 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Nyitott; kiadási ellenőrzés hozzáadva, képek pótlása hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Javítás commitolva, CI még nem igazolta |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Verziózott compare-and-swap API + összevezető kliens implementálva; többeszközös teszt hátra (migráció nélkül) |
-| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Részben javítva a 13 kép kötelező ellenőrzésével |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision és MySQL integrációs teszt megírva; CI és valódi többeszközös próba hátra |
+| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt, a képek még hiányoznak |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Javítás commitolva, CI még nem igazolta |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
@@ -26,10 +26,10 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | Validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Nyitott |
-| P2 | A-19 | Teljes menü- és navigációs mátrix | Vizsgálat hátra |
+| P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva, teljes mátrixvizsgálat hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Vizsgálat hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Navigációs márkagomb billentyűzettel is elérhető; teljes audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb és tankönyv menü keyboard/touch kezelés javítva; teljes audit hátra |
 
 ## Első javítási csomag
 
@@ -38,6 +38,15 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 - A-01/A-18: `php-release.yml` ellenőrzi, hogy a `release/ritmikai/p001.jpg` – `p013.jpg` mind létező, nem üres fájl-e; a jelenlegi hiány esetén a build megáll, nem ad ki hibás ZIP-et.
 
 **Negyedik javítási egység:** A-23 első akadálymentességi javítás: a fejléc főoldalra visszalépő eleme billentyűzettel is aktiválható. A teljes WCAG és mobil ellenőrzés továbbra is hátra.\n\n**Harmadik javítási egység:** A-08 élő PHP-lefedettség és statikus buildleltár különválasztása; A-09 Tanársegéd üzemmód egyértelműsítése; A-12 négy bővített modul manuális teljesítési jelölése; A-16 XP-max tájékoztató.\n\n**Második javítási egység:** A-04/A-05/A-07 kódjavítás, valamint A-06 verzióazonosítós feltételes szervermentés, 409-es konfliktusválasz és böngészős összevezetés. A késznek minősítéshez CI, valódi párhuzamos eszközös teszt, PHP kompatibilitás és éles adatmegőrzési próba szükséges.\n\n**Fontos:** az első csomag nem helyettesíti a 13 jogszerűen felhasználható képfájl beszerzését és felvételét. Az éles weboldal és a belépett felhasználók nincsenek validálva. A-06 biztonságos, migrációt igénylő következő feladat. Korábbi CI-kör: a TypeScript/egységteszt/PHP/build lépések sikeresek, a ZIP-összeállítás a hiányzó 13 ritmikai kép miatt elbukik. Az új commitok aktuális CI státuszát külön kell ellenőrizni.
+
+## Ötödik javítási egység (2026-11-07)
+
+- A-06: a PHP szerver friss mentés után a MySQL JSON-mezőből visszaolvasott adat alapján adja a revisiont; új izolált MySQL integrációs teszt vizsgálja az első mentést, ismételt mentést, hiányzó revision elutasítását és elavult kliens 409 válaszát. **A teszt CI-eredménye még nem igazolt.**
+- A-18: a PHP csomagképek ellenőrzése Python manifest-szkripttel bővült; a 4 tankönyv 302 indexelt oldala és megfelelő képei, a 64 jegyzet-JPG és a 13 ritmikai JPG szükséges. A hiányzó képek továbbra is kiadásblokkolók.
+- A-19/A-23: a tankönyvmenü érintéssel nyitható, Escape-pel zárható; a menüpontok kijelölése zárja a menüt.
+- A-03: üres kérdésbank esetén kezelhető üzenet jelenik meg, nem omlik össze a teszt.
+
+**Kiadási tény:** korábbi Actions-futtatásban a Linux telepítőcsomag sikeres, a PHP ZIP összeállítása a médiahiány miatt hibás. A sikeres Linux build nem jelenti a PHP produkció készségét. Éles szerver, tényleges felhasználói adatok és minden média URL ellenőrzése továbbra sem történt meg.
 
 ## Lezárási feltételek
 
