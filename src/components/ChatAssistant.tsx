@@ -145,8 +145,8 @@ export const ChatAssistant: React.FC = () => {
                   }`} />
                   <span>
                     {aiMode === 'checking' && 'AI állapotának ellenőrzése...'}
-                    {aiMode === 'gemini' && 'Gemini konfigurálva'}
-                    {aiMode === 'fallback' && 'Helyi tanársegéd – ellenőrzött fogalmak'}
+                    {aiMode === 'gemini' && 'Generatív AI elérhető'}
+                    {aiMode === 'fallback' && 'Forráskereső tanársegéd – nem generatív AI'}
                     {aiMode === 'error' && 'AI-kapcsolati hiba'}
                   </span>
                 </p>
