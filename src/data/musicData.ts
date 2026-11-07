@@ -125,46 +125,38 @@ export const MUSIC_CHAPTERS: Chapter[] = [
   {
     id: 'szolmizacio-hangkozok',
     number: 3,
-    title: 'Szolmizáció és Hangközök (Intervallumok)',
-    description: 'Relatív szolmizációs hangok (d-r-m-f-s-l-t), tiszta, kis- és nagy hangközök prímektől decimáig.',
+    title: 'Relatív szolmizáció és hangközök',
+    description: 'Dó–dó′ szolmizációs skála, transzponálás és a hangközök száma, minősége, felismerése és megszólaltatása.',
     iconName: 'Layers',
     subchapters: [
       {
         id: 'szolmizacio-elonyai',
-        title: '3.1 Relatív szolmizáció',
-        summary: 'A szolmizáció nem az abszolút magasságot, hanem a hangnemen belüli funkciót jelöli (dó, ré, mi, fá, szó, lá, ti).',
+        title: '3.1 Relatív szolmizáció, dó–dó′ hangsor és transzponálás',
+        summary: 'Dó–ré–mi–fá–szó–lá–ti–dó′, a hangnemhez viszonyított fokok és áthelyezésük más alaphangra.',
         content: [
-          'Dúr hangsorban az 1. hang a dó, moll hangsorban az 1. hang a lá.',
-          'Kodály elve: „Könnyebb félhang nélkül tisztán énekelni” (félhang nélküli pentatónia / hexachord).',
-          'Azonos hangzók (ó-i, ó-á) segítik az intonációt és zenei emlékezetet.'
+          'A relatív szolmizáció a hangok egymáshoz való viszonyát jelöli: dó, ré, mi, fá, szó, lá, ti, dó′. A dó nem egyetlen rögzített abszolút hangmagasság, hanem a választott dúr hangsor alaphangja.',
+          'C-dúrban dó = C′, ré = D′, mi = E′, fá = F′, szó = G′, lá = A′, ti = H′, felső dó = C″. A megszólaló C-dúr hangsor nyolc negyedből áll, 60 BPM mellett nyolc másodpercig tart.',
+          'A dúr szolmizációs hangsorban a mi–fá és ti–dó′ között félhang, a többi szomszédos fok között egészhanglépés található. Énekeld és figyeld meg a két félhanglépést!',
+          'Ugyanez a dó–ré–mi dallam más hangnemben is megszólaltatható: G-dúrban dó = G, ré = A, mi = H; F-dúrban dó = F, ré = G, mi = A. A hangközviszonyok megmaradnak, az abszolút hangmagasság változik.',
+          'A transzponálás során a dallam minden hangját azonos hangközzel helyezzük át. A relatív szolmizáció segít a dallam szerepeinek és hangközeinek megtartásában különböző hangnemekben.',
+          'A lá-alapú természetes moll a dúrral azonos alaphangkészletből is levezethető. A lá–ti–dó–ré–mi hangsor különböző tonalitásérzetét hallás után is érdemes összehasonlítani.',
+          'Gyakorlat: énekeld a dó–ré–mi–fá–szó–lá–ti–dó′ sort, majd a G–A–H–C–D hangokat G-dúrban szolmizáld szótagokkal. Transzponáld a motívumot C-dúrba!'
         ]
       },
       {
         id: 'hangkoz-fajtak',
-        title: '3.2 Hangközök (Prímtől Decimáig)',
-        summary: 'Két hang egymástól való távolsága. Tiszta, kis- és nagy hangközök.',
+        title: '3.2 Hangközök: fajták, számítás, fordítás és hangzó példák',
+        summary: 'A prím–oktáv közötti tiszta, kis és nagy hangközök, a tritónusz, az oktávon túli hangközök és a fordítás.',
         content: [
-          'a) Prím (1): Azonos magasságú hangok (pl. d-d, jele: T1)',
-          'b) Szekund (2): Szomszédos hangok (kis szekund, jele: K2 (mi-fá, ti-dó); nagy szekund jele: N2 (d-r, r-m, f-s, s-l, l-t)',
-          'c) Terc (3): Három hang távolság (kis terc, jele: K3, nagy terc, jele: N3). K3 = N2 + K2. N3 = N2 + N2.',
-          'd) Kvart (4): Négy hang távolság (tiszta kvart, jele? T4 (pl.: d-f). T4 = N2 + N2 + N2 + K2.',
-          'e) Kvint (5): Öt hang távolság (tiszta kvint, jele: t5). T5 = N2 + N2 + N2 + N2 + K2.',
-          'f) Szext (6): Hat hang távolság (kis szext k6, nagy szext n6)',
-          'g) Szeptim (7): Hét hang távolság (kis szeptim k7, nagy szeptim n7)',
-          'h) Oktáv (8): Nyolc hang távolság (tiszta oktáv t8: l,-l\')',
-          'i) Nona (9) és Decima (10): Oktávon túli hangközök.'
-        ],
-        examples: [
-          {
-            title: 'Tiszta Kvint hallgatása',
-            description: 'd - s (Dó és Szó hangok együttesen vagy egymás után)',
-            audioNotes: ['C4', 'G4']
-          },
-          {
-            title: 'Nagy Terc hallgatása',
-            description: 'd - m (Dó és Mi)',
-            audioNotes: ['C4', 'E4']
-          }
+          'A hangköz két hang magasságának különbsége. A hangköz számát a betűnevek befoglaló számolása adja: C–D szekund (2), C–E terc (3), C–F kvart (4), C–G kvint (5), C–C″ oktáv (8).',
+          'A prím azonos hangmagasságú két hang (t1, 0 félhang). A kis szekund 1, a nagy szekund 2, a kis terc 3, a nagy terc 4 félhangos.',
+          'A tiszta kvart 5 félhang (például C–F), a tritónusz 6 félhang (például C–Fisz, bővített kvart), a tiszta kvint 7 félhang (C–G). A tiszta kvart két egész és egy félhanglépésből áll C-dúrban.',
+          'A kis és nagy szext 8, illetve 9; a kis és nagy szeptim 10, illetve 11; a tiszta oktáv 12 félhang. A nona (9) és a decima (10) az oktávon túli hangközök közé tartozik.',
+          'A hangköz számát a hangnevek, a minőséget a hangköz pontos félhangtávolsága határozza meg. Az azonos félhangtávolságnak enharmonikus írásmóddal más hangközneve is lehet.',
+          'Hangközfordításkor az egyik hangot oktávval áthelyezzük. A fordítás számértékei kilencre egészítik ki egymást: prím–oktáv, szekund–szeptim, terc–szext, kvart–kvint. A kis nagyra, a nagy kisre, a tiszta tisztára fordul.',
+          'Példák: C–Esz kis terc (3 félhang), C–E nagy terc (4), C–F tiszta kvart (5), C–G tiszta kvint (7). A nagy terc fordítása kis szext.',
+          'Hangzó gyakorlat: válaszd ki a kívánt hangközt, és figyeld meg a C′ alaphang és a második hang egymás utáni megszólalását. Hasonlítsd össze a szomszédos kis és nagy hangközöket!',
+          'Önellenőrzés: számold meg a hangköz betűnév szerinti fokait, a félhangokat, majd határozd meg a minőséget és a fordítást!'
         ]
       }
     ]
