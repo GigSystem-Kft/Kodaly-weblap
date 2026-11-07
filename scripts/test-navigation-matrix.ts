@@ -29,3 +29,11 @@ test('the four extended curriculum modules have complete page dispatches',()=>{
     assert.ok(app.includes("completeChapter('"+module.id+"')"),'Missing completion marker: '+module.id);
   }
 });
+
+test('textbook dropdown visibility and aria-expanded are derived from the same state',()=>{
+ assert.match(nav,/aria-expanded=\{textbooksOpen\}/);
+ assert.match(nav,/textbooksOpen \? 'block' : 'hidden'/);
+ assert.match(nav,/onMouseEnter=\{\(\) => setTextbooksOpen\(true\)\}/);
+ assert.match(nav,/onMouseLeave=\{\(\) => setTextbooksOpen\(false\)\}/);
+ assert.match(nav,/event\.key === 'Escape'/);
+});
