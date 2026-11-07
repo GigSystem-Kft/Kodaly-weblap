@@ -30,6 +30,7 @@ export function createEmptyProgress(): UserProgress {
     flashcardsMastered: [],
     matchingCompleted: [],
     favoriteExpressions: [],
+    earTrainingDailyXp: {},
     xp: 0,
     streak: 0,
     lastActiveDate: '',
@@ -57,6 +58,13 @@ export function migrateProgress(raw: unknown): UserProgress {
         (item.durationSeconds === undefined || (Number.isInteger(item.durationSeconds) && item.durationSeconds >= 0 && item.durationSeconds <= 36_000))
       ).slice(-100)
     : [];
+  const earTrainingDailyXp = value.earTrainingDailyXp &&
+    typeof value.earTrainingDailyXp === 'object' && !Array.isArray(value.earTrainingDailyXp)
+    ? Object.fromEntries(Object.entries(value.earTrainingDailyXp)
+        .filter(([day, points]) => /^\\d{4}-\\d{2}-\\d{2}$/.test(day) &&
+          Number.isInteger(points) && (points as number) >= 0 && (points as number) <= 100)
+        .sort(([a],[b])=>a.localeCompare(b)).slice(-366))
+    : {};
   const activityDays = strings(value.activityDays).filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day));
   return {
     completedChapters: strings(value.completedChapters),
@@ -66,6 +74,7 @@ export function migrateProgress(raw: unknown): UserProgress {
     flashcardsMastered: strings(value.flashcardsMastered),
     matchingCompleted: strings(value.matchingCompleted),
     favoriteExpressions: strings(value.favoriteExpressions).slice(0, 1800),
+    earTrainingDailyXp,
     // Historical XP cannot be reconstructed; keep the saved value, but never grant the old default 100 to new users.
     xp: typeof value.xp === 'number' && Number.isFinite(value.xp) ? Math.max(0, value.xp) : 0,
     streak: consecutiveDays(activityDays),
@@ -83,6 +92,21 @@ export function recordActivity(progress: UserProgress, amount: number, date = lo
     lastActiveDate: date
   };
 }
+/** Prevent unlimited XP farming from replaying the same ear-training challenges. */
+export function recordEarTrainingActivity(
+  progress: UserProgress,
+  amount: number,
+  date = localDay()
+): UserProgress {
+  const current = progress.earTrainingDailyXp?.[date] ?? 0;
+  const earned = Math.max(0, Math.min(100 - current, Math.floor(amount)));
+  const updated = Object.fromEntries(
+    Object.entries({ ...(progress.earTrainingDailyXp ?? {}), [date]: current + earned })
+      .sort(([a],[b])=>a.localeCompare(b)).slice(-366)
+  );
+  return recordActivity({ ...progress, earTrainingDailyXp: updated }, earned, date);
+}
+
 export function readProgress(): UserProgress {
   try {
     const saved = localStorage.getItem(PROGRESS_KEY);
@@ -111,6 +135,11 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     flashcardsMastered: union(account.flashcardsMastered, guest.flashcardsMastered),
     matchingCompleted: union(account.matchingCompleted, guest.matchingCompleted),
     favoriteExpressions: union(account.favoriteExpressions ?? [], guest.favoriteExpressions ?? []).slice(0,1800),
+    earTrainingDailyXp: Object.fromEntries(
+      [...new Set([...Object.keys(account.earTrainingDailyXp ?? {}), ...Object.keys(guest.earTrainingDailyXp ?? {})])]
+        .sort().slice(-366)
+        .map(day => [day, Math.max(account.earTrainingDailyXp?.[day] ?? 0, guest.earTrainingDailyXp?.[day] ?? 0)])
+    ),
     xp: Math.max(account.xp, guest.xp),
     activityDays: days,
     lastActiveDate: days.at(-1) ?? '',
