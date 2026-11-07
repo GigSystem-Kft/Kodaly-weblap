@@ -130,3 +130,20 @@ export function playEarTrainingInterval(notes: readonly string[]): void {
     console.error('Interval playback error:', error);
   }
 }
+
+/** Hangkészlet-dallam gyakorlása természetesebb, felhangos, egyenként elkülönülő hangokkal. */
+export function playEarTrainingMelody(notes: readonly string[]): void {
+  if (!notes.length || notes.length > 16) return;
+  try {
+    stopEarTrainingInterval();
+    const ctx=getAudioContext();
+    const begin=ctx.currentTime+0.045;
+    for(let index=0;index<notes.length;index++) {
+      const frequency=NOTE_FREQUENCIES[notes[index]];
+      if (!frequency) return;
+      scheduleWarmTone(ctx,frequency,begin+index*0.86,1.07);
+    }
+  } catch(error) {
+    console.error('Hangkészletlejátszási hiba:',error);
+  }
+}
