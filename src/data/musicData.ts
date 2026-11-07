@@ -63,16 +63,20 @@ export const MUSIC_CHAPTERS: Chapter[] = [
       },
       {
         id: 'tempo-utem',
-        title: '1.3 Tempó és Ütemfajták',
-        summary: 'A tempó a zenemű sebessége, Mälzel-metronóm használata. Az ütem mint metrikus egység és ütemjelzők.',
+        title: '1.3 Tempó, metrum, hangsúly és ütemmutatók',
+        summary: 'A korábbi 1.3 és 1.5 teljes, összevont tananyaga: tempó, mérőlüktetés, súlyos/súlytalan ütések és egyszerű/összetett ütemek.',
         content: [
-          'A tempó a zenemű hangjainak abszolút időtartam-meghatározása (szemben a relatív ritmussal).',
-          'Mälzel-féle metronóm (M. M.): pl. M. M. = 60 azt jelenti, hogy 60 ütés jut egy percre.',
-          'Ütemfajták:',
-          '• 2/4-es ütem: Magyar gyermekdalok jellemző ütemfajtája. 1 súlyos, 1 súlytalan negyed.',
-          '• 3/4-es ütem: Egy súlyos és két súlytalan egység (pl. Sárga csikó).',
-          '• 4/4-es ütem: Fősúly az 1., melléksúly a 3. negyeden.',
-          '• 6/8-os ütem: Nyolcad egységnyi ütem, 6 nyolcad fér egy ütembe (pl. Summáját írom).'
+          'A tempó a zene haladási sebessége; a mérő vagy pulzus a rendszeresen ismétlődő viszonyítási pont. A ritmus a hangok és szünetek tényleges időbeli elrendezése, amely eltérhet az egyenletes lüktetéstől.',
+          'Mälzel-metronóm: ♩ = 60 azt jelenti, hogy egy perc alatt 60 negyedütés hangzik el, azaz egy negyed egy másodpercig tart. A 6/8 ütemben fontos a nyolcad- és a pontozottnegyed-lüktetés megkülönböztetése.',
+          'A metrum a hangsúlyos és hangsúlytalan egységek szabályos rendje. A fősúly rendszerint az ütem első egységére esik; a mellékhangsúly ennél gyengébb, de a súlytalan ütésekhez képest kiemelt.',
+          'Az ütemmutató felső száma az ütemen belül lejegyzett egységek számát, az alsó száma a jelzett hangértéket nevezi meg. Az összetett ütemben az érzékelt mérőegység több lejegyzett hangértékből is állhat.',
+          '2/4-es ütem: Két negyed; az első fősúlyos, a második súlytalan. Gyakori ütemfajta a magyar gyermekdalokban. Hallásfeladat: erős–gyenge | erős–gyenge.',
+          '3/4-es ütem: Három negyed; az első fősúlyos, a második és harmadik súlytalan. Hallásfeladat: erős–gyenge–gyenge | erős–gyenge–gyenge.',
+          '4/4-es ütem: Négy negyed; az első fősúlyos, a harmadik melléksúlyos, a második és negyedik súlytalan. Hallásfeladat: erős–gyenge–közepes–gyenge, majd ismétlés.',
+          '6/8-os ütem: Hat nyolcadnyi érték, amely tipikusan két hármas csoportra tagolódik: 1–2–3 | 4–5–6. Az első nyolcad fősúlyos, a negyedik mellékhangsúlyos; a többi hangsúlytalan. A két nagyobb lüktetési egység rendszerint pontozott negyed.',
+          'Egyszerű ütemekben a mérőegység általában ketté, összetett ütemekben hármas részekre oszlik. A 6/8 ezért nem egyszerűen gyorsabb 3/4: a hangsúlyrend 3+3 nyolcad, nem három egyenrangú negyed.',
+          'Összehasonlító gyakorlat: hallgasd meg a két egymást követő ütemet mind a négy ütemmutatóban! Tapssal jelöld a fősúlyt, a 4/4 harmadik és a 6/8 negyedik egységében a mellékhangsúlyt.',
+          'Önellenőrzés: a 2/4 két negyedből, a 3/4 háromból, a 4/4 négyből, a 6/8 pedig hat nyolcadból áll. Számold meg a kiemelt hangokat, és hasonlítsd össze a 3/4 és a 6/8 hangzását!'
         ]
       }
     ]
