@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { playNote } from '../utils/audio';
+import React, { useEffect, useRef, useState } from 'react';
+import { playNote, playRhythmPlayback, stopRhythmPlayback } from '../utils/audio';
+import { RHYTHM_SUBDIVISIONS, rhythmPattern, type RhythmSubdivision } from '../utils/rhythmPattern';
 
 const keys = [
   {note:'C4', name:'C',semi:0},{note:'D4',name:'D',semi:2},
@@ -18,20 +19,62 @@ const presets = [
 export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>{
   const [selected,setSelected]=useState(1);
   const [active,setActive]=useState('C4');
-  const [division,setDivision]=useState(4);
+  const [division,setDivision]=useState<RhythmSubdivision>(1);
+  const [activeRhythmCell,setActiveRhythmCell]=useState(-1);
+  const [isRhythmPlaying,setIsRhythmPlaying]=useState(false);
+  const animation=useRef<ReturnType<typeof setInterval>|null>(null);
+  const stopRhythm=()=>{
+    stopRhythmPlayback();
+    if(animation.current!==null){clearInterval(animation.current);animation.current=null;}
+    setIsRhythmPlaying(false);
+    setActiveRhythmCell(-1);
+  };
+  useEffect(()=>()=>{stopRhythmPlayback();if(animation.current!==null)clearInterval(animation.current);},[]);
+  const selectDivision=(value:RhythmSubdivision)=>{
+    stopRhythm();
+    setDivision(value);
+  };
+  const startRhythm=()=>{
+    stopRhythm();
+    try {
+      const playback=playRhythmPlayback(division,60);
+      const begin=performance.now();
+      const noteMs=playback.durationMs/division;
+      setIsRhythmPlaying(true);
+      setActiveRhythmCell(0);
+      animation.current=setInterval(()=>{
+        const elapsed=performance.now()-begin;
+        if(elapsed>=playback.durationMs)stopRhythm();
+        else setActiveRhythmCell(Math.min(division-1,Math.floor(elapsed/noteMs)));
+      },35);
+    }catch(error){console.error('Ritmuslejátszás hiba:',error);stopRhythm();}
+  };
   const notes=presets[selected].steps;
   if(!['ritmus','hangkeszletek','hetfoku-hangsorok','szolmizacio-hangkozok'].includes(chapterId))return null;
   return <section className="mt-7 rounded-2xl border border-indigo-200 bg-white p-5 md:p-7" aria-label="Interaktív zenei szemléltetés">
     <h4 className="font-serif-cormorant text-2xl font-semibold mb-2">Próbáld ki és hallgasd meg!</h4>
     {chapterId==='ritmus' && <>
-      <p className="text-slate-600 text-sm mb-3">Az egy negyedet alkotó hangértékeket változtasd a gombokkal. A téglalapok azonos hosszúságú időt osztanak fel.</p>
+      <p className="text-slate-600 text-sm mb-3">Egy teljes <strong>4/4-es ütemet</strong> hallhatsz <strong>60 BPM</strong> tempóban (négy negyed = 4 másodperc). A hangmagasság azonos, csak a hangok időtartama és száma változik.</p>
       <div className="flex flex-wrap gap-2 mb-4">
-        {[1,2,4,8,16].map(n=><button key={n} type="button" onClick={()=>setDivision(n)}
+        {RHYTHM_SUBDIVISIONS.map(n=><button key={n} type="button" onClick={()=>selectDivision(n)}
           aria-pressed={division===n}
-          className={`border rounded-lg px-3 py-2 text-sm ${division===n?'bg-indigo-600 text-white':'bg-white text-slate-800'}`}>{n} rész</button>)}
+          className={`border rounded-lg px-3 py-2 text-sm ${division===n?'bg-indigo-600 text-white':'bg-white text-slate-800'}`}>{n===1?'Egész':n===2?'Fél':n===4?'Negyed':n===8?'Nyolcad':'Tizenhatod'}</button>)}
       </div>
-      <div className="flex gap-1 h-16 mb-3">{Array.from({length:division},(_,i)=><div key={i} className="flex-1 bg-indigo-100 border border-indigo-400 rounded-md flex items-center justify-center text-indigo-900 text-xs">{i+1}</div>)}</div>
-      <button type="button" className="bg-slate-900 text-white rounded-lg px-4 py-2 text-sm" onClick={()=>playNote('C4',550)}>Mérőhang megszólaltatása</button>
+      <p className="font-semibold text-slate-800 text-sm mb-3">{division} × {division===1?'egész':division===2?'fél':division===4?'negyed':division===8?'nyolcad':'tizenhatod'} hang = 4 negyed. Egy hang időtartama: {(rhythmPattern(division).noteSeconds).toLocaleString('hu-HU')} másodperc.</p>
+      <div className="flex gap-1 h-20 mb-3" role="group" aria-label="Négy negyedből álló ütem hangértékekre bontva">
+        {Array.from({length:division},(_,i)=><div key={i} aria-label={`${i+1}. hang`}
+          className={`flex-1 min-w-0 border rounded-md flex flex-col items-center justify-center transition-colors duration-75 ${activeRhythmCell===i?'bg-indigo-600 border-indigo-700 text-white':'bg-indigo-100 border-indigo-400 text-indigo-900'}`}>
+          <span className="text-xl leading-none" aria-hidden="true">{division===1?'𝅝':division===2?'𝅗𝅥':division===4?'♩':division===8?'♪':'♬'}</span>
+          {division<=8&&<span className="text-xs mt-1">{i+1}</span>}
+        </div>)}
+      </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        <button type="button" className="bg-slate-900 text-white rounded-lg px-4 py-2 text-sm" onClick={startRhythm}>
+          {isRhythmPlaying?'Újraindítás':'Négynegyedes ütem lejátszása'}
+        </button>
+        {isRhythmPlaying&&<button type="button" className="border border-slate-400 text-slate-900 rounded-lg px-4 py-2 text-sm" onClick={stopRhythm}>Leállítás</button>}
+      </div>
+      <p className="text-xs text-slate-600 mt-3" role="status">{isRhythmPlaying?'Lejátszás folyamatban: a kiemelt mező mutatja az aktuális hangot.':'Válassz hangértéket, majd indítsd el az ütemet. Minden beállítás pontosan 4 másodpercig tart.'}</p>
     </>}
     {chapterId!=='ritmus' && <>
       <p className="text-slate-600 text-sm mb-3">Válassz hangkészletet, majd kattints a billentyűkre: az ábrán egyszerre látod a hangnevet, a hangsor lépéseit és a megszólaló hangot.</p>
