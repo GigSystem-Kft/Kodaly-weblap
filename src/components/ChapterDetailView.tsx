@@ -46,7 +46,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
         <div className="flex items-center space-x-3">
           <button
             onClick={() => onOpenQuiz(chapter.id)}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-slate-900 text-sm font-medium transition-all shadow-lg shadow-violet-600/30"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium transition-all shadow-lg shadow-violet-600/30"
           >
             <HelpCircle className="w-4 h-4" />
             <span>Fejezet Kvíz Indítása</span>
@@ -69,7 +69,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
       </div>
 
       {/* Chapter Header */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8 shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8 shadow-sm">
         <span className="text-xs font-bold text-[#4a54e1]">0{chapter.number}. FEJEZET</span>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 mb-3">{chapter.title}</h2>
         <p className="text-slate-700 text-base leading-relaxed">{chapter.description}</p>
@@ -95,7 +95,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 }`}
               >
                 <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs font-bold ${
-                  isActive ? 'bg-white/20 text-slate-900' : 'bg-slate-50 text-[#4a54e1]'
+                  isActive ? 'bg-white/20 text-white' : 'bg-slate-50 text-[#4a54e1]'
                 }`}>
                   {idx + 1}
                 </span>
