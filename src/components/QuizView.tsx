@@ -70,110 +70,26 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
         </p>
       </div>
 
-      {/* Chapter Filter */}
-      <div className="flex flex-wrap justify-center gap-2 mb-8">
-        <button
-          onClick={() => {
-            setSelectedChapter('all');
-            restartQuiz();
-          }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'all'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}
-        >
-          Összes kérdés
-        </button>
-        <button
-          onClick={() => { setSelectedChapter('pedagogia'); restartQuiz(); }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'pedagogia'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}>
-          08. Tantárgy-pedagógia
-        </button>
-        <button
-          onClick={() => {
-            setSelectedChapter('ritmus');
-            restartQuiz();
-          }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'ritmus'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}
-        >
-          Ritmus & Tempó
-        </button>
-        <button
-          onClick={() => {
-            setSelectedChapter('hangok-kulcsok');
-            restartQuiz();
-          }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'hangok-kulcsok'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}
-        >
-          Hangok & Kulcsok
-        </button>
-        <button
-          onClick={() => {
-            setSelectedChapter('szolmizacio-hangkozok');
-            restartQuiz();
-          }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'szolmizacio-hangkozok'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}
-        >
-          Szolmizáció & Hangközök
-        </button>
-        {[
-          { id: 'kreativ', label: '06. Kreatív zenei nevelés' },
-          { id: 'zenetortenet', label: '07. Zenetörténet' },
-          { id: 'zenei-kifejezesek', label: '09. Zenei kifejezések és új hangsorok' }
-        ].map(category => (
-          <button key={category.id}
-            onClick={() => { setSelectedChapter(category.id); restartQuiz(); }}
-            className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-              selectedChapter === category.id
-                ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-                : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-            }`}>
-            {category.label}
-          </button>
-        ))}
-        <button
-          onClick={() => {
-            setSelectedChapter('solfege');
-            restartQuiz();
-          }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'solfege'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}
-        >
-          Szolmizációs hangok
-        </button>
-        <button
-          onClick={() => {
-            setSelectedChapter('abc-hangok');
-            restartQuiz();
-          }}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-all ${
-            selectedChapter === 'abc-hangok'
-              ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30'
-              : 'bg-slate-900/80 text-slate-300 border border-slate-800 hover:bg-slate-800'
-          }`}
-        >
-          ABC-s hangok
-        </button>
+      {/* One accessible dropdown replaces the growing button cloud. */}
+      <div className="max-w-xl mx-auto mb-8">
+        <label htmlFor="quiz-chapter" className="block mb-2 text-sm font-semibold text-slate-200">Teszt témaköre</label>
+        <select id="quiz-chapter" value={selectedChapter}
+          onChange={(event) => { setSelectedChapter(event.target.value); restartQuiz(); }}
+          className="w-full rounded-xl border border-violet-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
+          {[
+            {id:'all', label:'Összes kérdés'},
+            {id:'ritmus', label:'01. Ritmus és tempó'},
+            {id:'hangok-kulcsok', label:'02. Hangok és kulcsok'},
+            {id:'szolmizacio-hangkozok', label:'03. Szolmizáció és hangközök'},
+            {id:'kreativ', label:'06. Kreatív zenei nevelés'},
+            {id:'zenetortenet', label:'07. Zenetörténet'},
+            {id:'pedagogia', label:'08. Tantárgy-pedagógia'},
+            {id:'zenei-kifejezesek', label:'09. Zenei kifejezések'},
+            {id:'solfege', label:'Szolmizációs hangok'},
+            {id:'abc-hangok', label:'ABC-s hangok'},
+          ].map(item=><option value={item.id} key={item.id}>{item.label}</option>)}
+        </select>
+        <p className="text-xs text-slate-400 mt-2">{questions.length} kérdés a kiválasztott témakörben</p>
       </div>
 
       {isFinished ? (
