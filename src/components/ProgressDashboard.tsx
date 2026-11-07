@@ -80,7 +80,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
             {[...(progress.quizAttempts ?? [])].reverse().slice(0, 5).map(attempt => (
               <li key={attempt.id} className="py-3 text-sm">
                 <div className="flex flex-wrap justify-between gap-2">
-                  <span className="font-medium text-slate-800">{attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
+                  <span className="font-medium text-slate-800">{attempt.chapterId === 'vegyes-gyakorlas' ? 'Vegyes gyakorlás' : attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
                   <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}</span>
                 </div>
                 {(attempt.wrongQuestionIds?.length ?? 0)>0 && <details className="mt-2">
