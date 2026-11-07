@@ -1,5 +1,5 @@
 import React,{useMemo,useState} from 'react';
-import {RHYTHM_RESEARCH_PAGES,RHYTHM_RESEARCH_ORIGINAL_URL,RHYTHM_RESEARCH_SOURCE} from '../data/rhythmResearchPages';
+import {RHYTHM_RESEARCH_PAGES,RHYTHM_PROGRAM_ORIGINAL_URL,RHYTHM_RESEARCH_SOURCE} from '../data/rhythmResearchPages';
 import {RESEARCH_RHYTHM_GAMES} from '../data/rhythmResearchGames';
 
 /** 13 oldalas, helyben szövegesen kereshető elsődleges forrás és tíz óravázlat. */
