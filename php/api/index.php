@@ -517,7 +517,8 @@ try {
             }
             answer(200,['mode'=>'fallback',
                 'knowledge'=>['indexedSources'=>count($sources),
-                    'lessonChunks'=>$lessons,'indexedChunks'=>count($entries)]]);
+                    'lessonChunks'=>$lessons,'indexedChunks'=>count($entries),
+                    'coverage'=>tutorSourceAudit($entries)]]);
         case 'chat':
             method('POST'); guardWrite($config); throttle('chat', 60);
             $data=getPayload();
