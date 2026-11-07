@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { CREATIVE_SOURCE, CREATIVE_THEMES, CREATIVE_PRACTICES } from '../data/creativeEducation';
+import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { CREATIVE_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Users, Clock, Target, X, ZoomIn } from 'lucide-react';
 
@@ -200,6 +201,7 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
           );
         })}
       </div>
+      <CuratedMediaPanel chapterNumber={6}/>
       {enlargedImage && (
         <div role="dialog" aria-modal="true" aria-label={enlargedImage.title + ' nagyított képe'}
           className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4 md:p-8"
