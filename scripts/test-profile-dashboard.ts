@@ -65,3 +65,9 @@ test('account progress offers retry after transient network outage', () => {
  assert.match(app,/window\.addEventListener\('beforeunload', warnPendingSave\)/);
  assert.match(panel,/Eredmények mentésének újrapróbálása/);
 });
+
+test('floating AI assistant is constrained to small mobile viewport width and height',()=>{
+ const chat=readFileSync('src/components/ChatAssistant.tsx','utf8');
+ assert.match(chat,/w-\[calc\(100vw-1\.5rem\)\]/);
+ assert.match(chat,/max-h-\[calc\(100dvh-1\.5rem\)\]/);
+});
