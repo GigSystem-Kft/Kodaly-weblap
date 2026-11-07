@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
+      - main
       - 'feature/reszletes-tananyag-tobb-feladat-20261104'
   pull_request:
     branches: [main]
