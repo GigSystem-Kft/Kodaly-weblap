@@ -130,7 +130,7 @@ function mbSafeCut(string $text,int $max): string {
 /** Only aggregate status: do not reveal private uploaded source titles to anonymous visitors. */
 function tutorSourceAudit(array $entries): array {
     $coverage=[];
-    for($n=1;$n<=8;$n++) $coverage[(string)$n]=0;
+    for($n=1;$n<=9;$n++) $coverage[(string)$n]=0;
     $visual=0; $glossary=0;
     foreach($entries as $entry) {
         if(!is_array($entry)) continue;
