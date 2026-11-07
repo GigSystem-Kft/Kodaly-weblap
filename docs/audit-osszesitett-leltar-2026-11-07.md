@@ -114,6 +114,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-06: hálózati hiba miatti mentetlen fiókprogressz esetén böngészőzárási figyelmeztetés készült, de bezárt böngésző után még nem bizonyított a teljes adatmegőrzés.
 - A #2 PR továbbra is draft, a főág érintetlen.
 
+## Legutóbb ellenőrzött CI eredmény
+
+- 2026-11-07, GitHub Actions `42413149677`: Linux telepítőcsomag **sikeres**.
+- 2026-11-07, GitHub Actions `42413149871`: TypeScript, PHP és MySQL tesztelések, frontend build **sikeresek**; a PHP ZIP végső `Assemble root-ready CloudPanel ZIP` lépése **sikertelen**, mivel a hiányzó ritmikai JPG-k miatt a média-manifeszt blokkolja a kiadást.
+- A P0 médiaszállítás és éles E2E nem teljesült. A #2 PR továbbra is draft; **main merge nem történt**.
+
 ## Lezárási feltételek
 
 1. A P0 hibák megszűnnek, és a telepítő teljes statikus asset-manifeszt ellenőrzése sikeres.
