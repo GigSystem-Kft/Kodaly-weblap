@@ -399,7 +399,7 @@ export default function App() {
 
       <ChatAssistant />
 
-      <footer className="px-6 md:px-12 py-6 flex flex-col sm:flex-row justify-between items-center text-[0.65rem] font-mono-jetbrains text-[#1c1c1c]/60 border-t border-[#1c1c1c]/15 bg-[#fdfcf8]">
+      <footer className="px-6 md:px-12 py-6 flex flex-col sm:flex-row justify-between items-center text-[0.65rem] font-mono-jetbrains text-[#1c1c1c]/75 border-t border-[#1c1c1c]/15 bg-[#fdfcf8]">
         <span>COPYRIGHT © 2026. ALL RIGHTS RESERVED.</span>
         <span>CREATED BY DR. SZABÓ NORBERT — MATE</span>
       </footer>
