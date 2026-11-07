@@ -260,6 +260,20 @@ function knowledgeEntries(): array {
     $list=require $file;
     $entries = is_array($list) ? $list : [];
     $entries = array_values(array_filter($entries, static fn($e) => !str_contains(strtolower((string)($e['source'] ?? '')), 'kesztler')));
+    // Licensed full-text pedagogical book is a separate, server-side PHP data file.
+    // The release builder deliberately does not bundle copyrighted full source text;
+    // the site owner installs it only when their publication/AI indexing permission applies.
+    $pedagogyFile = __DIR__ . '/knowledge-pedagogy.php';
+    if (is_file($pedagogyFile)) {
+        $pedagogyEntries = require $pedagogyFile;
+        if (is_array($pedagogyEntries)) {
+            foreach ($pedagogyEntries as $item) {
+                if (is_array($item) && isset($item['source'], $item['label'], $item['text'])) {
+                    $entries[] = $item;
+                }
+            }
+        }
+    }
     require_once __DIR__ . '/tutor-sources.php';
     return array_merge($entries, tutorExtraKnowledge());
 }
