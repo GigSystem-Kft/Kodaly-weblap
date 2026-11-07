@@ -67,6 +67,7 @@ export interface UserProgress {
   flashcardsMastered: string[];
   matchingCompleted: string[];
   favoriteExpressions?: string[]; // saved glossary favorites, backward-compatible
+  earTrainingDailyXp?: Record<string, number>; // client-side practice cap; not a certified grade
   xp: number;
   streak: number;
   lastActiveDate: string;
