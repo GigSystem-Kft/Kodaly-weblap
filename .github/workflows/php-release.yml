@@ -99,6 +99,7 @@ jobs:
               -o /tmp/ritmikai-original.pdf
             sha256sum /tmp/ritmikai-original.pdf
             pdfinfo /tmp/ritmikai-original.pdf | grep -E 'Pages:|Page size:'
+            pdftotext -layout /tmp/ritmikai-original.pdf - | sha256sum
             echo 'eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa  /tmp/ritmikai-original.pdf' | sha256sum -c -
             bash scripts/render-rhythm-research-pages.sh /tmp/ritmikai-original.pdf
           fi
