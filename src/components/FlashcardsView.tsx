@@ -39,6 +39,15 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
     handleNext();
   };
 
+  if (filteredCards.length === 0) {
+    return <div className="max-w-4xl mx-auto px-4 py-8 text-slate-900">
+      <h2 className="text-xl font-bold mb-3">Ebben a témakörben még nincs szókártya</h2>
+      <p className="mb-4">A fogalomtárban a kategória ettől még kereshető.</p>
+      <button type="button" onClick={() => { setSelectedCategory('all'); setCurrentIndex(0); setIsFlipped(false); }}
+        className="rounded-lg bg-indigo-700 px-4 py-2 font-semibold text-white">Összes szókártya</button>
+    </div>;
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -76,8 +85,19 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
 
       {/* Flashcard Box */}
       <div
+        role="button"
+        tabIndex={0}
+        aria-label={isFlipped ? 'Szókártya: a kifejezés visszafordítása' : 'Szókártya: a meghatározás megjelenítése'}
+        aria-pressed={isFlipped}
         onClick={() => setIsFlipped(!isFlipped)}
-        className="w-full h-80 sm:h-96 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 border border-indigo-500/40 rounded-3xl p-8 flex flex-col justify-between shadow-2xl cursor-pointer hover:border-indigo-400 transition-all mb-8 relative group"
+        onKeyDown={event => {
+          if (event.target !== event.currentTarget) return;
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsFlipped(value => !value);
+          }
+        }}
+        className="w-full h-80 sm:h-96 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 border border-indigo-500/40 rounded-3xl p-8 flex flex-col justify-between shadow-2xl cursor-pointer hover:border-indigo-400 focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 transition-all mb-8 relative group"
       >
         <div className="flex items-center justify-between">
           <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
@@ -145,7 +165,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
             className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30 flex items-center space-x-2"
           >
             <Check className="w-4 h-4" />
-            <span>Tudom (+15 XP)</span>
+            <span>{masteredCards.includes(currentCard.id) ? 'Már megtanultam' : 'Tudom (+15 XP)'}</span>
           </button>
         </div>
 
