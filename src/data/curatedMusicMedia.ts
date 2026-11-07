@@ -7,7 +7,7 @@
  */
 export interface CuratedMedia {
  id:string; chapters:number[]; title:string; note:string; kind:'kep'|'video'|'hanganyag';
- url:string; imageUrl?:string; license?:string; access?:string;
+ url:string; imageUrl?:string; embedUrl?:string; license?:string; access?:string;
 }
 const commons='https://commons.wikimedia.org/wiki/File:';
 const fileImage=(name:string)=>'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(name);
@@ -49,6 +49,29 @@ export const CURATED_MEDIA:CuratedMedia[]=[
   note:'Fontos: az ábra angolszász hangneveket használhat; a magyar H/B hangneveket a tananyag szövegében ellenőrizd.',
   kind:'kep',url:commons+'Circle_of_5ths_(fifths).svg',
   imageUrl:fileImage('Circle of 5ths (fifths).svg'),license:'CC0 – TYalaA, Wikimedia Commons'
+ },
+ {
+  id:'video-kodaly-liszt',chapters:[7],title:'Liszt Ferenc munkássága – magyar vonatkozások',
+  note:'Kovács Tamásné magyar nyelvű zenetörténeti bemutatója, a kecskeméti Kodály Iskola nyilvános, iskolai videójegyzékéből. Figyeld meg a Liszt-életmű magyar kapcsolatait.',
+  kind:'video',url:'https://youtu.be/czHwpBARY90',
+  embedUrl:'https://www.youtube-nocookie.com/embed/czHwpBARY90',
+  access:'Az ágyazott lejátszás a videó tulajdonosának beállításaitól függ'
+ },
+ {
+  id:'video-ritmus-gs',chapters:[1,6],title:'A zene alapjai: ritmus és lüktetés',
+  note:'Jónás Tamás magyar nyelvű videós magyarázata a metrumokról, ritmusértékekről és triolákról. A videó a hivatkozott magyar cikkbe van beágyazva.',
+  kind:'video',url:'https://gsfanatic.com/hu/gs-article/a-zene-alapjai-ritmus-es-luktetes'
+ },
+ {
+  id:'video-paratlan',chapters:[1,6],title:'Ritmusérzék fejlesztése páratlan ütemekkel',
+  note:'Jónás Tamás gyakorlati magyar videója; ütemszámolás, 7/4-es ritmusgyakorlatok. A feladatok a forrásoldalon, beágyazott videóval érhetők el.',
+  kind:'video',url:'https://gsfanatic.com/hu/gs-article/igy-fejleszd-a-ritmuserzeked---paratlan-utemmutatoval'
+ },
+ {
+  id:'video-zeneelmelet-zenecsoda',chapters:[3,4,5,8],title:'Zeneelméleti videók – relatív hangok, hangközök, akkordok',
+  note:'Magyar magyarázatok és tényleges videólejátszók egy forrásoldalon. A lejátszás sütibeállításhoz kötött lehet.',
+  kind:'video',url:'https://zenecsoda.jimdoweb.com/zeneelm%C3%A9let/',
+  access:'A videókat a forrásoldal a látogató hozzájárulása után tölti be'
  },
  {
   id:'video-aktiv-ritmus',chapters:[1,6,8],title:'Ritmikus énekes-játékok – magyar kutatási videótár',
