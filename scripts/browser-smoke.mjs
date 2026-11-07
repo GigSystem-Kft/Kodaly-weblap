@@ -49,6 +49,18 @@ try {
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
   console.log('Guest: personal learning dashboard loaded');
 
+  await page.getByRole('button',{name:/01\. Tananyag/}).click();
+  await page.getByRole('button',{name:/09 Zenei kifejezések/}).click();
+  await page.getByRole('heading',{name:'Zenei kifejezések'}).waitFor();
+  await page.getByRole('button',{name:'Kedvencekhez adás'}).first().click();
+  await page.getByRole('checkbox',{name:/Csak a megjelölt kedvencek/}).check();
+  if(await page.locator('article').count()!==1) throw new Error('Glossary favorite filtering failed');
+  await page.getByRole('button',{name:/Vissza a tananyaghoz/}).click();
+  await page.getByRole('button',{name:/09 Zenei kifejezések/}).click();
+  await page.getByRole('checkbox',{name:/Csak a megjelölt kedvencek/}).check();
+  if(await page.locator('article').count()!==1) throw new Error('Glossary favorites lost on view remount');
+  console.log('Guest: glossary favorites persist across page navigation');
+
   // A mobile touch device exercises actual click-to-open navigation without hover.
   const touch=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   await touch.goto(root,{waitUntil:'domcontentloaded'});
