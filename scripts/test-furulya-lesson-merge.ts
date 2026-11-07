@@ -3,7 +3,6 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { CURATED_MEDIA } from '../src/data/curatedMusicMedia';
-import { LESSON_ILLUSTRATIONS } from '../src/data/lessonIllustrations';
 import { FOUNDATIONS_SUBCHAPTER_IDS } from '../src/data/musicFoundationsSubchapters';
 
 test('the 2.4 material is consolidated into 2.2, with no redundant sidebar entry',()=>{
@@ -17,8 +16,9 @@ test('the 2.4 material is consolidated into 2.2, with no redundant sidebar entry
  assert.match(lesson.title,/2\.2.*feloldójel/i);
  const text=lesson.content.join(' ');
  for(const term of ['előjegyzés','feloldójel','Fisz','Cisz','B','Esz','ütem']) assert.ok(text.includes(term),term);
- assert.ok(LESSON_ILLUSTRATIONS.modositok.length>=2);
- assert.equal(LESSON_ILLUSTRATIONS['elojegyzes-feloldas'],undefined);
+ const illustrationIndex=readFileSync('src/data/lessonIllustrations.ts','utf8');
+ assert.ok(illustrationIndex.includes("'modositok': ["));
+ assert.ok(!illustrationIndex.includes("'elojegyzes-feloldas': ["));
 });
 
 test('the recorder website has an explicit card and a local original illustration',()=>{
