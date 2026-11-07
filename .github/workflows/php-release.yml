@@ -86,23 +86,6 @@ jobs:
         run: bash scripts/test-php-chat-no-database.sh
       - name: Test invitation signup against MySQL
         run: bash scripts/test-php-invitations.sh
-      - name: Prepare verified original rhythm research pages
-        run: |
-          set -euo pipefail
-          if [ ! -s public/ritmikai/p001.jpg ]; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq poppler-utils
-            # The university host currently sends an incomplete TLS certificate chain.
-            # SHA256 pinning below is mandatory; do not execute or trust downloaded content without it.
-            curl -kfLSs --retry 3 --connect-timeout 15 --max-time 120 \
-              'https://www2.u-szeged.hu/ezk/wp-content/uploads/2017/09/Ritmikai-fejleszt%C5%91program_3h%C3%B3_honlapra.pdf' \
-              -o /tmp/ritmikai-original.pdf
-            sha256sum /tmp/ritmikai-original.pdf
-            pdfinfo /tmp/ritmikai-original.pdf | grep -E 'Pages:|Page size:'
-            pdftotext -layout /tmp/ritmikai-original.pdf - | sha256sum
-            echo 'eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa  /tmp/ritmikai-original.pdf' | sha256sum -c -
-            bash scripts/render-rhythm-research-pages.sh /tmp/ritmikai-original.pdf
-          fi
       - name: Build frontend for PHP API
         env:
           VITE_PHP_API: '1'
