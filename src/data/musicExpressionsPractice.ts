@@ -107,5 +107,5 @@ export const THEORY_QUIZZES:QuizQuestion[]=THEORY_DRILLS.map((item,i)=>{
  const options=alternatives.map(x=>x.meaning);options.splice(at,0,item.meaning);
  return {id:'drill-q-'+item.id,chapterId:item.category==='Hangértékek'||item.category==='Ritmusképletek'||item.category==='Ütemfajták'?'ritmus':'zenei-kifejezesek',
  question:'Válaszd ki a helyes magyarázatot: '+item.term,
- options,correctIndex:at,explanation:item.why};
+ options,correctIndex:at,explanation:'Magyarázat: '+item.why};
 });
