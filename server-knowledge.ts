@@ -39,9 +39,9 @@ const normalize = (value: string) =>
 
 function tokenize(value: string): string[] {
   // 1.13, 2.18 és 3.9 ritmuspéldák: megőrzött, önálló keresőazonosítók.
-  const withRhythmIds=normalize(value).replace(/\\b([123])\\.(\\d{1,2})\\b/g, 'ritmuspeldax$1x$2');
+  const withRhythmIds=normalize(value).replace(/\b([123])\.(\d{1,2})\b/g, 'ritmuspeldax$1x$2');
   return (withRhythmIds.match(/[a-z0-9]{3,}/g) ?? [])
-    .map(word => ['hexakord','hexachordum','hexachord'].includes(word) ? 'hexachord' : word.slice(0, 6))
+    .map(word => word.startsWith('ritmuspeldax') ? word : ['hexakord','hexachordum','hexachord'].includes(word) ? 'hexachord' : word.slice(0, 6))
     .filter(word => !STOPWORDS.has(word));
 }
 
@@ -293,7 +293,7 @@ export interface SearchResult {
 export function searchKnowledge(query: string, limit = 6): SearchResult[] {
   const terms = [...new Set(tokenize(query))];
   if (!terms.length) return [];
-  const sourcePattern = /ritmikai|ritmust[aá]bl[aá]zat|ritmusp[eé]lda/i.test(query) ? query.match(/\\b([123])\\.(\\d{1,2})\\b/) : null;
+  const sourcePattern = /ritmikai|ritmust[aá]bl[aá]zat|ritmusp[eé]lda/i.test(query) ? query.match(/\b([123])\.(\d{1,2})\b/) : null;
   const targetSourcePage = sourcePattern ? Number(sourcePattern[1]) + 9 : null;
   const scored = INDEX.map(entry => {
     let score = 0;
