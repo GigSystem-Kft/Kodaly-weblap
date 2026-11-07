@@ -11,6 +11,7 @@ import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducati
 import { MUSIC_HISTORY } from '../src/data/musicHistory';
 import { HISTORY_WORKSHOPS } from '../src/data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistoryProfiles';
+import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS, HISTORY_VISUALS, HISTORY_RESOURCES, HISTORY_NOTE_SOURCE } from '../src/data/musicHistorySupplement';
 
 type Entry = { source: string; label: string; text: string; creativePractice?: {
   id: string; title: string; theme: string; goal: string; materials: string;
@@ -106,6 +107,26 @@ for (const workshop of HISTORY_WORKSHOPS) {
   text:[...workshop.goals,...workshop.context,...workshop.steps,workshop.question,
     workshop.modelAnswer,workshop.furtherPractice].join('\\n\\n')
  });
+}
+for(const item of HISTORY_NOTE_INSIGHTS){
+ entries.push({source:HISTORY_NOTE_SOURCE+' – önálló, forráskritikus értelmezés',
+  label:'07. Zenetörténet / '+item.periodId+' / '+item.title+' / '+item.pages.join('–')+'. oldal',
+  text:[item.title,item.explanation,...item.listenFor,item.task,item.sampleAnswer,item.caution??''].join('\\n\\n')});
+}
+for(const item of HISTORY_TEXTBOOK_LINKS){
+ entries.push({source:'NAT 2020 Ének-zene '+item.grade+'. osztály – zenetörténeti művek',
+  label:'07. Zenetörténet / '+item.periodId+' / '+item.work+' / '+item.page+'. PDF-oldal',
+  text:[item.work,'Tankönyv: '+item.grade+'. osztály, '+item.page+'. oldal',item.focus,item.activity].join('\\n')});
+}
+for(const item of HISTORY_VISUALS){
+ entries.push({source:'Zenetörténet – történeti illusztráció, forrás és licenc',
+  label:'07. Zenetörténet / '+item.periodId+' / '+item.title,
+  text:[item.caption,item.sourceUrl,item.licenseNote].join('\\n')});
+}
+for(const item of HISTORY_RESOURCES){
+ entries.push({source:'Zenetörténet – külső hang- és videóforrás',
+  label:'07. Zenetörténet / '+item.periodId+' / '+item.title,
+  text:[item.focus,item.url,item.availabilityNote??''].join('\\n')});
 }
 for (const profile of COMPOSER_BIOGRAPHIES) {
   entries.push({
