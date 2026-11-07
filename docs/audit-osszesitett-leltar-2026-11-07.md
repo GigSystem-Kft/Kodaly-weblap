@@ -6,10 +6,10 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 
 | Prioritás | ID | Téma | Állapot |
 |---|---|---|---|
-| P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva, 13 JPG helyben előállítva; a bináris oldalképek GitHubba való felvétele még hátra |
+| P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | MEGOLDVA: 13 eredeti, Git SHA-val bájtpontosan ellenőrzött JPG feltöltve a fejlesztési ágra; 42422196761 teljes PHP-telepítő CI sikeres |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás és CI build/tesztek sikeresek; élő magyar kereső-E2E még hátra |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés; háromutas kedvenc-összevezetés és kijelentkezés előtti mentetlenségfigyelmeztetés, regressziós tesztek. MySQL CI-sikeres; valódi többeszközös böngészős próba hátra |
-| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal, 13 ritmikai kép, 64 jegyzetkép JPEG-jelölő és méretellenőrzéssel; a hiányos ZIP blokkolt; az egyetemi PDF alternatív URL-jének SHA-256-ja sem egyezett, a 13 lokális JPG GitHubba való felvétele szükséges |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, háromutas kedvenc-összevezetés, fiókonként elkülönített offline függő mentés-visszaállítás; offline böngészős és migrációs tesztek; valós többeszközös éles próba hátra |
+| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | MEGOLDVA: a kötelező 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép médiaellenőrzése zöld; 42422196761 PHP ZIP sikeresen összeállt |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
@@ -22,7 +22,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127+69=258 tétel definíció alapján átsorolva, 945 helyett 687 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Párosító 5 XP/új pár (max. 50/kör), hallásfeladat 100 XP/nap, PHP-validált napló és tesztek; az XP továbbra is kliensoldali gyakorlási pont, teljes szerveroldali anti-cheat hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
-| P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt a 42411290126-os CI-ben sikeres; további kotta- és lejátszás-E2E hátra |
+| P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B/H megfeleltetés és G5 (783,99 Hz) javítva; a nagy szeptim hangsor H4-re javítva; teljes 12-TET és 12 hangköz frekvenciateszt bekerült; további lejátszás-E2E hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil és kedvenc-összevezetés tisztázva; párhuzamos kedvenc törlés háromutas összevezetése; XP-adat történeti eseménynaplója továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, rontott kérdések, helyes válaszok és magyarázatok, gyakorlási idő; trend és pedagógiai értékelés hátra |
@@ -178,3 +178,10 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 3. Vendég, hallgató, tanár, admin teljes életút szerepkörös és többeszközös tesztje kész; nincs adatvesztés.
 4. Magyar hangnevek, kotta és audio, valamint a forrásolt AI-válaszok szakmai mintatesztje sikeres.
 5. Mobil/desktop, billentyűzet és akadálymentességi ellenőrzés után az összes hiba bizonyítékkal lezárható.
+
+## Huszonnegyedik javítási egység – eredeti média kiadása és offline helyreállítás
+
+- A-01/A-18: **2026-11-07, GitHub commit `dfa23b569796ace22a15071224029d083b4d23ce`: 13 darab valódi `public/ritmikai/p001.jpg`–`p013.jpg` fájl kerültek a fejlesztési ágra.** A forrás az eredeti, 13 oldalas PDF, amelynek SHA-256-ja `eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa`. Minden oldal Git-blob SHA-ját külön összevetettük a korábban generált JPG Git SHA-jával; mind a 13 egyezett. GitHub Actions `42422196761` **teljes PHP ZIP sikeres**, `42422196762` Linux build sikeres, `42422196771` Chromium E2E sikeres. A technikai A-01/A-18 kiadásblokkoló lezárható; ez még nem az éles szerver telepítési elfogadása.
+- A-06: bejelentkezett felhasználó függő, szerverre még el nem jutott eredményeit fiókazonosítóval elkülönített helyi böngészőtárolóba írjuk, és a következő azonos fiókbelépésnél a mentett alapállapothoz viszonyított háromutas összevezetéssel állítjuk helyre. A fiókhoz nem tartozó vagy hibás változatot nem emeljük be. Sikeres szervermentéskor kizárólag a ténylegesen továbbított változat ideiglenes helyi másolatát töröljük. Felületi figyelmeztetés és egység-, valamint böngészős regresszió készült. A böngésző helyi tárolója **nem titkosított biztonsági mentés**; érzékeny adatokhoz a közös gépen körültekintés szükséges.
+- A-14/A-20: felfedeztük és javítottuk, hogy a G5 táblázatos frekvenciája 790 Hz volt az A=440 Hz 12-TET szerinti 783,99 Hz helyett; a nagy szeptim hangközprogramban H4 helyett korábban a magyar B4 (B♭) szólt. 39 hangmagasság 12-TET ellenőrzése és mind a 12 hangköz automatikus frekvencia–felirat egyezése bekerült a tesztcsomagba.
+- A teljes projekt még **nem** kiadásra kész, amíg a nyitott tudományos/tartalmi audit, adatkezelési jóváhagyás és az éles jogosultsági/telepítési E2E nincs lezárva. A `main` változatlan.
