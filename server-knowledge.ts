@@ -15,6 +15,7 @@ import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducatio
 import { MUSIC_HISTORY } from './src/data/musicHistory';
 import { HISTORY_WORKSHOPS } from './src/data/musicHistoryWorkshops';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from './src/data/musicHistoryProfiles';
+import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS, HISTORY_VISUALS, HISTORY_RESOURCES, HISTORY_NOTE_SOURCE } from './src/data/musicHistorySupplement';
 
 interface KnowledgeChunk {
   source: string;
@@ -203,6 +204,35 @@ function buildIndex(): KnowledgeChunk[] {
     );
     if (chunk) entries.push(chunk);
   }
+  // A 16 oldalas saját jegyzet nyers szövege külön, oldalszámozott forrásból
+  // érkezik; a jegyzet kritikus történeti állításait a következő, javított leckék
+  // és módszertani figyelmeztetések pontosítják.
+  for(const item of HISTORY_NOTE_INSIGHTS){
+    const body=[item.title,item.explanation,...item.listenFor,item.task,item.sampleAnswer,item.caution??''].join('\\n\\n');
+    for(const part of splitLongText(body,1200)){
+      const chunk=makeChunk(HISTORY_NOTE_SOURCE+' – forráskritikus, önálló feldolgozás',
+        '07. Zenetörténet / '+item.periodId+' / '+item.title+' / eredeti '+item.pages.join('–')+'. oldal',part,'lesson');
+      if(chunk)entries.push(chunk);
+    }
+  }
+  for(const item of HISTORY_TEXTBOOK_LINKS){
+    const body=[item.work,'Tankönyv: Ének-zene '+item.grade+'. osztály, '+item.page+'. PDF-oldal',item.focus,item.activity].join('\\n');
+    const chunk=makeChunk('NAT 2020 Ének-zene '+item.grade+'. osztály – ellenőrzött műlista és zenetörténeti tanítási kapcsolatok',
+      '07. Zenetörténet / '+item.periodId+' / '+item.work+' / '+item.page+'. oldal',body,'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for(const item of HISTORY_RESOURCES){
+    const chunk=makeChunk('Zenetörténet – online múzeumi, hang- és videoforrások',
+      '07. Zenetörténet / '+item.periodId+' / '+item.title,
+      [item.title,item.focus,item.url,item.availabilityNote??''].join('\\n'),'source');
+    if(chunk)entries.push(chunk);
+  }
+  for(const item of HISTORY_VISUALS){
+    const chunk=makeChunk('Zenetörténet – múzeumi és Wikimedia Commons történeti képek',
+      '07. Zenetörténet / '+item.periodId+' / '+item.title,
+      [item.caption,item.sourceUrl,item.licenseNote].join('\\n'),'source');
+    if(chunk)entries.push(chunk);
+  }
   for (const workshop of HISTORY_WORKSHOPS) {
     const period=MUSIC_HISTORY.find(item=>item.id===workshop.periodId);
     if (!period) continue;
@@ -388,7 +418,8 @@ export function sourceCoverageReport() {
   const omitted = files.filter(f => f.startsWith('_') || /kesztler[-_ ]zenei[-_ ]alapismeretek/i.test(f));
   const missing = ['jegyzet.txt','forrasok/nat2020-enekzene-1.txt','forrasok/nat2020-enekzene-2.txt',
     'forrasok/nat2020-enekzene-3.txt','forrasok/nat2020-enekzene-4.txt',
-    'forrasok/mta-szte-ritmikai-fejleszto-jatekgyujtemeny.txt']
+    'forrasok/mta-szte-ritmikai-fejleszto-jatekgyujtemeny.txt',
+    'forrasok/sajat-zenetorteneti-jegyzet-16-oldal.txt']
     .filter(name => !existsSync(resolve(DATA_DIR,name)));
   return {
     generatedAt: new Date().toISOString(),
