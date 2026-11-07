@@ -15,10 +15,11 @@ interface AccountPanelProps {
   onSignedOut: () => void;
   onImportLocal: () => void;
   syncError?: string;
+  onRetrySync?: () => void;
 }
 
 export const AccountPanel: React.FC<AccountPanelProps> = ({
-  user, onSignedIn, onSignedOut, onImportLocal, syncError
+  user, onSignedIn, onSignedOut, onImportLocal, syncError, onRetrySync
 }) => {
   const [available, setAvailable] = useState(false);
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
@@ -174,7 +175,13 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         <div>
           <p className="text-sm text-slate-600">Bejelentkezve: <strong>{user.displayName}</strong> ({user.email})</p>
           <p className="text-sm text-emerald-700 mt-2">Az eredmények automatikusan mentésre kerülnek a saját fiókodba.</p>
-          {syncError && <p role="alert" className="text-sm text-rose-600 mt-2">{syncError}</p>}
+          {syncError && <div role="alert" className="mt-2 text-sm text-rose-700">
+            <p>{syncError}</p>
+            <button type="button" onClick={onRetrySync}
+              className="mt-2 rounded-lg border border-rose-300 px-3 py-2 font-semibold hover:bg-rose-50">
+              Eredmények mentésének újrapróbálása
+            </button>
+          </div>}
           {success && <p role="status" className="text-sm text-emerald-700 mt-2">{success}</p>}
           <div className="flex flex-wrap gap-2 mt-4">
             <button type="button" onClick={onImportLocal} className="rounded-lg px-4 py-2 bg-indigo-600 text-white text-sm hover:bg-indigo-500">Korábbi helyi eredmények átvitele</button>
