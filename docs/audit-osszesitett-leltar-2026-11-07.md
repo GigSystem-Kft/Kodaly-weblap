@@ -27,7 +27,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozás-lista (pont, helyes/összes, témakör) implementálva, kérdésenkénti hibák/időtartam továbbra is nyitott |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva, teljes mátrixvizsgálat hátra |
-| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Vizsgálat hátra |
+| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt hozzáadva, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
 | P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb és tankönyv menü keyboard/touch kezelés javítva; teljes audit hátra |
 
@@ -56,6 +56,10 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 
 - A-17: a korábbi `quizScores` legjobb eredmények változatlanul megmaradnak; opcionális, legfeljebb 100 eseményes `quizAttempts` került az adatmodellbe, kliens migrációba, összevezetésbe, PHP-adatellenőrzésbe és személyes profilba. Kvíz-témakör, dátum, eredmény, helyes/összes rögzül, tanulási naplóként, nem hiteles vizsgamérésként. Kérdésenkénti hibák, időtartam és statisztikai trend részletei még fejlesztendők.
 - A-21: tesztkód készült a `teacher` és `student` admin-jogosultságának megtagadására; CI ellenőrzés szükséges.
+
+## Nyolcadik javítási egység (2026-11-07)
+
+- A-20: automatikus tananyagintegritási teszt ellenőrzi az 5 alaptananyag és a 4 bővített modul azonosítóit, az alfejezeti tartalom meglétét, a kérdésbank kategóriakapcsolatait és válaszindexeit, valamint a szókártya- és párosítóazonosítók egyediségét. A teljes szakmai-kottai-zenei egyezés ettől még nem tekinthető lezártnak.
 
 ## Lezárási feltételek
 
