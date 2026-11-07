@@ -22,12 +22,15 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
   const [division,setDivision]=useState<RhythmSubdivision>(1);
   const [activeRhythmCell,setActiveRhythmCell]=useState(-1);
   const [isRhythmPlaying,setIsRhythmPlaying]=useState(false);
+  const [withMetronome,setWithMetronome]=useState(true);
+  const [activeBeat,setActiveBeat]=useState(-1);
   const animation=useRef<ReturnType<typeof setInterval>|null>(null);
   const stopRhythm=()=>{
     stopRhythmPlayback();
     if(animation.current!==null){clearInterval(animation.current);animation.current=null;}
     setIsRhythmPlaying(false);
     setActiveRhythmCell(-1);
+    setActiveBeat(-1);
   };
   useEffect(()=>()=>{stopRhythmPlayback();if(animation.current!==null)clearInterval(animation.current);},[]);
   const selectDivision=(value:RhythmSubdivision)=>{
@@ -37,15 +40,19 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
   const startRhythm=()=>{
     stopRhythm();
     try {
-      const playback=playRhythmPlayback(division,60);
+      const playback=playRhythmPlayback(division,60,withMetronome);
       const begin=performance.now();
       const noteMs=playback.durationMs/division;
       setIsRhythmPlaying(true);
       setActiveRhythmCell(0);
+      setActiveBeat(0);
       animation.current=setInterval(()=>{
         const elapsed=performance.now()-begin;
         if(elapsed>=playback.durationMs)stopRhythm();
-        else setActiveRhythmCell(Math.min(division-1,Math.floor(elapsed/noteMs)));
+        else {
+          setActiveRhythmCell(Math.min(division-1,Math.floor(elapsed/noteMs)));
+          setActiveBeat(Math.min(3,Math.floor(elapsed/1000)));
+        }
       },35);
     }catch(error){console.error('Ritmuslejátszás hiba:',error);stopRhythm();}
   };
@@ -54,7 +61,7 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
   return <section className="mt-7 rounded-2xl border border-indigo-200 bg-white p-5 md:p-7" aria-label="Interaktív zenei szemléltetés">
     <h4 className="font-serif-cormorant text-2xl font-semibold mb-2">Próbáld ki és hallgasd meg!</h4>
     {chapterId==='ritmus' && <>
-      <p className="text-slate-600 text-sm mb-3">Egy teljes <strong>4/4-es ütemet</strong> hallhatsz <strong>60 BPM</strong> tempóban (négy negyed = 4 másodperc). A hangmagasság azonos, csak a hangok időtartama és száma változik.</p>
+      <p className="text-slate-600 text-sm mb-3">Egy teljes <strong>4/4-es ütemet</strong> hallhatsz <strong>60 BPM</strong> tempóban (négy negyed = 4 másodperc). A hangmagasság azonos, csak a hangok időtartama és száma változik. A halk metronóm minden negyedre kattan, a hangértéktől függetlenül.</p>
       <div className="flex flex-wrap gap-2 mb-4">
         {RHYTHM_SUBDIVISIONS.map(n=><button key={n} type="button" onClick={()=>selectDivision(n)}
           aria-pressed={division===n}
@@ -67,6 +74,18 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
           <span className="text-xl leading-none" aria-hidden="true">{division===1?'𝅝':division===2?'𝅗𝅥':division===4?'♩':division===8?'♪':'♬'}</span>
           {division<=8&&<span className="text-xs mt-1">{i+1}</span>}
         </div>)}
+      </div>
+      <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+        <label className="inline-flex items-center gap-2 text-sm font-semibold text-slate-800 cursor-pointer">
+          <input type="checkbox" checked={withMetronome} onChange={event=>{stopRhythm();setWithMetronome(event.target.checked);}}
+            className="h-4 w-4 accent-indigo-600" />
+          Mérőütés hallható (60 BPM)
+        </label>
+        <span className="text-xs text-slate-600">Az első ütés hangsúlyosabb.</span>
+      </div>
+      <div className="flex gap-2 mb-4" role="group" aria-label="A négy negyed mérőütésének jelzése">
+        {[1,2,3,4].map((beat,i)=><div key={beat} aria-label={beat+'. mérőütés'}
+          className={`flex-1 rounded-lg py-2 text-center text-xs font-bold border ${activeBeat===i?'bg-amber-300 text-amber-950 border-amber-500':'bg-slate-50 text-slate-500 border-slate-200'}`}>{beat}</div>)}
       </div>
       <div className="flex items-center gap-2 flex-wrap">
         <button type="button" className="bg-slate-900 text-white rounded-lg px-4 py-2 text-sm" onClick={startRhythm}>
