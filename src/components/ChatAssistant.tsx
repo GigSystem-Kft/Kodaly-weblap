@@ -145,12 +145,18 @@ export const ChatAssistant: React.FC = () => {
                   }`} />
                   <span>
                     {aiMode === 'checking' && 'AI állapotának ellenőrzése...'}
-                    {aiMode === 'gemini' && 'Generatív AI elérhető'}
+                    {aiMode === 'gemini' && 'Generatív AI bejelentkezve elérhető'}
                     {aiMode === 'fallback' && 'Forráskereső tanársegéd – nem generatív AI'}
                     {aiMode === 'error' && 'AI-kapcsolati hiba'}
                   </span>
                 </p>
                 {knowledgeSummary && <p className="text-[10px] text-slate-400 mt-0.5">{knowledgeSummary}</p>}
+                {aiMode === 'gemini' && (
+                  <p className="text-[10px] text-amber-200 mt-1 max-w-[250px]">
+                    Bekapcsolt generatív módban a kérdésed és legfeljebb három nyilvános tananyagrészlet
+                    külső Google AI szolgáltatóhoz kerül. Fiókadatokat nem továbbítunk.
+                  </p>
+                )}
               </div>
             </div>
             <button
