@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from '../src/data/musicPedagogyDeep';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
@@ -21,6 +22,20 @@ for (const chapter of MUSIC_CHAPTERS) {
       text: text.slice(0, 5000)
     });
   }
+}
+for (const guide of FOUNDATIONS_GUIDES) {
+ const chapter=MUSIC_CHAPTERS.find(c=>c.id===guide.chapterId);
+ if (!chapter) continue;
+ for (const section of guide.sections) {
+  entries.push({
+   source:'Zeneelméleti Műhely – saját zeneelméleti magyarázat; szakmai alap: Open Music Theory, Music Theory for the 21st-Century Classroom',
+   label:`0${chapter.number}. ${chapter.title} / ${section.title}`,
+   text:[...section.paragraphs,'Tanulási célok: '+guide.objectives.join('; '),
+    'Gyakorlatok: '+guide.guidedPractice.join('; '),
+    'Önellenőrzés: '+guide.selfCheck.map(item=>item.question+' – '+item.answer).join('; '),
+    'Források: '+guide.sources.map(source=>source.url).join('; ')].join('\\n\\n')
+  });
+ }
 }
 for (const practice of CREATIVE_PRACTICES) {
   entries.push({
