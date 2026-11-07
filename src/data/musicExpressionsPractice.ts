@@ -2,11 +2,10 @@ import type {Flashcard,MatchingPair,QuizQuestion} from '../types';
 import MUSIC_EXPRESSIONS from './musicExpressions.json';
 
 const categories=[
- 'Díszítések és ornamentika','Előadásmód és artikuláció',
  'Tempó és időkezelés','Dinamika és karakter','Ritmus és hangértékek',
  'Hangsorok és harmóniák','Hangszer és játéktechnika','Éneklés és kórus',
  'Zenei műfajok és formák','Kottaírás és jelölések','Zenetörténet és stílus',
- 'Egyéb szakkifejezések'
+ 'Egyéb szakkifejezések','Díszítések és ornamentika','Előadásmód és artikuláció'
 ];
 const preferred=new Set([
  'a cappella','a tempo','accelerando','adagio','ad libitum','agitato','allegro','allegretto','allargando',
@@ -33,15 +32,15 @@ const chosen=unique([
  ...MUSIC_EXPRESSIONS.filter(item=>preferred.has(item.term.toLocaleLowerCase('hu-HU'))&&clean(item)),
  ...categories.flatMap(category=>MUSIC_EXPRESSIONS.filter(item=>item.category===category&&clean(item)).slice(0,20))
 ]);
-const quizTerms=chosen.slice(0,160);
-const maxCards=chosen.slice(0,220);
+const quizTerms=chosen.slice(0,260);
+const maxCards=chosen.slice(0,320);
 const labels=(s:string)=>s.replace(/\s+/g,' ').trim();
 const cardCategory=(category:string)=>'Zenei kifejezések – '+category;
 export const EXPRESSION_FLASHCARDS:Flashcard[]=maxCards.map(item=>({
  id:'expr-fl-'+item.id,term:item.term,definition:labels(item.definition),
  category:cardCategory(item.category),hint:'Forrás: Zenei kifejezések, '+item.letter+' betű'
 }));
-export const EXPRESSION_MATCHING:MatchingPair[]=chosen.slice(0,150).map(item=>({
+export const EXPRESSION_MATCHING:MatchingPair[]=chosen.slice(0,320).map(item=>({
  id:'expr-m-'+item.id,term:item.term,match:labels(item.definition),
  category:cardCategory(item.category)
 }));
