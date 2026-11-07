@@ -110,7 +110,7 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
               <img src={img(p.oldal)} alt={`${title}, ${p.oldal}. oldal`} loading="lazy" className="w-full h-auto block" />
             </button>
             <details className="px-3 py-2 border-t border-[#1c1c1c]/10">
-              <summary className="cursor-pointer font-mono-jetbrains text-[0.65rem] uppercase text-[#1c1c1c]/60">
+              <summary className="cursor-pointer font-mono-jetbrains text-[0.65rem] uppercase text-[#1c1c1c]/75">
                 {p.oldal}. oldal – szöveg
               </summary>
               <pre className="whitespace-pre-wrap text-sm mt-2 font-sans">{p.szoveg || '(nincs szöveg)'}</pre>
