@@ -180,6 +180,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         <div>
           <p className="text-sm text-slate-600">Bejelentkezve: <strong>{user.displayName}</strong> ({user.email})</p>
           <p className="text-sm text-emerald-700 mt-2">Az eredmények automatikusan mentésre kerülnek a saját fiókodba.</p>
+          <p className="text-xs text-slate-600 mt-1">Kapcsolatszakadáskor a még nem szinkronizált eredmények ideiglenes másolata ezen a böngészőn, a fiókodhoz elkülönítve tárolódik. Közös gépen jelentkezz ki, és ügyelj a böngészőadatok védelmére.</p>
+          {hasUnsavedProgress && <p role="status" className="text-sm font-semibold text-amber-800 mt-2">Mentés folyamatban – az utolsó változások még nem érkeztek meg a szerverre.</p>}
           {syncError && <div role="alert" className="mt-2 text-sm text-rose-700">
             <p>{syncError}</p>
             <button type="button" onClick={onRetrySync}
