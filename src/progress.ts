@@ -26,6 +26,7 @@ export function createEmptyProgress(): UserProgress {
     completedChapters: [],
     completedSubchapters: [],
     quizScores: {},
+    quizAttempts: [],
     flashcardsMastered: [],
     matchingCompleted: [],
     xp: 0,
@@ -42,11 +43,23 @@ export function migrateProgress(raw: unknown): UserProgress {
   const scores = value.quizScores && typeof value.quizScores === 'object' && !Array.isArray(value.quizScores)
     ? Object.fromEntries(Object.entries(value.quizScores).filter(([key, v]) => key.length < 120 && typeof v === 'number' && Number.isFinite(v)).map(([key, v]) => [key, Math.min(100, Math.max(0, v))]))
     : {};
+  const quizAttempts = Array.isArray(value.quizAttempts)
+    ? value.quizAttempts.filter((item): item is NonNullable<UserProgress['quizAttempts']>[number] =>
+        !!item && typeof item === 'object' &&
+        typeof item.id === 'string' && item.id.length <= 120 &&
+        typeof item.chapterId === 'string' && item.chapterId.length <= 120 &&
+        typeof item.score === 'number' && Number.isFinite(item.score) && item.score >= 0 && item.score <= 100 &&
+        Number.isInteger(item.correct) && Number.isInteger(item.total) &&
+        item.total > 0 && item.total <= 1000 && item.correct >= 0 && item.correct <= item.total &&
+        typeof item.at === 'string' && !Number.isNaN(Date.parse(item.at))
+      ).slice(-100)
+    : [];
   const activityDays = strings(value.activityDays).filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day));
   return {
     completedChapters: strings(value.completedChapters),
     completedSubchapters: strings(value.completedSubchapters),
     quizScores: scores,
+    quizAttempts,
     flashcardsMastered: strings(value.flashcardsMastered),
     matchingCompleted: strings(value.matchingCompleted),
     // Historical XP cannot be reconstructed; keep the saved value, but never grant the old default 100 to new users.
@@ -88,6 +101,9 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     completedChapters: union(account.completedChapters, guest.completedChapters),
     completedSubchapters: union(account.completedSubchapters, guest.completedSubchapters),
     quizScores,
+    quizAttempts: [...new Map(
+      [...(account.quizAttempts ?? []), ...(guest.quizAttempts ?? [])].map(item => [item.id, item])
+    ).values()].sort((a, b) => a.at.localeCompare(b.at)).slice(-100),
     flashcardsMastered: union(account.flashcardsMastered, guest.flashcardsMastered),
     matchingCompleted: union(account.matchingCompleted, guest.matchingCompleted),
     xp: Math.max(account.xp, guest.xp),
