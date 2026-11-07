@@ -171,12 +171,12 @@ a többieknek. Például a tanár tapsolhat, a gyerekek az asztalt üthetik, a t
 a ritmust stb.
 A ritmusok esetén fontos a fokozatosság betartása.
 
-       Ritmuspéldák: lásd Ritmustáblázat 1.1-1.15, 2.1-2.18
+       Ritmuspéldák: lásd Ritmustáblázat 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 1.10 1.11 1.12 1.13 1.14 1.15, 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 2.10 2.11 2.12 2.13 2.14 2.15 2.16 2.17 2.18
 
 Később lehet nem tanult ritmusokat is kipróbálni (tizenhatodok, szinkópa, triola) pusztán az
 utánzás szintjén, nem kell megnevezni azokat.
 
-       Ritmuspéldák: lásd Ritmustáblázat 3.1-3.9
+       Ritmuspéldák: lásd Ritmustáblázat 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9
 
 
 
@@ -191,7 +191,7 @@ tanárra. Ha a gyerekek nem kétszer két ütemes ritmust játszottak, javítsuk
 --- 7. oldal ---
 MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
 
-          Ritmuspéldák: lásd Ritmustáblázat 1.1-1.15, 2.1-2.18
+          Ritmuspéldák: lásd Ritmustáblázat 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 1.10 1.11 1.12 1.13 1.14 1.15, 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 2.10 2.11 2.12 2.13 2.14 2.15 2.16 2.17 2.18
 
 
 
@@ -206,7 +206,7 @@ közben a ritmusneveket. Amikor az utolsó, vagyis a sorban legelöl ülő gyere
 „üzenetet”, egy papírra írja le a ritmussort. A végén összehasonlítjuk a kapott ritmusokat. Aki
 a legpontosabban adta vissza a kapott ritmust, az a csapat győz.
 
-          Ritmuspéldák: lásd Ritmustáblázat 1.1-1.15, 2.1-2.18 (két példát 4 ütemessé
+          Ritmuspéldák: lásd Ritmustáblázat 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 1.10 1.11 1.12 1.13 1.14 1.15, 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 2.10 2.11 2.12 2.13 2.14 2.15 2.16 2.17 2.18 (két példát 4 ütemessé
           összefűzve)
 
 
@@ -322,7 +322,7 @@ MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
           RITMUSTÁBLÁZAT
             1. Negyed-nyolcad variációk
 
-KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt ritmusképletek, negyed–nyolcad variációk: 1.1–1.15. Ritmusértékek: tá = negyed, ti-ti = nyolcadpár. Ezen az oldalon a kottapéldák képi tartalma nincs a PDF szövegrétegében; az eredeti ábra megtekintése szükséges a teljes ritmikai szerkezet ellenőrzéséhez.
+KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt ritmusképletek, negyed–nyolcad variációk: 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 1.10 1.11 1.12 1.13 1.14 1.15. Ritmusértékek: tá = negyed, ti-ti = nyolcadpár. Ezen az oldalon a kottapéldák képi tartalma nincs a PDF szövegrétegében; az eredeti ábra megtekintése szükséges a teljes ritmikai szerkezet ellenőrzéséhez.
 
 
 --- 11. oldal ---
@@ -330,7 +330,7 @@ MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
 
         2. Negyed-nyolcad variációk szünettel
 
-KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt negyed–nyolcad variációk negyedszünettel: 2.1–2.18. Tá = negyed, ti-ti = nyolcadpár, szün = negyedszünet. Az eredeti kottaképek a PDF szövegrétegéből nem olvashatók ki gépileg.
+KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt negyed–nyolcad variációk negyedszünettel: 2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.9 2.10 2.11 2.12 2.13 2.14 2.15 2.16 2.17 2.18. Tá = negyed, ti-ti = nyolcadpár, szün = negyedszünet. Az eredeti kottaképek a PDF szövegrétegéből nem olvashatók ki gépileg.
 
 
 --- 12. oldal ---
@@ -338,7 +338,7 @@ MTA-SZTE ÉNEK-ZENE SZAKMÓDSZERTANI KUTATÓCSOPORT
 
           3. Példák utánzásos feladatokhoz
 
-KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt utánzásos ritmusgyakorlatok: 3.1–3.9. Eltérő ritmusértékek, köztük tizenhatodok, pontozott értékek és triolák; a pontos zenei lejegyzést az eredeti PDF képe tartalmazza.
+KOTTAKÉPI TÁRGYMUTATÓ: Képként ábrázolt utánzásos ritmusgyakorlatok: 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8 3.9. Eltérő ritmusértékek, köztük tizenhatodok, pontozott értékek és triolák; a pontos zenei lejegyzést az eredeti PDF képe tartalmazza.
 
 
 --- 13. oldal ---
