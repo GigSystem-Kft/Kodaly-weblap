@@ -22,8 +22,8 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62 tétel célzottan átsorolva, 945 helyett 883 Egyéb; maradék kézi lektorálás szükséges |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | UI-ban gyakorlási pontként jelölve, párosító XP csak új párra; szerveroldali verifikáció hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | Nyitott |
-| P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt; további kotta- és lejátszás-E2E hátra |
-| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | Automatikus HTTPS/forrás/licenc-metaadat szerkezeti ellenőrzés megírva; élő URL és jogi validálás hátra |
+| P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B3/B4/B5 233.08/466.16/932.33 Hz-re javítva, H természetes hang; regressziós teszt a 42411290126-os CI-ben sikeres; további kotta- és lejátszás-E2E hátra |
+| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | HTTPS/forrás/licenc-metaadat CI-teszt sikeres; 4 Commons fájloldal és OSZK gyűjteményoldal kézzel visszaellenőrizve; teljes élő URL/jogi validálás hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil tájékoztató pontosítva; történeti XP-eseménynapló továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások és legfeljebb 12 rontott kérdés ID-ja, profilos átismétlés; válaszidő és teljes kérdésenkénti analitika hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva, teljes mátrixvizsgálat hátra |
@@ -74,12 +74,20 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 
 ## Tizedik javítási egység (2026-11-07)
 
-- A-10: a 1793 címszavas glosszárium 62 egyértelmű, a definíciója alapján biztosan besorolható tételét átvezettük két új és három meglévő kategóriába. Minden címszó, eredeti meghatározás és stabil ID megmaradt. A feladatbankok új kategóriaelemei a régebbi gyakorlatok sorrendjének megtartásával bővültek. Az első CI-regresszió új kategóriás kártyahiányt jelzett, ezt a korlát és sorrend javításával kezeltük; a legújabb futás ellenőrizendő.
+- A-10: a 1793 címszavas glosszárium 62 egyértelmű, a definíciója alapján biztosan besorolható tételét átvezettük két új és három meglévő kategóriába. Minden címszó, eredeti meghatározás és stabil ID megmaradt. A feladatbankok új kategóriaelemei a régebbi gyakorlatok sorrendjének megtartásával bővültek. Az első CI-regresszió új kategóriás kártyahiányt jelzett, ezt a korlát és sorrend javításával kezeltük; a 42411290126-os PHP CI-futtatásban az egységtesztek sikeresek; a kiadási ZIP még hiányzó képek miatt blokkolt.
 - A-14: a Web Audio motorban B3, B4 és B5 tévesen H természetes frekvenciáján szólt. Most a magyar B nemzetközi B♭-ként, a H természetes B-ként szól. Oktávonkénti regressziós teszt készült.
 - A-15: történeti médiaforrásoknál HTTPS-t, képi forrásoldalt, licencmegjegyzést, történeti korszak-ID-t és videók elérhetőségi tájékoztatását automatikusan ellenőrizzük. A konkrét videók elérhetőségét nem igazolja az offline teszt.
 - A-17: a kvíznapló már legfeljebb 12 elrontott kérdés azonosítóját is megőrizheti próbálkozásonként, és a profil ezeket a feladatbankban szereplő kérdésszöveggel jeleníti meg. Többeszközös összevezetés és PHP-validáció kiterjesztve, új regresszióval.
 - A-13/A-20: a struktúraellenőrzés nem helyettesíti a teljes tartalmi és zenetörténeti lektorálást.
 - A-01 továbbra is P0 blokkoló: a 13 JPG helyben elkészült, de GitHubba történő feltöltésük nincs igazolva. A telepítő nem adható ki hiányos képekkel.
+
+## Tizenegyedik javítási egység – CI ellenőrzés
+
+- A 42411290104 GitHub Actions Linux telepítő munkafolyamat sikeres.
+- A 42411290126 PHP telepítő munkafolyamatban a TypeScript- és egységtesztek, PHP és MySQL integráció, valamint a frontend build sikeres; a `Assemble root-ready CloudPanel ZIP` lépés hibával leáll a hiányzó médiák miatt.
+- A 62 kategóriaátvezetés után a korábbi gyakorlóbankok előnyben részesített sorrendje helyreállt, a kártya- és párosítóbank pedig a két új csoportot is felveszi.
+- A-15: az OSZK Zeneműtár és négy Commons-portré forrásoldala hozzáférhető volt webes ellenőrzéskor; a YouTube/archív videók tényleges lejátszhatóságát nem bizonyítja a webes metadata-lekérés.
+- **Nincs release-teljesítés, nincs main merge.**
 
 ## Lezárási feltételek
 
