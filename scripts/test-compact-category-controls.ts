@@ -1,3 +1,5 @@
+import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { EXTRA_LEARNING_MODULES } from '../src/data/learningProgressSummary';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -22,11 +24,19 @@ test('quiz chapter uses one dropdown and resets the score and question when chan
  const code=readFileSync('src/components/QuizView.tsx','utf8');
  assert.match(code,/htmlFor="quiz-chapter"/);
  assert.match(code,/setSelectedChapter\(event.target.value\); restartQuiz\(\)/);
- assert.match(code,/id:'zenei-kifejezesek'/);
- assert.match(code,/id:'zenetortenet'/);
- assert.match(code,/id:'hangkeszletek'/);
- assert.match(code,/id:'hetfoku-hangsorok'/);
- assert.match(code,/QUIZ_QUESTIONS.some\(q => q.chapterId === item.id\)/);
+
+
+
+
+ assert.match(code,/QUIZ_QUESTIONS.some\\(q => q.chapterId === item.id\\)/);
+ assert.match(code,/MUSIC_CHAPTERS.map\\(chapter/);
+ assert.match(code,/EXTRA_LEARNING_MODULES.map\\(module/);
+ for(const id of ['hangkeszletek','hetfoku-hangsorok']){
+   assert.ok(MUSIC_CHAPTERS.some(ch => ch.id === id), 'Missing canonical chapter '+id);
+ }
+ for(const id of ['zenei-kifejezesek','zenetortenet']){
+   assert.ok(EXTRA_LEARNING_MODULES.some(mod => mod.quizId === id), 'Missing extended quiz '+id);
+ }
  assert.ok(!code.includes('Chapter Filter'));
 });
 
