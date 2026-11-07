@@ -110,8 +110,8 @@ export const HistorySupplementSection:React.FC<{periodId:string;search?:string}>
    <h5 className="text-xl font-bold mb-3">Megnyitható hangfelvételek, videók és források</h5>
    <div className="grid md:grid-cols-2 gap-3">
     {resources.map(v=><article key={v.title} className="bg-white rounded-lg border border-indigo-100 p-3">
-      {v.kind==='video'&&v.url.includes('youtube.com/watch?v=5a9aUN7JPSM')&&<div className="mb-3 aspect-video bg-slate-950 rounded-md overflow-hidden">
-       <iframe title={v.title} loading="lazy" src="https://www.youtube-nocookie.com/embed/5a9aUN7JPSM"
+      {v.kind==='video'&&/^https:\/\/www\.youtube\.com\/watch\?v=(5a9aUN7JPSM|v2z942agohk)$/.test(v.url)&&<div className="mb-3 aspect-video bg-slate-950 rounded-md overflow-hidden">
+       <iframe title={v.title} loading="lazy" src={"https://www.youtube-nocookie.com/embed/"+new URL(v.url).searchParams.get("v")}
         className="w-full h-full border-0" allowFullScreen referrerPolicy="strict-origin-when-cross-origin"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"/>
       </div>}
