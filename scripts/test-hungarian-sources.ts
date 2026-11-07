@@ -4,6 +4,7 @@ import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
 import { CREATIVE_WORKSHOPS, PEDAGOGY_WORKSHOPS } from '../src/data/hungarianDidacticWorkshops';
 import { CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 import { PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
+import { HUNGARIAN_FLASHCARDS, HUNGARIAN_MATCHING, HUNGARIAN_QUIZZES } from '../src/data/hungarianWorkshopsExerciseBank';
 
 test('all foundational chapter reading links are Hungarian language materials',()=>{
  assert.equal(FOUNDATIONS_GUIDES.length,5);
@@ -37,5 +38,19 @@ test('university pedagogy workshops match published lesson identifiers and have 
   assert.ok(workshop.questions.length>=1);
   assert.ok(workshop.evidence.length>=2);
   assert.ok(workshop.sources.some(src=>src.url.includes('uni-eszterhazy.hu')));
+ }
+});
+
+test('sixth and eighth units include additive Hungarian language self-check banks',()=>{
+ assert.equal(HUNGARIAN_FLASHCARDS.length,8);
+ assert.equal(HUNGARIAN_MATCHING.length,8);
+ assert.equal(HUNGARIAN_QUIZZES.length,8);
+ assert.equal(new Set(HUNGARIAN_QUIZZES.map(x=>x.id)).size,8);
+ for(const quiz of HUNGARIAN_QUIZZES){
+  assert.ok(['kreativ','pedagogia'].includes(quiz.chapterId));
+  assert.equal(quiz.options.length,4);
+  assert.equal(new Set(quiz.options).size,4);
+  assert.ok(quiz.options[quiz.correctIndex]);
+  assert.ok(quiz.explanation.length>25);
  }
 });
