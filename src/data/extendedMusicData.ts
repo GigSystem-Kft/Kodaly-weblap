@@ -21,7 +21,7 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
     {
       id: 'pentaton-gyakorlat',
       title: '4.3 Ötfokúság és dallamalkotás',
-      summary: 'Öt eredeti hangzó pentaton motívum: emelkedő, ereszkedő, ugrásos, hullámzó és kérdés–felelet.'
+      summary: 'Öt eredeti hangzó pentaton motívum: emelkedő, ereszkedő, ugrásos, hullámzó és kérdés–felelet.',
       content: [
         'A hangkészlet az adott dallamban előforduló különböző hangok összessége; a hangsor e hangok rendezett sorozata.',
         'Az anhemiton pentaton hangsort öt hang alkotja, félhanglépés nélkül. Dó-pentaton példája: dó–ré–mi–szó–lá.',
