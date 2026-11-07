@@ -357,3 +357,17 @@ export function playChromaticSequence(notes:readonly string[],bpm=60):{durationM
   }
   return {durationMs:frequencies.length*beatSeconds*1000,stop:stopEarTrainingInterval};
 }
+
+/** Egyidejű, lágy hármashangzat, a korábbi hangpéldák hangszínével. */
+export function playWarmTriad(notes:readonly string[],durationSeconds=2.2):{durationMs:number;stop:()=>void}{
+  const frequencies=notes.map(note=>{
+    const f=NOTE_FREQUENCIES[note];
+    if(!f)throw new Error('Ismeretlen akkordhang: '+note);
+    return f;
+  });
+  stopEarTrainingInterval();
+  const ctx=getAudioContext();
+  const at=ctx.currentTime+0.05;
+  for(const f of frequencies)scheduleWarmTone(ctx,f,at,durationSeconds);
+  return {durationMs:durationSeconds*1000,stop:stopEarTrainingInterval};
+}
