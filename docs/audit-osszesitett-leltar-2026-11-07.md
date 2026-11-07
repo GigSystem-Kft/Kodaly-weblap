@@ -8,7 +8,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Nyitott; kiadási ellenőrzés hozzáadva, képek pótlása hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Javítás commitolva, CI még nem igazolta |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision és MySQL integrációs teszt megírva; CI és valódi többeszközös próba hátra |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision; MySQL integrációs teszt CI-sikeres, valódi többeszközös böngészős próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt, a képek még hiányoznak |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Javítás commitolva, CI még nem igazolta |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
@@ -41,12 +41,12 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 
 ## Ötödik javítási egység (2026-11-07)
 
-- A-06: a PHP szerver friss mentés után a MySQL JSON-mezőből visszaolvasott adat alapján adja a revisiont; új izolált MySQL integrációs teszt vizsgálja az első mentést, ismételt mentést, hiányzó revision elutasítását és elavult kliens 409 válaszát. **A teszt CI-eredménye még nem igazolt.**
+- A-06: a PHP szerver friss mentés után a MySQL JSON-mezőből visszaolvasott adat alapján adja a revisiont; új izolált MySQL integrációs teszt vizsgálja az első mentést, ismételt mentést, hiányzó revision elutasítását és elavult kliens 409 válaszát. **MySQL-fiók integrációs teszt CI-sikeres; valós többeszközös böngészőpróba még hátra.**
 - A-18: a PHP csomagképek ellenőrzése Python manifest-szkripttel bővült; a 4 tankönyv 302 indexelt oldala és megfelelő képei, a 64 jegyzet-JPG és a 13 ritmikai JPG szükséges. A hiányzó képek továbbra is kiadásblokkolók.
 - A-19/A-23: a tankönyvmenü érintéssel nyitható, Escape-pel zárható; a menüpontok kijelölése zárja a menüt.
 - A-03: üres kérdésbank esetén kezelhető üzenet jelenik meg, nem omlik össze a teszt.
 
-**Kiadási tény:** korábbi Actions-futtatásban a Linux telepítőcsomag sikeres, a PHP ZIP összeállítása a médiahiány miatt hibás. A sikeres Linux build nem jelenti a PHP produkció készségét. Éles szerver, tényleges felhasználói adatok és minden média URL ellenőrzése továbbra sem történt meg.
+**Kiadási tény:** a legutóbbi megvizsgált PHP Actions-futtatásban (42408457312) a TypeScript/egységteszt, a PHP szintaxis/tesztek, a MySQL fiók- és progress-tesztek és a frontend build sikeresek voltak. A ZIP összeállítása továbbra is blokkolt a média-manifeszt miatt. Egy korábbi Linux telepítőcsomag sikeres volt. A sikeres Linux build nem jelenti a PHP produkció készségét. Éles szerver, tényleges felhasználói adatok és minden média URL ellenőrzése továbbra sem történt meg.
 
 ## Lezárási feltételek
 
