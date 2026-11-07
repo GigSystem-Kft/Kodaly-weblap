@@ -139,6 +139,12 @@ function progressOk(mixed $p): bool {
             count($p[$key]) > 10000) return false;
         foreach ($p[$key] as $v) if (!is_string($v) || strlen($v) > 120) return false;
     }
+    if (array_key_exists('favoriteExpressions', $p)) {
+        if (!is_array($p['favoriteExpressions']) || !array_is_list($p['favoriteExpressions']) ||
+            count($p['favoriteExpressions']) > 1800) return false;
+        foreach ($p['favoriteExpressions'] as $id)
+            if (!is_string($id) || strlen($id) > 120) return false;
+    }
     if (!isset($p['quizScores']) || !is_array($p['quizScores']) ||
         count($p['quizScores']) > 500) return false;
     foreach ($p['quizScores'] as $key => $score) {
