@@ -11,6 +11,7 @@ import { ChromaticScaleVisual } from './ChromaticScaleVisual';
 import { SolfegeScaleVisual } from './SolfegeScaleVisual';
 import { IntervalExamplesVisual } from './IntervalExamplesVisual';
 import { CollectionLessonVisual } from './CollectionLessonVisual';
+import { TonalExamplesVisual, CircleOfFifthsVisual } from './TonalExamplesVisual';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
 
@@ -204,7 +205,17 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                     ? (currentSub.id === 'ton-hangkeszlet'||currentSub.id === 'chord-hangkeszlet'||currentSub.id === 'pentaton-gyakorlat')
                       ? <CollectionLessonVisual key={currentSub.id} lessonId={currentSub.id}/>
                       : null
-                    : <InteractiveMusicVisual chapterId={chapter.id}/>}
+                    : chapter.id === 'hetfoku-hangsorok'
+                      ? (currentSub.id === 'dúr-es-modalis'
+                        ? <><TonalExamplesVisual key={currentSub.id} mode="major"/><CircleOfFifthsVisual/></>
+                        : currentSub.id === 'moll-hangsorok'
+                          ? <TonalExamplesVisual key={currentSub.id} mode="minor"/>
+                          : currentSub.id === 'harmashangzatok'
+                            ? <TonalExamplesVisual key={currentSub.id} mode="triads"/>
+                            : currentSub.id === 'kvintkor'
+                              ? <CircleOfFifthsVisual key={currentSub.id}/>
+                              : null)
+                      : <InteractiveMusicVisual chapterId={chapter.id}/>}
 
             {/* Az eredeti Hangértékek galéria releváns ábrái itt, a leckében. */}
             {illustrations.length > 0 && (
