@@ -137,7 +137,7 @@ function tutorSourceAudit(array $entries): array {
         $label=(string)($entry['label']??'');
         $source=(string)($entry['source']??'');
         foreach($coverage as $n=>$count) {
-            if(preg_match('/^0?'.preg_quote($n,'/').'\\./u',$label)) {
+            if(preg_match('/^0?'.preg_quote((string)$n,'/').'\\./u',$label)) {
                 $coverage[$n]++;
                 break;
             }
