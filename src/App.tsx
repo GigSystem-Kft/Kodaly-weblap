@@ -275,6 +275,8 @@ export default function App() {
 
         {activeTab === 'musicExpressions' && (
           <MusicExpressionsView
+            favoriteIds={progress.favoriteExpressions ?? []}
+            onFavoriteChange={(ids) => setProgress(prev => ({ ...prev, favoriteExpressions: ids }))}
             completed={progress.completedChapters.includes('musicExpressions')}
             onComplete={() => completeChapter('musicExpressions')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
