@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { QUIZ_QUESTIONS } from '../data/musicData';
 import { QuizQuestion } from '../types';
 import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from 'lucide-react';
@@ -17,10 +17,21 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [isFinished, setIsFinished] = useState<boolean>(false);
   const [wrongQuestionIds, setWrongQuestionIds] = useState<string[]>([]);
+  const [round, setRound] = useState(0);
 
-  const questions = selectedChapter === 'all'
-    ? QUIZ_QUESTIONS
-    : QUIZ_QUESTIONS.filter((q) => q.chapterId === selectedChapter);
+  // A practice round is deliberately short; the full bank remains available over
+  // repeated rounds, while a single all-topics session no longer needs hundreds of clicks.
+  const questions = useMemo(() => {
+    const bank = selectedChapter === 'all'
+      ? QUIZ_QUESTIONS
+      : QUIZ_QUESTIONS.filter(question => question.chapterId === selectedChapter);
+    const shuffled = [...bank];
+    for (let index = shuffled.length - 1; index > 0; index--) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+    return shuffled.slice(0, 15);
+  }, [selectedChapter, round]);
 
   const currentQ = questions[currentIndex] || questions[0];
 
@@ -58,6 +69,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     setCorrectCount(0);
     setIsFinished(false);
     setWrongQuestionIds([]);
+    setRound(value => value + 1);
   };
 
   if (questions.length === 0) {
@@ -66,7 +78,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
         <h2 className="text-2xl font-bold mb-3">Ehhez a témakörhöz még nincs kérdés</h2>
         <p className="mb-4">Válassz egy másik témakört, vagy próbáld ki az összes kérdést.</p>
         <button type="button" onClick={() => { setSelectedChapter('all'); restartQuiz(); }}
-          className="rounded-lg bg-violet-700 text-white px-4 py-2">Összes kérdés</button>
+          className="rounded-lg bg-violet-700 text-white px-4 py-2">Vegyes gyakorlás</button>
       </div>
     );
   }
@@ -91,7 +103,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
           onChange={(event) => { setSelectedChapter(event.target.value); restartQuiz(); }}
           className="w-full rounded-xl border border-violet-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
           {[
-            {id:'all', label:'Összes kérdés'},
+            {id:'all', label:'Vegyes gyakorlás (15 kérdés)'},
             {id:'ritmus', label:'01. Ritmus és tempó'},
             {id:'hangok-kulcsok', label:'02. Hangok és kulcsok'},
             {id:'szolmizacio-hangkozok', label:'03. Szolmizáció és hangközök'},
