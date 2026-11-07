@@ -46,4 +46,5 @@ test('quiz uses fair 15-question practice rounds rather than an unbounded all-to
  assert.match(code,/\[selectedChapter, round\]/);
  assert.match(code,/setRound\(value => value \+ 1\)/);
  assert.match(code,/Vegyes gyakorlás \(15 kérdés\)/);
+ assert.match(code,/selectedChapter === 'all' \? 'vegyes-gyakorlas' : selectedChapter/);
 });
