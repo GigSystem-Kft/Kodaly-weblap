@@ -4,7 +4,7 @@ import {Play, RotateCcw, Volume2} from 'lucide-react';
 type Mode='hangsor'|'ritmus'|'hangérték'|'ütemmutató';
 type Challenge={id:string;title:string;explanation:string;pitches?:number[];lengths?:number[];meter?:number[];accent?:number[]};
 type Segment={pitch:number;time:number;duration:number;accent:number};
-const list:Record<Mode,Challenge[]>={
+export const EXTENDED_EAR_DRILLS:Record<Mode,Challenge[]>={
  hangsor:[
   {id:'c-major',title:'C-dúr',pitches:[60,62,64,65,67,69,71,72],explanation:'C–D–E–F–G–A–H–C: 2–2–1–2–2–2–1 félhang.'},
   {id:'g-major',title:'G-dúr',pitches:[67,69,71,72,74,76,78,79],explanation:'G–A–H–C–D–E–Fisz–G: egy kereszt.'},
@@ -32,7 +32,7 @@ const list:Record<Mode,Challenge[]>={
   {id:'sixteenth',title:'Tizenhatod hangérték',lengths:Array(16).fill(.25),explanation:'Tizenhat tizenhatod egy 4/4-es ütemben.'}
  ],
  'ütemmutató':[
-  {id:'2/4',title:'2/4',meter:[1,0,1,0],explanation:'Két kétszólamú ütem: súlyos–súlytalan / súlyos–súlytalan.'},
+  {id:'2/4',title:'2/4',meter:[1,0,1,0],explanation:'Két kétnegyedes ütem: súlyos–súlytalan / súlyos–súlytalan.'},
   {id:'3/4',title:'3/4',meter:[1,0,0,1,0,0],explanation:'Két hármas ütem: első negyed hangsúlyos.'},
   {id:'4/4',title:'4/4',meter:[1,0,.55,0,1,0,.55,0],explanation:'Két négyes ütem: 1. negyed főhangsúly, 3. mellékhangsúly.'},
   {id:'6/8',title:'6/8',meter:[1,0,0,.65,0,0,1,0,0,.65,0,0],explanation:'Két 6/8-os ütem: hat nyolcad, két hármas csoport, hangsúly az első és negyedik nyolcadon.'}
@@ -89,7 +89,7 @@ export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp
   useEffect(()=>()=>stopExerciseAudio(),[]);
  const changeMode=(next:Mode)=>{stopExerciseAudio();setMode(next);setRound(shuffle(list[next]));setIndex(0);setGuess(null);setStreak(0);};
  const choose=(id:string)=>{if(guess!==null)return;setGuess(id);if(id===current.id){onAddXp(25);setStreak(n=>n+1);}else setStreak(0);};
- const advance=()=>{stopExerciseAudio();setGuess(null);if(index+1>=round.length){setRound(shuffle(list[mode]));setIndex(0);}else setIndex(i=>i+1);};
+ const advance=()=>{stopExerciseAudio();setGuess(null);if(index+1>=round.length){setRound(shuffle(EXTENDED_EAR_DRILLS[mode]));setIndex(0);}else setIndex(i=>i+1);};
  return <section className="max-w-3xl mx-auto p-5 sm:p-7 mt-6 text-slate-900">
   <header className="text-center mb-6">
     <p className="font-semibold text-xs uppercase tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · új feladattípusok</p>
@@ -113,7 +113,7 @@ export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp
      </select><span className="text-slate-500">Alap: 60 BPM</span>
     </div>
     <div className="grid grid-cols-2 gap-2">
-     {list[mode].map(item=><button key={item.id} type="button" disabled={guess!==null} onClick={()=>choose(item.id)}
+     {EXTENDED_EAR_DRILLS[mode].map(item=><button key={item.id} type="button" disabled={guess!==null} onClick={()=>choose(item.id)}
       className={`p-3 rounded-xl border text-sm font-semibold disabled:cursor-default ${guess!==null&&item.id===current.id?'border-emerald-600 bg-emerald-100 text-emerald-950':guess===item.id?'border-rose-600 bg-rose-100 text-rose-950':'border-slate-200 bg-slate-50 hover:bg-indigo-50'}`}>{item.title}</button>)}
     </div>
     {guess!==null&&<div role="status" className="mt-5 pt-5 border-t border-slate-200">
