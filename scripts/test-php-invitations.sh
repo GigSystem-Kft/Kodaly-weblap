@@ -156,3 +156,6 @@ echo 'PHP account pilot: invitation, email verification, one-use reset and passw
 
 # Exercise optimistic revision checks against the same disposable MySQL database.
 bash scripts/test-php-progress-revisions.sh
+
+# The account must not retain administrator permissions after a role downgrade.
+bash scripts/test-php-roles.sh
