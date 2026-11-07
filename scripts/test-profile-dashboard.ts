@@ -89,3 +89,10 @@ test('signout must warn before discarding unsynchronized student results',()=>{
  assert.match(account,/if \(hasUnsavedProgress && !window\.confirm/);
  assert.match(account,/Ha most kijelentkezel, ezek elveszhetnek/);
 });
+
+test('a missed quiz question has a grounded correct response and explanation in profile',()=>{
+  const dashboard=readFileSync('src/components/ProgressDashboard.tsx','utf8');
+  assert.match(dashboard,/question\.options\[question\.correctIndex\]/);
+  assert.match(dashboard,/question\.explanation/);
+  assert.match(dashboard,/Korábbi kérdés \(már nem szerepel a feladatbankban\)/);
+});
