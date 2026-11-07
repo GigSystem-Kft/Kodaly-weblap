@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress } from './src/progress';
+import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './src/progress';
 
 test('a new learner starts with zero experience and no fabricated days', () => {
   const progress = createEmptyProgress();
@@ -152,4 +152,28 @@ test('guest account import still unions favorites without silent deletion', () =
   const guest=createEmptyProgress();
   guest.favoriteExpressions=['local'];
   assert.deepEqual(mergeProgress(account,guest).favoriteExpressions,['saved','local']);
+});
+
+test('hearing exercise XP is bounded to 100 per day without losing historical points', () => {
+  const day='2026-11-07';
+  let progress=createEmptyProgress();
+  progress.xp=300;
+  progress=recordEarTrainingActivity(progress,25,day);
+  progress=recordEarTrainingActivity(progress,80,day);
+  assert.equal(progress.xp,400);
+  assert.equal(progress.earTrainingDailyXp?.[day],100);
+  progress=recordEarTrainingActivity(progress,25,day);
+  assert.equal(progress.xp,400);
+  const next=recordEarTrainingActivity(progress,25,'2026-11-08');
+  assert.equal(next.xp,425);
+});
+test('daily XP caps survive import and reject forged daily counter shapes', () => {
+  const server=createEmptyProgress();
+  server.earTrainingDailyXp={'2026-11-07':75};
+  const local=createEmptyProgress();
+  local.earTrainingDailyXp={'2026-11-07':50,'2026-11-08':25};
+  const merged=mergeProgress(server,local);
+  assert.deepEqual(merged.earTrainingDailyXp,{'2026-11-07':75,'2026-11-08':25});
+  const migrated=migrateProgress({...local,earTrainingDailyXp:{'invalid-date':1000,'2026-11-07':120,'2026-11-08':25}});
+  assert.deepEqual(migrated.earTrainingDailyXp,{'2026-11-08':25});
 });
