@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/../php/api/tutor-search.php';
+require __DIR__ . '/../php/api/music-answers.php';
 function ensureTutorSearch(bool $yes,string $label): void {
  if (!$yes) {fwrite(STDERR,"FAIL: $label\n");exit(1);}
 }
