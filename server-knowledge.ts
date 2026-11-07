@@ -1,6 +1,10 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { MUSIC_CHAPTERS } from './src/data/musicData';
+import { MUSIC_CHAPTERS, FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from './src/data/musicData';
+import { RHYTHM_RESEARCH_PAGES, RHYTHM_RESEARCH_SOURCE } from './src/data/rhythmResearchPages';
+import { RESEARCH_RHYTHM_GAMES } from './src/data/rhythmResearchGames';
+import { MAJOR_SCALES, MINOR_SCALES, TRIADS, C_MAJOR_INVERSIONS, FIFTHS_CIRCLE } from './src/data/tonalExamples';
+import { COLLECTION_EXAMPLES } from './src/data/collectionLessonExamples';
 import { VERIFIED_GLOSSARY } from './src/data/verifiedMusicGlossary';
 import { CURATED_MEDIA } from './src/data/curatedMusicMedia';
 import { FOUNDATIONS_GUIDES } from './src/data/musicFoundationsGuide';
@@ -97,12 +101,59 @@ function buildIndex(): KnowledgeChunk[] {
   for (const chapter of MUSIC_CHAPTERS) {
     for (const sub of chapter.subchapters) {
       // A lecke rövid és részletes szövege együtt kereshető, az eredeti fejezetnévvel.
-      const body = [sub.summary, ...sub.content].join('\n\n');
+      const body = [sub.summary, ...sub.content, ...(sub.examples ?? []).flatMap(example=>[example.title,example.description,...(example.audioNotes??[])]), ...(sub.quotes ?? []).map(q=>q.text+' – '+q.source)].join('\n\n');
       const label = `${chapter.title} / ${sub.title}`;
       for (const piece of splitLongText(body, 1200)) {
         const chunk = makeChunk('Zeneelméleti Műhely – Tananyag', label, piece, 'lesson');
         if (chunk) entries.push(chunk);
       }
+    }
+  }
+  // A tanulói oldal további adatai (kvízek, szókártyák, párosítás, hangzó példák)
+  // a Tanársegédben is kereshetők. Nem vesszük fel a privát tanulói profiladatokat.
+  for (const card of FLASHCARDS_DATA) {
+    const chunk=makeChunk('Zeneelméleti Műhely – Szókártyák',card.category+' / '+card.term,card.term+' – '+card.definition,'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for (const quiz of QUIZ_QUESTIONS) {
+    const correct=quiz.options[quiz.correctIndex]??'';
+    const chunk=makeChunk('Zeneelméleti Műhely – Teszt',quiz.chapterId+' / '+quiz.id,
+      quiz.question+'\\nHelyes válasz: '+correct+'\\n'+(quiz.explanation??''),'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for (const pair of MATCHING_PAIRS) {
+    const chunk=makeChunk('Zeneelméleti Műhely – Párosító',pair.category,
+      pair.term+' – '+pair.match,'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for (const example of [...MAJOR_SCALES,...MINOR_SCALES,...TRIADS,...C_MAJOR_INVERSIONS]) {
+    const chunk=makeChunk('Zeneelméleti Műhely – Hangzó hangsor és akkord',example.name,
+      [example.name,example.labels.join(' – '),example.description].join('\\n'),'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for(const key of Object.values(COLLECTION_EXAMPLES).flat()){
+    const chunk=makeChunk('Zeneelméleti Műhely – Hangkészletek és pentaton példák',key.title,
+      [key.title,key.solfege,key.description,key.notes.join(', ')].join('\\n'),'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  for(const key of FIFTHS_CIRCLE){
+    const chunk=makeChunk('Zeneelméleti Műhely – Kvintkör','Kvintkör / '+key.major+'-dúr / '+key.minor+'-moll',
+      key.major+'-dúr párhuzamos '+key.minor+'-moll; '+Math.abs(key.accidentals)+' '+(key.accidentals>0?'kereszt':key.accidentals<0?'bé':'előjegyzés nélküli hangnem'),'lesson');
+    if(chunk)entries.push(chunk);
+  }
+  // A feltöltött PDF teljes, oldalanként kinyert szövege és a grafikus ritmustáblák tárgymutatója.
+  for(const page of RHYTHM_RESEARCH_PAGES){
+    const content=[page.text,page.figureDescription??''].join('\\n\\n');
+    for(const part of splitLongText(content,1200)){
+      const chunk=makeChunk(RHYTHM_RESEARCH_SOURCE,`Ritmikai fejlesztőprogram – ${page.page}. oldal / ${page.title}`,part,'source');
+      if(chunk)entries.push(chunk);
+    }
+  }
+  for(const game of RESEARCH_RHYTHM_GAMES){
+    const content=[game.name,game.goal,game.grouping,game.equipment,...game.steps,...game.variations,game.observation,...game.relatedPatterns].join('\\n\\n');
+    for(const part of splitLongText(content,1200)){
+      const chunk=makeChunk('MTA-SZTE – Ritmikai fejlesztőprogram (önálló módszertani feldolgozás)',`Kreatív ritmikai játék: ${game.name}, ${game.pages.join('–')}. oldal`,part,'lesson');
+      if(chunk)entries.push(chunk);
     }
   }
   for (const guide of FOUNDATIONS_GUIDES) {
@@ -330,7 +381,8 @@ export function sourceCoverageReport() {
   const files = existsSync(SOURCES_DIR) ? readdirSync(SOURCES_DIR).filter(f => /\.(txt|md)$/i.test(f)).sort() : [];
   const omitted = files.filter(f => f.startsWith('_') || /kesztler[-_ ]zenei[-_ ]alapismeretek/i.test(f));
   const missing = ['jegyzet.txt','forrasok/nat2020-enekzene-1.txt','forrasok/nat2020-enekzene-2.txt',
-    'forrasok/nat2020-enekzene-3.txt','forrasok/nat2020-enekzene-4.txt']
+    'forrasok/nat2020-enekzene-3.txt','forrasok/nat2020-enekzene-4.txt',
+    'forrasok/mta-szte-ritmikai-fejleszto-jatekgyujtemeny.txt']
     .filter(name => !existsSync(resolve(DATA_DIR,name)));
   return {
     generatedAt: new Date().toISOString(),
@@ -343,7 +395,8 @@ export function sourceCoverageReport() {
     missing,
     limitations: [
       'Ez a jelentés a szerverbe beépített szöveges indexet méri, nem a teljes fájltárat.',
-      'PDF-képek, kottaábrák és videók tartalma nem automatikusan kereshető.',
+      'Az új ritmikai fejlesztőprogram mind a 13 szöveges oldala indexelt; a 10–12. oldali ritmuskották képei csak leíró tárgymutatóval kereshetők, nem ellenőrzött hangjegyenkénti átiratok.',
+      'Az egyéb PDF-képek, kottaábrák és videók tartalma nem automatikusan kereshető.',
       'A külön feltöltött, privát oktatói dokumentumokat a PHP-kiszolgáló tárolja; azok nem részei ennek a statikus jelentésnek.',
       'A lekérdezésből való előkerülést és a szakmailag helyes AI-választ külön tesztek ellenőrzik.'
     ]
