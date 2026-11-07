@@ -48,3 +48,18 @@ test('guest import merges achievements instead of overwriting another account', 
   assert.equal(merged.quizScores['hangok-kulcsok'], 95);
   assert.equal(merged.xp, 100);
 });
+
+test('matching and subchapter completions survive a legacy-compatible progress merge',()=>{
+ const server = createEmptyProgress();
+ server.completedSubchapters=['ritmus-1'];
+ server.matchingCompleted=['pair-a'];
+ server.xp=80;
+ const concurrent = createEmptyProgress();
+ concurrent.completedSubchapters=['ritmus-2'];
+ concurrent.matchingCompleted=['pair-b'];
+ concurrent.xp=65;
+ const merged=mergeProgress(server,concurrent);
+ assert.deepEqual(merged.completedSubchapters,['ritmus-1','ritmus-2']);
+ assert.deepEqual(merged.matchingCompleted,['pair-a','pair-b']);
+ assert.equal(merged.xp,80);
+});
