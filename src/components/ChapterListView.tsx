@@ -63,7 +63,6 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
                 key={chapter.id}
                 role="button"
                 tabIndex={0}
-                aria-label={`Tananyag megnyitása: ${chapter.number}. ${chapter.title}`}
                 onClick={() => onSelectChapter(chapter)}
                 onKeyDown={(event) => {
                   if (event.key === 'Enter' || event.key === ' ') {
