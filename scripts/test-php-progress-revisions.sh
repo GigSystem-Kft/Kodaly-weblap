@@ -21,6 +21,10 @@ saved="$(revision)"
 get_progress
 test "$(revision)" = "$saved"
 updated='{"completedChapters":["ritmus","hangok-kulcsok"],"completedSubchapters":["hangok-1"],"quizScores":{"ritmus":90},"favoriteExpressions":["favorite-a"],"earTrainingDailyXp":{"2026-11-07":75},"quizAttempts":[{"id":"attempt-1","chapterId":"ritmus","score":90,"correct":9,"total":10,"at":"2026-11-07T12:00:00Z"}],"flashcardsMastered":[],"matchingCompleted":[],"xp":50,"streak":0,"lastActiveDate":"","activityDays":[]}'
+# Reject forged practice rewards before applying any database update.
+invalidLedger="${updated/\"2026-11-07\":75/\"2026-11-07\":101}"
+invalidStatus="$(put_progress "{\\\"progress\\\":$invalidLedger,\\\"revision\\\":\\\"$saved\\\"}")"
+test "$invalidStatus" = 400
 status="$(put_progress "{\"progress\":$updated,\"revision\":\"$saved\"}")"
 test "$status" = 200
 status="$(put_progress "{\"progress\":$payload,\"revision\":\"$saved\"}")"
