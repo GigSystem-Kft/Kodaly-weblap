@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from './src/data/musicData';
+import { FOUNDATIONS_GUIDES } from './src/data/musicFoundationsGuide';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from './src/data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from './src/data/musicPedagogyDeep';
 import { CREATIVE_PRACTICES, CREATIVE_SOURCE } from './src/data/creativeEducation';
@@ -82,6 +83,20 @@ function buildIndex(): KnowledgeChunk[] {
       const label = `${chapter.title} / ${sub.title}`;
       for (const piece of splitLongText(body, 1200)) {
         const chunk = makeChunk('Zeneelméleti Műhely – Tananyag', label, piece, 'lesson');
+        if (chunk) entries.push(chunk);
+      }
+    }
+  }
+  for (const guide of FOUNDATIONS_GUIDES) {
+    const chapter=MUSIC_CHAPTERS.find(c=>c.id===guide.chapterId);
+    if (!chapter) continue;
+    for (const section of guide.sections) {
+      const text=[...section.paragraphs,...guide.guidedPractice,...guide.commonMistakes,
+        ...guide.selfCheck.flatMap(item=>[item.question,item.answer]),
+        ...guide.sources.map(item=>item.url)].join('\\n\\n');
+      for (const piece of splitLongText(text,1200)) {
+        const chunk=makeChunk('Zeneelméleti Műhely – forrásmegjelölt bővített zeneelméleti tananyag',
+          chapter.title+' / '+section.title,piece,'lesson');
         if (chunk) entries.push(chunk);
       }
     }
