@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../src/data/musicPedagogy';
 import { CREATIVE_SOURCE, CREATIVE_PRACTICES } from '../src/data/creativeEducation';
 import { MUSIC_HISTORY } from '../src/data/musicHistory';
 import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistoryProfiles';
@@ -76,6 +77,23 @@ for (const study of GUIDED_LISTENING) {
       'Forrás: ' + study.sourceUrl
     ].join('\\n')
   });
+}
+// Only original, attributed instructional summaries, NOT the original protected PDF text.
+for (const unit of PEDAGOGY_UNITS) {
+ for (const section of unit.sections) {
+  entries.push({
+   source: `${PEDAGOGY_SOURCE.author} (${PEDAGOGY_SOURCE.year}), ${PEDAGOGY_SOURCE.title} – saját módszertani feldolgozás, ${unit.page} oldal`,
+   label: `08. Ének-zene tantárgy-pedagógia / ${unit.title} / ${section.heading}`,
+   text: [
+    'Tanulási cél: '+unit.goal,
+    section.text,
+    'Kulcsfogalmak: '+unit.concepts.join(', '),
+    'Szemináriumi kérdések: '+unit.seminar.join(' '),
+    'Önellenőrzés: '+unit.reflection.join(' '),
+    'Eredeti forrás: '+PEDAGOGY_SOURCE.originalUrl
+   ].join('\\n')
+  });
+ }
 }
 const root = resolve('server-data');
 const files = [
