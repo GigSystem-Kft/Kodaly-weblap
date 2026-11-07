@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CURATED_MEDIA } from '../src/data/curatedMusicMedia';
@@ -12,7 +13,9 @@ test('each chapter offers sourced, clearly identified visual or video material',
    assert.ok(item.url.startsWith('https://'));
    assert.ok(item.chapters.every(n=>n>=1&&n<=8));
    if(item.imageUrl) {
-     assert.ok(item.imageUrl.startsWith('https://commons.wikimedia.org/wiki/Special:FilePath/'));
+     const commons=item.imageUrl.startsWith('https://commons.wikimedia.org/wiki/Special:FilePath/');
+     const local=item.imageUrl.startsWith('/assets/') && existsSync('public'+item.imageUrl);
+     assert.ok(commons || local,'Unknown or missing image source: '+item.id);
      assert.ok(item.license);
    }
  }
