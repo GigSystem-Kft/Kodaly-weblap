@@ -126,3 +126,36 @@ function mbSafeCut(string $text,int $max): string {
     return preg_replace('/[^\\x00-\\x7F][\\x80-\\xBF]*$/','',$s) ?? $s;
 }
 
+
+/** Only aggregate status: do not reveal private uploaded source titles to anonymous visitors. */
+function tutorSourceAudit(array $entries): array {
+    $coverage=[];
+    for($n=1;$n<=8;$n++) $coverage[(string)$n]=0;
+    $visual=0; $glossary=0;
+    foreach($entries as $entry) {
+        if(!is_array($entry)) continue;
+        $label=(string)($entry['label']??'');
+        $source=(string)($entry['source']??'');
+        foreach($coverage as $n=>$count) {
+            if(preg_match('/^0?'.preg_quote($n,'/').'\\./u',$label)) {
+                $coverage[$n]++;
+                break;
+            }
+            if($n===6 && str_contains($label,'Kreatív zenei nevelés')) { $coverage[$n]++; break; }
+            if($n===7 && str_contains($label,'Zenetörténet')) { $coverage[$n]++; break; }
+            if($n===8 && str_contains($label,'Ének-zene tantárgy-pedagógia')) { $coverage[$n]++; break; }
+        }
+        if(str_contains($source,'szemléltetőanyag-katalógus')) $visual++;
+        if(str_contains($source,'fogalomtár') || str_contains($label,'fogalomtár')) $glossary++;
+    }
+    require_once __DIR__ . '/tutor-sources.php';
+    return [
+      'generatedIndexPresent'=>is_file(__DIR__.'/knowledge.php'),
+      'licensedBookIndexPresent'=>is_file(__DIR__.'/knowledge-pedagogy.php'),
+      'supplementarySourceCount'=>count(tutorSourceList()),
+      'chapters'=>$coverage,
+      'mediaMetadataChunks'=>$visual,
+      'verifiedGlossaryChunks'=>$glossary,
+      'notIndexedAutomatically'=>['PDF képi tartalom és kottaképek','Videók hang- és képtartalma','Nem feltöltött külső oldalak teljes szövege']
+    ];
+}
