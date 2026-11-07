@@ -6,10 +6,10 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 
 | Prioritás | ID | Téma | Állapot |
 |---|---|---|---|
-| P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva a felhasználói fájlokban, helyi konverzió sikeres; hivatalos forrásból SHA-ellenőrzött CI generálás beállítva, futás hátra |
+| P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | Eredeti 13 oldalas PDF megtalálva, 13 JPG helyben előállítva; a bináris oldalképek GitHubba való felvétele még hátra |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Javítás commitolva, CI még nem igazolta |
 | P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, tárolt MySQL JSON-ból képzett revision; MySQL integrációs teszt CI-sikeres, valódi többeszközös böngészős próba hátra |
-| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt; a hivatalos PDF-ből történő automatikus képgenerálás CI-ben tesztelendő |
+| P0 | A-18 | Release csomag teljessége nincs ellenőrizve | Média-manifeszt: 302 tankönyvoldal index/kép, 13 ritmikai kép, 64 jegyzetkép; a hiányos ZIP blokkolt; a hivatalos PDF URL jelenleg hibás választ ad, a 13 lokálisan generált kép GitHubba való felvétele szükséges |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Javítás commitolva, CI még nem igazolta |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Kód javítva: manuális alfejezetjelölés, teszt hátra |
 | P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
@@ -50,7 +50,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 
 ## Hatodik javítási egység (2026-11-07)
 
-Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalálható. SHA256: `eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa`. A forrásfájl `pdfinfo` szerint 13 oldal, és helyben 13 JPG oldal előállítható. A PHP-release workflow a szegedi egyetemi hivatalos publikációról próbálja beszerezni a PDF-et és kizárólag SHA256 egyezés után alakítja JPG-vé, majd a manifest vizsgálja. A hivatalos URL kívülről jelenleg hibát adhat; a CI sikere nem igazolt, a kiadás addig blokkolt.
+Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalálható. SHA256: `eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa`. A forrásfájl `pdfinfo` szerint 13 oldal, és helyben 13 JPG oldal előállítható. A hivatalos egyetemi webcím 2026-11-07-én nem PDF-et, hanem hibás HTML-választ adott még a GitHub Actions környezetben is; ezért az online letöltést nem tesszük a kiadási folyamat részévé. A 13 helyben renderelt képfájl GitHubba történő bináris feltöltése továbbra is szükséges. A manifest addig szándékosan blokkolja a PHP ZIP-et.
 
 ## Lezárási feltételek
 
