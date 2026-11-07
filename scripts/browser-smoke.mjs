@@ -66,6 +66,36 @@ try {
   if(!bounds || bounds.x < -1 || bounds.x+bounds.width>391 ||
       bounds.y< -1 || bounds.y+bounds.height>845) throw new Error('Tutor panel overflows mobile viewport');
   console.log('Mobile: assistant remains inside screen');
+  // UI role visibility tests use intercepted API responses; the real PHP
+  // authorization is independently tested against the disposable MySQL server.
+  for(const role of ['student','teacher','admin']){
+    const accountPage=await browser.newPage();
+    await accountPage.route('**/api/index.php?*', route => {
+      const endpoint=new URL(route.request().url()).searchParams.get('route');
+      let data;
+      if(endpoint==='auth/me'){
+        data={user:{id:'role-fixture',email:'example@example.invalid',displayName:'Próbafiók',role}};
+      } else if(endpoint==='progress'){
+        data={progress:null,revision:'0'.repeat(64)};
+      } else if(endpoint==='auth/status'){
+        data={available:true,registrationEnabled:false};
+      } else if(endpoint==='chat/status'){
+        data={mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}};
+      } else {
+        data={error:'Fixture endpoint unavailable'};
+      }
+      return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
+    });
+    await accountPage.goto(root,{waitUntil:'domcontentloaded'});
+    await accountPage.getByRole('button',{name:/06\\. Profil/}).click();
+    await accountPage.getByText('Próbafiók').first().waitFor();
+    const adminButton=accountPage.getByRole('button',{name:'Admin',exact:true});
+    if(role==='admin' && await adminButton.count()!==1) throw new Error('Admin navigation missing for admin role');
+    if(role!=='admin' && await adminButton.count()!==0) throw new Error('Admin navigation exposed to '+role);
+    await accountPage.close();
+    console.log('Account UI: '+role+' navigation verified');
+  }
+
   console.log('Browser smoke checks PASSED');
 } catch(error) {
   failures.push(error instanceof Error ? error.stack : String(error));
