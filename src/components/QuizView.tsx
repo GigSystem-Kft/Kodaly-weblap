@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { QUIZ_QUESTIONS } from '../data/musicData';
+import { QUIZ_QUESTIONS, MUSIC_CHAPTERS } from '../data/musicData';
+import { EXTRA_LEARNING_MODULES } from '../data/learningProgressSummary';
 import { QuizQuestion } from '../types';
 import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from 'lucide-react';
 import { playNote } from '../utils/audio';
@@ -105,15 +106,14 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
           className="w-full rounded-xl border border-violet-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
           {[
             {id:'all', label:'Vegyes gyakorlás (15 kérdés)'},
-            {id:'ritmus', label:'01. Ritmus és tempó'},
-            {id:'hangok-kulcsok', label:'02. Hangok és kulcsok'},
-            {id:'szolmizacio-hangkozok', label:'03. Szolmizáció és hangközök'},
-            {id:'hangkeszletek', label:'04. Hangkészletek'},
-            {id:'hetfoku-hangsorok', label:'05. Hétfokú hangsorok és akkordok'},
-            {id:'kreativ', label:'06. Kreatív zenei nevelés'},
-            {id:'zenetortenet', label:'07. Zenetörténet'},
-            {id:'pedagogia', label:'08. Tantárgy-pedagógia'},
-            {id:'zenei-kifejezesek', label:'09. Zenei kifejezések'},
+            ...MUSIC_CHAPTERS.map(chapter => ({
+              id: chapter.id,
+              label: `${String(chapter.number).padStart(2, '0')}. ${chapter.title}`
+            })),
+            ...EXTRA_LEARNING_MODULES.map(module => ({
+              id: module.quizId,
+              label: `${String(module.number).padStart(2, '0')}. ${module.title}`
+            })),
             {id:'solfege', label:'Szolmizációs hangok'},
             {id:'abc-hangok', label:'ABC-s hangok'},
           ].filter(item => item.id === 'all' || QUIZ_QUESTIONS.some(q => q.chapterId === item.id))
