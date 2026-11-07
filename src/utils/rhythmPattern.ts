@@ -9,6 +9,7 @@ export function rhythmPattern(divisions: RhythmSubdivision, bpm=60) {
   const noteSeconds=totalSeconds/divisions;
   return {
     bpm, divisions, beatSeconds, noteSeconds, totalSeconds,
+    beats:Array.from({length:4},(_,index)=>({index,startSeconds:index*beatSeconds,accent:index===0})),
     notes:Array.from({length:divisions},(_,index)=>({
       index,startSeconds:index*noteSeconds,durationSeconds:noteSeconds
     }))
