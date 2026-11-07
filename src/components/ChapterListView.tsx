@@ -8,10 +8,11 @@ interface ChapterListViewProps {
   progress: UserProgress;
   onOpenCreative: () => void;
   onOpenHistory: () => void;
+  onOpenPedagogy: () => void;
 }
 
-export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapter, progress, onOpenCreative, onOpenHistory }) => {
-  const totalChapters = MUSIC_CHAPTERS.length + 2;
+export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapter, progress, onOpenCreative, onOpenHistory, onOpenPedagogy }) => {
+  const totalChapters = MUSIC_CHAPTERS.length + 3;
   const completedCount = MUSIC_CHAPTERS.filter(chapter => progress.completedChapters.includes(chapter.id)).length;
 
   return (
@@ -106,6 +107,15 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
               <span className="block text-xs text-[#1c1c1c]/60 leading-normal">
                 Korszakok az ókortól a 20. századig, jellegzetes műfajok, zeneszerzők és több Wikipédia-forrás.
               </span>
+            </span>
+            <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+          </button>
+          <button type="button" onClick={onOpenPedagogy}
+            className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
+            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">08</span>
+            <span>
+              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Ének-zene tantárgy-pedagógia</span>
+              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">Kelemen Judit szakirodalma nyomán: 16 részletes egyetemi témakör, módszertani feladatok és önellenőrzés.</span>
             </span>
             <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
           </button>
