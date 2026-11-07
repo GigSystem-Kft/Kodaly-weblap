@@ -200,7 +200,7 @@ export const MUSIC_CHAPTERS: Chapter[] = [
           'Dúr hangsor szerkezete: n2 + n2 + k2 + n2 + n2 + n2 + k2 (dó-tól dó-ig).',
           'G-dúr: 1 kereszt (#) - Fisz.',
           'D-dúr: 2 kereszt (#) - Fisz, Cisz.',
-          'F-dúr: 1 bé (b) - Esz.',
+          'F-dúr: 1 bé (♭) – B (leszállított H).',
           'Modális hangsorok: Ion (dúr), Líd (bővített kvart), Mixolíd (kis szeptim).'
         ]
       },
@@ -421,7 +421,7 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
     chapterId: 'ritmus',
     question: 'Mi a magyar gyermekdalok legjellemzőbb ütemfajtája?',
     options: ['3/4-es ütem', '4/4-es ütem', '2/4-es ütem', '6/8-os ütem'],
-    correctIndex: 1,
+    correctIndex: 2,
     explanation: 'A 2/4-es ütem (egy súlyos és egy súlytalan negyed) a magyar gyermekdalok legjellemzőbb ütemfajtája.'
   },
   {
