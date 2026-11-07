@@ -64,3 +64,69 @@ export function playMelody(notes: { note: string; duration: number }[]): void {
     totalTime += duration;
   });
 }
+
+
+/**
+ * Softer, longer two-note interval exercise. The partials and damping imitate a
+ * gently struck mallet/piano-like instrument, without remote audio samples.
+ * Scheduling against AudioContext.currentTime keeps timing accurate on mobile.
+ */
+let earTrainingVoices: { oscillators: OscillatorNode[]; output: GainNode }[] = [];
+
+export function stopEarTrainingInterval(): void {
+  for (const voice of earTrainingVoices) {
+    try {
+      voice.output.gain.cancelScheduledValues(0);
+      voice.output.gain.setValueAtTime(0, 0);
+      voice.oscillators.forEach(osc => { try { osc.stop(); } catch { /* already stopped */ } });
+    } catch { /* audio may have been released */ }
+  }
+  earTrainingVoices = [];
+}
+
+function scheduleWarmTone(ctx: AudioContext, frequency: number, startAt: number, duration = 1.9): void {
+  const output = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = Math.min(3500, frequency * 8);
+  filter.Q.value = 0.55;
+  output.gain.setValueAtTime(0.0001, startAt);
+  output.gain.exponentialRampToValueAtTime(0.23, startAt + 0.045);
+  output.gain.exponentialRampToValueAtTime(0.12, startAt + 0.24);
+  output.gain.exponentialRampToValueAtTime(0.0001, startAt + duration);
+  filter.connect(output);
+  output.connect(ctx.destination);
+  const oscillators: OscillatorNode[] = [];
+  // An unobtrusive, harmonic-rich tone is easier on the ear than a pure sine.
+  for (const [harmonic, level] of [[1, 1], [2, 0.26], [3, 0.11], [4, 0.045]] as const) {
+    const oscillator = ctx.createOscillator();
+    const mix = ctx.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(frequency * harmonic, startAt);
+    mix.gain.value = level / 1.45;
+    oscillator.connect(mix);
+    mix.connect(filter);
+    oscillator.start(startAt);
+    oscillator.stop(startAt + duration + 0.06);
+    oscillator.onended = () => { oscillator.disconnect(); mix.disconnect(); };
+    oscillators.push(oscillator);
+  }
+  earTrainingVoices.push({ oscillators, output });
+}
+
+/** Two clearly separated pitches, with a short natural overlap at the end. */
+export function playEarTrainingInterval(notes: readonly string[]): void {
+  if (notes.length !== 2) return;
+  try {
+    stopEarTrainingInterval();
+    const ctx = getAudioContext();
+    const begin = ctx.currentTime + 0.04;
+    const first = NOTE_FREQUENCIES[notes[0]];
+    const second = NOTE_FREQUENCIES[notes[1]];
+    if (!first || !second) return;
+    scheduleWarmTone(ctx, first, begin, 1.95);
+    scheduleWarmTone(ctx, second, begin + 1.30, 1.95);
+  } catch (error) {
+    console.error('Interval playback error:', error);
+  }
+}
