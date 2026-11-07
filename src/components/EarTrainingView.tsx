@@ -3,6 +3,7 @@ import { Play } from 'lucide-react';
 import { playNote, playEarTrainingInterval, stopEarTrainingInterval } from '../utils/audio';
 import { shuffleEarChallenges } from '../utils/earTraining';
 import { PitchCollectionTraining } from './PitchCollectionTraining';
+import { ExtendedEarTraining } from './ExtendedEarTraining';
 
 interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
@@ -24,7 +25,7 @@ const EAR_CHALLENGES = [
 ];
 
 export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => {
-  const [trainingTab,setTrainingTab] = useState<'intervals'|'collections'>('intervals');
+  const [trainingTab,setTrainingTab] = useState<'intervals'|'collections'|'extended'>('intervals');
   const [round, setRound] = useState(() => shuffleEarChallenges(EAR_CHALLENGES));
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -73,8 +74,10 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
         className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='intervals'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangközök felismerése</button>
       <button type="button" aria-pressed={trainingTab==='collections'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('collections')}}
         className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='collections'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangkészletek és párosítás</button>
+      <button type="button" aria-pressed={trainingTab==='extended'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('extended')}}
+        className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='extended'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangsorok, ritmusok, hangértékek</button>
     </nav>
-    {trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
+    {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
     <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangközök felismerése">
       <div className="text-center mb-6">
         <p className="text-xs uppercase font-bold tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · hangközök</p>
