@@ -23,14 +23,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
 
   return (
     <header className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
-      <div className="brand cursor-pointer mb-4 md:mb-0" onClick={() => setActiveTab('chapters')}>
+      <button type="button" className="brand cursor-pointer mb-4 md:mb-0 text-left" onClick={() => setActiveTab('chapters')} aria-label="Vissza a tananyag főoldalára">
         <h1 className="font-serif-cormorant text-3xl md:text-4xl italic font-semibold leading-none mb-1 text-[#1c1c1c]">
           Zeneelméleti Műhely
         </h1>
         <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/60 font-medium">
           Zenei Ismeretek & Oktatási Portál
         </p>
-      </div>
+      </button>
 
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
         <nav className="flex flex-wrap gap-x-6 gap-y-2">
