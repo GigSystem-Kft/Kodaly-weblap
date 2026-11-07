@@ -52,7 +52,8 @@ export function migrateProgress(raw: unknown): UserProgress {
         Number.isInteger(item.correct) && Number.isInteger(item.total) &&
         item.total > 0 && item.total <= 1000 && item.correct >= 0 && item.correct <= item.total &&
         typeof item.at === 'string' && !Number.isNaN(Date.parse(item.at)) &&
-        (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 12 && item.wrongQuestionIds.every((id:unknown)=>typeof id === 'string' && id.length <= 120)))
+        (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 12 && item.wrongQuestionIds.every((id:unknown)=>typeof id === 'string' && id.length <= 120))) &&
+        (item.durationSeconds === undefined || (Number.isInteger(item.durationSeconds) && item.durationSeconds >= 0 && item.durationSeconds <= 36_000))
       ).slice(-100)
     : [];
   const activityDays = strings(value.activityDays).filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day));
