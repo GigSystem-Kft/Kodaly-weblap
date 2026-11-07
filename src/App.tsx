@@ -1,5 +1,5 @@
 import { apiFetch } from './api';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
@@ -35,6 +35,11 @@ export default function App() {
   const [account, setAccount] = useState<AccountUser | null>(null);
   const [accountReady, setAccountReady] = useState(false);
   const [syncError, setSyncError] = useState('');
+  const revisionRef = useRef<string | null>(null);
+  const savedSnapshotRef = useRef<string | null>(null);
+  const savingRef = useRef(false);
+  const accountGenerationRef = useRef(0);
+  const [saveTick, setSaveTick] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -48,7 +53,11 @@ export default function App() {
           if (!progressResponse.ok) throw new Error('Nem sikerült betölteni a mentett eredményeket.');
           const saved = await progressResponse.json();
           if (active) {
-            setProgress(migrateProgress(saved.progress));
+            const restored = migrateProgress(saved.progress);
+            savedSnapshotRef.current = JSON.stringify(restored);
+            revisionRef.current = saved.revision;
+            accountGenerationRef.current++;
+            setProgress(restored);
             setAccount(data.user as AccountUser);
           }
         }
@@ -68,33 +77,62 @@ export default function App() {
       localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
       return;
     }
+    const snapshot = JSON.stringify(progress);
+    if (savedSnapshotRef.current === snapshot || revisionRef.current === null) return;
     const handle = window.setTimeout(async () => {
+      if (savingRef.current) return;
+      savingRef.current = true;
+      const generation = accountGenerationRef.current;
       try {
         const response = await apiFetch('/api/progress', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ progress })
+          body: JSON.stringify({ progress, revision: revisionRef.current })
         });
+        const result = await response.json();
+        if (generation !== accountGenerationRef.current) return;
+        if (response.status === 409) {
+          revisionRef.current = result.revision;
+          const serverProgress = migrateProgress(result.progress);
+          savedSnapshotRef.current = JSON.stringify(serverProgress);
+          setProgress(previous => mergeProgress(serverProgress, previous));
+          setSyncError('Másik eszköz eredményeit összevezettük. Az új mentést újrapróbáljuk.');
+          return;
+        }
         if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
+        revisionRef.current = result.revision;
+        savedSnapshotRef.current = snapshot;
         setSyncError('');
       } catch (error) {
-        setSyncError(error instanceof Error ? error.message : 'Mentési hiba.');
+        if (generation === accountGenerationRef.current) {
+          setSyncError(error instanceof Error ? error.message : 'Mentési hiba.');
+        }
+      } finally {
+        savingRef.current = false;
+        setSaveTick(previous => previous + 1);
       }
     }, 600);
     return () => window.clearTimeout(handle);
-  }, [progress, account, accountReady]);
+  }, [progress, account, accountReady, saveTick]);
 
   const signIn = async (user: AccountUser) => {
     const response = await apiFetch('/api/progress');
     if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
     const saved = await response.json();
-    setProgress(migrateProgress(saved.progress));
+    const restored = migrateProgress(saved.progress);
+    accountGenerationRef.current++;
+    savedSnapshotRef.current = JSON.stringify(restored);
+    revisionRef.current = saved.revision;
+    setProgress(restored);
     setSyncError('');
     setAccount(user);
     setAccountReady(true);
   };
 
   const signOut = () => {
+    accountGenerationRef.current++;
+    revisionRef.current = null;
+    savedSnapshotRef.current = null;
     setAccount(null);
     setProgress(readProgress());
     setSyncError('');
