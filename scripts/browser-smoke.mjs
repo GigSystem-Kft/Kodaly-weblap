@@ -108,6 +108,15 @@ try {
   // authorization is independently tested against the disposable MySQL server.
   for(const role of ['student','teacher','admin']){
     const accountPage=await browser.newPage();
+    if (role==='student') {
+      await accountPage.addInitScript(() => {
+        localStorage.setItem('kodaly_pending_progress_role-fixture',
+          JSON.stringify({
+            version: 1, ownerId:'role-fixture', base:{},
+            local:{favoriteExpressions:['recovered-offline-favorite']}
+          }));
+      });
+    }
     await accountPage.route('**/api/index.php?*', route => {
       const endpoint=new URL(route.request().url()).searchParams.get('route');
       let data;
@@ -127,6 +136,12 @@ try {
     await accountPage.goto(root,{waitUntil:'domcontentloaded'});
     await accountPage.getByRole('button',{name:/06\. Profil/}).click();
     await accountPage.getByText('Próbafiók').first().waitFor();
+    if (role==='student') {
+      const favoritesCount = accountPage.locator('div.bg-slate-50')
+        .filter({hasText:'Kedvenc fogalmak'}).first();
+      await favoritesCount.getByText('1',{exact:true}).waitFor();
+      console.log('Account UI: pending offline favorite restored after simulated reload');
+    }
     const adminButton=accountPage.getByRole('button',{name:'Admin',exact:true});
     if(role==='admin' && await adminButton.count()!==1) throw new Error('Admin navigation missing for admin role');
     if(role!=='admin' && await adminButton.count()!==0) throw new Error('Admin navigation exposed to '+role);
