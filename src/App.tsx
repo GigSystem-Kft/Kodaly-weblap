@@ -260,7 +260,7 @@ export default function App() {
                 syncError={syncError}
               />
             </div>
-            <ProgressDashboard progress={progress} signedIn={!!account} />
+            <ProgressDashboard progress={progress} signedIn={!!account} onOpenModule={(tab) => {setActiveTab(tab); window.scrollTo({top:0,behavior:'smooth'});}} />
           </>
         )}
 
