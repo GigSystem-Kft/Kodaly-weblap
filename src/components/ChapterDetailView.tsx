@@ -6,6 +6,7 @@ import { ImageLightbox } from './ImageLightbox';
 import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { InteractiveMusicVisual } from './InteractiveMusicVisual';
 import { RhythmFiguresVisual } from './RhythmFiguresVisual';
+import { MeterExamplesVisual } from './MeterExamplesVisual';
 import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
 import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
 
@@ -184,7 +185,9 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 ? <RhythmFiguresVisual key={currentSub.id}/>
                 : currentSub.id === 'ritmus-alapok'
                   ? <InteractiveMusicVisual key={currentSub.id} chapterId={chapter.id}/>
-                  : null)
+                  : currentSub.id === 'tempo-utem'
+                    ? <MeterExamplesVisual key={currentSub.id}/>
+                    : null)
               : <InteractiveMusicVisual chapterId={chapter.id}/>}
 
             {/* Az eredeti Hangértékek galéria releváns ábrái itt, a leckében. */}
