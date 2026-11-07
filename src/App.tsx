@@ -243,6 +243,8 @@ export default function App() {
 
         {activeTab === 'musicExpressions' && (
           <MusicExpressionsView
+            completed={progress.completedChapters.includes('musicExpressions')}
+            onComplete={() => completeChapter('musicExpressions')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onQuiz={() => openQuiz('zenei-kifejezesek')}
             onFlashcards={openFlashcards}
@@ -252,6 +254,8 @@ export default function App() {
 
         {activeTab === 'musicPedagogy' && (
           <MusicPedagogyView
+            completed={progress.completedChapters.includes('musicPedagogy')}
+            onComplete={() => completeChapter('musicPedagogy')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onQuiz={() => openQuiz('pedagogia')}
             onFlashcards={() => openFlashcards('Ének-zene tantárgy-pedagógia')}
@@ -261,6 +265,8 @@ export default function App() {
 
         {activeTab === 'musicHistory' && (
           <MusicHistoryView
+            completed={progress.completedChapters.includes('musicHistory')}
+            onComplete={() => completeChapter('musicHistory')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onQuiz={() => openQuiz('zenetortenet')}
             onFlashcards={() => openFlashcards('Zenetörténet')}
@@ -269,7 +275,7 @@ export default function App() {
         )}
 
         {activeTab === 'creative' && (
-          <CreativeEducationView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
+          <CreativeEducationView completed={progress.completedChapters.includes('creative')} onComplete={() => completeChapter('creative')} onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
         )}
 
         {activeTab === 'chapterDetail' && selectedChapter && (
