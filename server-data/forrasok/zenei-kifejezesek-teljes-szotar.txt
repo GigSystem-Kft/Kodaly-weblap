@@ -1,0 +1,2748 @@
+# Zenei kifejezések — felhasználó által adott szótár; eredeti megfogalmazás, lehetséges elavult meghatározásokkal és nyomdahibákkal. A tanársegéd ne vegye bizonyítatlanul minden adatát.
+
+A
+
+a ballata – balladaszerűen
+a battuta – recitativo-jellegű, v. szabadon előadott (ad lib., a piacere) rész után az előírt ütemmértékbe való visszatérésre utaló jelzés
+a bene placito – tetszés szerint
+a cappella – minden hangszeres kíséret nélküli, tisztán énekes (kórus) zene
+a capriccio – szeszélyesen
+a cinque – öten, ötszólamúan
+a défaut de… – valamely hangszer hiányában
+a deux mains – két kézzel, két kézre
+a due – mindketten (szokásos rövidítése: a2)
+a due battute – a zene kétütemenkénti lüktetése (verstanban, népzenében: dipódia)
+a due corde – két húron
+a due mani – két kézzel, két kézre
+a la corde – a húron
+a la française – franciás modorban
+a la mesure – az előírt tempóban
+a la pointe de l’archet – a vonó hegyével
+a livre ouvert – lapról, első látásra (prima vista)
+a medio arco – a vonó közepén
+a peine – alig
+a peine entendu – alig hallhatóan
+a pédal douce – a zongora bal pedáljának használata (unacorda)
+a piacere – tetszés szerint
+a piacemento – tetszés szerint
+a piena orchestra – teljes zenekarra
+a plaisir – tetszés szerint
+a pleine voix – teljes hangon
+a plusieurs voix – többszólamúan
+a poco a poco – fokozatosan, lassanként
+a première vue – első látásra
+a prima vista – első látásra
+a punta d’arco – (a punta dell’arco) a vonó hegyével
+a punto – pontosan
+a quatre mains – négykezes
+a quatre voix – négy szólamra
+a quattro battute – a zene négyütemenkénti lüktetése (verstanban, népzenében: tetrapódia)
+a quattro mani – négy kézre, négykezes
+a quattro voci – négy szólamra
+a sa place – a helyén
+a tempo – az eredeti tempóban
+a tempo di ballo – táncszerűen
+a tre – háromszólamúan; három hangszer unisono
+a tre battute – a zene háromütemenkénti lüktetése (verstanban, népzenében: tripódia)
+a tre corde – három húron; zongoránál a bal pedál mellőzése
+a tre parti – három szólamra
+a tre voci – három énekhangra
+a una corda – egy húron; zongoránál a bal pedál használatára utal
+a vide – üres, generálpauza
+a vista – első látásra (játszani, énekelni)
+a voce piena – teljes hangon
+a voce sola – egy énekhangra, énekszólóra
+a volonte – kedve szerint
+abbandono, abbandonatamente – odaadással
+abbandonato – elhagyatott, elhanyagolt
+abbassamento – gyengülve
+abbellare – díszíteni, ékesíteni
+ab initio – a kezdettől
+abruptio – megszakítás, hirtelen beálló szünet
+abzug – díszítésfajta, két azonos magasságú hang egymásutánjából áll (Chopin)
+accarezzevolmente – enyelgően, hízelgően
+accelerando – gyorsítva
+accent – hangsúly
+accent double – díszítésfajta, két azonos értékű hangból, az első maga a főhang, a második a következő főhang anticipációja
+~ fallend – díszítésfajta; rövid, hangsúlyos felső előke (XVIII. sz. eleje)
+~ plaintif – rövid, hangsúlyos alsó előke (XVIII. sz. eleji lantzenében)
+~ steigend – rövid, hangsúlyos alsó előke (XVIII. sz.)
+accentuatio – hangsúly
+acciaccato – hevesen, erőszakosan
+accidens – módosítójel
+accolade – több vonalrendszert a kezdetnél összefogó jel ( { )
+accomodato – alkalmazkodva
+accomodo – kényelmesen
+accompagnamento – kíséret
+~supplementario – segítő kíséret
+accoppiato – összekötve
+accorciato – rövidítés
+accordando – egybehangzóan
+accordato alto – magasra hangolva (doboknál a membrán a szokottnál erősebben kifeszítve)
+accordatoio – hangolókulcs
+accordate subito – gyorsan hangolj!
+accordé – hangmagasság
+accordion, accordèon – harmonika
+accordo – akkord
+~ arpeggiato – tört akkord
+~ aumentato – bővített hármas
+~ di passaggio – átmenő akkord
+~ fondamentale – alaphelyzetű akkord
+~ incollato – az akkord hangjai egyszerre, egyforma erősséggel szólalnak meg
+~ maggiore – dúrakkord
+~ minore – mollakkord
+~ perfetto – hármashangzat
+~ tenuto – tartott akkord
+accordoir – hangvilla
+accouplé – összekötve, átkötött hang
+accoutumé – a szokott módon
+accrescendo – növekvő erővel (crescendo)
+accresciuto – felnagyítva
+accroissant – felnövekedve, felfokozva
+accuralmente – gondosan, pontosan
+acerbamente – nyersen, ridegen
+acquietandosi – nyugodtan
+acuto – élesen, átütő hangzással
+ad libitum – tetszés szerint
+adagio – lassan, igen lassan
+~ assai – nagyon lassan
+~ di molto – nagyon lassan
+~ molto – nagyon lassan
+additato – ujjrenddel ellátva
+addolcendo, adoucissant – ellágyulva
+addolorato – fájdalmasan
+adiramente – hangosan, izgatottan
+adirato – haragosan
+aequisonus – egybehangzóan (unisono)
+aequo animo – lelkinyugalommal, egykedvűen
+affabile – kellemesen, kedvesen
+affanato – nyugtalanul, fájdalommal
+affetto – érzés, érzelem
+affettuoso – érzelmesen, bensőségesen, kifejezéssel
+afflitto – szomorúan
+affrettando – nekiiramodva, sietve, gyorsítva, rohanó
+agevole – könnyedén
+aggiustamente – pontos ütemben
+agilità – mozgékonyság, könnyedség
+agitamento – nyugtalanul, izgatottan
+agitato – izgatottan, hevesen, szenvedélyesen
+aigu – élesen
+air – ének, ária
+airs champêtres – pásztordalok
+alamoth – héber zenében a legmagasabb szólam; magas fekvésű zsoltárének
+alborada – reggeli dal
+al fine – végig
+al loco – helyben
+~ piacere – tetszés szerint
+~ rigore di tempo – szigorúan az ütem szerint
+~ riverso – fordítva, visszafelé
+~ segno – a jelnél
+~ tallone – kápánál
+alcune volte – időnként, néhányszor
+aliquot hangok – felhangok
+alla danza – táncszerűen, táncritmusban
+alla mente – rögtönözve
+allargando – szélesítve, lelassulva
+allegretto – gyorsacskán
+allegrezza – vidámság
+allegro – vidáman, gyorsan
+~ con brio – élénken, hévvel
+~ con fuoco – tüzes gyorsasággal
+~ giusto – feszesen, pontosan, kötött tempóban
+~ ma non troppo – nem nagyon gyorsan
+~ moderaro – mérsékelt gyorsasággal
+~ molto – nagyon gyorsan
+~ vivace – igen gyorsan és élénken
+allemande – német, páros ütemű, lassú népi tánc
+allentando – visszatartva
+allontandosi – eltávolodva
+allungato – szélesen, széles vonóval
+alterato – módosított
+alterezza – büszkeség
+alzando – emelkedve
+amabile – kedvesen, gyengéden
+amarezza – szomorúság, bánat
+ame – lélek, a hegedű része
+amener – XVII. századi, hármas ütemmértékű francia társastánc
+am griffbrette – a fogólapon
+amorevole – kedvesen, gyengéden
+amoroso – szerelmesen, gyengéden, bensőségesen
+ampiezza – széles (con ampiezza – szélesen)
+ampliando – szélesedve
+anabasis – a görög zenében felfelé haladó hangok sora
+anacruse – felütés, ütemelőző (anacrouse, anacrusis, anakrusis)
+anakamptos – a görög zenében lefelé haladó hangok sora
+anaphora – a közvetlen megelőző tétel ismétlése
+anarmonia – diszharmónia, rosszhangzás
+ancora – még egyszer
+ancora piú – még egyszer, még többet
+andamento – a fúga közjátékai
+andante – lassan, lépésben
+~cantabile – dallamdús, énekszerű andante tétel
+andantino – lassacskán
+anglaise – angol tánc
+angosciosamente – szorongással
+anhemiton pentatónia v. pentatonika – félhang nélküli ötfokúság (zongora fekete billentyűsorozata)
+anima – lélek (con anima – lélekkel)
+animando – lelkesülten
+animato – lelkesen, élénken
+animo, animoso – élénken, mozgékonyan
+ansa – fogólap
+anschlag – 1. billentés; 2. a kettős előke régebbi német neve
+anstimmung – intonáció, intonálni
+anteludium – előjáték, preludium
+anthem – angol egyházi zeneművészeti műforma, átmeneti típus a kantáta és a motetta között
+anthropophonika – az emberi hang tana
+anticipáció – előlegezés
+antiphonos – a középkorban az oktáv elnevezése
+aperto – nyíltan
+aphonia – hangtalanság, hangsúlytalanság
+apodipna – antik görög vallásos ének
+aposiopesis – elnémulás, generálpauza
+apotome – antik görög zenében a kromatikus félhang
+appassionato – szenvedélyesen
+appeasing – ellágyulva
+appenato – szenvedően
+applicatura – ujjrend, vonósoknál fekvést is jelent
+appoggiano – „megtámasztva”, hangsúlyozva; szigorúan kötötten
+appoggiatura – előke
+appuyé – megtámasztva
+arcata in giù – vonóval lefelé
+~in sù – vonóval felfelé
+ardente – lángolóan
+ardito – merész, bátor, vakmerő
+ardore – lelkesedés, sóvárgás
+arioso – áriaszerűen
+armonico, armonioso – harmonikusan
+arpeggiando – törve, hárfaszerűen
+arpeggiare – akkordot törve játszani
+arpeggio – játékmód, melyben az előadó a harmóniát hangjaira bontva ” hárfaszerűen” szólaltatja meg
+arraché – tépve, szakítva (hárfa)
+arrangement – átírás
+ars – művészet
+~ antiqua – régi művészet, az ún. Notre Dame iskola (XIII. sz. második fele), kezdetlegesen polifon zene
+~ nova – új művészet, a XIV. sz. zenéjének korabeli elnevezése
+arte lirica – énekművészet
+artikuláció – ” szótagolás”; hangok, hangcsoportok, motívumok, témák értelmüknek megfelelő tagolása
+aspiration – „lehelet”, XVII – XVIII. századi díszítés, röviden érintett felső vagy alsó utóka
+aspramente – élesen, keményen, szigorúan
+aspro – nyersen, durván
+assai – nagyon, sok (Allegro assai – nagyon gyorsan)
+assemblage – kettős ékesítés
+assoluto – kötetlenül
+asztali zene – a XVII-XVIII. századi főurak ünnepi étkezései alatt szolgáltatott zene
+atonalitás – tonalitás nélküliség
+attacca – indíts, megállás nélkül folytatva
+~ subito il seguente – azonnal kezdeni a következő tételt
+attaccare – bevágni, rákezdeni
+attacco – „roham”; imitációs feldolgozás alapjául szolgáló, kevés hangból álló zenei motívum
+atto – felvonás
+aubade – hajnali dal (a trubadurok kedvelt műformája)
+au besoin – ha szükséges
+audace – merészen
+auflösung – feloldás
+aufschlag – az ütem hangsúlytalan része
+aufstrich – vonóval felfelé
+auftakt – felütés
+augmentáció – nagyobbítás, zenei részlet ritmusértékeinek többszörösére való növelése
+augmented fifth – bővített kvint
+~ fourth – bővített kvart, tritonus
+~ orchestra – megerősített zenekar
+augmentando – növekvően
+ausführung – kivitelezés
+ausgabe – kiadás
+ausgehalten – kitartva
+ausklingen lassen – kihangzani hagyni (lasciar vibrare)
+autentikus hangsorok – régi egyházi főhangsorok: dór, fríg, líd, mixolíd
+autentikus zárlat – funkcionális irányba (D- T, T – D, S – D) történő zárlat
+auxiliary note – váltóhang
+~ sound – segédhang, váltóhang
+avec fureur – haragosan, izgatottan
+avvivando – felélénkülve
+azione sacra – „szent cselekmény”; olasz nyelvű megzenésített passió-játékok elnevezése, melyeket a XVII. századi Bécsben, a Nagyhéten adtak elő
+azione teatrale – pompagazdag rövid opera, hódoló színjáték a XVII-XVIII. századi fejedelmi udvarokban
+äussere stimme – külső szólamok
+álzárlat – a kadencia fajtája, amikor a feloldás a dominánsról (D) az első fok (T) kivételével valamely más akkordon történik
+átfúvás – fúvós hangszereken a harmonikus felhangoknak erősebb befúvással történő megszólaltatása
+átmenet – moduláció
+átmenőhang – két akkordhang dallami összekapcsolására szolgáló harmóniaidegen hang, amely mindig hangsúlytalan ütemrészre esik
+áttört szerkesztés – folyamatos dallam motívumait különböző hangszerekre szétosztó szerkesztésmód
+
+vissza a lap tetejére
+
+B
+
+baborácska – lassú, páros ütemű cseh nemzeti tánc
+bacchetta – ütő, ütőszerszám
+~ di legno – fa- ütő (kemény ütő)
+~ di spugna – párnázott, nagyon puha ütő
+bacchius – versláb, 2 hosszú és 1 rövid szótag egymásutánja
+badinage, badinerie – enyelgés, játék
+bagatelle – „semmiség” , hangszerre írt rövid zenemű
+bagpipe – duda
+baguette –  dobverő, ütőszerszám
+balancement – remegtetés, vibrátószerű játékmód
+balett, balletto – táncjáték
+ballabile – táncszerűen
+ballada, ballata, ballad – ősrégi olasz népdaltípus, drámai elbeszélés
+ballad-opera – régi angol daljáték népdalokkal
+ballematia, ballistia – lírai tartalmú olasz táncdalok
+ballo – tánc
+ballonchio – olasz népi körtánc
+banda, band, bande – fúvószenekar, olasz operákban a fúvós- és ütőhangszerek együttese
+bandolin – mandolin
+bandolon – nagy spanyol diszkantcitera
+bandoneon – a harmonika egy fajtája
+bandura – ukrán pengetőhangszer (panszkaja)
+bandurria – spanyol diszkantcitera
+banjo – amerikai énekkíséretre használt gitár
+bar – ütem, ütemvonal
+bar-forma – a középkori világi zene legelterjedtebb daltípusa, formai képlete: A-A-B
+bari-basso – mélybasszus
+~ tenor – mélytenor
+bariolage – vonóshangszereken egy üres húr és egy lefogott húr gyors váltakozása
+bariton – középfekvésű férfihang
+bariton kulcs – F-kulcs a harmadik vonalon, a kis F helyét jelöli
+baroxyton – erőshangú, mély rézfúvós hangszer, az orosz és osztrák katonazenekarok használták a XIX. sz. végétől
+barre, barra – ütemvonal
+barréfogás – harántfogás a gitáron; az ujj, mint mesterséges capotasto szerepel
+bas-dessus – mély szoprán, mezzoszoprán
+basis – alap
+baskischetrommel – csörgődob
+bass-clef – basszuskulcs
+bass-drum – nagydob
+bassadanza – XVI – XVII. sz-i lassú, lépkedő udvari tánc Burgundiában. A spanyol pavane elődje
+bassanello – a fagott elődje
+basse chiffrée – számozott basszus
+basse de cromorne – a fagott régebbi elnevezése
+~ de viole – a viola da gamba régebbi neve
+~ double – nagybőgő
+basset, bassetto – a gordonka neve a XVIII. században
+basso, bassa – mély
+basso basso – nagyon mély
+~ cifrato – számozott basszus
+~ continuo – megszakítás nélkül hangzó állandó basszus
+~ ostinato – makacs basszus, a basszusban állandóan ismétlődő motivikus anyag v. figuráció
+~ profondo – mély- basszus
+~ ripieno – csak együttesben, kórusban szereplő basszus énekszólam
+~ seguente – többszólamú tétel legmélyebb szólamával együtt haladó kísérő basszus
+basson, bassoon – fagott
+basszuskulcs – F- kulcs,  negyedik vonalon áll és a kis F helyét jelöli
+bataille, battaglia – zenében csataképet festő muzsika
+baton – 1. szünet; 2. karmesteri pálca
+battement, battimento – alsó váltóhanggal kezdődő (fordított) trilla
+battere il tempo – ütemezni, taktust ütni
+batteria – a zenekar ütőhangszereinek csoportja
+battery – többnyire 4 hangból álló akkord felbontott, arpeggio-szerű megszólaltatása
+battre la mesure – ütemezni
+battuta – ütem, ütemezés, ütés
+bayrischer – bajor népi tánc, a ländler egyik fajtája
+bearing – terc-csúszás
+beat – rövid, hangsúlyos előke
+bebung – hangremegtetés, a clavichord különleges billentésmódja
+bel canto – „szép ének”; olasz énekstílus, mely nagy hangsúlyt helyez az énektechnikára
+belebter – lelekesebben, vidámabban, élénkebben, mozgalmasabban
+bell – zenekari harang
+bellezza – a hang szépsége
+bellicosamente – harciasan
+bellicoso – harciasan
+ben, bene – jól
+~ marcato – jól kiemelve
+~ tenuto – jól kitartva
+bene accentato – jól hangsúlyozva
+~ placito – tetszés szerint
+benedictus – a misekompozíció 5. tételének elnevezése
+bergamasca – tréfás, élénk, páros ütemű régi olasz tánc
+berlingozza – olasz paraszttánc
+bernoise – élénk svájci tánc, keringő és körtánc váltakozásával
+bewegter – izgatottabban, mozgalmasabban
+bezifferung – a basso continuo számjelei; zenekari szólamok próbaszámai, cifferei
+bianca – a félkotta francia neve
+bind – kötés
+bindebogen – ív
+bindung – kötés, kötőív
+bipodikus motívum – két ütemű zenei gondolat
+bis – újra, kétszer, ismételni
+bisbigliando – hárfajátékban a zongoraszerű tremolót két kézzel, felváltva pengetni
+bizzarramente, bizzarro – különösen, bizarr módon
+bizzarria – capriccio-szerű zenedarab
+blanche – félhangjegy
+blared – harsogtatva (rézfúvóknál használatos)
+blatt – lap, kottalap
+blattolni – első látásra játszani, énekelni
+blech – a rézfúvós hangszerek rövid neve
+block chinoise – jazz-zenekarban használt idiofon, száraz, kattogó hangú ütőhangszer
+blues – melankólikus hangulatú, mérsékelt gyorsaságú 4/4-es társasági tánc
+bocca – száj, fúvólyuk
+~ chiusa – zárt ajakkal
+bocchino – fúvóka
+bockstriller – kecsketrilla
+bogen – vonó; ív
+bogenform – ív-forma
+bois – „fa”, a zenekar fafúvós hangszereinek rövid gyűjtőneve
+boîte à musique – zenélődoboz
+bokázó – hallgató-nótákban a lassú után következő második, gyorsabb rész; a verbunkos irodalom tipikus zárlatformája
+bolero – lassú, ¾-es spanyol népi tánc
+bombo – többszörös hangismétlés
+bon temps de la mesure – „az ütem jó része”: hangsúlyos ütemrész
+bordó, bordone, bourdon – a duda állandó kvintet hangoztató basszus sípjainak neve (orgonapont)
+boston – a keringő amerikai változata
+botoló – a magyar népi botostáncok legtökéletesebb páros ütemű férfi egyestánca, a bot a kardot helyettesíti
+bouché – fojtva, többnyire kürtjátéknál fordul elő
+bourrée, borea – élénk mozgású, 4/4-es régi francia tánc
+boutade – gyors, vidám táncrögtönzés, fantáziaszerű darab
+bow – vonó
+~ form – ív-forma
+bővített hármas – két nagytercből álló bővített kvintes hármashangzat
+~ kvintszextakkord – „német szext”, valamely moll IV. fokú négyeshangzatának első fordítása, felfelé módosított alaphanggal. Feloldása az I.fokú kvart-szextakkord
+~ szextakkord – valamely moll IV. fokú hármashangzatának első fordítása, felfelé módosított alaphanggal
+~ terckvartakkord – „francia szext”, valamely moll II. fokú négyeshangzatának második fordítása, felfelé módosított terchanggal. Feloldása az V.fokra történik
+brácsakulcs – alt kulcs
+branle, bransle, brando – mérsékelt gyorsaságú francia társastánc
+bravura – ügyesség, bravúr
+break – jazz-zenében a melódiasorokat összekötő improvizáció, mely ritmusában különbözik az előtte és utána álló dallamtól
+breath – lélegzet
+brechung – törés, régebben az alulról induló arpeggiora használták
+brettgeige – deszkahegedű, néma hegedű, rezonátortest nélkül; ujjgyakorlatokra használták
+breve – rövid, röviden
+brevis – a menzurális hangjegyírásban szereplő kottaérték, az egészkotta két- vagy háromszorosának felel meg
+bridge – hegedűláb
+brillante – csillogóan, fényesen
+brindisi – pohárköszöntő, bordal (opera)
+brio – élénk, lendület
+brioso – frissen, élenken, tüzesen
+brîu – nagyon élénk, páros ütemű román népi tánc
+broken chord – tört akkord, apreggio
+brummeisen – doromb
+brunette – régi francia szerelmi dalok
+bruscamente – nyersen, élesen hangsúlyozva
+brush – kefe, seprű, fémszálakból készült ütő
+brutale, brutalmente – durván, kegyetlenül, nyersen, embertelenül
+buffo – vidám, komikus
+buller – vonóshangszerek szerkezeti hibájából adódó jelenség, a III. húron, a IV. fekvés valamely pontján jelentkező, lökésszerűen hullámzó, zörejjel vegyes hang
+bund – érintő (a fogólapos húros hangszereken)
+buonaccordo – a spinét egyik régi neve
+buon gusto – jó ízléssel
+buono – jó; hangsúlyos ütemrész
+burla – tréfa
+burlesca, burlesco, burlesque – burleszk, groteszk vagy tréfás színezetű zenemű (olyan bohózatfajtát jelöl, amely képtelen helyzetekre, torzításokra, kiélezett helyzetkomikumokra épít, lásd: Chaplin)
+burletta – énekbetétekkel tarkított bohózat
+busanne, buzanne, busine – a középkor egyenes trombitája
+bühne – színpad, színpadi jelenet
+BWV – „Bach-Werke Verzeichnis”, J. S. Bach műveinek tematikus jegyzéke (Wolfgang Schmieder)
+
+vissza a lap tetejére
+
+C
+
+cabaletta, cavaletta – egyszerű, rövid, kis ária
+cabiscola – középkori templomi előénekes
+caccia – vadászat; szabad imitáció, kánon
+cachucha – mérsékelt gyorsaságú andalúziai, ¾-es vagy ⅜-os tánc
+cadenze – kadencia
+~ feinte – az álzárlat régebbi neve
+~ imparfaite – tökéletes egész-zárlat
+~ plagale – plagális zárlat
+cadenza – kadencia
+~ di bravura – nagy technikát igénylő, csillogó kadencia vagy közjáték
+~d’inganno – álzárlat
+caesura – metszet, megszakítás; egy motívum vagy frázis vége
+caisse – dob
+~ claire – kisdob
+~ roulante – pergődob
+cake walk – ¾-es angol tánc. Jellemzője a sok szinkópa, a súlyos ütemrészekre eső rövid szünet, valamint a polkaszerű középrész
+calamella – antik római nádfuvola
+calamus – az oboa őse
+calando – lassulva és halkulva, elhalóan
+calderon – korona
+calmandosi – nyugtatva
+calmato, calmo – nyugodtan, békésen
+cambiare la posizione – fekvést váltani
+cambiata – váltóhang
+campana – harang
+campanaccio – kolomp
+campanelli – harangjáték, glockenspiel
+campanetta – harangjáték
+canarie, canario – gigue-szerű francia tánc, ⅜-ban
+cancan – kontratánc-szerű francia tánc
+cancrizando – valamely művet a záróakkordtól kezdődően visszafelé, hátulról előre olvasni
+canere – hangszeren játszani; énekelni
+canna – síp
+canon à l’écrevisse – rákkánon
+~ apertus – egyszerű, nyílt kánon, partitúraszerűen kiírt szólamokkal
+~ cancrizans – rákkánon
+~ enigmaticus – rejtvénykánon, melyben a belépéseket nem jelzik, ki kell találni
+~ fermé – zárt kánon
+~ infunitus – végtelen kánon, körkánon
+cantabile, cantando – énekelve
+cantambanco – utcai énekes
+cantamento – éneklés, ének
+cantare – énekelni
+cantata – kantáta
+~ amorosa – szerelmes szövegű, világi kantáta
+~ da camera – világi kantáta, kamarakantáta
+~ da chiesa – templomi, egyházi kantáta
+~ morale – világi kantáta, meoynek szövege erkölcsi tanulságot tartalmaz
+cantatella, cantatina – kis kantáta
+cantatorium – kat. templomi énekeskönyv
+cantellerando – dúdolva, halkan énekelve
+canterino – énekes
+canticum graduum – lépcsőének a kat. liturgiában
+canti carnivali – karnevál-dalok
+canticum – biblikus szövegű dicsérő ének
+cantilena – dallam
+cantillatio – énekszerű előadás
+canto – ének, dal, dallam
+cantor – kántor
+cantus, canto – ének, dal, dallam
+cantus figuratus – díszített, figurált ének
+~ firmus – fődallam, melyet a a többi szólam alárendelt szerepben vesz körül
+~ monodicus – egyszólamú ének
+~ per medium – az alla breve XVI. századi megfelelője
+canzonaccia – utcai nóta, kuplé
+canzoncina – dalocska
+canzone – ének, dal
+canzoniere – dalgyűjtemény
+capo – fej, kezdet, valamely mű eleje
+capo d’opera – mestermű, egy zeneszerző legfőbb műve
+capotasto – gitárszerű hangszerek transzponáló-szerkezete (capo d’astro, capodaster)
+cappella – zenekari vagy énekkari együttes
+capriccietto – kis capriccio
+capriccio, caprice – szeszély; kötetlen formában írt zenemű
+capriccioso – szeszélyesen
+carezzando, carezzevole – behízelgően, kedveskedve
+caricato – túlzottan, erőltetetten, mesterkélten
+carillon – harangjáték
+carmagnole – gyújtóhatású republikánus táncdal (francia polgári forradalom)
+carmen – költemény, ének
+~ lugubre – gyászének
+carol – tradicionális angol karácsonyi ének
+carole – ófrancia körtánc
+cartello – a zenei vázlat régebbi olasz elnevezése
+cartellone – operaidény műsortervezetének régi olasz elnevezése
+cascata – gyors passzázs , mely két, egymástól távoli dallamhang között fokonként halad
+cassa – dob
+cassation – divertimentóhoz vagy szerenádhoz hasonló instrumentális forma a XVIII. században
+catch – többnyire vidám szövegű kánonok
+catena – lánc
+~ di trilli – lánctrilla vagy trillalánc: felfelé vagy lefelé haladó hangokon alkalmazott sorozatos trilla, utóka nélkül.
+catgut – bélhúr
+cattivo – súlytalan ütemrész
+cauda – „farok”, a kóda régi neve
+cavatina, cavata – kis terjedelmű áriácska
+celere – gyorsan, hamar
+celerità – gyorsaság, sebesség
+cello – gordonka
+centon, centone – különféle zeneművekből összeállított egyveleg
+cezura – metszet
+céleste – égies
+chaconne, ciacona – variációsorozat egy ¾-es vagy 3/2-es osztinátó basszustémára, amiben rendszerint maga a basszus nem variálódik
+chalumeau – a klarinét és az oboa őse
+chamber chorus – kamarakórus
+~ cantata – kamarakantáta
+~ music – kamarazene
+~ orchestra – kamarazenekar
+~ symphony – kamaraszimfónia
+change – váltás, hangszert váltani
+~ of meter – ütemnemváltozás
+~ of position – fekvésváltás
+changer de jeu – orgonaregisztert változtatni
+chanson – dal: a legegyszerűbb szerkezetű, monodikus, könnyed szövegű, harmonikus jellegű dalocska, hangszeres kísérettel
+~ populaire – népdal
+chansonette – dalocska, kis sanzon
+chant- ének
+~ de l’église – templomi, egyházi ének
+~ de triomphe – győzelmi dal
+~ pastorale – pásztordal
+~ sur le livre – a XIV. sz. improvizált polifon éneklésmódja (discantus supra librum)
+chanter – énekelni
+~ à livre ouvert – első látásra, lapról énekelni
+charivari – gúnydal
+charleston – a fox-trot egyik változata
+chef d’attaque – karvezető
+~ d’orchestre – karmester, zenekari karmester
+chevalet – hegedűláb
+chiara, chiaro – tiszta, világos
+chiarentana – olasz népi körtánc
+chiave – kulcs
+chime – zenekari harang
+chiuso – zárva, fojtva (kürtjátékban használt utasítás)
+choeur – énekkar, kórus
+choked – fojtva, a réztányért megütés után azonnal elfojtani
+chor – énekkar, kórus
+choragus – karvezető
+choral – protestáns egyházi népének
+choraliter – korálének-szerűen
+chordofon hangszerek – húros hangszerek : citerafélék (pl. cembalo, virginal spinét, cimbalom, zongora), lantok (pl. gitár, hegedű), lírák (pl. kithara, crwth), hárfák
+chorea – körtánc
+ciklikus művek – nagyobb művek, melyek összetartozó tételei kerek egészet alkotnak, összetartozásukban (hangnemi vagy tematikus) egység, változatosság és fokozás valósul meg. Ilyenek: variáció, szvit, divertimento, szonáta, versenymű, oratórium, mise, szimfónia stb.
+cilindro – hengeres ventil
+cintillante – pajkosan
+circolo – a főhangot körülíró alsó és felső előke
+clara voce – világos, tiszta hangon; érthetően
+clausula – zárlat, záradék, zárótétel
+~ affinalis – zárlat az alaphangnem valamely rokon hangnemében
+~ dissecta – félzárlat
+~ dominans – zárlat a dominánson
+~ falsa – álzárlat
+~ finalis – zárlat a főhangnemben
+~ peregrina – távoli hangnembe moduláló zárlat
+~ pura – tiszta, moduláció nélküli zárlat
+calviatura, clavier – billentyűzet
+clef – kulcs; fúvóshangszerek billentyűzete
+~ d’accordeur – hangolókulcs
+cliquette – csattogtató
+close canon – zárt kánon
+~ position – szűkfekvés
+clutsamclaviatur – ív alakú billentyűzet a zongorán, két végén a billentyűk rövidülnek
+coalottino – kis versenymű, concertino
+coda – befejező rész, függelék
+codetta – rövid, kis kóda; a fúga expozíciójában a főtéma függeléke, rövid közjáték, amely rendszerint a dux-szólamok (3. és 5. szólam) belépése előtt a comes függelékeként jelenik meg. Szerepe a domináns hangnemből az alaphangnembe vezető moduláció
+cogli instrumenti – hangszerek kíséretével, hangszerekkel
+col, colla, colle – -val, – vel
+col legno – a vonó fájával, ütőknél faverővel, kemény verővel
+coll’arco – vonóval, vonó szőrével
+colla destra – jobbkézzel
+~ parte – a főszólammal; kíséretre vonatkozó utasítás: alkalmazkodni a szólistához
+~ punta dell’ arco – a vonó hegyével
+~ sinistra – balkézzel
+collera – harag
+collet de violon – a hegedű nyaka
+colophonium – gyanta
+colpo – ütés
+~ d’arco – vonóvezetés
+come – úgy, mint
+~ prima – úgy, mint először
+~ sopra – úgy, mint fentebb
+~ sta – amint írva van, minden (improvizált) díszítés nélkül
+comes – a fúga expizíciójában a másodiknak és negyediknek belépő szólam, amely a fúga alaphangnemében megszólaló témát, a duxot a domináns hangnemben imitálja
+common chord – hármashangzat
+~ time – négynegyedes ütem
+commosso – izgatottan, mozgalmasan
+comodamente – kényelmes tempóban
+commodo, comodo – kényelmesen
+companion – társ
+comicamente – nevetségesen, komikusan
+cominciare – megkezdeni, belefogni
+comparaison, comparazione – fokozás
+comparse – statiszta, néma szereplő
+compass – hangterjedelem, ambitus
+compiacevole – tetszetősen, kellemesen
+complexio – kiegészítés, valamely zenemű bizonyos ismételt része a fine jelzésig
+con – -val, -vel,-n
+~ abbandono – odaadással
+~ affetto – érzéssel, szenvedéllyel
+~ affezzione – szomorúan
+~ agilità – könnyedén
+~ agitazione – nyugtalansággal
+~ alcuna licenza – bizonyos szabadsággal
+~ allegrezza – vidáman
+~ alterezza – büszkén
+~ amarezza – bánatosan, szomorúan
+~ amore – szeretettel, szerelemmel
+~ anima – lélekkel
+~ aspra accentuazione – éles, érdes hangsúlyozással
+~ brio – tűzzel, hévvel
+~ calore – melegséggel
+~ caricatura – torzítással
+~ celerità – gyorsan, sebesen
+~ collera – haragosan
+~ delicatezza – finoman
+~ desiderio – vággyal
+~ devozione – áhítattal
+~ descrezione – tapintatosan, a főszólamra tekintettel
+~ disperazione – kétségbeesetten
+~ dolce maniera – kellemes modorban
+~ dolcezza – édesen, kellemesen
+~ dolore – fájdalommal, fájdalmasan
+~ duolo – fájdalommal
+~ ebollizione – forrongással, forrongva
+~ elevazione – emelkedetten
+~ espansione – feszülten
+~ espressione – kifejezéssel, kifejezésteljesen
+~ fermezza – szilárdan
+~ festività – ünnepélyesen
+~ fierezza – vadul
+~ forza – erővel, erősen
+~ fretta – sietve
+~ fuoco – tűzzel, tüzesen
+~ garbo – bájjal
+~ gioia – derűsen, vidáman
+~ grandezza – méltósággal
+~ gravità – súlyosan
+~ grazia – bájosan
+~ gusto – ízléssel
+~ impeto – vadul
+~ inquietudine – nyugtalanul
+~ ira – haraggal
+~ irruenza – hevességgel, erőszakkal, féktelenséggel
+~ leggierezza – könnyedén, könnyedséggel
+~ lenezza – kényelmesen, kényelemmel
+~ mano destra – jobbkézzel
+~ mano sinistra – balkézzel
+~ morbidezza – elomlóan
+~ molta delicatezza – sok finomsággal, ízléssel
+~ molta espressione – kifejezésteljesen
+~ molto – mozgalmasan
+~ osservanza – figyelemmel, figyelmesen
+~ passione – szenvedélyesen
+~ precisione – pontosan
+~ rabbia – mérgesen
+~ rigore – szigorúan
+~ sentimento – érzéssel
+~ severità – komolyan
+~ solennità – ünnepélyesen
+~ sordino – tompítóval, hangfogóval
+~ slancio – lendülettel, nekiiramodással
+~ spirito – lélekkel, szellemesen
+~ stilo popolare – népies hangvétellel
+~ tenerezza – kedvesen, gyengéden
+~ tinto – színesen
+~ tristezza – szomorúan
+~ tutta la forza – teljes erővel
+~ un dito – egy ujjal
+~ variazione – változattal, variációval
+~ velocità – gyorsan, sebesen
+~ vigore – élénken, erőteljesen
+~ voce rauca – fátyolozott hangon
+~ vivezza – élénken
+~ zelo – izgatottan
+concento – összhangzás, harmónia
+concentus – a gregorián korálisban a kar éneke
+concert spirituel – egyházzenei hangverseny
+concertando – versenyműszerűen
+concertante, concertato – versenyezve
+concertina – a harmonika egyik fajtája
+concertino – kis versenymű; a régi concerto-formában a szóló
+concerto, concert, konzert – hangverseny; versenymű
+~ da chiesa – egyházzenei hangverseny
+~ grosso – zenekarra írt nagyobb szabású, többtételes mű, melyben egy szolisztikus irányzatú kisebb együttes (concertino), egy zenekar-jellegű nagyobb együttessel (ripieno, később tutti) áll szemben
+concitato – izgatottan, ingerülten
+conclusione – záradék, zárótétel, befejező rész
+conducimento – lépésszerűen haladó hangok sora
+conduct – vezényelni
+conductor – karmester
+conductus – többszólamú énekes műforma, melyben a szólamok ugyanazt a szöveget, ugyanabban a ritmusban éneklik
+confinalis – társ-záróhang; az I. fok helyett az V. fokon megálló dallam záróhangjának neve
+confluentia – egybefolyás
+consecutive fifths – kvintpárhuzam
+conseguente – a kánon és a fúga utánzó szólama
+console – játékasztal
+consonanza – együtthangzás, jólhangzás, konszonancia
+consort – az instrumentális kamarazene és kamaraművek elnevezése, két fő típusa a whole consort (azonos hangszerekből), és a broken consort (különféle hangszerekkel)
+contane, contano – szünetelni, hallgatni, pauzálni
+contenuto – tartalom, tartalomjegyzék
+continuato – folytatva
+continued shake – folytatólagos, hosszú trilla
+contradanza, contredanse – eredetileg angol tánc, a párok egymással szemben álltak
+contrepartie – ellenszólam
+contrepoint – ellenpont
+conversio – megfordítás
+coperto – beborítva
+copista – hangjegymásoló
+corda – húr
+~ caracteristica – vezetőhang
+~ d’acciaio – gémhúr, húr
+~ del tamburo – dob-húr
+~ di vuota – üres húr
+~ doppia – kettős húr
+corde – húr
+~ à jour – üres húr
+~ à vide – üres húr, üres húron
+~ d’acier – fémhúr
+~ de boyau – bélhúr
+~ du timbre – dob-húr
+~ fausse – rossz, használhatatlan húr
+cordes – vonósok
+~ sympathiques – rezonátorhúrok
+cordiera – a hegedű húrtartója
+cordometer – a húrok keresztmetszetét mérő műszer
+corista – karénekes
+~ a fiato – hangolósíp
+~ a sbarra – hangvilla
+corner, cornare.- kürtön játszani
+corno – kürt
+coro – kórus, kar, énekkar
+~ di camera – kamarakórus
+~ di ragazzi – fiú- kórus
+~ pieno – teljes kar
+corona – nyugvójel, korona, megállás
+corps du milieu – fafúvós hangszerek
+corpus – a hangszer teste
+corta – rövid, röviden
+cosaque – lassú, ¾-es kozák népi tánc
+cotillon – eredetileg egyszerű, francia népi párostánc, később társasági tánc (jelentése: alsószoknya)
+cottage – a pianino régebbi neve
+coulant – folyékonyan
+coulé, coulez – a terc-csúszás régi neve
+counterpoint – ellenpont
+couper – rövidíteni, staccato játékmód
+courante – régi ¾-es francia tánc
+couronne – nyugvójel, korona
+covered fifths – fedett kvintek
+credo – a megkomponált mise harmadik állandó tétele, amely csak a gyászmisében nem szerepel
+crescendo – fokozatosan erősödve, növekvő hangerővel
+crine – a vonó szőrzete
+cuivré – recsegtetve, harsogtatva, rezesen (kürtök, trombiták)
+cuivrette – egyes fafúvós hangszerek (pl. fagott) S-alakú fémcsöve, amelybe a fúvókát illesztik
+cupo – fojtva, fojtottan
+custos – „őr”; az ütemnem és néha a kulcs megváltoztatására figyelmeztető jelzés
+csapásolás – néptáncban a táncos lehajolva csizmája szárát ritmusra veregeti
+csárdás – páros ütemű magyar népi páros tánc, két része van: a hosszabb lassút rövidebb friss követi (régebbi elnevezései: libbentős, mártogatós, csosszantós, ugrós)
+csonka ütem – minden olyan nem teljes ütem, amely az egységnél (pl. ¾-ben a negyed) több
+csőr – az egyenes fuvolafélék és a klarinét fejrésze, melyen át a befúvás történik
+– csűrdöngölő – páros ütemű magyar népi egyestánc, a verbunkos egyik figurált változata
+
+vissza a lap tetejére
+
+D
+
+da – -tól, -től, -ból, -ből
+~ capo – a kezdettől, elölről (rövidítése: D.C.)
+~ capo al fine – (D. c. al fine) a zeneművet elölről ismételni a végét jelentő Fine szóig
+
+~ capo sin’ al segno pou segue la coda – „a kezdettől a jelig, majd követően a kóda”
+
+~ leggio a leggio – pultonként
+
+~ lontano – távolról
+
+dal – (o.) -tól, -től, -ból, -ből
+~ segno – a jeltől (ismétlésre utaló jelzés), rövidítése: D.S.
+
+dalárda – férfiénekkar
+
+dalciklus – tartalomban és jellegben összetartozó műdalok sorozata, melyek formája különböző is lehet
+
+daljáték – 1. Népies melodikájú, víg témájú operaszerű énekes játék; 2. Francia népi játék a trubadúrok korában (XI -XII. század); 3. Népies stílusú, népszínmű jellegű színpadi mű
+
+dalla – (o.) -tól, -től, -ból, -ből
+
+dallam – a hangok önmagában egységesen lezárt sora, amely zenei mondatokra, frázisokra és motívumokra tagolódik
+
+dallamos moll – melodikus moll – a romantikában a harmonikus moll variánsaként sűrűn szereplő hangsor, annak bővített szekundlépését a VI. fok felemelésével kikerüli. Jellegzetessége a felemelt VI. és VII. fok. Lefelé menetben ritka, helyette inkább a természetes moll (eol) hangsor szerepel.
+
+dalmű – zenekísérettel ellátott énekes színjáték, opera
+
+damenisatio – szolmizáció Da, Me, Ni, Po, Tu, La, Be szótagokra
+
+damper, dämpfer – hangfogó
+
+dance, danse, danza – tánc
+
+dans le coulisses – színfalak mögött (pl.: színpadi zene)
+
+~ un style populaire – népies hangvétellel
+
+deaconing – az angol-amerikai zsoltáréneklés XIX. századi szokásos módja
+
+debile, debole – gyengén, erőtlenül
+
+debilitando – erőtlenedve, gyengülve
+
+debolissimo – nagyon erőtlenül
+
+debut – első fellépés
+
+deceptive cadence – álzárlat
+
+decisamente – nagyon határozottan
+
+deciso – határozottan, biztosan
+
+decissimo – a leghatározottabban, legbiztosabban
+
+declamando – szavalatszerűen, szavalva  deklamálva
+
+decrescendo – fokozatosan halkulva, csökkenő hangerővel (röviden: decresc., helyesen elválasztva: de-cre-scen-do)
+
+deficiendo – hangerőt és tempót egyaránt csökkentve
+
+degree, degré – hangfok
+
+deklamáció – szavalás. Zenében: a helyes szövegejtés
+
+deklamálva – szavalva, nagy súlyt helyezve a szöveg érthetőségére
+
+del – -nak, -nek, -ból, -ből
+
+deliberamento, deliberato – elszántan, szabadon
+
+delicatamento – finoman, ízléssel
+
+delicatezza – finomság, ízlés
+
+delicato – finoman, gyengéden, tapintatosan, ízléssel
+
+delirante – őrjöngve
+
+delirio – őrület
+
+dell’, della, dello – -nak, -nek, -ból, -ből
+
+delle onde – hullámok
+
+demande – „kérdés”, a fúga főtémája
+
+demi – valaminek a fele
+
+~ baton – félütem szünet
+
+~ jeu – félerővel
+
+~ mesure – félütem
+
+~ pause – fél értékű (két negyed) szünetjel
+
+~ position – félfekvés
+
+~ pupitre – a pultok fele
+
+~ quart de soupir – harmincketted szünetjel
+
+~ soupir – nyolcad szünetjel
+
+~ ton – félhang
+
+demutsvoll – alázatosan
+
+depressio – ütemezésnél a hangsúlyos leütés
+
+de pupitre en pupitre – pultonként
+
+descant – diszkant, szoprán
+
+descort – lai, XIII. századi francia trubadúrdalok
+
+desiderio – vágy, vággyal
+
+desk – kottatartó, pult
+
+~ by desk – pultonként
+
+dessin – vázlat, zenemű vázlata
+
+dessus – szoprán, diszkant
+
+~ de flûte – diszkant-fuvola
+
+~ de viole – szoprán-hegedű, a mai hegedű régi neve
+
+destra, destra mano – jobbkéz
+
+determinato – határozottan, biztosan
+
+detto – ugyanaz, ugyanolyan
+
+deutlich – világosan, érthetően
+
+deux – kettő
+
+~ quarte – kétnegyedes ütem
+
+deuxième position – második fekvés
+
+development – feldolgozás
+
+devise – a devisen-arie bevezetője
+
+devisen-arie – da capo ária, bevezetőjében a forma főtémájának hosszabb-rövidebb kezdete kétszer is (először instrumentálisan, majd vokálisan is) megszólal, csak ezután következik a tulajdonképpeni ária (Scarlatti, Bach)
+
+devoto – áhítatosan, komolyan
+
+devozione – áhítat
+
+dextra – jobb, jobbkéz
+
+déchant – discantus
+
+délicat – finoman, finom ízléssel
+
+délicatesse – finomság, ízlés
+
+démancher – vonósoknál: fekvést váltani
+
+détaché – 1. Szaggatva, vonós hangszerek nem kötött, szélesen elhatárolt játékmódja; 2. Ornamens  a XVII-XVIII. században (trilla vagy mordent előtt fordult elő: a jelzett főhang és a rákövetkező főhang díszítése közötti kis szünet)
+
+~ avant un pincé – détaché, melyet mordent követ
+
+~ avant un tremblement – détaché, melyet trilla követ
+
+détoner – disztonálni, hamisan énekelni
+
+di – -tól, -től -n
+
+~ molto – nagyon, nagyon sok
+
+~ nuovo – újból, ismét, még egyszer
+
+diabolus in musica – „ördög a zenében”, a tritonus gúnyneve
+
+dialog, dialogo, dialogue – dialógus
+
+dialógus – párbeszéd, váltakozó ének, kétszólamú zenemű: a két szólam egymást váltva felelget
+
+~ oratórium – a XVII. századi német, rövid oratóriumtípus, istentiszteleteken adták elő
+
+diapason – 1. Hangolás, kamarahang; 2. Franciáknál: hangvilla; 3. Eredetileg: oktáv
+
+~ à bouche – hangolósíp
+
+~ normal – hangolásunk alaphangja, kamarahang. Nemzetközileg megállapított rezgésszáma 440mHz: az egyvonalas A hang magassága.
+
+diapentisare – kvintekben haladni
+
+diaphonia – széthangzás; szerkesztésmód: két szólam az unisonóból eltávolodik egymástól kvart távolságig, azután ismét visszatér eredeti helyzetébe, ismét unisonová válik.
+
+~ basilica – orgonapont
+
+diapsalma – két énekelt versszak közti szünet
+
+diaschisma – „lemetszett rész”: füllel nem érzékelhető , csak kiszámítható apró hangköz (pl.: Hisz-C)
+diastema – hangköz
+
+diastolika – frazírozás, a zenei gondolatok helyes tagolása
+
+diatónia – hétfokú hangrendszer, amelynek tagjai egymástól tiszta kvint távolságban is ábrázolhatók. (E kvinteket szekundokba rendezve kapjuk meg a diatonikus hangsorokat, Do-ról indulva dúrt, Re-ről a dórt, Mi-ről a fríget stb.)
+
+diatonikus félhang/félhanglépés – olyan lépés, amelynek kiinduló és befejező hangja a két szomszédos törzshangból származik (pl.: f-gesz  vagy esz-fesz)
+
+diaulia – énekek közé iktatott aulos közjátékok az antik görögöknél
+
+dièse – 1. Felfelé módosító jel (#); 2. Zongora fekete billentyűi
+
+diesis – a felfelé módosító jel (#) neve
+
+diferencias – „különbségek”, ismert dallamokra írt művészi variációk a XVI. századi spanyol instrumentális zenében
+
+difficile – nehéz
+
+difónia – kétszólamúság
+
+diluendo – elhalóan, elenyészve
+
+diminished – szűkített
+
+diminució – témaszűkítés: valamely téma vagy zenei részlet ritmus-értékeinek kicsinyítése, az eredeti ritmikai viszonyok megtartásával (kontrapunktikus zenében leggyakoribb)
+
+diminuendo – halkulva, halkítva, fogyó erővel (rövidítése: dim.)
+
+dinamika – a hang erőssége, a hang erősségének változásaival foglalkozó tan
+
+dipódia – a zene két ütemkénti lüktetése
+
+dirge – halotti szertartásra szánt angol instrumentális vagy vokális kompozíció
+
+dirigálni – vezényelni
+
+discantus – 1. Középkori polifon vokális műfaj, már önálló szólamokkal; 2. A tenor (cantus firmus) feletti legmagasabb szólam neve a középkori többszólamú zenében
+
+discordato – elhangolva
+
+disjectio – „szétdobás”, a főhang után a felső tercre ugró rövid díszítőhang (Georg Muffat 1695.)
+
+disjunctio – „szétválasztás”, a mai staccatonak megfelelő díszítés, jele a hangfej felett egy pont, vagy apró függőleges vonalka (Georg Muffat 1695.)
+
+diskantmesse – XV. századi misekompozíció, amelynek más műből kölcsönzött cantus firmusát nem a szokás szerinti tenorba, hanem a legfelső szólamba (discant) helyezték
+
+distanza – távolság
+
+distinto – világosan, érthetően
+
+disszonáns – rosszul hangzó, széthangzó
+
+disztonál – hamisan énekel
+
+dita incrociate – villásfogás
+
+dito – ujj
+
+divertimento, divertissement – „szórakozás”, 1. Többtételes zenemű, rendszerint kis-zenekarra (kamarazenekarra); 2. Operákban: táncbetét; 3. Fúgában: rövid, szabad közjáték
+
+divided, divisé – osztva, osztott szólamokkal
+
+divisi, divise – „felosztva”, megosztva. Zenekari vonósszólamokban az azonos szólamot játszó hangszercsoport röbb részre oszlik, külön, egymástól esetleg különböző szólamot játszanak. Az így jelölt akkord pl. nem kettős-,  hármas-, négyesfogással játszandó, hanem a csoport hangszerei egymás közt megosztva játsszák. Énekkari szólamokban is használatos. (röviden: div. in 2; div. in 3 stb.)
+
+division – szabad díszítés a XVII-XVIII. század instrumentális zenéjében: valamely dallam hangjának gyors figurákkal, passzázsokkal való tarkítása.
+
+~viol – a viola da gamba egyik fajtája: valamivel kisebb, mint a zenekarban használt viola da gamba  szólójátékra is alkalmasabb. Hangolásuk egyezik.
+
+divoto – komolyan, áhítatosan
+
+dixieland – a jazz kezdeti korszakára, a XX. század eleji kisegyüttesekre jellemző előadásmód, legfőbb sajátossága a hangszeresek egyidejű rögtönzése. Az Egyesült Államok délvidékéről származik
+
+dodekafónia – tizenkétfokú hangrendszer
+
+doigt couchée – kis barré a gambán, harántfogás 2-3 húron
+
+doigter – ujjrend, ujjrakás
+
+dolce – lágyan, édesen, gyengéden
+
+~maniera – gyengéd modorban, gyengédséggel
+
+~melo – cimbalom ritkán használt neve
+
+dolcemento – lágyan, gyengéden
+
+dolcezza – báj, kellem
+
+dolcissimo – nagyon lágyan, lehető legfinomabban
+
+dolendo – panaszosan
+
+dolente –  búsan, panaszosan, fájdalmasan
+
+dolore – fájdalom, szomorúság
+
+doloroso – fájdalmasan, búsan
+
+domchoir – székesegyházi énekkar
+
+domináns – a funkciós zene három funkciójának egyike. Szerepe (funkciója), hogy tonális akkordot vonz. A klasszikus dúr- moll dualitásban elsősorban az V.fok, másodsorban a VII.fok, ritkábban a III.fok tölt be domináns funkciót. (Jele: D)
+
+~ hármashangzat – neve alatt elsősorban V.fokú (dúr!) hármashangzatot értjük. Tágabb értelemben a VII.fokú és a III.fokú hármashangzat is domináns hármashangzat.
+
+~szeptimakkord – dúrhármashangzat + kisszeptim összetételű négyeshangzat, amely a diatónián belül a dúr és a harmonikus moll hangsor V.fokára építhető
+
+dominante – domináns
+
+dominant pedal – domináns orgonapont a legmélyebb szólamban
+
+doppelchor – kettős kar
+
+doppelfuge – kettősfúga
+
+doppelgriff – kettősfogás vonós hangszereken
+
+doppelkonzert – kettős versenymű, többnyire két azonos hangszerre írt concertáló szólam, zenekari kísérettel
+
+doppelrohrblatt, doppelzunge – kettős nyelv
+
+doppelschlag – kettős ékesítés
+
+doppelvorschlag – kettős előke
+
+doppio – kétszeres, kettős, dupla
+
+~ movimento – kettős mozgás: még egyszer olyan gyorsan, mint előbb
+
+~ pedale – kettős pedálszólam, kétszólamú pedálmenet az orgonán
+
+dór hangsor – az ún. modális hangsorok egyike, vezetőhang nélküli molljellegű hangsor. Jellemzője a sor VI.fokán levő nagyszext: a dór-szext. (A zongora fehér billentyűin eljátszható, a D kezdőhangtól elindulva)
+
+dot – pont
+
+dotted note – pontozott hangjegy
+
+double – régi francia szvitekben egyes tételek cifrázott ismétlése, több double egymásutánja variáció-jelleget ad a műnek.
+
+~ anche – kettős nyelv
+
+~ appoggiatura – kettős előke
+
+~ backfall – XVII. századi angol ornamens: terc-csúszás a főhangra, felülről lefelé (Playford 1655)
+
+~ cadence – kettős trilla (J. S. Bach)
+
+~ corde, double-stop – kettősfogás vonóshangszereken
+
+~ croche – tizenhatod hangjegy
+
+~ fugue – kettősfúga
+
+double-relish – a XVII. századi (akkoriban nagyon népszerű) angol lant és viola díszítés, mely két vagy három főhangra vonatkozott
+
+doxológia – dicsérőének a római liturgiában
+
+drame lyrique, dramma lirica – az opera elnevezése a modern terminológiában (akkor is, ha a mű nem lírai karakterű)
+
+dramma per musica – az opera régebbi megjelölése: zenés dráma
+
+drammaticamente, drammatico – drámai erővel, drámaian
+
+drámai szoprán – magas női hang, kifejezőereje és kissé sötét színe miatt különösen súlyosabb drámai szerepekre alkalmas.
+
+dreher – „forgó”: a ländlerhez hasonló, ¾-es osztrák népi tánc
+
+drei – három
+
+dreiklang – hármashangzat
+
+drinking song – bordal, szüreti dal
+
+dritta, droite – jobb, jobbkéz
+
+drone bass – orgonapont
+
+ductus – dallam, téma
+
+dudabasszus – 2-3 hangból álló (alapot és kvintet hangoztató) fekvő basszus a dallam alatt
+
+due – kettő
+
+~ corde – „két húr”, a zongorajátékban a bal pedál használatára utaló jelzés
+
+~ volte – kétszer
+
+duett, duette, duetto – kettős, két szóló-énekhang vagy két szólóhangszer párbeszéde. Kettős ária.
+
+duettino – kis, rövid lélegzetű kettős
+
+dulcimer – cimbalom
+
+dulcitone – a cseleszta egyik fajtája: acélrudacskák helyett hangvillák adják a hangot
+
+dumka – lassú tempójú, ukrán népi históriás dal, amelyet kobzával kísértek
+
+dump, dumpe – korai angol, vagy ír panaszos, szomorkás hangulatú daltípus
+
+dunántúli terc – az a jelenség a magyar népzenében, amikor a záróhang terce és szeptimje hol kicsi, hol nagy, hol a kettő közötti semleges terc, illetve szeptim
+
+duo – kettős
+
+duoráma – dráma vagy zenés játék, két szereplővel
+
+duola, duole, duolet, duplet – hármas tagoltságú ritmusban fellépő két egyenlő hangérték, melyet a hármas csoport időtartamának megfelelő idő alatt kell megszólaltatni
+
+duplex hangszer – két hangszer egyesítéséből keletkezett hangszer (pl.: egy Esz és egy D trombita kombinációja, amelynek hangolása a megfelelő szerkezettel, játék közben is változtatható)
+
+duplex longa – a régi menzurális hangjegyírás leghosszabb értékének (maxima) neve a XIII. században
+
+duplum – középkori orgánumokban a tenor feletti szólam neve
+
+duplikáció – kettőzés, másolat
+
+duramente – keményen
+
+durata – előadási idő, egy mű előadásának időtartama
+
+durchführung – feldolgozás, kidolgozás
+
+durchgangsnote – átfutó vagy átmenő hangok
+
+durchgehender akkord – átmenő akkord
+
+durdreiklang – dúr hármashangzat
+
+durezza – keménység, határozottság
+
+duty trumpet – jelzőtrombita (régen a lovaskatonaság természetes trombitája, B-hangolásban)
+
+dux – a fúga expozíciójában elsőnek, harmadik, esetleg ötödiknek belépő szólam, amely a fúga főtémáját a mű alaphangnemében szólaltatja meg
+
+dúr-akkord – olyan hármashangzat, amelyben az alaphanghoz viszonyítva nagyterc és tiszta kvint van
+
+dúr hangsor – a diatonikus hangrendszer legfontosabb hangsora, jellegzetessége a kezdőhangtól számított nagyterc.  A XVI. században mindjobban előtérbe jut, uralma a klasszikus zenében (1700. és 1825. között) a harmonikus mollal együtt szinte kizárólagos. (A zongora fehér billentyűin eljátszható a C kezdőhangtól indulva)
+
+dúr jellegű hangsorok – olyan hangsorok, amelyeknek dúr tercük van, azaz a III. foka a kezdőhangtól számítva nagyterc távolságra fekszik. A diatonikus hangrendszer hangsorai közül dúr jellegű az ión, a líd, és a mixolíd
+
+düvő – ősi indiai eredetű szó, jelentése: kettő. A tradicionális roma zenében használatos játékmód: hangsúlytalan ütemrészeken alkalmazott tenutós hangsúly
+
+vissza a lap tetejére
+
+E
+
+e – és
+
+ebollizione – forrongás
+
+ebrioso – megrészegülten
+
+eccitato – izgatottan
+
+ecclesiasticus – egyházi, templomi
+
+echeggiante – visszhangozva
+echo – visszhang
+
+echo manual, echo mű – „távmű”, az orgona egyik sípcsoportja, csak nagyobb hangszerekbe építik, a többi síptól távolabb, rejtett helyről szólal meg
+
+echo organ, echo work – echo mű
+
+eclatant – csillogóan
+
+ecloga, eclogue – pásztordal
+
+eco – visszhang
+
+ecourter – rövidítés
+
+ed – és
+
+editeur – kiadó
+
+editio – kiadás
+
+~ originalis – eredeti kiadás
+
+~ princeps – első kiadás
+
+editor, editore –  kiadó
+
+edizione – kiadás
+
+effekt – hatás
+
+effet – hatás, régi francia ornamentikai tabellákban a kivitel értelmében használt szó
+
+effetto – hatás
+
+~ orchestrale – zenekari hatás
+
+egész trilla – olyan trilla, amely több mint négy hangból áll, és utókája is van
+
+egész zárlat – tökéletes egész zárlat
+
+egészhangú skála – egy oktávon belül hat olyan hangból álló sor, amelynek mindegyike egymástól nagyszekund távolságra van, nem tartozik a diatonikus hangrendszerbe
+
+eguale – egyenletes, egyforma, egyenlő
+
+~ movimento – egyenlő mozgás
+
+egualmente – egyenletesen, egyformán
+
+eguaglianza – egyenlőség
+
+egyenletes ellenpont – kontrapunktikus szerkesztésmód, amelyben a szólamok egyező ritmusúak
+
+egyenlőtlen ellenpont – kontrapunktikus szerkesztésmód, amelyben legalább két szólamnak más és más ritmusa van
+
+egyestánc – páros ütemű magyar népi férfitánc, legényes. (kanásztánc, pásztortánc, botostáncok stb.)
+
+egyházi hangsorok – antik görög eredetűek. A középkori zeneteóriában az autentikus és plagális főcsoportra osztott hangsorokat I-től XII-ig római számmal jelölték. Autentikus hangsorok: I. dór, III. fríg, V. líd, VII. mixolíd, IX. ión, XI. aeol. Plagális hangsorok : II. hypodór, IV. hypofríg, VI. hypolíd, VIII. hypomixolíd, X. hypoión, XII. hypoaeol.
+
+egyházi kantáta – vallásos szövegre írt kantáta
+
+egyházi zárlat – olyan zárlat, amely a szubdominánsról lép a tonikára
+
+egyházi zene – vallásos, többnyire liturgikus szövegre írt vokális, vagy vallásos célra írt hangszeres kompozíció (pl.: gregorián ének)
+
+egynemű kar – olyan összeállítású kórus, amelyben vagy csak női, vagy csak férfihangok vannak. Egynemű kar a gyermekkar is, az énekesek nemére való tekintet nélkül.
+
+egyszerű ellenpont – szólamai csak az eredeti viszonylatban használhatók és nem fordíthatók (a felső szólam nem cserélhető fel az alsóval).
+
+egytémás rondó –  kisrondó (terjedelmére való tekintet nélkül); olyan rondóforma, amelyben a rondótémán kívül más rész nem tér vissza.
+
+egyvonásos oktáv – egyvonalas oktáv
+
+eilend – sietve, siettetve, hirtelen felgyorsulva
+
+eine saite – egy húr
+
+einklang – unisono
+
+einleitung – bevezetés, előjáték, introdukció
+
+einsatz – belépés, bevágás
+
+einschnitt – egy motívum vagy frázis vége: cezura
+
+einstimmig – egyszólamú
+
+eintritt – szólambelépés
+
+ekfonetikus hangjegyírás – középkori kezdetleges jel-írásmód a bizánci, örmény, szír és kopt liturgikus szövegekben. Eredetileg a hangmagasság emelkedését és süllyedését jelölték a deklamálandó szöveg felett ( NEM neuma-írás!). Ma is használatos a ta’amim zsidó rituálékban.
+
+elargissant – szélesedve
+
+elegantemente – választékosan, könnyedén, elegánsan
+
+eleganza – elegancia, választékosság, tetszetősség (con eleganza – eleganciával, elegánsan)
+
+elegiaco – panaszosan, elégikusan
+
+elegy – elégia
+
+elementi, elémens – „alkatrészek”; az ütem, a téma elemei
+
+elevation – XVII. századi elnevezés a felfelé haladó terc-csúszásra (jele a főhang felett: +)
+
+elevatio – emelkedetten
+
+elevazione – 1. Emelés, a kéz felemelése; 2. A misében: Úrfelmutatás; 3. Emelkedettség
+
+elégia – eredetileg antik görög siratóének lantkísérettel. A XIX. század óta szomorú, gyászos hangulatú darabok vagy tételek címe, a hangszeres zenében is. Romantikus mesterek szomorkás hangulatú karakterdarabjai (gyászdal)
+
+eléments métriques – ütemrészek
+
+elisione, elízió – „kihagyás”, amikor a várt feloldás kimarad és helyette rögtön a várt feloldás utáni következő hang vagy akkord jelenik meg
+
+ellenmozgás – két szólam ellenkező irányú haladása
+
+ellenpárhuzamok – antiparalelek: amikor két szólam oktáv vagy kvint távolságból ellenmozgásban haladva újra oktáv ill. kvint távolságba kerül.
+
+ellenpont – contrapunctus, többszólamú szerkesztés, ahol az egyes szólamok önálló melodikus mondanivalóval rendelkeznek. Lehet többszörös ellenpont is. Fejlettebb formája az imitációs ellenpont, legfejlettebb formái: a kánon és a fúga
+
+előadási jelek – szóban vagy jelzésben megadott utasítások, körvonalazzák a szerzőnek az előadásra vonatkozó utasításait
+
+előjáték – operákat, operafelvonásokat, baletteket, oratóriumokat stb. bevezető zene, többnyire megszakítás (lezárás) nélkül torkollik a cselekménybe. Legtöbbször az utána következő rész (felvonás, jelenet) hangulatát vezeti be.
+
+előjegyzés – a vonalrendszer elején elhelyezett #-k vagy b-k, amelyek az egész sorra érvényesek
+
+előke – az egyik legrégibb és legfontosabb díszítés. Több fajtáját hosszú és rövid előkékre lehet osztályozni. Mai formája a XIX. században keletkezett: a kiskottával kiírt zászlós díszítőhang szárát áthúzták annak jelölésére, hogy játékideje (a főhang rovására) nagyon rövid, rendszerint 32-ed érték. A több hangból álló különféle előkéket is gyorsan, hangsúlyosan kell játszani, értéküket a főhang idejéből kell levenni. A hosszú előkéket a mai zeneszerzők minden megkülönböztetés nélkül, szerves hangokként használják.
+
+előtag – félperiódus, a periódus első része
+
+első hegedű – a zenekar két részre osztott hegedűszólamának (I. és II. hegedű) nagyobb csoportja, a vonósok diszkantja. A játékosok (6-18fő) a karmester baljánál ülnek, szólamvezetőjük a zenekar szóló-hegedűművésze, a koncertmester.
+
+első pult – zenekari vonósszólamokban gyakori jelzés: a megjelölt szólamcsoportból csak az első kottaállvány előtt ülő 1-2 muzsikus játszik.
+
+embaterion – spártai katonadal
+
+embellishment – díszítés, díszítőhang
+
+embouchure – ansatz, fúvóka
+
+emiolia – hemiola, másfél, a háromnak kétfelé osztása, 3 fél kotta (hemiola major), vagy 3 negyed kotta (hemiola minor) éneklése vagy játszása 2 ütés alatt
+
+emmeles – a subfinalis (egyházi hangnemek záróhangja alatti hang) középkori elnevezése
+
+emozione – lelkesültség
+
+emphasis – nyomaték, fontosság
+
+emphatically – nyomatékkal
+
+emphatisch – nyomatékkal
+
+emporté – haragosan
+
+empty – „üres”
+
+enchaînez – kötni, követni (fr. kottákban gyakran az Attacca helyett áll)
+
+encore – még, újra
+
+en dehors – kidomborítva
+
+~ mesure – ütemben, az időmértéket szigorúan betartva
+
+~pressant – siettetve
+
+energico, energicamente – erélyesen, határozottan
+
+enfatico – nyomatékkal
+
+enge lage – szűkfekvés
+
+engführung – szűkmenet
+
+enharmónia – hangrendszerünkben két olyan megközelítőleg azonos magasságú (az egyenletesen temperált hangrendszerben azonos magasságú) hang enharmonikus, amely két különböző szomszédos törzshangból származtatott, módosított hang (pl. Cisz-Desz). Enharmonikus lehet két olyan hang is, amelyek közül csak az egyik módosított hang (pl. C-Deszesz, Hisz-C, H–Cesz). Az enharmonikus hangoknak elsősorban az enharmonikus modulációban, ill.  cserében van fontos szerepük
+
+enharmonikus csere v. moduláció – az enharmónia alapján nyugvó modulációs jelenség: valamely hang enharmonikusan átértelmezve az új hangnemben más szerepet tölt be, mint az előzőben, írásmódja megváltozik
+
+~ hangszerek – azok a hangszerek, amelyeken nem kell képezni a hangot (mint pl. a hegedűn), csupán valamely mechanizmus útján a már előkészített, kész hangot kell megszólaltatni (pl. zongora, orgona stb.)
+
+enigma – talány, rejtvény
+
+enigmatical canon – rejtvénykánon
+
+enjoument – vidám hangulatú kis hangszeres darab
+
+enlevez la sourdine – szordinót levenni
+
+enroué – bágyadtan
+
+ensalada – „egyveleg”, humoros karakterű XVI. századi spanyol dal
+
+ensemble – együttes, összjáték
+
+entfernung – hangterjedelem, ambitus
+
+entr’act – felvonásközi zene
+
+entrata – bevezetés, bevezető zene
+
+entusiasmo – lelkesedés, lelkesültség
+
+entusiastico – lelkesülten
+
+entwurf – vázlat, zenei vázlat
+
+eol, aeol – vezetőhang nélküli molljellegű hangsor, VI. foka kisszext távolságra fekszik, a zongora fehér billentyűin eljátszható az A-kezdőhangtól elindulva
+
+~ hárfa – „szélhárfa”: a romantika korában újra életre keltett ókori hangszer. A hangszert a léghuzam hatásának tették ki, rendszerint félig nyitott ablakba. Hangzásának különlegessége (a szél erősségének megfelelően) a felhangok megszólalásában rejlett
+
+epicedium – panaszdal, gyászdal
+
+epilenion – Bacchus tiszteletére énekelt táncdalok
+
+epigon – utánzó, utód
+
+epigramma – rövid költemény, felirat
+
+epikus zene – „elbeszélő” zene: többnyire azok a műfajok, amelyeknek szövege vagy programja elbeszélő jellegű (oratórium stb.)
+
+epilógus – befejezés, utójáték
+
+epistropha – a zárótétel ismétlése
+
+epitaffio – sírfelirat, epitáfium
+
+epithalam – nászdal, lakodalmi ének
+
+epithalmion – nászdal
+
+epizeuxis – egy zenei frázis vagy énekszöveg-részlet egymás után való többszöri ismétlése („Alleluja! Alleluja! Alleluja!”)
+
+epizód, episodo, episode – az a mű folyamán csak egyszer elhangzó, nem önálló rész, amely előzményt feltételez és folytatást kíván, formája nem teljesen zárt. Az ún. Couperin-rondókban az epizódokat couplet-nak nevezik. A fúgában: közjáték, amelyben a fúga tematikus anyaga nem szerepel
+
+equabilmente – hasonlóan
+
+equal voices – egynemű kar
+
+erleichtert – könnyített
+
+ernst – komolyan
+
+eroicamente – hősiesen
+
+eroico – hősiesen
+
+eroticon – szerelmi dal, vagy szenvedélyes szerelmet festő hangszeres kompozíció
+
+ersterbend – elhalóan
+
+erzählend – elbeszélve
+
+esaltato – izgatottan
+
+esecuzione – előadás, kivitelezés
+
+esempio – példa
+
+esercizio – gyakorlat
+
+espace – vonalköz
+
+espansione – kiterjedés, feszülés
+
+espansivo – nyíltan, világosan
+
+espirando, espirante – elhalóan
+
+espressione – kifejezés
+
+espressivo – érzéssel, kifejezéssel (röviden: espr.)
+
+espringale – középkori ugrótánc
+
+esquinazo – ¾ vagy 6/8 ütemmértékű, pontozott ritmusú chilei szerenád-féle, melyet karácsonyi dalnak is énekelnek
+
+estampida – (istampitta) a XIII-XIV. század legfontosabb instrumentális formája a trubaduroknál. A vokális szekvenciából ered. Rendszerint 4-7 részből áll, melyek mindegyikét kétszer játsszák
+
+estensione – hangterjedelem, ambitus
+
+estinguendo – elhalóan, kialvóan
+
+estinto – elhalóan, kialvóan
+
+estratamente – rendkívül
+
+estribillo – a villancico (kantátaszerű, egyházi szövegű spanyol műformának) elején és végén található kórustétel
+
+esztrád zenekar – szórakoztató műsorokat játszó zenekar, általában zongorával
+
+etendue – hangterjedelem, ambitus
+
+etüd, etude – gyakorlat, tanulmányi célokat szolgáló, gyakran mégis művészi értékű zenemű
+
+eufonia – jóhangzás, széphangzás
+
+eufonico, euphonique – jól hangzó, szépen hangzó
+
+eunuch, evirati – kasztrált (nemiségétől megfosztott férfiénekes)
+
+euthia – felfelé haladó hangsor
+
+eversio, evolutio – a kettős ellenpontban a szólamok cseréje, mint a tematikus munka egyik stádiuma
+
+exaltation – felindulás
+
+exalté – felindultan, izgatottan
+
+exclamatio – 1. Felkiáltás, 2. Ornamens, a confluentia egyik fajtája, egyezik a felfelé haladó terc-csúszással
+
+exclusus – régi zenei írásokban a hármashangzat kvintje
+
+exercise – gyakorlat
+
+exécution – előadás, kivitelezés
+
+exodium – záró-zene, befejező zene
+
+expozíció – 1. A fúgában:  a szólamok szabályos egymásutánban először mutatják be a főtémát. (Kettős-, hármasfúgában több expozíció is lehet) 2. Szonátaformában és kéttémás rondóban (szanátarondó, nagyrondó):  a tétel legfontosabb témáit bemutató rész – A bécsi klasszicizmus zenéjében: az expozíció magában foglalja a főtémát a mű alaphangnemében, az átvezető részt, a mellék-  és zárótémát a domináns hangnemben (moll kompozíciókban legtöbbször a párhuzamos dúr hangnemben). Újabb zenében az egyes témák helyett témacsoportok szerepelhetnek, minden egyes témacsoport között külön átvezető rész lehet, hangnemi rendje sokkal szabadabb.
+
+expresszionizmus – a XX. század elejének egyik művészi irányzata; realista ábrázolás helyett elvont, szubjektív lelki tartalmat igyekszik kifejezni
+
+extemporáció – rögtönzés
+
+extempore – rögtönözve
+
+éclatant – csillogóan
+
+échelle – hangsor, skála
+
+écossaise – eredetileg páratlan ütemű skót tánc. Később a francia és német műzenében páros ütemű vidám tánc
+
+ékesítések – díszítések, ornamensek, a dallamot díszítő, ékesítő hangok. A műzenében a díszítések gyakorlata először a gregorián énekben jelentkezett a XIII-XIV. században: improvizált passzázsokkal díszítettek dallamokat. Ez az improvizált ornamentika – a diminució – a XVI. században élte fénykorát. Minden dallamot díszítettek, a a díszítőfigurák lassan stereotipizálódtak, és többé-kevésbé állandó formát nyertek (XVI. század vége). Egyes figurákat jelekkel láttak el, ezzel kezdetét vette a jelzéses ornamentika korszaka. A barokk kor muzsikusai már tömegesen alkalmazták a különféle jeleket, kiskottákat, ugyanakkor a diminució gyakorlata leszűrtebb, művészi formában élt tovább. A XVIII. század végétől kezdődően a jelek száma és a kiskották alkalmazása csökkent, a szerzők igyekeztek műveikben a leírható díszítéseket a lehető legpontosabban, a dallam szerves részeként rögzíteni. Ma már mindössze néhány díszítőjelet alkalmaznak a műzenében.
+
+énekbeszéd – 1. Recitativo, 2. Az énekszólam vagy szólamok komponálásának (főleg operákban) olyan módszere, amely zárt formák helyett (pl. áriák) a dallamalkotásnál elsősorban a beszéd (pl. prózai, mindennapi beszéd) lejtéséből indul ki. (Wagner, késői Erkel, Muszorgszkij, Janáček, Debussy vokális művészete)
+
+épreuve – próba, betanulás
+
+érintők – 1. Egyes húros hangszerek (pl. gitár, lant stb.) fogólapján a húrok leszorításának helyét jelző rendszerint fémből készült keresztlécek. 2. A clavichord érintői: a húr megszólaltatásán kívül hangolását is változtatták.
+
+értelmi hangsúly – az értelmileg összetartozó zenei részek, frázisok elejének kiemelése
+
+érzékeny hang – 1. A vezetőhang (hangnemi helyzetéből eredően törekszik felfelé vagy lefelé).  2. A disszonáns hangok (feloldásuk szabja megtörekvési irányukat – szeptimhangok). 3. Az alterált hangok (a módosítás irányába törekszenek). Megkettőzésükből rossz párhuzamok keletkeznek.
+
+étouffez, étouffé – kürtjátéknál: fojtva. Hosszan csengő ütőhangszerek esetében: azonnali letompítás, elfojtás
+
+~ le son – elfojtani a hangot
+
+étouffoir – hangfogó, szordinó
+
+étude – etüd
+
+vissza a lap tetejére
+
+F
+
+F-kulcsok – basszuskulcs: a negyedik vonalon, baritonkulcs: a harmadik vonalon, szubbasszus kulcs az ötödik vonalon. Minden esetben a kis F helyét jelölik.
+
+F-nyílás – vonóshangszerek fedelén levő két  egymás felé hajló f-alakú nyílás. A hangszekrényben felerősödött hangrezgés ezeken át terjed tovább.
+
+fa-la-la – vidám, népies stílusú táncdalok a XVI-XVII. században. A versszakok végén a fa-la-la szótagokat refrénszerűen énekelték.
+
+faburden – falsobordone
+
+facile – könnyen
+
+facilement – könnyen
+
+facilità, facilité – könnyedség
+
+facilmente – könnyedén
+
+facoltativo – nem kötelező, szabadon választható
+
+faktúra – valamely zenemű „felrakásának” módja hangszerre, zenekarra, énekkarra stb. Különbséget lehet tenni stíluskorszakok közötti (klasszikus / romantikus), szerzők közötti faktúrák (Mozart / Beethoven), valamint ugyanazon szerző korai és kései műveinek faktúrája között
+
+falsa, falsch, false – hamis
+
+false cadence – álzárlat
+
+falsetto – falzett, fejhang
+
+falsobordone, falsetum – a többszólamú stílus kezdeti formája. Rendszerint háromszólamú; a dallamot a legalsó szólam (tenor) intonálja, a legfelső szólam a felső szexttel, a középső a felső terccel kíséri. A kezdő és befejező akkord mindig alap-kvint-oktáv. Szextakkord stílusnak is nevezik.
+
+falzettisták – férfiénekesek, akik a XVI. században a templomi énekkarokban a szoprán és alt szólamokat énekelték. Helyükre később a kasztráltak kerültek.
+
+fanatico – rajongva, fanatikusan
+
+fancy – hangszeres együttesre írt zene (Fantasy) a XVII. századi Angliában. Később tánctételeket csatoltak hozzá és szvitszerű formája lett.
+
+fandango – andalúziai spanyol nemzeti tánc, páratlan ütemben, gitár és castagnette kísérettel. A tánc szüneteit ének tölti ki.
+
+fanfare – 1. Fanfár; 2. A franciák gyakran nevezik így katonai vagy polgári fúvószenekaraikat
+
+fanfár – többnyire trombitákon és harsonákon megszólaltatott szignálszerű, rövid zene
+
+fantasia – fantázia
+
+~section – a szonáta feldolgozási részét nevezik így néha az angolok
+
+fantastically, fantastico, fantastique, fantastisch – képzelgően, fantasztikusan
+
+fantázia – rögtönzés-szerű kötetlen műforma. Az egyes zenei gondolatok sűrűn váltakoznak benne, instrumentális zenében igen gyakori. Magyar kifejezése lehet: ábránd.
+
+farandole – provencei népi tánc, mérsékelt 6/8-ban. A különböző nemű táncosok egymás kezét fogva hosszú láncot alkotva kígyóvonalakban járják. Régebben galoubet zenére táncolták.
+
+farce – zenés bohózat, komikus közjáték
+
+far il capotasto – gordonkajátékban: az így jelzett helyet / részletet hüvelykfekvésben kell játszani
+
+farsa – komikus közjáték, zenés bohózat
+
+fast – gyors, gyorsan
+
+fastosamente, fastoso – pompázatosan, hivalkodóan, kevélyen
+
+faticoso – fáradtan, nehezen
+
+fausse – hamis
+
+fausset – fejhang
+
+fauxbourdon – falsobordone
+
+favola pastorale – népies olasz színjátékok a XV. században. Énekes, hangszeres és táncos betétek voltak benne. Az opera előfutárja.
+
+favori, favorito – közkedvelt
+
+fáklyatánc – római eredetű tánc, a táncolók a fáklyát a kezükben tartják. A XVIII-XIX. század német hercegi udvaraiban esküvők alkalmával járták. Polonéz-szerű  ¾-es ütemű, ünnepélyes indulózenére táncolták.
+
+fänchen – „zászlócska”, a nyolcad, vagy annál kisebb hangjegyértékek zászlója
+
+febbrile – lázasan
+
+fedett lépések – leplezett lépések (menetek) állnak elő olyankor, amikor két szólam ugyanazon irányban haladva oktáv vagy kvint helyzetbe kerül. A mesterek gyakorlatában nagyon gyakran előfordul (habár a régi tankönyvek tiltják). A legrosszabbul hangzó fedett lépések: a fedett oktávok és a fedett kvintek a külső szólamokban (szoprán és basszus) között lépnek fel, valamint akkor, amikor a szeptim vagy szekund (nóna) távolságra eső hangok oktávba, ill. prímbe mennek át.
+
+feierlich – ünnepélyesen
+
+feinte – az előke (accent) ritkább neve a XVII. században
+
+fejhang – főleg tenoristáknál szokásos éneklésmód: az énekes valóságos hangterjedelmén felül még néhány gyenge, nazális hangot kiénekel
+
+fekvés – 1. A zeneelméletben: aszerint, hogy a legfelsőbb szólamban az alap (v. oktáv) és annak terce vagy kvintje van, megkülönböztethetünk oktáv-, terc- vagy kvintfekvést. Jele a basszushang felletti 8, 3 vagy 5 szám. 2. Az énekes vagy valamely hangszer magas v. mély hangjainak gyűjtőneve: magasfekvés, mélyfekvés. 3. Fogólapos húros hangszereknél a balkéz különböző helyzetei a fogólapon.
+
+feldmusik – a katonazene – katona-fúvószenekar egyik régebbi német neve
+
+feldstücke – többnyire négyszólamú fanfárzene a XVII. századi katonazenekaroknál (egyéb nevei: feldpartitas, feldsonaten)
+
+feldton – az Esz-dúr hangnem XIX. századi elnevezése (oka: a katonazenekarok hangszerei majdnem mind Esz hangolásúak voltak)
+
+feldtrompeter – szabadban játszó katona-trombitás a XVII. században
+
+feldolgozás – kidolgozás: az a kötetlen formájú, rendszerint moduláló rész, amely a mű folyamán már előbb bemutatott anyagból épül. Szűkebb értelemben a szonátaformában az expozíció és a reexpozíció közti rész; a kéttémás-rondóban (szonátarondó, nagyrondó) a rondótéma első és második visszatérése közé eső rész.
+
+felhangok – aliquot-hangok, harmonikus felsőhangok, parciális hangok, részhangok: egy zenei hanggal egy időben megszólaló, de külön nem hallhatóhangok egész sora. Ez a sor felfelé elméletileg határtalan, azon fizikai jelenségen alapul, hogy valamely rezgő test (pl. húr) nemcsak a maga egészében, hanem egyes részeiben is rezeg.
+
+feloldás – 1. Valamely hang módosításának megszüntetése. 2. Valamely disszonanciának konszonanciába való átvezetése
+
+feloldójel – valamely előjegyzést vagy módosítást érvénytelenítő jel
+
+felsőmű – az orgona manuálja, a főmű billentyűsora felett (ritkán alatta)
+
+felső váltóhang – a váltandó hang felső szomszédos (kis- vagy nagyszekunddal feljebb fekvő) hangja
+
+felütés – a legutolsó hangsúlytalan ütemrészen való kezdés (a kezdés megelőzi az ütem kezdetét jelző főhangsúlyt)
+
+fermamente – biztosan, erősen
+
+fermata – 1. korona; 2. orgonapont
+
+fermatamente – biztosan, erősen
+
+fermezza – szilárdság, erő
+
+feroce – vadul, hevesen
+
+festevole – derűsen
+
+festivamente – ünnepelve, ujjongva
+
+festività – ünnepélyesség
+
+festivo – ünnepélyesen
+
+festoso – ünnepélyesen, vidáman, örvendezően
+
+feurig – izzón, tüzesen
+
+félfekvés – vonóshangszereken a balkéz első ujja közvetlenül az üres húr utáni első félhangon helyezkedik el (üres húr és első fekvés között)
+
+félperiódus – a periódus elő- vagy utótagjának neve
+
+féltrilla – rövid, nagyon gyors trilla, utóka nélkül
+
+félzárlat – egy zenei mondat dominánson történő befejezése
+
+férfikar – szólamai: I. II. tenor, és I. II. basszus; az ilyen összeállítású kórusra írt művek neve is
+
+fiacco – bágyadtan, fáradtan
+
+fiati – a zenekar fúvói
+
+~ di legno – fafúvók
+
+~ di d’ottone – rézfúvók
+
+fiddle, fiedel – fidula, hegedű
+
+fides – húr
+
+fidicina – római lantosnő
+
+fidula – a vonóshangszerek valószínűleg ázsiai eredetű középkori neve; hegedű
+
+fieramente – büszkén, durván, féktelenül
+
+fierezza – vadság, durvaság
+
+fiero – durván, féktelenül, erőszakosan
+
+figura – a verbunkos gyors, gazdagon cifrázott triója vagy kódája
+
+figurák – alakzatok, a zenét mozgásukkal, ritmikájukkal élénkítő hangzatfelbontások, átmenő-, váltóhangok, késleltetések, anticipációk.
+
+filum – a hangjegy szára
+
+fin’al – -ig
+
+finale – befejező-, zárórész (operák: felvonások ill. az egész opera befejező jelenete; ciklikus művek: befejező tétel)
+
+finalis – záróhang
+
+finalklausel – kóda
+
+fine – befejezés, vég
+
+fingering, fingersatz – ujjrend
+
+finito – befejezve
+
+finto – az álzárlat egyik neve
+
+fioco – bágyadtan
+
+fiochetto – kissé rekedten
+
+fioreggiante – díszítve
+
+fioretti – díszítések
+
+fioriscente – díszítve, ékesítve
+
+fiorito – díszítve, ékesítve
+
+fioritura – ékesítés, díszítés
+
+fiottole – hajósdal
+
+fisztula hang – fejhang
+
+fitto – sűrű, sűrűn
+
+five-part form – az egytémás rondóforma (a-b-a-c-a)
+
+flageolet, flageolett, flagioletto – üveghang: vonóshangszereken a húr bizonyos csomópontjainak gyenge érintésével képezhető harmonikus felsőhangok (temészetes ~: üres húron gyenge érintéssel képezhető, mesterséges ~: leszorított húrral és egy időben csomópont-érintéssel képezhető). Hárfa, gitár: a húrfelező csomópont gyenge érintésével képzendő (a húr felső oktávja)
+
+flamenco –  a spanyol (Andalúziában élő) cigányok által a XVIII-XIX. században elterjesztett népzenei- és táncstílus. Legősibb formája az ének (cante), amihez hangszeres kíséret (toque) és tánc (baile) kapcsolódhat.
+
+flattement, flatté – XVII. századi díszítés a viola-zenében. Ma mordentnek nevezzük.
+
+flatterzunge, flutter – fúvóshangszereken: a játékos befúvás közben „r” betűt perget a nyelvével
+
+flautando – fuvolaszerűen, fuvolázva; vonósoknál: sul tasto
+
+flebile – panaszosan, siránkozva
+
+flessibile – hajlékonyan, lágyan
+
+flessibilità – hajlékonyság, simulékonyság
+
+fliessend – folyékonyan, peregve
+
+floridus – „virágos ellenpont”
+
+flos harmonicus – a díszítések (trilla, vibrato, mordent) gyűjtőneve a XIII. században
+
+flötenwerk – az orgona fuvolaféle regisztereinek összessége
+
+flügel – „szárny”, zongora egyik német neve
+
+focoso – hevesen, lobbanékonyan
+
+foglietto – „lapocska”, régebben  kis együttesek hegedű-vezetőszólama
+
+fogólap – húros hangszerek nyakának felső felére erősített fekete léc, a húrt ezen leszorítva lehet képezni a hangot
+
+fojtva – tompítva, kürtszólamokban: fojtott játékmódra utaló jelzés, befejezte után „nyitottan” jelzés áll.
+
+folâtre – pajkosan
+
+folia – régi ¾-es portugál tánc, ostinato-basszustémára épített variációsorozat.
+
+folksong – népdal
+
+follemente – bolondosan
+
+fondamento – alaphang
+
+fonetika – „hangzó”-tan, a beszédhangok helyes képzésének tudománya, az éneklésben fontos szerepe van
+
+fonográf – a gramofon őse (Edison, 1877.) A tölcsérrel egybegyűjtött hangrezgéseket kevésbé tartós viaszhengereken rögzítette.
+
+force – erő
+
+fordítás – a zenében: egy hangköz alsó hangját oktávval magasabbra, vagy felső hangját oktávval mélyebbre tesszük, a hangköz megfordul (tiszta→tiszta, kicsik→nagyok, nagyok→kicsik  szűk→bő, bő→szűk; prím→oktáv, szekund→szeptim, terc→szext, kvart→kvint, kvint→kvart …. stb.)
+
+forefall – hangsúlyos rövid alsó előke a XVII. századi Angliában
+
+~and shake – felső váltóhang előkés, késleltetett trilla a XVII. századi Angliában
+
+forlana – a gigue-hez hasonló, gyors 6/4-es vagy 6/8-os tánc a XVIII. század elején
+
+formalizmus – zenei törekvés, irányzat, mely a formális elemeket helyezi középpontba, a kifejezési eszközöket öncélúan, nem a tartalomnak megfelelően használja.
+
+formatan – a zeneelmélet része, amely a zenei formákkal, azok keletkezésével, fejlődésével foglalkozik
+
+forslag – előke
+
+fort – erős, erősen (dinamika)
+
+forte – hangosan, erősen (röv.: f)
+
+forte-fortissimo – rendkívül erősen (röv.: fff)
+
+forte possibile – olyan erősen, amennyire csak a játékos képes
+
+fortemente – erősen
+
+forte piano – 1. Zongora; 2. Dinamika: erősen indítani a nagot, de rögtön lehalkítani (röv.: fp)
+
+fortissimo – nagyon erősen (röv.: ff)
+
+fortspinnung – továbbszövés; motivikus munka
+
+forza – erő
+
+forzando – fokozott, hangsúlyozott erővel (röv.: fz)
+
+fouet – ostor
+
+fourchette tonique – hangvilla
+
+fourchou – villásfogás
+
+fourniture – mixtura
+
+fox-trot – röviden: fox, a ’20-as évek közkedvelt társasági tánca, tempója lassú vagy gyors 4/4, alla breve. Változatai: charleston, stomp, schuffle
+
+főhang – 1. Hangnem szempontjából legfontosabb hangok ( T, D, S). 2. Hangok, melyek felett díszítőjel áll. 3. Ritmikai szempontból hangsúlyos hang
+
+főhármashangzatok – valamely hangsor I., IV., V. fokára épített hármashangzat
+
+főmű – az orgona egyik sípcsoportja, a legbővebb méretű principálokkal, jellege tömör és fényes. Manuálja többnyire az első vagy a második
+
+főpróba – egy együttes utolsó próbája az előadás előtt
+
+főtéma – a szonáta- és a nagyrondó/szonátarondó formának legfontosabb témája, a mű mondanivalóját tartalmazza.
+
+fra le quinte – a kulisszák mögött (színpadi zene)
+
+fraîchrment – frissen, vidáman
+
+française – 6/8-os vidám francia tánc, az anglaise és a ecossaise változata
+
+franchezza – bátorság, nyíltság, hetykeség
+
+francia nyitány – Lully-kezdeményezte háromrészes nyitány-forma: első része patetikus Grave, a középső gyors, fugato-szerű Allegro, befejező része az első részt rövidítve ismétli
+
+frappante note – acciaccatura
+
+frappé – leütés
+
+frase – frázis
+
+fraseggiare, fraseggiamento – frazírozás
+
+frazírozás – zeneművek értelmi tagolása (frázisokra bontása hangsúlyokkal, elválasztással stb.)
+
+frázis – a zenei gondolat önálló, hosszabb-rövidebb tagjai, melyeket cezurák választanak el egymástól. A legtöbb frázis két, három, vagy több motívumból áll, minden frázisnak határozott (súlyos v. súlytalan) kezdete, dallamilag, ritmikailag, v. dinamikailag kiemelkedő magja és határozott (súlyos v. súlytalan) zárása van
+
+free style – kötetlen, szabad stílusban, formában írt kompozíció
+
+freddo – hidegen
+
+frei – szabadon
+
+~ im vortrag – „előadásban szabadon”
+
+fremebondo – felbőszülten, szenvedélytől remegve
+
+frenetico – tombolva
+
+frescamente – vidáman, frissen
+
+fresco – frissen
+
+frets – érintők
+
+frettando – sietséggel
+
+frettolosamente – sietve, kapkodva
+
+fricassée – régi francia humoros, zenés egyveleg
+
+frikciós hangszerek – amelyek megszólaltatása súrlódással történik (vonósok, forgólant  clavichord stb.)
+
+friss – a verbunkos és a csárdás gyors, aprózott szakasza
+
+frivolo – könnyelműen, kihívóan, ledéren
+
+fríg hangsor – molljellegű hangsor, jellemzője, hogy II.foka a kezdőhangtól kisszekund távolságra fekszik. A zongora fehér billentyűin eljátszható az E kezdőhangtól elindulva
+
+frog, frosch – kápa
+
+froid – hidegen
+
+frottola – XV-XVI. századi népies hangulatú többszólamú dal, a madrigál és a villanella elődje
+
+frusta – ostor
+
+fúga – „futás, kergetőzés”, a legmagasabbrendű polifon imitációs műformák egyike. Neve az egymást utánzó szólamok sorban való belépésére utal. Fő formarészei: expozíció (a szólamok egymás után sorban bemutatják a témát alap-és domináns hangnemben), a feldolgozási rész (rokon hangnemekbe modulál, a témát különböző szólamokban mutatja be, tématöredéket, témafordítást, szűkmenetet hoz),  a repríz (a témát v. töredékét az alaphangbemben mutatja be), és a coda (hosszabb-rövidebb tonikai orgonaponttal).
+
+fuga a due (tre) soggetti – két- (három-) témás fúga
+
+~ aequalis motus – fúga, melynek szólamai egyforma mozgással és ritmusértékekben haladnak
+
+~ authentica – fúga, amelynek témája felfelé halad
+
+~ canonica – kánon
+
+~ composita – fúga, melynek témája lépcsőzetes hanglépésekből áll
+
+~ contraria – ellenfúga (a comes a dux fordítása)
+
+~ doppia, ~ duplex – kettősfúga, két témájú fúga
+~ impropria – kidolgozásában szabad, nem kötött fúga
+
+~ homophona – fúga, amelynek utánzó szólamai és feleletei azonos magasságúak (unisono)
+
+~ incomposita – fúga, amelynek témája ugrásokban halad
+
+~ in contrario tempore – fúga, melyben a dux hangsúlyos, a comes hangsúlytalan ütemrészen indul
+
+~ inversa – a kettős ellenpont szabályai szerint készült fúga, amely a témák ellenmozgásos fordítását használja ki
+
+~ irregularis – kidolgozásában szabad fúga
+
+~ libera – szabad fúga
+
+~ mixta – fúga, amelynek comese különféleképpen (fordításban, augmentációban stb.) jelentkezik
+
+~ obligata – fúga, melyben a dux és comesen kívül más tematikus anyag nem szerepel
+
+~ partialis – fúga, melyben egyes periódusoknak szabad imitációjuk van
+
+~ per augmentationem – fúga, melynek comese augmentációban jelentkezik
+
+~ per contrarium reversum – fúga, melyben a téma megfordításánál a hangjegyértékek nem változnak
+
+~ per contrarium simplex – fúga, amelyben a comes valamely más hangfokon (rendszerint kvinten), a legegyszerűbb alakjában jelentkezik
+
+~ per diminutionem – fúga, amelyben a téma imitációja diminuált
+
+~ per diminutionem unterruptam – fúga, amelynek diminuált imitációját szünetek szakítják meg
+
+~ per motum contrarium – ellenfúga
+
+~ periodica – fúga, amelyben egyes periódusoknak szabad imitációjuk van
+
+~ plagalis – fúga, melynek dux-a lefelé haladó lépcsőzetes hangokból áll
+
+~ propria – a teljesen szabályos fúga
+
+~ reale – reális válasz
+
+~ recta – fúga, melynek szólamai egyforma mozgással és ritmusértékekben haladnak
+
+~ reditta – fúga, amelynek közepén (feldolgozás) vagy végén legalább két szólam kánonban halad
+
+~ regularis – teljesen szabályos fúga
+
+~ retrograda per motum contrarium – fúga, amelyben a comes a duxot hátulról előrefelé és egyben fordításban hozza
+
+~ ricercata – a legnehezebb  a forma minden lehetőségét kihasználó mesterfúga
+
+~ sciolta, ~ soluta – szabad fúga
+
+~ fúgatéma – dux
+
+fugato – zenei részlet, mely fúgaexpozíciót tartalmaz (fúgaszerűen indul, de nem kerekedik teljes fúgává)
+
+fughetta – kis fúga (a fúgánál szegényebb, vázlatosabb, de a forma minden lényeges elemét tartalmazza
+
+fugue – fúga
+
+fulgente – csillogóan
+
+full chorus – teljes kar
+
+full orchestra – teljes zenekar
+
+fundamentalbass – 1. Számozott basszus, generálbassus, 2. Többször ismétlődő basszusfigura
+
+fundamental chord – alaphelyzetű akkord
+
+fundamental note – alaphang
+
+funebre – gyászosan
+
+funeral march – gyászinduló
+
+funkció – valamely hangnak/akkordnak a hangnemhez (tonalitáshoz) való viszonya. A három fő funkció: Tonika (=T), Szubdomináns (=S), Domináns (=D)
+
+funkciós irány – autentikus irány: a különböző hangoknak/akkordoknak más funkciójú hangokhoz/akkordokhoz való vonzódása (T⇒S, S⇒D, D⇒T)
+
+fuoco – tűz, tűzzel
+
+fuocoso – tüzesen
+
+furiant – erősen akcentuált, többnyire  ¾-es, gyors cseh tánc
+
+furibondo – dühvel, vadul, őrülten
+
+furioso – dühödten, vadul, őrülten
+
+furore – düh, őrültség
+
+furtivamente – eltitkolva
+
+fusa – „csöppnyi”: középkori menzurális hangjegyérték, a mai nyolcadkotta megfelelője
+
+futam – hangok/hangzatok gyors egymásutánja
+
+fúvóka – fúvóshangszerek része, melyen a levegő befúvása történik
+
+vissza a lap tetejére
+
+G
+
+gabel – hangvilla
+
+gabelgriffe – villásfogás
+
+gabelton – normál „A” hang
+
+gagliarda, gaillarde – gyors, hármas ütemmértékű régi olasz ugró-tánc. A pavane után következik
+
+gai, gaio – jókedvűen, vidáman
+
+gaiamente, gaiement – vidáman, élénken
+
+galamment, galante – behízelgőn, gálánsan
+
+galantemente – tetszetősen
+
+galanterien – többnyire táncok homofon szerkezettel a XVIII. században
+
+galop, galopp – gyors, 2/4-es ütemű körtánc, tizenhatod felütéssel indul.
+
+gamelán zenekar – jávai ütőhangszeres zenekar, melynek vezetője vonóshangszeren játszik
+
+gamma – a középkorban a skála legmélyebb hangja, a mai nagy G.
+
+gang- menet, passzázs
+
+garbatamente – kedvesen
+
+garbo – báj, kellem
+
+gassenhauer – utcai nóta, mint az olasz villanella
+
+gathering note – „összegyűjtő hang”: az orgonista megadja a kezdőhangot
+
+gauche – bal, balkéz
+
+gaudiosamente – örömmel telve
+
+gaudioso – örvendezve
+
+gaukenspiel – zenés bohózat, komikus közjáték
+
+gavotte – mérsékelt mozgású, kissé ünnepélyes jellegű régi francia tánc, 2/2, vagy 2/4-ben, félütemnyi felütéssel
+
+gáláns stílus – rokokó stílus, a XVIII. század közepére jellemző, a nagy-barokk stílus szigorú szabályait az idilli, társasági hangvétel színvonalára csökkenti
+
+gebet – ima: rövid, lassú, áhítatos tempójú darab
+
+gebrauchsmusik – házi muzsikálásra készített, egyszerű, világos, modern zene, melyet nem hivatásos zenészeknek, hanem műkedvelőknek, közepes képességű előadóknak szántak, technikai nehézséget nem okozva.
+
+gebrochener akkord – tört akkord
+
+gebunden – legato, kötve
+
+gebundener stil – kötött stílus, a XVII-XVIII. század szigorúan kontrapunktikus stílusa
+
+gedämpft – fojtottan, különféle szordinók alkalmazása rézfúvóknál (kürt). Megszüntetését az offen szó jelzi
+
+gedrängt – tömören, zsúfolva
+
+gefährte – „társ”, a fúga comes-e
+
+gegenbewegung – ellenmozgás
+
+gegenfuge – ellenfúga
+
+gegensatz – ellentéma, ellentét
+
+gehaltener akkord – tartott akkord
+
+geheimnisvoll – misztikusan, titokzatosan
+
+geige – hegedű
+
+geisslerlieder – XIV. századi énekek, a flagellánsok énekelték
+
+geistliche musik – vallásos zene (NEM egyházi zene)
+
+gemeindelied – gyülekezeti ének, korál
+
+gemischter chor – vegyeskar
+
+gemischte stimmen – 1. Kevert játékok; 2. kevert énekhangok, vegyeskar
+
+generalauftakt – felütés egy fajtája, mely egy, esetleg több ütemnyi nekilendülést jelent egy téma vagy tematikus rész előtt
+
+generalbass – számozott basszus, basso continuo
+
+generalpause, generálpauza – „általános szünet”, együttes-játékban az egy időben az összes szólamra, hangszerre vonatkozik (röv.: G.P.). Elvétve „üres”-nek is szokták nevezni  jelölni
+
+generalprobe – főpróba
+
+general silence – generálpauza
+
+generoso – nemesen, ízléssel
+
+gentile – kedvesen
+
+gerade bewegung – párhuzamos mozgás
+
+geraubtes zeitmass – tempo rubato
+
+gerendák – két, vagy több nyolcad (és annál kisebb) hangjegyet egységbe foglaló egyenes vonal a hangjegyek száránál. (8adokat egy gerenda, 16odokat két gerenda, 32edeket három gerenda … stb. fog össze)
+
+gesamtaufgabe – összkiadás
+
+gesang – dal
+
+gesangstimme – énekszólam
+
+gesangvoll – éneklő hangon, cantabile
+
+geschmack – ízlés
+
+geschwind – gyorsan
+
+gestohlenes zeitmass – tempo rubato
+
+gestopft – fojtva
+
+gestossene note – „elkülönített hang”, staccato, martellato stb. hangok
+
+geteilt – osztva, divisi
+
+geteilte stimmen – osztott szólamok
+
+getrennt – elválasztva
+
+générateur – alaphang
+
+ghiribizzoso – szeszélyesen
+
+giga – gigue
+
+gigue – gyors, élenk mozgású régi tánc, főként páratlan ütemben (néha páros), gyakran triolás alakulatokkal. XVII-XVIII. századi táncszvitekben gyakran szerepel
+
+gioco – játék, gyermekjáték
+
+giocondo – vidáman, jókedvűen
+
+giocosamente – játékosan
+
+giocoso – tréfásan, játékosan
+
+gioia – derű, vidámság
+
+gioviale – barátságosan
+
+giro – a doppelschlag ritkább neve
+
+gitano – cigány spanyolul
+
+giubilante – örömujjongva
+
+giubiloso – örömujjongva, ujjongással
+
+giulivamente – vidáman, örvendezve
+
+giustezza della voce – a hang tisztasága
+
+giusto – pontosan (feszes, kötött tempót és ritmust jelent)
+
+glänzend – csillogóan
+
+glee – angol, kíséret nélküli, egyszerű többszólamú (három férfihangra) dal, a XVIII. században volt népszerű
+
+gleiche stimmen – azonos hangok, egynemű kar
+
+gleichmässig – egyöntetűen, ugyanúgy
+
+gleichzeitig – ugyanakkor, ugyanabban az időben
+
+gli altri – a többiek
+
+~ archi – a vonósok
+
+~ fiati – a fúvók
+
+~ ottoni – a rezek
+
+glissando – siklás, csúszás (két hang közötti csúszás). Jele a kiinduló hangtól a befejező hangig terjedő egyenes/hullámos vonal, gliss. felirattal
+
+glisser – glissando
+
+glissicando – glissando
+
+glocke – zenekari harang
+
+glockenspiel – harangjáték
+
+gloria – a misekompozíció második állandó tétele (a gyászmiséből hiányzik)
+
+glosas – XVI. század eleji diminúciós díszítés, a harmonizált zsoltárok egyszerű figurációinak neve
+
+goffo – esetlenül, félszegen, otrombán
+
+gola – gége, torok
+
+gondellied – gondoliera, sajkadal
+
+gondoliera – barcarola, gondoladal, sajkadal, romantikus mesterek által stilizált dalok velencei gondolásoktól
+
+gorgheggiamento – gurgulázó, hibás trilla az éneklésben
+
+gorgheggio – roulade
+
+gorgia – a XVI. század énekgyakorlatában az improvizált ékesítések összefoglaló neve
+
+gout – ízlés
+
+görög hangsorok – hétfokú, diatonikus hangsorok: dór, fríg, líd és mixolíd. Modális megfelelői ugyanebben a sorrendben: fríg, dór, ión, lokriszi
+
+grabgesang – gyászének, gyászdal
+
+grace – díszítés, ékesítés
+
+~ note – díszítőhang
+
+gracieux – kecsesen
+
+gracile – gyengéden
+
+grad – fok, hangfok
+
+gradatamente – fokozatosan, fokonként haladva
+
+gradation, gradazione – fokozatos hanglépés, fokozás
+
+grade ascendente – felfelé haladó hangfokok, dinamikai fokok
+
+~ descendente – lefelé haladó hangfokok, dinamikai fokok
+
+gradevolmente – kellemesen, élvezetesen
+
+grado, gradus – fok, lépcső, hangfok
+
+graduellement – fokozatosan, fokonként haladva
+
+granadiana – „granadai tánc”, a fandango egyik változata
+
+grandezza – nagyvonalúság, méltóság
+
+grandioso – hatalmasan
+
+grandisonate – lármásan, nagyhangon
+
+grand jeu – teljes mű (összes regiszter egyszerre) az orgonán
+
+gran orgue, gran organo – főmű az orgonán
+
+granulato – nem kötve, egyenként, elkülönítve
+
+grappa – accolade, több vonalrendszert a kezdetnél összefogó jel ( ­{ )
+
+grave – súlyos, súlyosan, tempójelzésként: igen lassan
+
+gravemente – súlyosan, nagyon lassan
+
+gravezza – komolyság, súly
+
+gravissimo – a lehető legsúlyosabban, nagyon komolyan
+
+gravita – súllyal, méltósággal
+
+grazia – báj, kellem
+
+graziosamente – kecsesen, bájosan
+
+grazioso – kecsesen, bájosan
+
+greghesca – a villanella egyik nápolyi változata, többnyire háromszólamú, szövege velencei és görög elemeket tartalmaz
+
+gregorián korális v. ének – Nagy Gergely pápa (590-604) nevéről elnevezett, általa összegyűjtetett liturgikus, szigorúan vokális, szigorúan egyszólamú énekek
+
+griffbrett – fogólap
+
+gridando – kiáltva
+
+groppi – glosas, XVI. századi improvizált díszítés, a diminució neve; a XVII. században (Praetorius): főhangkezdésű, utókás trilla
+
+groppo, groppolo – XVI-XVII. századi olasz énekesek főhangkezdésű, lassú trillája, a végén gyors utókával. Ma: doppelschlag olasz megfelelője
+
+grosser dreiklang – nagy hármashangzat (alap + nagyterc + tiszta kvint)
+
+ground – „alap”: mindig ugyanazt a rövid motívumot ismétlő basszus, a felsőbb szólamokban szabad variációkkal, hasonlóan mint a chaconne és a passacaglia. Kb. a basso ostinato megfelelője.
+
+grund – alap, tágabb értelemben: basszus
+
+grupeto, gruppetto – „kis csoport”, doppelschlag
+
+gruppo – improvizált díszítőfigura, doppelschlag
+
+guajira – közepesen gyors spanyol és kubai tánc, sajátosan változó 3/4 – 6/8 ütemben
+
+guerriero – harciasan
+
+guida – vezető, vezető-szólam
+
+guidon – a sor végén a következő sor ütemnem vagy kulcs megváltozására figyelmeztető jelzés
+
+guineo – XVI. századi 3/4-es vagy 3/8-os francia és olasz buja tánc, hasonlít a gagliardához.
+
+guracho – élénk, bájos andalúziai tánc, egy 6/8-os és egy 2/4-es részből áll. Gitárkíséretét maga a táncos játssza.
+
+gusto – ízlés, élvezet
+
+gutturális hang – torokhang
+
+gymel – cantus gemellus – régi előadásmód, a dallamot alsó, vagy felső terccel kísérik. A falsobordone technika kezdetlegesebb változata
+
+gyászinduló – többnyire mollban írt, pontozott ritmusú, méltóságteljes zene, középrészében világosabb, vigasztalóbb
+
+vissza a lap tetejére
+
+H
+
+habanera – páros ütemű kubai népi tánc, mely Spanyolországban is elterjedt
+
+habas verdes – gyors 2/4-es spanyol tánc
+
+hajdútánc – a középkori magyar hajdúk tapssal kísért, bokázó, guggoló szilaj tánca, ebből alakult a csárdás
+
+halbbass – „félbasszus”, a bariton hang
+
+halbe lage – félfekvés
+
+haletant – lihegve
+
+half fall – előke
+
+halkal, halkkal – régi magyar tempójelzés: lassan
+
+hallgató – lassú, cigányos modorban tálalt népies műdal
+
+halling – mérsékelt tempójú, páros ütemű, hangszerrel kísért norvég tánc
+
+hanaka – polonéz-szerű, gyors, 3/4-es morva népi tánc
+
+handstück – XVIII. század végi instruktív zongoradarabok neve
+
+hangfestés – a zeneművészet zenén kívüli jelenségeket ábrázoló eszköze
+
+hanglyuk – 1. húros hangszerek fedőlapján alkalmazott különböző alakú bevágás/ok; 2. fúvóshangszerek oldalába fúrt lyukak, melyek befogása-elengedése a hangmagasság változtatására szolgál
+
+harmónia – több, egyszerre megszólaló hang egysége
+
+harmoniemusik – fúvós-zene
+
+harmonikus mollhangsor – összhangzatos mollhangsor (a VI-VII. fok között bővített szekunddal)
+
+hartnäckiger bass – „makacs basszus”
+
+hauptakzent – főhangsúly
+
+hauptkadenz – valamely mű legutolsó kadenciája
+
+hausse – kápa
+
+hármas ellenpont – kontrapunktikus szerkesztésmód, a három szólam egymással felcserélhető
+
+hármashangzat – két egymásra épített tercből álló hangzat
+
+háromtagú forma – háromszakaszos dalforma
+
+házi zene – nem nyilvános előadásra szánt zene, rendszerint műkedvelők előadásában
+
+heftig – hevesen
+
+hegedősök – magyar vándor-énekmondók a XIV. században
+
+hell – világos, világosan
+
+hemiola – „másfél”, háromnak kétfelé osztása
+
+heroikus – hősi, hősies
+
+heroique – hősi, hősiesen
+
+hervorgehoben – kiemelve
+
+heterofónia – primitív többszólamúság: a kísérőszólamot is a dallamot játsszák, annyi különbséggel, hogy egyes dallamhangok díszítettek
+
+heuriger – osztrák népi tánc, a ländler egyik fajtája
+
+hexachord – hat hangból álló hangsorrészlet
+
+hexaton skála – egészhangú skála
+
+hésitant – tétovázva, ingadozva
+
+hiatus – űr, lyuk, hiány; ha a prozódiában egy magánhangzóval végződő szót ugyancsak magánhangzóval kezdődő szó követ
+
+high mass – ünnepi, énekes mise
+
+hímnemű zárlat – záradék, melyben az utolsó ritmikai mozzanat súlyosabb, mint az azt közvetlenül megelőző
+
+himnusz – eredetileg vallásos dicsének; általában dicsőítő ének, ünnepélyes dal, nemzeti fohász
+
+hirtenlied – pásztordal
+
+históriás ének – régi (XVI. sz.) magyar zenei műfaj: epikus énekek dallammal való elrecitálása, lantkísérettel
+
+hochländer – gyors, ¾-es keringőszerű tánc
+
+hofkapelle – udvari zenekar (Haydn zenekara Eszterházán)
+
+hoketus, hoquetus – „csuklás”, a XII-XIII. század többszólamú énekes stílusában a dallamot rövidke szünetekkel csuklásszerűen aprózták
+
+holz – „fa”
+
+holzbläser – fafúvók
+
+homofónia – eredetileg unisono éneklés; ma a többszólamú (polifon) zene ellentéte, amelyben egy vezetőszólam kivételével a többi szólamnak alárendelt szerepe van (harmonizált zene)
+
+homoioptoton – régi zenében a záradék előtti generálpauza
+
+homoiteleuton – régi zenében a záradél utáni generálpauza
+
+hora – páros ütemű román népi tánc, mérsékelt tempóban indul, majd felfokozódik
+
+I
+
+imitando – utánzó
+impetuoso – viharosan
+in rilievo – kidomborítva
+incalzando – sietősen
+irato – haragos, mérges
+
+vissza a lap tetejére
+
+L
+
+lamento – kesergő, drámai hangvételű, hosszabb arioso, a 17. század operáiban gyakori
+languendo – vágyakozóan
+largamente – szélesen, lassan
+larghetto – kissé szélesen, lassacskán
+largo – szélesen; a leglassúbb tempó jelölése
+legato – kötve, kötötten; a hangok megszakítás nélkül kövessék egymást. Jele: kötőív
+leggiero – könnyedén
+lento – lassan
+lieto – vidáman
+lontano – távolról
+loquace – beszédes
+lugubre – komoran
+lunga – hosszan
+lusingando – hízelegve
+
+vissza a lap tetejére
+
+M
+
+maestoso – fenségesen
+maggiore – dúr
+malinconico – mélabúsan
+malizioso – gúnyos
+mancando – csökkentve
+marcatissimo – nagyon nyomatékosan
+marcato – nyomatékosan
+marche funèbre – gyászinduló
+martellato – kalapálva
+marziale – harciasan
+meno – kevésbé
+mesto – búsan
+mezza voce – félerős hangon
+mezzoforte – (mf) középerősen
+mezzopiano – középhalkan, félhalkan
+minore – moll
+miserioso – titokzatosan
+moderato – mérsékelt tempóban
+moduláció – átmenet egy hangnemből valamely más hangnembe
+molto – nagyon (pl. molto allegro = nagyon gyorsan)
+morbido – szelíden
+morendo – elhalóan
+mosso – mozgalmasan
+moto – mozgás
+
+vissza a lap tetejére
+
+N
+
+non – nem
+
+O
+
+onde – lásd:delle onde
+ordinario – rendes módon
+ossia – választható variáns a kottasorban (pl. könnyítés vagy variáció)
+
+vissza a lap tetejére
+
+P
+
+parlando – elbeszélő, kötetlen tempójú előadási mód
+passione -szenvedély
+patetico – pátosszal
+pauza – (pause) szünet
+perdendosi – elhalóan
+pesante – súlyosan
+piacevole -k edvesen
+piangendo – panaszosan
+pianissimo – nagyon halkan
+piano – halkan
+piena – teljes
+pizzicato – pengetve
+più – több (pl. più forte = több erővel, erősebben)
+poco – kissé (pl. poco piano = kissé halkan)
+poco a poco – fokról fokra
+poi – azután
+precipitando – nekirohanva
+prelúdium – előjáték
+prestissimo – nagyon gyorsan
+presto – gyorsan, sebesen
+prima, primo – első
+
+vissza a lap tetejére
+
+Q
+
+quasi – mintegy
+quieto – nyugodtan
+
+vissza a lap tetejére
+
+R
+
+rallentando – lassítva
+rapidamente – gyorsan
+rapido – gyorsan, sebesen
+rassegnazione – megadás, lemondás, megnyugvás
+ravvivando – lassítás után újjáéledve vissza kell térni az eredeti gyorsabb tempóhoz
+religioso – áhítatosan
+repetizione – ismétlés
+replica – ismétlés
+requiem – gyászmise
+ricercare – fúgaszerű kompozíció
+rigore – szigorú(an)
+rinforzando – erősödve
+risoluto – határozottan
+risvegliato – frissen
+ritartando – lassítva
+ritenuto – fokozatosan lassítva, visszatartva
+rubato – (szó szerint: elrabolt, ellopott) zenei: csapongva; egy-egy hang értékének önkényes meghosszabbítása vagy megrövidítése
+rumore – zaj
+rustico – parasztos
+
+vissza a lap tetejére
+
+S
+
+scherzando – játékosan
+scherzo – tréfa
+scorrevole – folyamatosan
+secco – szárazon, röviden
+seconda, secondo – második
+segno – jel
+segue – következik
+semplice – egyszerűen
+sempre – mindig
+sentimento – érzéssel
+senza – nélkül
+serrando – gyorsítva
+sforzando, sforzato – hangsúlyozva, erősen
+siciliano – régi olasz pásztorének
+simile – hasonlóan
+sin, sino – -ig
+smorzando – elhalóan
+solo – egyedül
+sonoro – zengzetesen
+sostenuto – visszatartva
+sotto voce – fojtott hangon
+spianato – simán (egyenletesen)
+spiritoso – lelkesen
+stranscinando – vontatottan
+strepitoso – zajosan
+stretta – gyors, élénk tempójú, virtuóz ária
+stringendo – hajtva (gyorsítva)
+subito – hirtelen
+suono – hang
+
+vissza a lap tetejére
+
+T
+
+tanto – nagyon
+teneramente – gyengéden
+tenuto – tartva
+tornando – visszatérve
+tosto – sebesen
+tranquillo – nyugodtan
+tremoló – a vonó gyors fel-le mozgatásával előidézett hanghatás
+triste – szomorúan
+troppo – túlságosan
+tutta (la)-forza – teljes erővel
+tutti – a teljes zenekar vagy énekkar belépését jelzi szólórészek után
+
+vissza a lap tetejére
+
+U
+
+umoristico – humoros
+unisono – egyszólamúan
+uniti – együtt
+
+vissza a lap tetejére
+
+V
+
+veloce – sebesen
+vide – lásd
+vigoroso – erélyesen
+viola – brácsa, mélyhegedű
+violento – hevesen
+vivace – élénken, gyorsan
+vivacissimo – nagyon élénken, nagyon gyorsan
+vivo – élénken
+voce – hang
+
+vissza a lap tetejére
+
+Angol zenei kifejezések, meghatározások
+
+accidental – módosítójel
+augmentation dot – a hangok utáni pont
+dotted quarter – pontozott negyed
+double flat – dupla bé
+double sharp – dupla kereszt
+eighth note – nyolcad hang
+flat – bé
+
+ground – „alap”,  tágabb értelemben a basszust jelenti.
+half note – félhang
+meausure – ütem
+measure line – ütemvonal
+measure number – ütemszám
+metronome marking – metronómérték
+natural – feloldójel
+quarter note – negyed hang
+quarter rest – negyed szünet
+rest – szünet
+sharp – kereszt
+sixteenth note – tizenhatod
+tie – kötőív
+time signature – ütemmutató
