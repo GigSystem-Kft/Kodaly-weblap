@@ -48,10 +48,20 @@ export interface MatchingPair {
   category: string;
 }
 
+export interface QuizAttempt {
+  id: string;
+  chapterId: string;
+  score: number;
+  correct: number;
+  total: number;
+  at: string;
+}
+
 export interface UserProgress {
   completedChapters: string[];
   completedSubchapters: string[];
-  quizScores: Record<string, number>; // chapterId -> percentage
+  quizScores: Record<string, number>; // chapterId -> best percentage (legacy compatible)
+  quizAttempts?: QuizAttempt[]; // recent individual attempts, not a verified exam record
   flashcardsMastered: string[];
   matchingCompleted: string[];
   xp: number;
