@@ -55,15 +55,11 @@ export const LESSON_ILLUSTRATIONS: Record<string, LessonIllustration[]> = {
   ],
   'modositok': [
     illustration('Módosító jelek', 'Kereszt, bé és kapcsolódó kottajelek.', jelek),
-    illustration('Dúr hangsorok előjegyzései', 'Az előjegyzések példái különböző dúr hangnemekben.', durok)
+    illustration('Dúr hangsorok előjegyzései', 'C-, G-, D-, F- és B-dúr előjegyzések és a feloldójel használata.', durok)
   ],
   'kottaolvasas': [
     illustration('Zenei kulcsok', 'A hangok helye a különböző kulcsokban.', kulcsok),
     illustration('ABC-s hangnevek', 'Oktávok és betűnevek szemléltetése.', abc)
-  ],
-  'elojegyzes-feloldas': [
-    illustration('Jelölések és módosító jelek', 'Hangmagasságot módosító jelek és vonaljelölések.', jelek),
-    illustration('Dúr hangsorok előjegyzései', 'C-, G-, D-, F- és B-dúr példák.', durok)
   ],
   'szolmizacio-elonyai': [
     illustration('Hangsor és szolmizáció', 'A C-dúr skála hangnevei és szolmizációja.', hangsor)
