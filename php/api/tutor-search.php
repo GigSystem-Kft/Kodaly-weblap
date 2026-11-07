@@ -159,3 +159,41 @@ function tutorSourceAudit(array $entries): array {
       'notIndexedAutomatically'=>['PDF képi tartalom és kottaképek','Videók hang- és képtartalma','Nem feltöltött külső oldalak teljes szövege']
     ];
 }
+
+/** Detailed inventory for authenticated admins; never expose titles of private sources publicly. */
+function tutorDetailedCoverage(array $entries): array {
+    $groups = []; $totalCharacters = 0;
+    foreach ($entries as $entry) {
+        if (!is_array($entry) || !is_string($entry['source'] ?? null)) continue;
+        $name = $entry['source'];
+        $characters = strlen((string)($entry['text'] ?? ''));
+        if (!isset($groups[$name])) {
+            $groups[$name] = ['source'=>$name,'chunks'=>0,'characters'=>0,'kind'=>'indexed'];
+        }
+        $groups[$name]['chunks']++;
+        $groups[$name]['characters'] += $characters;
+        $totalCharacters += $characters;
+    }
+    ksort($groups);
+    $missing = [];
+    if (!is_file(__DIR__.'/knowledge.php')) $missing[]='knowledge.php (beépített tudásbázis)';
+    $omitted = [
+        ['file'=>'Kesztler – ellenőrizetlen OCR-átirat',
+         'reason'=>'A gépi szöveg szakmai ellenőrzéséig a PHP tudásbázisból kizárva']
+    ];
+    return [
+        'generatedAt'=>gmdate('c'),
+        'indexChunks'=>count($entries),
+        'indexedCharacters'=>$totalCharacters,
+        'sources'=>array_values($groups),
+        'missing'=>$missing,
+        'omitted'=>$omitted,
+        'limitations'=>[
+            'Az index valóban felhasznált PHP-szövegrészleteit mutatja; a források teljes fájlmérete eltérhet.',
+            'A PDF-ek ábrái és a külső videók hangja nem automatikusan részei a keresőindexnek.',
+            'A knowledge-pedagogy.php csak jogszerű, külön engedélyezett telepítés esetén kerül a szerverre.',
+            'A forrás elérhetősége önmagában nem igazolja a generált AI-válasz tartalmi helyességét.'
+        ],
+        'liveSources'=>count(tutorSourceList())
+    ];
+}
