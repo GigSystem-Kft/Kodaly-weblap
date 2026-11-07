@@ -247,12 +247,25 @@ function searchTerms(string $value): array {
         'ú'=>'u','ü'=>'u','ű'=>'u','Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o',
         'Ö'=>'o','Ő'=>'o','Ú'=>'u','Ü'=>'u','Ű'=>'u'];
     $text = strtolower(strtr($value, $chars));
+    // Keep concepts, not the grammar surrounding a question.
+    $stop = ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy',
+        'van','nem','kerlek','roviden','tomoren','lenyegretoro','mondanal',
+        'mondj','valamit','szeretnek','tudnal','par','mondatban','mit',
+        'jelent','jelentese','azt','az','hogy','es','ha','mi','ki','miert',
+        'hogyan','mikor','van-e','tudsz','mondani','meselj','szolj','arra',
+        'nevezunk','nevezik','fogalma','definicio','fogalmat','nekem',
+        'legyszi','magyarazd','magyarazat','kicsit','lehet','keresek'];
     $words = preg_split('/[^a-z0-9]+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-    return array_values(array_unique(array_filter($words,
-        static fn(string $w): bool => strlen($w)>2 && !in_array($w,
-        ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy','van','nem','kerlek',
-         'roviden','tomoren','lenyegretoro','mondanal','mondj','valamit','szeretnek','tudnal','par','mondatban'],true)
-    )));
+    $terms=[];
+    foreach($words as $word) {
+        if (strlen($word)<=2 || in_array($word,$stop,true)) continue;
+        // Equivalent historical and Hungarian spellings.
+        if (in_array($word,['hexachord','hexachordum','hexachordok','hexachordot',
+            'hexakord','hexakordok','hexakordot'],true)) $word='hexachord';
+        if (in_array($word,['guidoni','guidofele'],true)) $word='guido';
+        $terms[$word]=true;
+    }
+    return array_keys($terms);
 }
 function knowledgeEntries(): array {
     $file=__DIR__ . '/knowledge.php';
@@ -283,24 +296,33 @@ function searchLessons(string $question, int $limit=4): array {
     $hits=[];
     foreach (knowledgeEntries() as $entry) {
         if (!is_array($entry) || !isset($entry['text'],$entry['source'],$entry['label'])) continue;
-        $haystack=searchTerms($entry['text'] . ' ' . $entry['label']);
-        $labelWords=searchTerms($entry['label']);
-        $matched=array_intersect($tokens,$haystack);
-        // Require actual topic coverage, not one common word from a long PDF page.
-        $topicScore=0;
-        foreach ($tokens as $token) {
-            foreach ($haystack as $word) {
-                if (str_starts_with($word, $token) || str_starts_with($token, $word)) {
-                    $topicScore++;
-                    break;
+        $labelWords=searchTerms((string)$entry['label']);
+        $bodyWords=searchTerms((string)$entry['text']);
+        $labelSet=array_fill_keys($labelWords,true);
+        $bodySet=array_fill_keys($bodyWords,true);
+        $matched=0; $labelMatched=0;
+        foreach($tokens as $token) {
+            $isMatch=false;
+            foreach ($labelWords as $word) {
+                if ($token===$word || (strlen($token)>=5 && str_starts_with($word,$token))) {
+                    $labelMatched++; $isMatch=true; break;
                 }
             }
+            if (!$isMatch) foreach($bodyWords as $word) {
+                if ($token===$word || (strlen($token)>=5 && str_starts_with($word,$token))) {
+                    $isMatch=true; break;
+                }
+            }
+            if ($isMatch) $matched++;
         }
-        $coverage=$topicScore/count($tokens);
-        if ($topicScore<1 || $coverage<0.75) continue;
-        $score=$topicScore + count(array_intersect($tokens,$labelWords))*4
-            + (($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag' ? 3 : 0);
-        if ($score>0) $hits[]=['score'=>$score,'entry'=>$entry];
+        if ($matched===0) continue;
+        // One concrete concept is enough. Multi-concept questions need broad coverage.
+        if (count($tokens)>1 && $matched/count($tokens)<0.6) continue;
+        $score=$matched*3 + $labelMatched*7;
+        if (($entry['source']??'')==='Zeneelméleti Műhely – Tananyag') $score+=2;
+        // Penalize long source passages that only incidentally mention a term.
+        if ($labelMatched===0 && strlen((string)$entry['text'])>1600) $score-=2;
+        $hits[]=['score'=>$score,'entry'=>$entry];
     }
     usort($hits,static fn($a,$b)=>$b['score'] <=> $a['score']);
     return array_slice(array_map(static fn($v)=>$v['entry'],$hits),0,$limit);
