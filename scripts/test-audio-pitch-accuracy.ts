@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { noteFrequencyHz } from '../src/utils/audio';
+import { EAR_CHALLENGES } from '../src/components/EarTrainingView';
 
 const semitoneFromA: Record<string,number> = {
   C:-9,'C#':-8,D:-7,'D#':-6,E:-5,F:-4,'F#':-3,
@@ -25,5 +26,23 @@ test('Hungarian B is Bb and H is international B-natural in every supported octa
   for (const octave of [3,4,5]) {
     assert.equal(noteFrequencyHz('B'+octave),noteFrequencyHz('A#'+octave));
     assert.ok((noteFrequencyHz('H'+octave)??0)>(noteFrequencyHz('B'+octave)??0));
+  }
+});
+
+test('ear-training named intervals produce their actual announced semitone distance',()=>{
+  const expected: Record<string,number> = {
+    t1:0,k2:1,n2:2,k3:3,n3:4,t4:5,t5:7,k6:8,n6:9,k7:10,n7:11,t8:12
+  };
+  assert.equal(EAR_CHALLENGES.length,12);
+  for (const challenge of EAR_CHALLENGES) {
+    const match=challenge.title.match(/\\(([tnk]\\d)\\)/);
+    assert.ok(match,'Unknown interval label: '+challenge.title);
+    const code=match[1];
+    const base=noteFrequencyHz(challenge.notes[0]);
+    const target=noteFrequencyHz(challenge.notes[1]);
+    assert.ok(base && target,'Missing audio note for '+challenge.title);
+    const semitones=Math.round(12*Math.log2(target/base));
+    assert.equal(semitones,expected[code],
+      `${challenge.title}: heard ${semitones} semitones, description says ${expected[code]}`);
   }
 });
