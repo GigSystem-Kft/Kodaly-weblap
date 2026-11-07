@@ -3,6 +3,7 @@ import { UserProgress } from '../types';
 import { MUSIC_CHAPTERS, QUIZ_QUESTIONS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES, learningProgressSummary } from '../data/learningProgressSummary';
 import { consecutiveDays, localDay } from '../progress';
+import { quizPracticeTrends } from '../quizAnalytics';
 import { Award, Sparkles, CheckCircle2, BookOpen, Trophy, ArrowRight, Layers, CalendarDays, ListChecks } from 'lucide-react';
 
 interface ProgressDashboardProps {
@@ -15,6 +16,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
   const stats = learningProgressSummary(progress);
   const trueStreak = consecutiveDays(progress.activityDays ?? []);
   const earXpToday = progress.earTrainingDailyXp?.[localDay()] ?? 0;
+  const trends = quizPracticeTrends(progress);
 
   const metrics = [
     { title:'Tanulmányozottnak jelölt egységek', value:`${stats.completedModules} / ${stats.curriculumModules}`, foot:'5 alapfejezet + 4 bővített témakör · saját jelölés', Icon:BookOpen,  },
@@ -67,6 +69,31 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Alfejezetek</span><strong className="block mt-1">{stats.completedSubchapters} / {stats.totalSubchapters}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Utolsó rögzített tanulás</span><strong className="block mt-1 text-sm">{stats.lastStudy || 'Még nincs adat'}</strong></div>
         </div>
+      </section>
+
+      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-7">
+        <h3 className="text-lg font-bold text-slate-900">Kvízgyakorlás alakulása témakörönként</h3>
+        <p className="text-sm text-slate-600 mt-2 mb-3">
+          Az azonos témakörben megoldott utolsó három gyakorlókör átlagát hasonlítjuk
+          a megelőző háromhoz. Hat próbálkozás alatt nem jelzünk irányt.
+          A változás gyakorlási visszajelzés, nem hitelesített tudásszintmérés.
+        </p>
+        {trends.length === 0
+          ? <p className="text-sm text-slate-600">Még nincs elegendő gyakorlási adat.</p>
+          : <ul className="space-y-2">
+              {trends.slice(0, 8).map(item => (
+                <li key={item.chapterId} className="rounded-xl border border-slate-200 p-3 flex flex-wrap gap-2 items-center justify-between">
+                  <span className="font-semibold text-slate-800 text-sm">
+                    {item.chapterId === 'vegyes-gyakorlas' ? 'Vegyes gyakorlás' : item.chapterId}
+                    <span className="font-normal text-slate-600"> · {item.attempts} kör</span>
+                  </span>
+                  <span className="text-sm text-slate-800">
+                    Utolsó 3 átlaga: <strong>{item.recentAverage}%</strong>
+                    {item.change !== null ? ` · előző 3-hoz képest ${item.change > 0 ? '+' : ''}${item.change} százalékpont` : ' · még nincs összehasonlítás'}
+                  </span>
+                </li>
+              ))}
+            </ul>}
       </section>
 
       <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-7">
