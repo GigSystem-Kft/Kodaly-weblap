@@ -41,3 +41,17 @@ test('profile distinguishes five progress-tracked lessons and the four extended 
  assert.ok(app.includes('onOpenModule={(tab) => {setActiveTab(tab)'));
  assert.ok(!page.includes('Tanfolyam Haladása'));
 });
+
+test('extended module completion is counted separately and reflected on profile',()=>{
+ const progress=createEmptyProgress();
+ progress.completedChapters=[MUSIC_CHAPTERS[0].id,...EXTRA_LEARNING_MODULES.map(module=>module.id)];
+ const summary=learningProgressSummary(progress);
+ assert.equal(summary.completedCoreChapters,1);
+ assert.equal(summary.completedExtendedModules,4);
+ assert.equal(summary.completedModules,5);
+ const dashboard=readFileSync('src/components/ProgressDashboard.tsx','utf8');
+ assert.match(dashboard,/stats.completedModules/);
+ for(const id of EXTRA_LEARNING_MODULES.map(module=>module.id)){
+   assert.ok(readFileSync('src/App.tsx','utf8').includes(`completeChapter('${id}')`));
+ }
+});
