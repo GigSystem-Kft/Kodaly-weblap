@@ -88,6 +88,26 @@ jobs:
         run: bash scripts/test-php-chat-no-database.sh
       - name: Test invitation signup against MySQL
         run: bash scripts/test-php-invitations.sh
+      - name: Recover original rhythm pages only from checksum-verified university PDF
+        run: |
+          set -euo pipefail
+          if [[ ! -s public/ritmikai/p001.jpg ]]; then
+            # The previously advertised university PDF path no longer returns PDF bytes.
+            # Another historical citation gives this longer filename. Accept only the
+            # SHA256 of the 13-page original supplied by the site owner.
+            URL='https://www2.u-szeged.hu/ezk/wp-content/uploads/2017/09/Ritmikai-fejleszt%C5%91program_3h%C3%B3napra.pdf'
+            if curl --insecure --fail --location --silent --show-error --max-time 55 "$URL" -o /tmp/ritmikai-source.pdf &&
+              echo 'eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa  /tmp/ritmikai-source.pdf' | sha256sum --check; then
+              if ! command -v pdftoppm >/dev/null; then
+                sudo apt-get update -qq
+                sudo apt-get install -y -qq poppler-utils
+              fi
+              bash scripts/render-rhythm-research-pages.sh /tmp/ritmikai-source.pdf
+              echo 'Verified original rhythm pages rendered for PHP release.'
+            else
+              echo '::warning::University PDF unavailable or not byte-identical; release asset gate remains mandatory.'
+            fi
+          fi
       - name: Build frontend for PHP API
         env:
           VITE_PHP_API: '1'
