@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../data/musicPedagogy';
+import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { DEEP_PEDAGOGY_LESSONS } from '../data/musicPedagogyDeep';
 import { PEDAGOGY_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
@@ -143,6 +144,7 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlash
      </article>;
    })}
   </div>
+  <CuratedMediaPanel chapterNumber={8}/>
   {openImage && <div role="dialog" aria-modal="true" aria-label="Kottapélda nagyítva"
    className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4"
    onClick={()=>setOpenImage(null)}>
