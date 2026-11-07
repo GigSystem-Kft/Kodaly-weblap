@@ -111,7 +111,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
         </div>
 
         <div className="flex items-center justify-between">
-          {!['Kreatív zenei nevelés','Zenetörténet','Zenetörténet – alkotók'].includes(currentCard.category) && (
+          {!currentCard.category.startsWith('Zenei kifejezések') && !currentCard.category.startsWith('Elméleti gyakorlás') && !['Kreatív zenei nevelés','Zenetörténet','Zenetörténet – alkotók'].includes(currentCard.category) && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
