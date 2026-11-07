@@ -30,7 +30,7 @@ export const CuratedMediaPanel:React.FC<{chapterNumber:number;compact?:boolean}>
      <p className="font-semibold text-sm text-slate-900 mb-1">{item.title}</p>
      <p className="text-xs leading-relaxed text-slate-600 mb-2">{item.note}</p>
      <a href={item.url} target="_blank" rel="noreferrer noopener" className="inline-flex gap-1 items-center text-xs font-semibold text-indigo-600 hover:underline">
-      Forrás és felhasználási feltételek <ExternalLink className="w-3 h-3"/>
+      {item.linkLabel ?? 'Forrás és felhasználási feltételek'} <ExternalLink className="w-3 h-3"/>
      </a>
      {item.license&&<p className="text-[11px] text-slate-500 mt-1">{item.license}</p>}
     </figcaption>
