@@ -25,6 +25,20 @@ try {
   console.log('Guest: landing page loaded');
   await checkAccessibility(page, 'főoldal');
 
+  await page.getByRole('button',{name:'Kurzus indítása'}).click();
+  await page.getByRole('button',{name:'Alfejezet tanulmányozva'}).click();
+  await page.getByText('Tanulmányozottnak jelölve').waitFor();
+  await page.getByRole('button',{name:'Fejezet Teljesítése'}).click();
+  await page.getByText('Teljesítve',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Vissza a fejezetekhez'}).click();
+  const keyboardChapter=page.locator('[role="button"][aria-label^="Tananyag megnyitása:"]').first();
+  await keyboardChapter.focus();
+  await keyboardChapter.press('Enter');
+  await page.getByText('Tanulmányozottnak jelölve').waitFor();
+  await page.getByText('Teljesítve',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'Vissza a fejezetekhez'}).click();
+  console.log('Guest: chapter and subchapter completion preserved; keyboard chapter navigation OK');
+
   await page.getByRole('button',{name:/02\. Szókártyák/}).click();
   await page.getByRole('heading',{name:'Zenei Szakkifejezések Gyakorlása'}).waitFor();
   const flashcard=page.locator('[aria-label^="Szókártya:"]');
