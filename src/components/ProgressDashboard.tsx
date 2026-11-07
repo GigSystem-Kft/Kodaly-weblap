@@ -67,6 +67,26 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
         </div>
       </section>
 
+      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-7">
+        <h3 className="text-lg font-bold text-slate-900">Legutóbbi kvízpróbálkozások</h3>
+        <p className="text-sm text-slate-600 mt-2 mb-4">
+          A mentett próbálkozásokból az utolsó öt látható. A rendszer legfeljebb 100 próbálkozást őriz;
+          a korábbi legjobb eredmények külön megmaradnak. Ez gyakorlási napló, nem hitelesített vizsgajegy.
+        </p>
+        {(progress.quizAttempts?.length ?? 0) === 0 ? (
+          <p className="text-sm text-slate-600">Még nincs részletesen naplózott próbálkozás. A régebbi legjobb pontszámok továbbra is megmaradnak.</p>
+        ) : (
+          <ul className="divide-y divide-slate-200">
+            {[...(progress.quizAttempts ?? [])].reverse().slice(0, 5).map(attempt => (
+              <li key={attempt.id} className="flex flex-wrap justify-between gap-2 py-2 text-sm">
+                <span className="font-medium text-slate-800">{attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
+                <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
       <section className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-lg mb-7">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
           <h3 className="text-lg font-bold text-white">Az öt alapfejezet teljesítése</h3>
