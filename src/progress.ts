@@ -117,3 +117,25 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     streak: consecutiveDays(days)
   };
 }
+
+/**
+ * Three-way conflict resolution for a concurrent account sync.
+ * Achievement collections only grow, but glossary favorites can be removed.
+ * Preserve additions made by another device while respecting removals made
+ * on this device since the last confirmed server snapshot.
+ */
+export function mergeConcurrentProgress(
+  server: UserProgress,
+  local: UserProgress,
+  base: UserProgress
+): UserProgress {
+  const merged = mergeProgress(server, local);
+  const original = new Set(base.favoriteExpressions ?? []);
+  const locallySelected = new Set(local.favoriteExpressions ?? []);
+  const locallyRemoved = new Set([...original].filter(id => !locallySelected.has(id)));
+  const locallyAdded = [...locallySelected].filter(id => !original.has(id));
+  merged.favoriteExpressions = [
+    ...new Set([...(server.favoriteExpressions ?? []), ...locallyAdded])
+  ].filter(id => !locallyRemoved.has(id)).slice(0, 1800);
+  return merged;
+}
