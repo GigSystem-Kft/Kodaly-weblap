@@ -195,9 +195,11 @@ export default function App() {
 
   const completeMatching = (pairIds: string[]) => {
     setProgress(prev => {
-      const newIds = pairIds.filter(id => !prev.matchingCompleted.includes(id));
+      const newIds = [...new Set(pairIds)].filter(id => !prev.matchingCompleted.includes(id));
       if (!newIds.length) return prev;
-      return recordActivity({ ...prev, matchingCompleted: [...prev.matchingCompleted, ...newIds] }, 50);
+      // Five points for each genuinely new pair; replaying an old round grants none.
+      const earned = Math.min(50, newIds.length * 5);
+      return recordActivity({ ...prev, matchingCompleted: [...prev.matchingCompleted, ...newIds] }, earned);
     });
   };
 
