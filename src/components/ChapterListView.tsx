@@ -115,7 +115,7 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">08</span>
             <span>
               <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Ének-zene tantárgy-pedagógia</span>
-              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">Kelemen Judit szakirodalma nyomán: 16 részletes egyetemi témakör, módszertani feladatok és önellenőrzés.</span>
+              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">Kelemen Judit szakirodalma nyomán: 17 részletes egyetemi témakör, módszertani feladatok és önellenőrzés.</span>
             </span>
             <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
           </button>
