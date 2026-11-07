@@ -29,7 +29,7 @@ Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyv legördülő mobil/keyboard nyitás javítva; 5 tankönyv és menüoldalak navigációs integritási tesztje felvéve; teljes böngészős bejárás hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Strukturális kérdésbank/fejezet/szókártya/párosító integritási teszt CI-sikeres, teljes zenei lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | Tervezés és validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet és játék fókusz/állapotjelölés javítva; teljes WCAG/mobil audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Márkagomb, tankönyvmenü, szókártya-billentyűzet, játék fókusz/állapotjelölés, Tanársegéd mobilablak-méretezés javítva; teljes WCAG/mobil audit hátra |
 
 ## Első javítási csomag
 
@@ -101,6 +101,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-09: a PHP Tanársegéd a helyi, ellenőrzött keresés mellett új, **kifejezetten engedélyezhető** generatív szövegválaszt is támogat. A `tutor_text_generation` konfiguráció alapból `enabled=false`, az API-kulcs kizárólag a nem nyilvános PHP-konfigurációban található. A modell fix allowlisten van, a kérdések külső továbbítása csak bejelentkezett hallgatónál, külön throttle mellett történhet. A rendszer a külső modellnek legfeljebb három első félhez tartozó tananyagrészletet küld; elkülönítetten licencelt könyvszöveg vagy személyes előrehaladás nem része a kérésnek. A generatív válasz forráslistája szerveroldalról készül. Hiba vagy hiányzó forrás esetén a meglévő PHP helyi tanársegéd válaszol. `store=false` API-tulajdonságot adunk át a szolgáltatónak.
 - A felület a generatív módnál jelzi a Google-szolgáltatóhoz történő adattovábbítást és a bejelentkezési feltételt. Éles üzem előtt szükséges adatkezelési és szolgáltatási költségkeret jóváhagyása, a nem nyilvános konfiguráció tényleges megadása, modellélőteszt és pedagógiai válaszminták értékelése.
 - Fontos: az új útvonal **nem bekapcsolt éles AI**. A működési állapotot a `chat/status` jelzi, a kód konfiguráció nélkül csak helyi forráskereső marad.
+
+## Tizennegyedik javítási egység (2026-11-07)
+
+- A-23: a Tanársegéd felugró ablaka már a `100vw` szélességből és a `100dvh` magasságból számított méretkorlátot alkalmazza; kis mobilképernyőn nem lóghat túl a megjelenítési területen.
+- A-09: a PHP CI beemelte a különálló `tutor-text-generation.php` fájlt a kiadási csomagba, hozzáadta a PHP-szintaxist és az opt-in/adatvédelmi unit tesztet. A MySQL nélküli tanársegéd teszt ideiglenes könyvtárába is bekerül a modul. A következő CI eredménye még ellenőrizendő.
+- A P0 médiahiány miatt a teljes PHP telepítő továbbra sem tekinthető késznek.
 
 ## Lezárási feltételek
 
