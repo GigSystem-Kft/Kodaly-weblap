@@ -12,7 +12,7 @@ test('uploaded MTA-SZTE PDF contains every one of its 13 original pages in the w
  for(const p of RHYTHM_RESEARCH_PAGES)assert.ok(p.text.length>30,'Empty PDF page: '+p.page);
  assert.match(RHYTHM_RESEARCH_PAGES[1].text,/10-15 perc/i);
  assert.match(RHYTHM_RESEARCH_PAGES[6].text,/Ritmustelefon/);
- assert.match(RHYTHM_RESEARCH_PAGES[8].text,/Osztinátó|osztinátó/);
+ assert.match(RHYTHM_RESEARCH_PAGES[7].text,/Osztinátó|osztinátó/);
 });
 test('all graphic table pages have explicit non-OCR limitations and their 42 distinct identifiers',()=>{
  for(const [page,series,count] of [[10,1,15],[11,2,18],[12,3,9]] as const){
@@ -42,7 +42,7 @@ test('all ten source-based creative games are accessible through one pedagogical
 });
 test('quiz answers, flashcards and pairings from the website are accessible to the AI index',()=>{
  const report=sourceCoverageReport();
- for(const word of ['Szókártyák','Teszt','Párosító','Hangzó hangsor','Kreatív ritmikai játék']){
+ for(const word of ['Szókártyák','Teszt','Párosító','Hangzó hangsor','Ritmikai fejlesztőprogram']){
   assert.ok(report.sources.some(x=>x.source.includes(word)),'Missing site content category: '+word);
  }
  assert.ok(FLASHCARDS_DATA.length>20);
