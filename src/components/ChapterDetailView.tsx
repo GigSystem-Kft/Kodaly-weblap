@@ -20,6 +20,8 @@ interface ChapterDetailViewProps {
   onBack: () => void;
   onOpenQuiz: (chapterId: string) => void;
   onCompleteChapter: (chapterId: string) => void;
+  onCompleteSubchapter: (subchapterId: string) => void;
+  completedSubchapters: string[];
   isCompleted: boolean;
 }
 
@@ -28,6 +30,8 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   onBack,
   onOpenQuiz,
   onCompleteChapter,
+  onCompleteSubchapter,
+  completedSubchapters,
   isCompleted
 }) => {
   const [activeSubId, setActiveSubId] = useState<string>(chapter.subchapters[0]?.id || '');
@@ -108,6 +112,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   {idx + 1}
                 </span>
                 <span className="flex-1 leading-snug">{sub.title}</span>
+                {completedSubchapters.includes(sub.id) && <CheckCircle className="w-4 h-4 shrink-0" aria-label="Tanulmányozott alfejezet" />}
               </button>
             );
           })}
@@ -116,7 +121,17 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
         {/* Content area */}
         <div className="lg:col-span-3 space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{currentSub.title}</h3>
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
+              <h3 className="text-xl font-bold text-slate-900">{currentSub.title}</h3>
+              {completedSubchapters.includes(currentSub.id) ? (
+                <span className="text-sm text-emerald-700 inline-flex gap-1 items-center"><CheckCircle className="w-4 h-4"/> Tanulmányozottnak jelölve</span>
+              ) : (
+                <button type="button" onClick={() => onCompleteSubchapter(currentSub.id)}
+                  className="rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 text-sm font-medium">
+                  Alfejezet tanulmányozva
+                </button>
+              )}
+            </div>
             <p className="text-[#4a54e1] font-medium text-sm mb-6 pb-4 border-b border-slate-200">
               {currentSub.summary}
             </p>
