@@ -45,15 +45,15 @@ try {
   if(await page.getByRole('dialog').count()!==0) throw new Error('Textbook lightbox did not close');
   console.log('Guest: textbook search and lightbox OK');
 
-  await page.getByRole('button',{name:/06\\. Profil/}).click();
+  await page.getByRole('button',{name:/06\. Profil/}).click();
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
   console.log('Guest: personal learning dashboard loaded');
 
   // A mobile touch device exercises actual click-to-open navigation without hover.
   const touch=await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   await touch.goto(root,{waitUntil:'domcontentloaded'});
-  await touch.getByRole('button',{name:/07\\. Tankönyvek/}).click();
-  await touch.getByRole('button',{name:/Énekzene 1\\. osztály/}).click();
+  await touch.getByRole('button',{name:/07\. Tankönyvek/}).click();
+  await touch.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
   await touch.locator('#textbook-search').waitFor();
   await touch.close();
   console.log('Mobile: textbook menu works with touch');
