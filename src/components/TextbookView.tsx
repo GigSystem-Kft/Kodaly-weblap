@@ -8,6 +8,7 @@ export const TEXTBOOKS = [
   { id: 2, title: 'Énekzene 2. osztály' },
   { id: 3, title: 'Énekzene 3. osztály' },
   { id: 4, title: 'Énekzene 4. osztály' },
+  { id: 5, title: 'Ritmikai fejlesztőprogram' },
 ];
 
 export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
