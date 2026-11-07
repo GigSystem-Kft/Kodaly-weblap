@@ -10,7 +10,7 @@ test('glossary maintains exactly 1793 source terms, IDs and definitions', () => 
 });
 test('conservative taxonomy changes are visible and never hidden by the practice bank',()=>{
   const terms=MUSIC_EXPRESSIONS;
-  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,687);
+  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,609);
   for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció']){
     assert.ok(MUSIC_EXPRESSION_CATEGORIES.includes(label));
     assert.ok(terms.some(t=>t.category===label));
@@ -26,4 +26,21 @@ test('meaning-based glossary improvements preserve stable IDs and editable sourc
    assert.ok(item,'Missing source entry '+term);
    assert.notEqual(item.category,'Egyéb szakkifejezések',term+' remains uncategorized');
  }
+});
+
+test('recent reviewed glossary terms appear in their exact specialist categories',()=>{
+  const expected: Record<string,string> = {
+    'bassanello':'Hangszer és játéktechnika',
+    'cello':'Hangszer és játéktechnika',
+    'coda':'Zenei műfajok és formák',
+    'chanson':'Zenei műfajok és formák',
+    'bockstriller':'Díszítések és ornamentika',
+    'BWV':'Zenetörténet és stílus',
+    'ben tenuto':'Előadásmód és artikuláció',
+    'calmato, calmo':'Dinamika és karakter'
+  };
+  for(const [term,category] of Object.entries(expected)){
+    const entry=MUSIC_EXPRESSIONS.find(item=>item.term===term);
+    assert.equal(entry?.category,category,`Incorrect reviewed taxonomy: ${term}`);
+  }
 });
