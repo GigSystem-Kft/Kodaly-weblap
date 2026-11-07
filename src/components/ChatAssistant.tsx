@@ -128,7 +128,7 @@ export const ChatAssistant: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-full sm:w-96 h-[500px] bg-slate-900 border border-indigo-500/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-96 max-h-[calc(100dvh-1.5rem)] h-[min(500px,calc(100dvh-1.5rem))] bg-slate-900 border border-indigo-500/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="bg-slate-800/90 border-b border-slate-700/60 p-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
