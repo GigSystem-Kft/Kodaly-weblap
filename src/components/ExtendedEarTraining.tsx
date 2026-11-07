@@ -1,4 +1,4 @@
-import React,{useEffect,useRef,useState} from 'react';
+import React,{useEffect,useState} from 'react';
 import {Play, RotateCcw, Volume2} from 'lucide-react';
 
 type Mode='hangsor'|'ritmus'|'hangérték'|'ütemmutató';
@@ -58,7 +58,12 @@ let active:AudioContext|null=null;
 export function stopExerciseAudio(){const prev=active;active=null;if(prev)void prev.close().catch(()=>{});}
 export function playExercise(challenge:Challenge,bpm=60){
  stopExerciseAudio();const ctx=new AudioContext();active=ctx;const at=ctx.currentTime+.05;
- for(const note of earDrillSchedule(challenge,bpm)){
+ const lesson=earDrillSchedule(challenge,bpm);
+ // Az abszolút hangmagasságok felismeréséhez C' referencia szól először,
+ // máskülönben a transzponált dúr hangsorok tisztán relatív hallással
+ // megkülönböztethetetlenek lennének.
+ const notes=challenge.pitches?[{pitch:60,time:0,duration:.65,accent:.85},...lesson.map(note=>({...note,time:note.time+1.15}))]:lesson;
+ for(const note of notes){
   const start=at+note.time;const stop=start+note.duration;
   const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.frequency.value=2400;
   const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,start);
@@ -81,8 +86,7 @@ export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp
  const [streak,setStreak]=useState(0);
  const [bpm,setBpm]=useState(60);
  const current=round[index];
- const ref=useRef(0);
- useEffect(()=>()=>stopExerciseAudio(),[]);
+  useEffect(()=>()=>stopExerciseAudio(),[]);
  const changeMode=(next:Mode)=>{stopExerciseAudio();setMode(next);setRound(shuffle(list[next]));setIndex(0);setGuess(null);setStreak(0);};
  const choose=(id:string)=>{if(guess!==null)return;setGuess(id);if(id===current.id){onAddXp(25);setStreak(n=>n+1);}else setStreak(0);};
  const advance=()=>{stopExerciseAudio();setGuess(null);if(index+1>=round.length){setRound(shuffle(list[mode]));setIndex(0);}else setIndex(i=>i+1);};
@@ -102,7 +106,7 @@ export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp
       <button type="button" aria-label="Hangminta lejátszása" onClick={()=>playExercise(current,bpm)}
        className="w-20 h-20 bg-violet-600 text-white rounded-full flex items-center justify-center hover:bg-violet-500"><Play size={35} fill="white"/></button>
     </div>
-    <p className="text-center text-sm text-slate-600 mb-4">Hallgasd meg a hangmintát! Újra meghallgathatod, amíg ki nem választod a választ.</p>
+    <p className="text-center text-sm text-slate-600 mb-4">Hallgasd meg a hangmintát! Hangsoroknál először összehasonlításként C’ referenciahang szól, majd a hangsor. Újra meghallgathatod.</p>
     <div className="flex justify-center items-center gap-3 mb-5 text-xs"><label htmlFor="ear-bpm">Tempó:</label>
      <select id="ear-bpm" value={bpm} onChange={e=>setBpm(Number(e.target.value))} className="border border-slate-300 rounded-lg px-3 py-2">
       {[50,60,72,90].map(n=><option key={n} value={n}>{n} BPM</option>)}
