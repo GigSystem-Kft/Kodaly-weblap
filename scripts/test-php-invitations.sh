@@ -153,3 +153,6 @@ selfRole="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{htt
 test "$selfRole" = 403
 echo 'PHP admin: guarded endpoints, invitation, listing and privilege restrictions passed'
 echo 'PHP account pilot: invitation, email verification, one-use reset and password change passed'
+
+# Exercise optimistic revision checks against the same disposable MySQL database.
+bash scripts/test-php-progress-revisions.sh
