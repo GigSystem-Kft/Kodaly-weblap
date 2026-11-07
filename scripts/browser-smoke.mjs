@@ -26,6 +26,7 @@ try {
   await checkAccessibility(page, 'főoldal');
 
   await page.getByRole('button',{name:'Kurzus indítása'}).click();
+  await checkAccessibility(page, 'alapfejezet');
   await page.getByRole('button',{name:'Alfejezet tanulmányozva'}).click();
   await page.getByText('Tanulmányozottnak jelölve').waitFor();
   await page.getByRole('button',{name:'Fejezet Teljesítése'}).click();
@@ -86,6 +87,7 @@ try {
   await page.getByRole('button',{name:/06\. Profil/}).click();
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
   console.log('Guest: personal learning dashboard loaded');
+  await checkAccessibility(page, 'tanulási profil');
 
   await page.getByRole('button',{name:/01\. Tananyag/}).click();
   await page.getByRole('button',{name:/09 Zenei kifejezések/}).click();
@@ -98,6 +100,7 @@ try {
   await page.getByRole('checkbox',{name:/Csak a megjelölt kedvencek/}).check();
   if(await page.locator('article').count()!==1) throw new Error('Glossary favorites lost on view remount');
   console.log('Guest: glossary favorites persist across page navigation');
+  await checkAccessibility(page, 'fogalomtár');
 
   // A mobile touch device exercises actual click-to-open navigation without hover.
   const touchContext=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
