@@ -52,8 +52,11 @@ if html.is_file():
 
 # Never bundle stray backups in the public webroot. Those archives can expose
 # application source and potentially private configuration when downloaded.
-for archive in root.rglob("*.zip"):
-    errors.append(f"Unexpected publicly accessible archive in webroot: {archive}")
+for suffix in ("*.zip", "*.sql", "*.bak", "*.tar.gz"):
+    for archive in root.rglob(suffix):
+        errors.append(f"Unexpected publicly accessible backup/archive in webroot: {archive}")
+for private_env in root.rglob(".env"):
+    errors.append(f"Private .env file cannot be deployed inside public webroot: {private_env}")
 
 expected_pages = {1: 72, 2: 69, 3: 80, 4: 81}
 for book in range(1, 5):
