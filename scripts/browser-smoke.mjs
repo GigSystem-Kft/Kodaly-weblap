@@ -295,11 +295,23 @@ try {
   const staticFixture = reportFixture(['Tananyag', 'Fogalomtár', 'Szemléltetés'], 3800);
   for (const reportMode of ['live', 'static']) {
     const reportPage = await browser.newPage();
+    let extraSource = null;
+    let invitationAttempts = 0;
+    let sourceReportLoads = 0;
     await reportPage.route('**/source-inventory.json', route =>
       route.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(staticFixture)})
     );
     await reportPage.route('**/api/index.php?*', route => {
       const endpoint = new URL(route.request().url()).searchParams.get('route');
+      if (endpoint === 'admin/source-upload') extraSource = {id:'1'.repeat(32),title:'Új kontroll forrás',createdAt:'2026-11-08',size:100};
+      if (endpoint === 'admin/source-delete') extraSource = null;
+      if (endpoint === 'admin/source-coverage') sourceReportLoads++;
+      const currentReport = {...liveFixture,
+        indexChunks:2800+(extraSource ? 1 : 0),
+        sources:extraSource
+          ? [...liveFixture.sources, {source:extraSource.title,chunks:1,characters:100,kind:'indexed'}]
+          : liveFixture.sources
+      };
       const data = endpoint === 'auth/me'
         ? {user:{id:'coverage-admin',email:'admin@example.invalid',displayName:'Próba admin',role:'admin'}}
         : endpoint === 'auth/status'
@@ -313,11 +325,18 @@ try {
         : endpoint === 'admin/invitations'
         ? {invitations:[]}
         : endpoint === 'admin/sources'
-        ? {sources:[]}
+        ? {sources:extraSource ? [extraSource] : []}
+        : endpoint === 'admin/source-upload' || endpoint === 'admin/source-delete'
+        ? {success:true}
+        : endpoint === 'admin/invite'
+        ? (++invitationAttempts === 1
+          ? {error:'Az SMTP jelenleg nem érhető el.'}
+          : {success:true,message:'Meghívó elküldve.'})
         : endpoint === 'admin/source-coverage' && reportMode === 'live'
-        ? liveFixture
+        ? currentReport
         : {error:'Fixture: live PHP report unavailable'};
-      return route.fulfill({status:data.error?503:200,contentType:'application/json',body:JSON.stringify(data)});
+      const status = data.error ? 503 : ['admin/source-upload','admin/invite'].includes(endpoint) ? 201 : 200;
+      return route.fulfill({status,contentType:'application/json',body:JSON.stringify(data)});
     });
     await reportPage.goto(root,{waitUntil:'domcontentloaded'});
     await reportPage.getByRole('button',{name:'Admin',exact:true}).click();
@@ -326,6 +345,33 @@ try {
       await reportPage.getByText(/PHP: 2 forráscsoport, 2800 szövegrész · Csomag: 3 forráscsoport, 3800 szövegrész/).waitFor();
       await reportPage.getByText(/A két jelentés eltér/).waitFor();
       await reportPage.getByText(/09. fejezet – Zenei kifejezések: 1793 \/ 1793 tétel/).waitFor();
+      // A failed invitation must not erase the destination address.
+      const inviteEmail = reportPage.getByPlaceholder('hallgato@pelda.hu');
+      await inviteEmail.fill('learner@example.invalid');
+      await reportPage.getByRole('button',{name:'Meghívó küldése'}).click();
+      await reportPage.getByRole('alert').filter({hasText:'Az SMTP jelenleg nem érhető el.'}).waitFor();
+      if (await inviteEmail.inputValue() !== 'learner@example.invalid')
+        throw new Error('Failed invitation cleared the entered email address');
+      await reportPage.getByRole('button',{name:'Meghívó küldése'}).click();
+      await reportPage.getByText('Meghívó elküldve.',{exact:false}).waitFor();
+      if (await inviteEmail.inputValue() !== '')
+        throw new Error('Successful invitation did not clear the email address');
+      // A newly uploaded private source must immediately refresh the live
+      // index comparison, and deletion must remove it without reload.
+      await reportPage.getByRole('textbox',{name:'Forrás címe'}).fill('Új kontroll forrás');
+      await reportPage.locator('#tutor-source-file').setInputFiles({
+        name:'audit.txt',mimeType:'text/plain',
+        buffer:Buffer.from('Szakmailag ellenőrzött, eredeti magyarázat. Hangértékek, ütemek, ritmus és szólamok.')
+      });
+      await reportPage.getByRole('button',{name:'Forrás feltöltése'}).click();
+      await reportPage.getByText(/PHP: 3 forráscsoport, 2801 szövegrész/).waitFor();
+      await reportPage.getByText('Új kontroll forrás',{exact:true}).first().waitFor();
+      reportPage.once('dialog', dialog => dialog.accept());
+      await reportPage.getByRole('button',{name:'Eltávolítás'}).click();
+      await reportPage.getByText(/PHP: 2 forráscsoport, 2800 szövegrész/).waitFor();
+      if (sourceReportLoads < 3)
+        throw new Error('Private source mutations did not refresh PHP coverage');
+      console.log('Admin UI: invitation failure retained email; source upload/delete refreshed coverage');
     } else {
       await reportPage.getByText(/Az élő PHP keresőindex nem érhető el/).waitFor();
       if (await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).count())
