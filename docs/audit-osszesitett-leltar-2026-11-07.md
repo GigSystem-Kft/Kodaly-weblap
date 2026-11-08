@@ -269,3 +269,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A változtatások **nem** helyettesítik az eredeti fogalmak/jelentések zenepedagógiai lektorálását vagy a teljes kérdésbank tartalmi ellenőrzését. Éles CloudPanel, jogosultsági E2E, két fizikai eszköz, licencellenőrzés és manuális akadálymentességi vizsgálat továbbra is nyitott, ezért nincs `main` merge és nincs végleges letöltési csomag.
 
 - **Új javítás végső CI eredménye (2026-11-08):** Chromium `42469761747` **success**; PHP/MySQL/ZIP `42469761757` **success**; Linux `42469761830` **success**. A párosító címke-egyediségi regresszió a böngészőben is átment. Ez az A-05/A-20/A-22 technikai részének bővítése, nem teljes szakmai vagy éles elfogadás.
+
+
+## 2026-11-08 – tanulói fiókváltás és mentés újraütemezése (A-06/A-21/A-24)
+
+- Az `App.tsx` mentési zára (`savingRef`) korábban ki tudott ejteni egy új fiókhoz tartozó mentési próbát, ha az előző fiók PUT kérése még folyamatban volt. A régi válasz állapotfrissítését a generáció-ellenőrzés már tiltotta, de a `finally` ág nem ébresztette fel az új fiók mentését, ha a régi kérés `reschedule=false` értékkel tért vissza.
+- Az előző kérés mentési zárolásának felszabadítása most új mentési próbát ütemez, ha közben a fiókgeneráció megváltozott. A döntési szabály önálló `shouldRescheduleProgressSync` függvényben található, egységtesztekkel a változatlan és megváltozott generációra.
+- Kódcommitok: `20edda05bb5918a77186c191e899b20119a26dba`, `1ccb799b93222b9dc15ab6c85056126c1f024a9e`, `0c55527acd94d8285d551968341d980cbb6c0c6f`, `00d5ffac1af6126afccfb76fdeb8c52ab79f4a1f`.
+- Elindított ellenőrzések: PHP/MySQL/ZIP `42472071175`, Linux `42472071224`, Chromium `42472071172`. **Az új mentési versenyhelyzetet egyelőre a döntési szabály egységtesztje védi; teljes valós fiókváltós és fizikai többeszközös elfogadási teszt továbbra is nyitott.**
+- A projekt továbbra sem végleges: CloudPanel-élesítés, személyes adatok adatvédelmi jóváhagyása, teljes szakmai és jogi lektorálás, valamint manuális akadálymentességi teszt szükséges. Nincs `main` merge és nincs végleges letöltés.
