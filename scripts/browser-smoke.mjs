@@ -69,7 +69,7 @@ try {
   const initialPairs = await termButtons.count();
   if (initialPairs < 1 || initialPairs > 6)
     throw new Error('Unexpected matching round size: ' + initialPairs);
-  const normalized = text => text.normalize('NFC').trim().replace(/\\s+/g, ' ').toLocaleLowerCase('hu-HU');
+  const normalized = text => text.normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('hu-HU');
   for (const [label, selector] of [
     ['terms', page.getByRole('button', { name: /^Fogalom:/ })],
     ['answers', page.getByRole('button', { name: /^Jelentés:/ })]
