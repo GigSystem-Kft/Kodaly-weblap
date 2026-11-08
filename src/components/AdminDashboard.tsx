@@ -37,8 +37,12 @@ export const AdminDashboard: React.FC = () => {
     setSources((await sourceResponse.json()).sources);
   }, []);
 
+  const [coverageRefreshToken, setCoverageRefreshToken] = useState(0);
   useEffect(() => {
     void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
+  }, [load]);
+
+  useEffect(() => {
     let cancelled = false;
     const readCoverage = async () => {
       // Compare independent datasets, never silently label a static
@@ -59,15 +63,13 @@ export const AdminDashboard: React.FC = () => {
       setStaticCoverage(staticReport);
       setCoverage(liveReport ?? staticReport);
       setCoverageOrigin(liveReport ? 'live' : staticReport ? 'static' : null);
-      if (!liveReport && !staticReport) {
-        setCoverageError('Sem az élő PHP-jelentés, sem a statikus forrásleltár nem érhető el.');
-      } else {
-        setCoverageError('');
-      }
+      setCoverageError(!liveReport && !staticReport
+        ? 'Sem az élő PHP-jelentés, sem a statikus forrásleltár nem érhető el.'
+        : '');
     };
     void readCoverage();
     return () => { cancelled = true; };
-  }, [load]);
+  }, [coverageRefreshToken]);
 
   const liveSourceNames = new Set(coverageOrigin === 'live' ? coverage?.sources.map(item => item.source) : []);
   const staticSourceNames = new Set(staticCoverage?.sources.map(item => item.source) ?? []);
@@ -96,7 +98,14 @@ export const AdminDashboard: React.FC = () => {
       const chooser = document.getElementById('tutor-source-file') as HTMLInputElement | null;
       if (chooser) chooser.value = '';
       setMessage('Forrás feltöltve. A Tanársegéd azonnal kereshet benne.');
-      await load(search);
+      // The list and live coverage are separate endpoints; a successful
+      // upload must refresh both without resetting the search filter.
+      setCoverageRefreshToken(token => token + 1);
+      try {
+        await load(search);
+      } catch {
+        setError('A forrás feltöltése sikerült, de a lista frissítése nem. Frissítsd az oldalt.');
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Feltöltési hiba.');
     } finally { setBusy(false); }
@@ -112,7 +121,13 @@ export const AdminDashboard: React.FC = () => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'A művelet sikertelen.');
       setMessage(result.message || success);
-      await load(search);
+      if (route === 'invite') setEmail('');
+      if (route === 'source-delete') setCoverageRefreshToken(token => token + 1);
+      try {
+        await load(search);
+      } catch {
+        setError('A művelet sikerült, de a lista frissítése nem. Frissítsd az oldalt.');
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Váratlan hiba.');
     } finally {
@@ -127,7 +142,7 @@ export const AdminDashboard: React.FC = () => {
       {message && <p role="status" className="mb-3 text-sm text-emerald-700">{message}</p>}
       {error && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
       <form className="rounded-xl border bg-white p-5 mb-6 flex flex-wrap gap-3 items-end"
-        onSubmit={e => { e.preventDefault(); if (email.trim()) void action('invite', { email: email.trim() }, 'Meghívó elküldve.').then(() => setEmail('')); }}>
+        onSubmit={e => { e.preventDefault(); if (email.trim() && !busy) void action('invite', { email: email.trim() }, 'Meghívó elküldve.'); }}>
         <label className="text-sm flex-1 min-w-56">Új hallgató meghívása
           <input required type="email" value={email} onChange={e => setEmail(e.target.value)}
             placeholder="hallgato@pelda.hu" maxLength={254}
