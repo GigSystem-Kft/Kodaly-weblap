@@ -23,7 +23,7 @@ import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
 import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './progress';
-import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './pendingProgress';
+import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress, safeBrowserStorage } from './pendingProgress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -56,13 +56,14 @@ export default function App() {
           if (active) {
             const restored = migrateProgress(saved.progress);
             const user = data.user as AccountUser;
-            const pending = loadPendingProgress(localStorage, user.id);
+            const pending = (safeBrowserStorage() ? loadPendingProgress(safeBrowserStorage()!, user.id) : null);
             const recovered = recoverPendingProgress(restored, pending);
             savedSnapshotRef.current = JSON.stringify(restored);
             revisionRef.current = saved.revision;
             accountGenerationRef.current++;
             if (pending && JSON.stringify(restored) === JSON.stringify(recovered)) {
-              clearSavedPendingProgress(localStorage, user.id, restored);
+              const storage = safeBrowserStorage();
+              if (storage) clearSavedPendingProgress(storage, user.id, restored);
             }
             setProgress(recovered);
             setAccount(user);
@@ -84,14 +85,22 @@ export default function App() {
   useEffect(() => {
     if (!accountReady) return;
     if (!account) {
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+      try {
+        const storage = safeBrowserStorage();
+        if (storage) storage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        else setSyncError('A böngésző helyi tárolója nem érhető el; vendégként a tanulási eredményeid nem maradnak meg újratöltés után.');
+      } catch {
+        setSyncError('A böngésző megtagadta a helyi mentést; vendégként az eredményeid nem maradnak meg újratöltés után.');
+      }
       return;
     }
     const snapshot = JSON.stringify(progress);
     if (savedSnapshotRef.current === snapshot || revisionRef.current === null) return;
     try {
+      const storage = safeBrowserStorage();
+      if (!storage) throw new Error('A böngésző helyi tárolója nem érhető el.');
       savePendingProgress(
-        localStorage, account.id,
+        storage, account.id,
         migrateProgress(savedSnapshotRef.current ? JSON.parse(savedSnapshotRef.current) : null),
         progress
       );
@@ -126,7 +135,8 @@ export default function App() {
         if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
         revisionRef.current = result.revision;
         savedSnapshotRef.current = snapshot;
-        clearSavedPendingProgress(localStorage, account.id, progress);
+        const storage = safeBrowserStorage();
+        if (storage) clearSavedPendingProgress(storage, account.id, progress);
         reschedule = true;
         setSyncError('');
       } catch (error) {
@@ -175,7 +185,7 @@ export default function App() {
     if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
     const saved = await response.json();
     const restored = migrateProgress(saved.progress);
-    const pending = loadPendingProgress(localStorage, user.id);
+    const pending = (safeBrowserStorage() ? loadPendingProgress(safeBrowserStorage()!, user.id) : null);
     const recovered = recoverPendingProgress(restored, pending);
     accountGenerationRef.current++;
     savedSnapshotRef.current = JSON.stringify(restored);
