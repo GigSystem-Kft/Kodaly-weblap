@@ -68,6 +68,25 @@ try {
   const initialPairs = await termButtons.count();
   if (initialPairs < 1 || initialPairs > 6)
     throw new Error('Unexpected matching round size: ' + initialPairs);
+  if (initialPairs > 1) {
+    const firstTerm = termButtons.first();
+    const firstLabel = (await firstTerm.textContent())?.trim();
+    const firstCandidates = MATCHING_PAIRS.filter(pair => pair.term === firstLabel);
+    const wrongAnswer = [];
+    for (const answer of await page.getByRole('button', { name: /^Jelentés:/ }).all()) {
+      const answerText = (await answer.textContent())?.trim();
+      if (answerText && !firstCandidates.some(pair => pair.match === answerText))
+        wrongAnswer.push(answer);
+    }
+    if (!wrongAnswer.length) throw new Error('No nonmatching answer available to exercise mistake feedback');
+    await firstTerm.click();
+    await wrongAnswer[0].click();
+    if ((await page.getByRole('status').textContent())?.trim() !== 'Ez a két elem nem tartozik össze. Próbáld újra!')
+      throw new Error('Incorrect matching attempt lacks accessible feedback');
+    await page.waitForTimeout(550);
+    if ((await firstTerm.getAttribute('aria-pressed')) !== 'false')
+      throw new Error('Incorrect matching attempt was not deselected');
+  }
   for (let index = 0; index < initialPairs; index++) {
     const term = termButtons.nth(index);
     const termLabel = (await term.textContent())?.trim();
