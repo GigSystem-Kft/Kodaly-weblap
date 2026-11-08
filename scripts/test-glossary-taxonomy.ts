@@ -10,7 +10,7 @@ test('glossary maintains exactly 1793 source terms, IDs and definitions', () => 
 });
 test('conservative taxonomy changes are visible and never hidden by the practice bank',()=>{
   const terms=MUSIC_EXPRESSIONS;
-  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,418);
+  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,417);
   for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció']){
     assert.ok(MUSIC_EXPRESSION_CATEGORIES.includes(label));
     assert.ok(terms.some(t=>t.category===label));
@@ -54,7 +54,7 @@ test('newly reviewed orchestration, expressive and theory terms retain exact cat
     'attacca':'Előadásmód és artikuláció',
     'da capo':'Kottaírás és jelölések',
     'dal segno':'Kottaírás és jelölések',
-    'con sordino':'Egyéb szakkifejezések',
+    'con sordino':'Hangszer és játéktechnika',
     'con fuoco':'Dinamika és karakter',
     'con dolore':'Dinamika és karakter',
     'diatonikus félhang/félhanglépés':'Hangsorok és harmóniák',
