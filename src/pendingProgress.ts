@@ -5,6 +5,19 @@ import { migrateProgress, mergeConcurrentProgress } from './progress';
 // account's unsaved data. This is device-local recovery, not server backup.
 const PREFIX = 'kodaly_pending_progress_';
 const MAX_BYTES = 1_000_000;
+/**
+ * localStorage can be inaccessible under browser privacy policies or disabled
+ * site storage. Account sync must remain usable even when offline recovery is not.
+ */
+export function safeBrowserStorage(): Storage | null {
+  try {
+    if (typeof window === 'undefined') return null;
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
 type Pending = { version: 1; ownerId: string; base: UserProgress; local: UserProgress };
 
 export function pendingProgressKey(userId: string): string {
