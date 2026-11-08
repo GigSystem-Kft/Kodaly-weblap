@@ -116,6 +116,21 @@ second_login="$(curl -sS -c "$student_jar" -o /tmp/zm-role-response.json -w '%{h
  -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
  --data '{"email":"role-student@example.org","password":"RoleTestPassword2026!"}')"
 test "$second_login" = 200
+# Private data portability: only the authenticated learner's own profile and
+# progress may appear in the export. No hashes or session secrets.
+test "$(curl -sS -o /tmp/zm-role-export-anonymous.json -w '%{http_code}' "${base}auth/export-data")" = 401
+test "$(curl -sS -b "$student_jar" -o /tmp/zm-role-export.json -w '%{http_code}' "${base}auth/export-data")" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-role-export.json"),true);
+if(($j["format"]??null)!=="zeneelmeleti-muhely-personal-data-v1")exit(1);
+if(($j["profile"]["email"]??null)!=="role-student@example.org")exit(1);
+if(($j["profile"]["id"]??null)!==$argv[1])exit(1);
+if(($j["progress"]["completedChapters"][0]??null)!=="szolfézs")exit(1);
+if(($j["progress"]["xp"]??null)!==10)exit(1);
+if(str_contains(json_encode($j),"pilot@example.org"))exit(1);
+foreach(["password_hash","token_hash","currentPassword","session"] as $secret)
+ if(array_key_exists($secret,$j["profile"]))exit(1);
+' "$second_id"
 # Wrong confirmation and wrong password must not delete any database rows.
 for request in \
  '{"currentPassword":"RoleTestPassword2026!","confirmation":"nem"}' \
