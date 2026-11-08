@@ -14,7 +14,7 @@ const shuffle = <T,>(items: T[]): T[] => {
 };
 
 const matchingLabelKey = (text: string): string =>
-  text.normalize('NFC').trim().replace(/\\s+/g, ' ').toLocaleLowerCase('hu-HU');
+  text.normalize('NFC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('hu-HU');
 
 interface MatchingGameProps {
   onCompleted: (pairIds: string[]) => void;
