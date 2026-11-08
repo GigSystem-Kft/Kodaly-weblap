@@ -302,7 +302,8 @@ try {
   const liveFixture = {...reportFixture(['Tananyag', 'Fogalomtár'], 2800), chapter09GlossaryEntries: 1793};
   const staticFixture = reportFixture(['Tananyag', 'Fogalomtár', 'Szemléltetés'], 3800);
   for (const reportMode of ['live', 'static']) {
-    const reportPage = await browser.newPage();
+    const reportContext = await browser.newContext();
+    const reportPage = await reportContext.newPage();
     let extraSource = null;
     let invitationAttempts = 0;
     let sourceReportLoads = 0;
@@ -386,13 +387,14 @@ try {
       if (await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).count())
         throw new Error('Static coverage report mislabeled as live PHP');
     }
-    await reportPage.close();
+    await reportContext.close();
   }
   console.log('Admin UI: PHP versus build source report comparison and explicit fallback verified');
 
   // Self-service erasure is an irreversible operation. Verify browser-side
   // confirmation and scoped offline cleanup without touching a real account.
-  const erasePage = await browser.newPage();
+  const eraseContext = await browser.newContext();
+  const erasePage = await eraseContext.newPage();
   let erasureRequests = 0;
   await erasePage.route('**/api/index.php?*', route => {
     const request = route.request();
@@ -449,7 +451,7 @@ try {
   if (erasureRequests !== 1) throw new Error('Confirmed deletion did not send exactly one request');
   if (await erasePage.evaluate(() => localStorage.getItem('kodaly_pending_progress_erase-fixture')) !== null)
     throw new Error('Deleted account retained its offline progress snapshot');
-  await erasePage.close();
+  await eraseContext.close();
   console.log('Account UI: erasure confirmation and per-account offline cleanup verified');
 
   // Storage is not always available (privacy mode, denied site permissions).
