@@ -406,9 +406,13 @@ try {
         case 'auth/login':
             throttle('login', 20);
             $data = getPayload();
-            $email = strtolower(trim($data['email'] ?? ''));
+            // Never pass arbitrary JSON values to string functions: malformed
+            // requests must return 400, not an uncaught TypeError/HTTP 500.
+            $rawEmail = $data['email'] ?? null;
+            $email = is_string($rawEmail) ? strtolower(trim($rawEmail)) : null;
             $pass = $data['password'] ?? null;
-            if (!is_string($email) || strlen($email)>254 || !is_string($pass) || strlen($pass)>128) {
+            if ($email === null || $email === '' || strlen($email)>254 ||
+                !is_string($pass) || $pass === '' || strlen($pass)>128) {
                 fail(400, 'Érvénytelen adatok.');
             }
             $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash,email_verified_at FROM zm_users WHERE email=? LIMIT 1');
