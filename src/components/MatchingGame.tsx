@@ -81,10 +81,10 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
       // Incorrect: provide the same outcome without requiring audio.
       setFeedback('Ez a két elem nem tartozik össze. Próbáld újra!');
       playNote('C3', 300);
-      setTimeout(() => {
-        setSelectedTerm(null);
-        setSelectedMatch(null);
-      }, 500);
+      // Immediately release the selection. A delayed timer could otherwise
+      // erase a new selection made after restart or a rapid retry.
+      setSelectedTerm(null);
+      setSelectedMatch(null);
     }
   };
 
