@@ -45,13 +45,28 @@ export const EXPRESSION_MATCHING:MatchingPair[]=chosen.slice(0,320).map(item=>({
  category:cardCategory(item.category)
 }));
 export const EXPRESSION_QUIZZES:QuizQuestion[]=quizTerms.map((item,i)=>{
- const alternatives=chosen.filter(x=>x.id!==item.id &&
-  x.definition.toLocaleLowerCase('hu-HU')!==item.definition.toLocaleLowerCase('hu-HU') &&
-  x.category===item.category && x.definition.length<125).slice(0,3);
- const pool=alternatives.length===3?alternatives:chosen.filter(x=>x.id!==item.id&&
-  x.definition!==item.definition).slice(i%12,i%12+3);
+ // Wrong answers must be distinct even after whitespace/case normalization.
+ // Prefer examples from the same teaching domain, then other domains only if
+ // the selected domain has fewer than three usable meanings.
+ const correct=labels(item.definition);
+ const used=new Set([correct.toLocaleLowerCase('hu-HU')]);
+ const alternatives:Expression[]=[];
+ const candidates=[
+  ...chosen.filter(x=>x.category===item.category),
+  ...chosen.filter(x=>x.category!==item.category)
+ ];
+ for(const candidate of candidates){
+  if(candidate.id===item.id)continue;
+  const meaning=labels(candidate.definition);
+  const normalized=meaning.toLocaleLowerCase('hu-HU');
+  if(!meaning||meaning.length>124||used.has(normalized))continue;
+  used.add(normalized);
+  alternatives.push(candidate);
+  if(alternatives.length===3)break;
+ }
  const answerIndex=i%4;
- const options=pool.map(item=>labels(item.definition));options.splice(answerIndex,0,labels(item.definition));
+ const options=alternatives.map(candidate=>labels(candidate.definition));
+ options.splice(answerIndex,0,correct);
  return {
   id:'expr-q-'+item.id,chapterId:'zenei-kifejezesek',
   question:'Mit jelent a kottában vagy a zenében: „'+item.term+'”?',
