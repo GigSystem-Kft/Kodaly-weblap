@@ -20,10 +20,27 @@ for role in teacher student; do
   '
   status="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-role-response.json -w '%{http_code}' "${base}admin/users")"
   test "$status" = 403
+  test "$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-role-response.json -w '%{http_code}' "${base}auth/deployment-check")" = 403
 done
 role_sql admin
 status="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-role-response.json -w '%{http_code}' "${base}admin/users")"
 test "$status" = 200
+# Deployment diagnosis is read-only and excludes private filesystem paths.
+check_status="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-check.json -w '%{http_code}' "${base}auth/deployment-check")"
+test "$check_status" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-check.json"),true);
+if(!is_bool($j["ready"]??null) || !is_array($j["missing"]??null) ||
+ !is_array($j["publicArchives"]??null) || !isset($j["checkedAt"]))exit(1);
+if(str_contains(json_encode($j),"/home/") || str_contains(json_encode($j),"password"))exit(1);
+'
+printf 'non-sensitive diagnostic fixture' > php/api/zm-deployment-check-test.zip
+curl -fsS -b /tmp/zm-admin-cookies "${base}auth/deployment-check" > /tmp/zm-deployment-with-archive.json
+rm -f php/api/zm-deployment-check-test.zip
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-with-archive.json"),true);
+if(($j["ready"]??null)!==false || !in_array("api/zm-deployment-check-test.zip",$j["publicArchives"]??[],true))exit(1);
+'
 # A second independently logged-in real user validates privilege changes and
 # account data isolation with the disposable MySQL/PHP server.
 php -r '
