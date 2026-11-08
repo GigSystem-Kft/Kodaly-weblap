@@ -18,7 +18,7 @@ export function localDay(date: Date = new Date()): string {
 }
 /** A calendar date must exist; the regex alone accepts 2026-02-30. */
 export function validStudyDay(value: string): boolean {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number(value.slice(0, 4)) < 1) return false;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number(value.slice(0, 4)) < 1) return false;
   const parsed = new Date(value + 'T00:00:00Z');
   return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
