@@ -105,7 +105,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <button
                 key={sub.id}
                 onClick={() => setActiveSubId(sub.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-start space-x-3 ${
+                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-start space-x-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800 ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                     : 'bg-white hover:bg-indigo-50 text-slate-700 border border-slate-200'
