@@ -145,7 +145,10 @@ export default function App() {
         }
       } finally {
         savingRef.current = false;
-        if (reschedule && generation === accountGenerationRef.current) {
+        // A previous account's in-flight save must never block the new
+        // account's pending progress. Stale responses cannot update its data,
+        // but releasing the save lock must wake the current account's writer.
+        if (reschedule || generation !== accountGenerationRef.current) {
           setSaveTick(previous => previous + 1);
         }
       }
