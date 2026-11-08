@@ -220,3 +220,10 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - **A-15:** a 2026-11-08-i forrásellenőrzés mind a nyolc használatban lévő Commons-képfájl oldalát dokumentálta a `docs/media-linkellenorzes-2026-11-07.md` fájlban. A Bartók-képet egy ismeretlen szerzőjű, 1927-es, Commons közkincsjelzésű portréra cseréltük a jogilag bizonytalanabb, 1982-es könyvre hivatkozó fájl helyett. A limoges-i tónárium képaláírása szakmailag pontosabb lett; az 1979-es Graduale Romanum-ból származtatott gregorián képtartalom jogainak független ellenőrzése továbbra is nyitott.
 
 **Végleges kiadás előfeltétele:** valódi PHP-auth hallgató/tanár/admin és két eszközös éles próba, adatkezelési ellenőrzés és manuális WCAG-folyamat; teljes tananyag zenetudományi és kiadói jogi lektorálása; zöld végső CI és próba CloudPanel telepítés. Csak ezután `main` merge és végleges terjesztés.
+
+## 2026-11-08 – automatikusan előállított szótári kvízek válaszellenőrzése
+
+- A-20/A-22: a `src/data/musicExpressionsPractice.ts` által generált zenei kifejezés-kvízkérdéseknél az alternatív válaszok kiválasztása immár normalizált magyar szöveg alapján kiszűri az ismétlődő jelentéseket. Mindig a saját zenei tárgyköréből választ először három különböző értelmezést, és csak hiány esetén keres más területről. A helyes válasz pozíciója és az eredeti kérdésazonosító változatlan, ezért a korábban mentett gyakorlási eredmények megmaradnak.
+- Új regressziós teszt: `scripts/test-glossary-answer-integrity.ts` ellenőrzi a négy válasz meglétét, egyediségét és a helyes válasz szótári forrását a teljes generált kérdésbankon. A teszt a szótári szöveg elválasztó szóközeit is normalizálja; ez nem módosítja a forrásdefiníciókat.
+- Az aktuális besorolási állapot továbbra is: 1793 tétel, 12 kategória, **0 „Egyéb”**. Ez csak technikai taxonómiai teljesség; a független zenetudományi lektorálás, a szinonim meghatározások pedagógiai egyértelműségének ellenőrzése és az éles E2E továbbra is nyitott.
+- A teljes audit befejezéséig a PR draft és a `main` változatlan.
