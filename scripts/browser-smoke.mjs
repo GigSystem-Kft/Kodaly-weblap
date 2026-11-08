@@ -127,6 +127,30 @@ try {
     throw new Error('Matching restart did not clear completion state');
   console.log('Guest: full matching round completed and restarted');
 
+  // Guest achievements must survive an actual browser reload, not just
+  // navigation. Check both matching IDs and XP.
+  await page.waitForFunction(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('kodaly_progress') || 'null');
+      return saved && Array.isArray(saved.matchingCompleted) &&
+        saved.matchingCompleted.length >= 1 && saved.xp > 0;
+    } catch { return false; }
+  });
+  const beforeReload = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem('kodaly_progress'));
+    return { matchingCompleted: [...saved.matchingCompleted].sort(), xp: saved.xp };
+  });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByRole('heading', { name: 'Zeneelméleti Műhely' }).waitFor();
+  const afterReload = await page.evaluate(() => {
+    const saved = JSON.parse(localStorage.getItem('kodaly_progress'));
+    return { matchingCompleted: [...saved.matchingCompleted].sort(), xp: saved.xp };
+  });
+  if (JSON.stringify(afterReload) !== JSON.stringify(beforeReload))
+    throw new Error('Guest matching achievements were lost or changed after reload');
+  console.log('Guest: matching progress and XP persist across browser reload');
+
+
   await page.getByRole('button',{name:/04\. Teszt/}).click();
   await page.getByRole('heading',{name:'Interaktív Ellenőrző Teszt'}).waitFor();
   const category=page.locator('#quiz-chapter');
