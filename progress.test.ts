@@ -1,7 +1,7 @@
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './src/pendingProgress';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './src/progress';
+import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync } from './src/progress';
 
 test('a new learner starts with zero experience and no fabricated days', () => {
   const progress = createEmptyProgress();
@@ -214,4 +214,11 @@ test('offline favorite removal is honored without deleting remote additions', ()
   const restored=recoverPendingProgress(remote,loadPendingProgress(storage,'account'));
   assert.deepEqual(restored.favoriteExpressions,['keep','new-device']);
   assert.equal(loadPendingProgress(storage,'other-account'),null);
+});
+
+test('stale account progress writes wake the new account without reusing the old result', () => {
+  assert.equal(shouldRescheduleProgressSync(false, 1, 2), true);
+  assert.equal(shouldRescheduleProgressSync(true, 1, 1), true);
+  assert.equal(shouldRescheduleProgressSync(false, 1, 1), false);
+  assert.equal(shouldRescheduleProgressSync(true, 1, 2), true);
 });
