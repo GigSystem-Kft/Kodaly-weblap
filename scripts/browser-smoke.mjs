@@ -84,9 +84,13 @@ try {
     await wrongAnswer[0].click();
     if ((await page.getByRole('status').textContent())?.trim() !== 'Ez a két elem nem tartozik össze. Próbáld újra!')
       throw new Error('Incorrect matching attempt lacks accessible feedback');
-    await page.waitForTimeout(550);
     if ((await firstTerm.getAttribute('aria-pressed')) !== 'false')
-      throw new Error('Incorrect matching attempt was not deselected');
+      throw new Error('Incorrect matching attempt was not deselected immediately');
+    // A former 500 ms reset timer used to erase a fresh choice after a mistake.
+    await firstTerm.click();
+    await page.waitForTimeout(550);
+    if ((await firstTerm.getAttribute('aria-pressed')) !== 'true')
+      throw new Error('Fresh selection was erased after the previous mistake');
   }
   for (let index = 0; index < initialPairs; index++) {
     const term = termButtons.nth(index);
