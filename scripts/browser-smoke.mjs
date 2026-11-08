@@ -291,7 +291,7 @@ try {
     sources: sources.map((source, i) => ({source, chunks: Math.floor(chunks / sources.length) + (i === 0 ? chunks % sources.length : 0), characters: 200, kind: 'indexed'})),
     omitted: [], missing: [], limitations: []
   });
-  const liveFixture = reportFixture(['Tananyag', 'Fogalomtár'], 2800);
+  const liveFixture = {...reportFixture(['Tananyag', 'Fogalomtár'], 2800), chapter09GlossaryEntries: 1793};
   const staticFixture = reportFixture(['Tananyag', 'Fogalomtár', 'Szemléltetés'], 3800);
   for (const reportMode of ['live', 'static']) {
     const reportPage = await browser.newPage();
@@ -325,6 +325,7 @@ try {
       await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).waitFor();
       await reportPage.getByText(/PHP: 2 forráscsoport, 2800 szövegrész · Csomag: 3 forráscsoport, 3800 szövegrész/).waitFor();
       await reportPage.getByText(/A két jelentés eltér/).waitFor();
+      await reportPage.getByText(/09. fejezet – Zenei kifejezések: 1793 \/ 1793 tétel/).waitFor();
     } else {
       await reportPage.getByText(/Az élő PHP keresőindex nem érhető el/).waitFor();
       if (await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).count())
