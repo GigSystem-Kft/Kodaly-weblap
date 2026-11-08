@@ -410,7 +410,7 @@ try {
     return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
   });
   await erasePage.goto(root,{waitUntil:'domcontentloaded'});
-  await erasePage.getByRole('button',{name:/06\\. Profil/}).click();
+  await erasePage.getByRole('button',{name:/06\. Profil/}).click();
   await erasePage.getByText('Törlési próbafiók').first().waitFor();
   await erasePage.evaluate(() => {
     localStorage.setItem('kodaly_pending_progress_erase-fixture', 'TEST_OFFLINE_SNAPSHOT');
