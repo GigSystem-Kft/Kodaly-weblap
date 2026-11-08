@@ -25,6 +25,19 @@ updated='{"completedChapters":["ritmus","hangok-kulcsok"],"completedSubchapters"
 invalidLedger="${updated/\"2026-11-07\":75/\"2026-11-07\":101}"
 invalidStatus="$(put_progress "{\"progress\":$invalidLedger,\"revision\":\"$saved\"}")"
 test "$invalidStatus" = 400
+# A-11/A-17: a server must reject impossible calendar dates, textual XP and
+# contradictory quiz metrics before it mutates the saved learning diary.
+invalidDay="${updated/\\"2026-11-07\\":75/\\"2026-02-30\\":75}"
+invalidActivity="${updated/\\"activityDays\\":\[\]/\\"activityDays\\":[\\"2026-02-30\\"]}"
+invalidScore="${updated/\\"score\\":90,\\"correct\\":9/\\"score\\":100,\\"correct\\":9}"
+invalidQuizString="${updated/\\"ritmus\\":90/\\"ritmus\\":\\"90\\"}"
+invalidXp="${updated/\\"xp\\":50/\\"xp\\":\\"50\\"}"
+for malformedProgress in "$invalidDay" "$invalidActivity" "$invalidScore" "$invalidQuizString" "$invalidXp"; do
+  status="$(put_progress "{\"progress\":$malformedProgress,\"revision\":\"$saved\"}")"
+  test "$status" = 400
+done
+get_progress
+test "$(revision)" = "$saved"
 status="$(put_progress "{\"progress\":$updated,\"revision\":\"$saved\"}")"
 test "$status" = 200
 status="$(put_progress "{\"progress\":$payload,\"revision\":\"$saved\"}")"
