@@ -61,8 +61,21 @@ jobs:
           npm run lint
       - name: Install PHP mail transport
         run: |
+          set -euo pipefail
           cd php/api
-          composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader
+          # GitHub's PHPMailer ZIP endpoint occasionally resets connections.
+          # Retry transport errors, but still fail the release if installation
+          # cannot complete; never assemble a ZIP without its mail dependency.
+          for attempt in 1 2 3; do
+            if composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader; then
+              exit 0
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "Composer dependency installation failed after three attempts" >&2
+              exit 1
+            fi
+            sleep $((attempt * 5))
+          done
       - name: PHP syntax check
         run: |
           php -v
