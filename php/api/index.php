@@ -143,12 +143,21 @@ function tokenToUuid(string $hex): string {
     return substr($hex,0,8) . '-' . substr($hex,8,4) . '-' .
            substr($hex,12,4) . '-' . substr($hex,16,4) . '-' . substr($hex,20,12);
 }
+/** Require real calendar dates rather than matching only the text pattern. */
+function validStudyDay(string $day): bool {
+    if (!validStudyDay($day)) return false;
+    [$year, $month, $date] = array_map('intval', explode('-', $day));
+    return checkdate($month, $date, $year);
+}
 function progressOk(mixed $p): bool {
     if (!is_array($p) || array_is_list($p)) return false;
     foreach (['completedChapters','completedSubchapters','flashcardsMastered','matchingCompleted','activityDays'] as $key) {
         if (!isset($p[$key]) || !is_array($p[$key]) || !array_is_list($p[$key]) ||
             count($p[$key]) > 10000) return false;
-        foreach ($p[$key] as $v) if (!is_string($v) || strlen($v) > 120) return false;
+        foreach ($p[$key] as $v) {
+            if (!is_string($v) || strlen($v) > 120) return false;
+            if ($key === 'activityDays' && !validStudyDay($v)) return false;
+        }
     }
     if (array_key_exists('earTrainingDailyXp', $p)) {
         if (!is_array($p['earTrainingDailyXp']) ||
@@ -167,7 +176,8 @@ function progressOk(mixed $p): bool {
     if (!isset($p['quizScores']) || !is_array($p['quizScores']) ||
         count($p['quizScores']) > 500) return false;
     foreach ($p['quizScores'] as $key => $score) {
-        if (strlen((string)$key) > 120 || !is_numeric($score) || $score < 0 || $score > 100) return false;
+        if (strlen((string)$key) > 120 || (!is_int($score) && !is_float($score)) ||
+            !is_finite((float)$score) || $score < 0 || $score > 100) return false;
     }
     if (array_key_exists('quizAttempts',$p)) {
         if (!is_array($p['quizAttempts']) || !array_is_list($p['quizAttempts']) ||
@@ -177,12 +187,14 @@ function progressOk(mixed $p): bool {
                 !isset($a['id'],$a['chapterId'],$a['score'],$a['correct'],$a['total'],$a['at']) ||
                 !is_string($a['id']) || strlen($a['id']) > 120 ||
                 !is_string($a['chapterId']) || strlen($a['chapterId']) > 120 ||
-                !is_numeric($a['score']) || $a['score'] < 0 || $a['score'] > 100 ||
+                (!is_int($a['score']) && !is_float($a['score'])) ||
+                !is_finite((float)$a['score']) || $a['score'] < 0 || $a['score'] > 100 ||
                 !is_int($a['correct']) || !is_int($a['total']) ||
                 $a['total'] < 1 || $a['total'] > 1000 ||
                 $a['correct'] < 0 || $a['correct'] > $a['total'] ||
                 !is_string($a['at']) || strlen($a['at']) > 40 ||
-                strtotime($a['at']) === false) return false;
+                strtotime($a['at']) === false ||
+                abs((float)$a['score'] - round($a['correct'] / $a['total'] * 100)) > 1) return false;
             if (array_key_exists('durationSeconds', $a) &&
                 (!is_int($a['durationSeconds']) || $a['durationSeconds'] < 0 || $a['durationSeconds'] > 36000)) {
                 return false;
@@ -196,7 +208,8 @@ function progressOk(mixed $p): bool {
             }
         }
     }
-    return isset($p['xp']) && is_numeric($p['xp']) &&
+    // XP is a practice indicator, not a verified exam grade; reject malformed types.
+    return isset($p['xp']) && is_int($p['xp']) &&
         $p['xp'] >= 0 && $p['xp'] <= 100000000;
 }
 
