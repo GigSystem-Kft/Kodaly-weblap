@@ -337,6 +337,64 @@ try {
     // separate student database must not take down the read-only learning assistant.
     $pdo = in_array($route, ['chat', 'chat/status'], true) ? null : database($config);
 
+    // Read-only admin diagnostic is usable even when admin.php is absent.
+    // The response never contains a server path, token, or user details.
+    if ($route === 'auth/deployment-check') {
+        method('GET');
+        $operator=requireUser($pdo);
+        if (($operator['role'] ?? '') !== 'admin') fail(403,'Nincs adminisztrátori jogosultságod.');
+        $root=dirname(__DIR__);
+        $required=['index.html','source-inventory.json',
+            'api/index.php','api/admin.php','api/tutor-search.php',
+            'api/tutor-sources.php','api/tutor-text-generation.php',
+            'api/tutor-image-generation.php','api/tutor-visuals.php',
+            'api/knowledge.php','api/music-answers.php','api/creative-answers.php',
+            'api/vendor/autoload.php'];
+        $missing=[];
+        foreach ($required as $relative) {
+            $file=$root.'/'.$relative;
+            if (!is_file($file) || !is_readable($file) || filesize($file)===0) {
+                $missing[]=$relative;
+            }
+        }
+        $html=$root.'/index.html';
+        if (is_file($html) && is_readable($html)) {
+            $markup=@file_get_contents($html);
+            $assets=[];
+            if (is_string($markup)) {
+                preg_match_all('~/(assets/[A-Za-z0-9._-]+\.(?:js|css))~', $markup, $matches);
+                $assets=array_values(array_unique($matches[1] ?? []));
+            }
+            if (!array_filter($assets, static fn($name)=>str_ends_with($name,'.js'))) {
+                $missing[]='index.html /assets/*.js';
+            }
+            foreach ($assets as $asset) {
+                if (!is_file($root.'/'.$asset) ||
+                    !is_readable($root.'/'.$asset) || filesize($root.'/'.$asset)===0) {
+                    $missing[]=$asset;
+                }
+            }
+        }
+        $archives=[];
+        foreach ([''=>$root,'api/'=>__DIR__] as $prefix=>$folder) {
+            foreach (['*.zip','*.sql','*.bak','*.tar.gz','.env'] as $pattern) {
+                foreach (glob($folder.'/'.$pattern) ?: [] as $file) {
+                    if (is_file($file)) $archives[]=$prefix.basename($file);
+                }
+            }
+        }
+        $archives=array_values(array_unique($archives));
+        answer(200,[
+            'checkedAt'=>gmdate('c'),
+            'ready'=>count($missing)===0 && count($archives)===0,
+            'missing'=>array_values(array_unique($missing)),
+            'publicArchives'=>$archives,
+            'mailConfigured'=>($config['mail_enabled'] ?? false)===true &&
+                ($config['mail_transport'] ?? '')==='smtp',
+            'scope'=>'Fájlkészlet-ellenőrzés, nem helyettesíti az éles funkcionális próbát'
+        ]);
+    }
+
     if (str_starts_with($route, 'admin/')) {
         require_once __DIR__ . '/admin.php';
         adminApi($pdo, $config, $route);
