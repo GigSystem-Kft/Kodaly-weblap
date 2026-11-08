@@ -10,7 +10,7 @@ test('glossary maintains exactly 1793 source terms, IDs and definitions', () => 
 });
 test('conservative taxonomy changes are visible and never hidden by the practice bank',()=>{
   const terms=MUSIC_EXPRESSIONS;
-  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,417);
+  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,273);
   for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció']){
     assert.ok(MUSIC_EXPRESSION_CATEGORIES.includes(label));
     assert.ok(terms.some(t=>t.category===label));
@@ -67,5 +67,26 @@ test('newly reviewed orchestration, expressive and theory terms retain exact cat
   for(const [term,category] of Object.entries(expected)){
     const entry=MUSIC_EXPRESSIONS.find(item=>item.term===term);
     assert.equal(entry?.category,category,term);
+  }
+});
+
+test('reclassified Hungarian harmony, articulation, vocal and historical glossary labels',()=>{
+  const expected:Record<string,string>={
+    'dodekafónia':'Hangsorok és harmóniák',
+    'enharmónia':'Hangsorok és harmóniák',
+    'egészhangú skála':'Hangsorok és harmóniák',
+    'dot':'Kottaírás és jelölések',
+    'doppio movimento':'Tempó és időkezelés',
+    'engführung':'Zenei műfajok és formák',
+    'falsetto':'Éneklés és kórus',
+    'far il capotasto':'Hangszer és játéktechnika',
+    'étude':'Zenei műfajok és formák',
+    'etüd, etude':'Zenei műfajok és formák',
+    'étouffoir':'Hangszer és játéktechnika',
+    'farsa':'Zenei műfajok és formák',
+    'drinking song':'Zenei műfajok és formák'
+  };
+  for(const [term,category] of Object.entries(expected)){
+    assert.equal(MUSIC_EXPRESSIONS.find(item=>item.term===term)?.category,category,term);
   }
 });
