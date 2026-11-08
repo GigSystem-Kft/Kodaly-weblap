@@ -235,3 +235,11 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - **2026. november 8-i CI:** `f34ae02ffc53cba250f7c40d7ef61aa3d2c04f07`: Chromium `42464213579` **success**, PHP/MySQL tesztek + teljes ZIP `42464213583` **success**, Linux `42464213558` **success**.
 - A-10: az aktuális forrásfájlban 1793 eredeti, azonosítóval követett címszó 12 szakterületi kategóriában szerepel, 0 „Egyéb”. A besorolás teljessége nem egyenlő a független szakterületi kontrollal.
 - **Nincs éles kiadás és nincs `main` összevezetés:** a teljes tananyag/tételbank lektorálása, médiaszerzői jogi ellenőrzés, az éles CloudPanel beüzemelés, hitelesített hallgató/tanár/admin E2E és fizikai két eszközös szinkronvizsgálat továbbra is nyitott.
+
+
+## 2026-11-08 – párosító játék tényleges böngészős teljesítése és hozzáférhető visszajelzés
+
+- **A-05/A-24:** A `scripts/browser-smoke.mjs` nem csupán megnyitja a párosító oldalt: a tényleges forrásbankból megkeresi az aktuális, véletlenszerűen kiválasztott párok helyes jelentését, az összes látható párt végigjátssza, ellenőrzi a sikeres befejező képernyőt és az új játék indítását. A korábbi bővítés a `a1bbe27419c0930df714250443bfb4b9970f4870` commitnál Chromium `42466309168`, PHP `42466309176`, Linux `42466309196` futásokban sikeres.
+- **A-05/A-23:** A párosító most sikeres és hibás próbálkozás esetén is magyar szöveges, `role=status` / `aria-live=polite` visszajelzést ad, ezért a feladat megoldása nem kizárólag a hangjelzésből érthető. Újrakezdésnél az előző visszajelzés törlődik. A Chromium-szkript a hibás választ, a visszajelzés szövegét, a hibás kijelölés elengedését, a teljes helyes sort és az újraindítás utáni állapotot is vizsgálja.
+- A további változások végső commitja `8fdb902425e67503a1a69b24a19495389b673ec2`; az ehhez tartozó Chromium, Linux és PHP CI-ellenőrzés e bejegyzéskor **folyamatban volt**, így az új hozzáférhetőségi módosítások még nem tekinthetők zöldnek.
+- A párosító teljesítési naplójának és XP-szabályainak szerveroldali jogosultsági/adatvédelmi elfogadása, továbbá a manuális képernyőolvasós teszt továbbra is nyitott. Nincs végleges kiadás vagy `main` összevezetés.
