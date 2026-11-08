@@ -49,3 +49,12 @@ test('Aquincum reconstruction credits Kaboldy and the exact CC BY-SA 3.0 license
   assert.match(aquincum.licenseNote,/CC BY-SA 3\.0/);
   assert.equal(aquincum.licenseUrl,'https://creativecommons.org/licenses/by-sa/3.0/');
 });
+
+test('Bartók portrait uses the verified 1927 anonymous Commons publication, not the 1982 book scan',()=>{
+  const portrait=HISTORY_VISUALS.find(item=>item.title.includes('Bartók Béla'));
+  assert.ok(portrait);
+  assert.match(portrait.sourceUrl,/Bartók_Béla_1927\.jpg/);
+  assert.match(portrait.caption,/1927/);
+  assert.match(portrait.licenseNote,/ismeretlen fotográfus/);
+  assert.ok(!HISTORY_VISUALS.some(item=>item.sourceUrl.endsWith('/Bartók_Béla.jpg')));
+});
