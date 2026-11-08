@@ -1,6 +1,6 @@
 # Zeneelméleti Műhely – összevont auditleltár (v1.2)
 
-Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-08. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6 ellenőrzési terület. A-19–A-24 vizsgálati hatókör, nem mind igazolt hiba.
+Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-09. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6 ellenőrzési terület. A-19–A-24 vizsgálati hatókör, nem mind igazolt hiba.
 
 **A korábbi javítási egységek korabeli, történeti állapotjelentések; az aktuális helyzetet az alábbi A-01–A-24 táblázat és a legutolsó egység mutatja.**
 
@@ -18,17 +18,17 @@ Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-08. Forrás: a 2026-11-
 | P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Az élő PHP-jelentés külön megmutatja a 09. fejezet 1793 fogalmának indexelési darabszámát; a kiadási PHP build hiány esetén leáll. Kiadás előtti éles ellenőrzés hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Élő PHP és statikus jelentés külön neve, csoportjai, számai és eltérése a felületen; az élő API hibája nem rejtőzik el statikus fallback mögött. Valós éles riport új változattal ellenőrzendő |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
-| P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése, összegzése és CI-tesztje sikeres |
+| P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Mind a kilenc tananyagegység közös számlálóban, 6–9. fejezet saját kártyáján a teljesítési állapot; Chromium útvonal-, jelölés- és oldalfrissítéses teszt sikeres. Éles hallgatói elfogadás hátra |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | Két külön hitelesített PHP/MySQL-felhasználó szerepköre és adatizolációja CI-zöld; sajátadat-export, önkiszolgáló hallgatói/oktatói fióktörlés, munkamenet- és haladási adat törlése, adminfiók védelme PHP és Chromium E2E teszttel igazolva. Valódi CloudPanel szerepkörös és két fizikai eszközös próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Chromium CI 42533440824 sikeres: vendég, szókártya, párosító, 04/05 kvíz, keresés, mobil touch/AI, szerepkörös és adminfelület, sajátadat-export/törlés, akadálymentesség; PHP/MySQL 42533440742 és Linux 42533440683 zöld. Éles telepítés/külső SMTP és két fizikai eszköz tesztje hátra |
 | P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | BESOROLÁS KÉSZ: mind az 1793 tétel 12 konkrét kategóriában, 0 Egyéb; 945 tétel átsorolva, új általános nyelvi kategória. Eredeti szöveg/azonosítók változatlanok; független zenetudományi lektorálás hátra |
-| P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Párosító 5 XP/új pár (max. 50/kör), hallásfeladat 100 XP/nap, PHP-validált napló és tesztek; az XP továbbra is kliensoldali gyakorlási pont, teljes szerveroldali anti-cheat hátra |
+| P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Kliens XP-korlátok és PHP-validált napló; új mentésnél csak egész XP, valós naptári nap és egész napi hallás-XP fogadható el, hibás típust elutasító PHP/MySQL regresszió zöld. Az XP továbbra sem hiteles vizsgapontszám; szerveroldali csalásvédelem hátra |
 | P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | 5 alap- és 4 bővített modulkatalógus, egységes 5 fejezetes alfejezeti útmutatók; önellenőrzési válaszok alfejezetenként elkülönítve, teljes szakmai szerkesztői egyeztetés hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B/H megfeleltetés és G5 (783,99 Hz) javítva; a nagy szeptim hangsor H4-re javítva; teljes 12-TET és 12 hangköz frekvenciateszt bekerült; további lejátszás-E2E hátra |
 | P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | OSZK és LFZE forráshelyesbítések, 8 Commons-képfájl jogállásleltára, 1927-es Bartók portré; történeti tónárium pontosítva. Tankönyv/1979-es kottakiadás jogi ellenőrzése hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil és kedvenc-összevezetés tisztázva; párhuzamos kedvenc törlés háromutas összevezetése; XP-adat történeti eseménynaplója továbbra sincs |
-| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, rontott kérdések, magyarázatok, gyakorlási idő; azonos témakör utolsó 3 és előző 3 átlagának trendje elkészült, pedagógiai értékelés hátra |
-| P2 | A-19 | Teljes menü- és navigációs mátrix | Mobil/keyboard tankönyvmenü és 5 tananyagkártya Enter/Space aktiválása; részletes Chromium navigációs teszt; teljes böngészős bejárás hátra |
+| P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges próbálkozások, hibák, gyakorlási idő és témaköri trendek; új szerverellenőrzés kiszűri a helyes/összes válasz és százalékos eredmény ellentmondását, migráció hibás próbálkozást eldob. Pedagógiai értékelés hátra |
+| P2 | A-19 | Teljes menü- és navigációs mátrix | Tankönyvek, billentyűzetes alapfejezetek és mind a négy bővített fejezet Chromium bejárása és jelölésének frissítés utáni megőrzése; a kilencegységes főoldali számláló is tesztelt. Teljes manuális navigáció/akadálymentesség hátra |
 | P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | A teljes kvízbank és a fogalomtári kvízek normalizált válaszopció-egyedisége CI-vel védett, zenei hang- és tananyag-integritástesztek sikeresek; szakmai lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses témaköri gyakorlókörök, egyedi válaszlehetőségek, témakörönkénti 3+3 korábbi kör trend; pedagógiai értékelési standard hátra |
 | P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Kibővített axe WCAG 2.1 AA Chromium-teszt: 04/05 kvíz, adminisztráció, fióktörlés, mobil Tanársegéd és korábbi oldalak; minden vizsgált képernyőn 0 súlyos/kritikus hiba. Manuális és sötét téma audit hátra |
@@ -365,3 +365,17 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - **A-21:** a személyes JSON export csak szerveroldalon elmentett adatot tartalmaz; az exportgomb mentetlen tanulási változások esetén letiltott, amíg a fiók szinkronja meg nem történik (`239c2be0cd1c26a65ed9d7123110387cf77d9d35`). A teljes jogi/üzemeltetői megfelelőség továbbra sem bizonyított.
 - **Teljes CI az új UI + teszteken:** Chromium `42533440824` **success**, PHP/MySQL/ZIP `42533440742` **success**, Linux `42533440683` **success**.
 - **Kiadás:** a kód több auditpontra kiterjedő javításai ellenére a független pedagógiai/zenei lektorálás, jogi engedélyellenőrzés, valódi hallgató/oktató és két fizikai eszközös CloudPanel-proba, adatvédelmi jóváhagyás, valamint teljes manuális WCAG audit még nyitott. Nincs `main` összevezetés és nincs végleges letöltési link.
+
+## 2026-11-09 – A-11/A-12/A-17/A-19: tanulási napló konzisztenciája és a kilencegységes tananyag
+
+**A-11/A-17 adatkonzisztencia:**
+- `php/api/index.php` új `validStudyDay()` függvénye valóban létező naptári napot követel meg a `activityDays` listában és `earTrainingDailyXp` naplóban. A szerver a szöveges/lebegőpontos XP-t, a szöveges témaköri pontszámot és a válaszok számával matematikailag ellentmondó kvízpróbálkozásokat **HTTP 400** hibával utasítja el. A regresszió mindegyik hibás eset után ellenőrzi, hogy a korábbi szerververzió nem változott, majd az érvényes mentés és az elavult verzió `409` védelme továbbra is működik. Ezek az **új mentések** védelmei; korábban tárolt SQL-adatokat nem módosítunk.
+- `src/progress.ts` `validStudyDay()` és `migrateProgress()` a hibás régi naptári napokat és ellentmondó kvízpróbálkozásokat kihagyja, az XP-t nem negatív egészre normalizálja; a valid dátumokat rendezi. A `progress.test.ts` új regressziója a 2024-es szökőnapot és a nem létező 2026. február 29–30. napokat is ellenőrzi. Az XP kliensoldali gyakorlási mutató marad; a teljesen szerver által hitelesített aktivitásnapló/anti-cheat **továbbra is nyitott**.
+  
+**A-12/A-19 pedagógiai navigáció:**
+- A tananyag nyitóoldala korábban `TANANYAG (9 FEJEZET)` mellett csak az 5 alapfejezetet számolta teljesítettnek. A `ChapterListView.tsx` most a `MUSIC_CHAPTERS` és `EXTRA_LEARNING_MODULES` közös azonosító-készletéből `TELJESÍTVE: x/9 TANANYAGEGYSÉG` értéket ad, a 06–09. modulok kártyáin is megjelenik a teljesítés jelzése. A személyes naplóval így azonos számlálási elvet követ.
+- A `scripts/browser-smoke.mjs` böngészőpróba mind a négy kiegészítő tananyagba belép, ellenőrzi a megfelelő címet, a `Modul tanulmányozva` műveletet, a főoldali 2/9 → 5/9 számlálást és az oldalfrissítés utáni 5/9 értéket.
+  
+**Kódcommitok:** `e367bfddae2f7a21eb2fbba751fd95f7f5bbf53b` (szerver dátum/típus), `865fd4347867e1f1449b7736a4b5f5e7c1dddbb6` (PHP regresszió), `417640aee3f0d94e1a819b004235d7a613e3638e` (kliensnapló), `db834feae27b78adc8df901097c98b6408585375` (unit teszt), `e286ad807082187b10a91704b61e0ca4218e1ee6` (tananyag főoldal), `d86afeda5d990be91140eb8dda4be6a009157e52` (böngészős próba).
+
+**Teljes CI az új teljes kódállapoton:** Chromium `42535728803` **success**, PHP/MySQL/ZIP `42535728794` **success**, Linux `42535728782` **success**. A teljes 24 pontos szakmai/jogi/éles elfogadás változatlanul nyitott; nincs végleges letöltés és nincs `main` összevezetés.
