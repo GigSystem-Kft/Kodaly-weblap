@@ -283,6 +283,57 @@ try {
     console.log('Account UI: '+role+' navigation verified');
   }
 
+  // The admin coverage panel must not silently present build-time statistics
+  // as live PHP results, especially after a partial server restore.
+  const reportFixture = (sources, chunks) => ({
+    generatedAt: '2026-11-08T20:00:00Z',
+    indexChunks: chunks, indexedCharacters: chunks * 200,
+    sources: sources.map((source, i) => ({source, chunks: Math.floor(chunks / sources.length) + (i === 0 ? chunks % sources.length : 0), characters: 200, kind: 'indexed'})),
+    omitted: [], missing: [], limitations: []
+  });
+  const liveFixture = reportFixture(['Tananyag', 'Fogalomtár'], 2800);
+  const staticFixture = reportFixture(['Tananyag', 'Fogalomtár', 'Szemléltetés'], 3800);
+  for (const reportMode of ['live', 'static']) {
+    const reportPage = await browser.newPage();
+    await reportPage.route('**/source-inventory.json', route =>
+      route.fulfill({status: 200, contentType: 'application/json', body: JSON.stringify(staticFixture)})
+    );
+    await reportPage.route('**/api/index.php?*', route => {
+      const endpoint = new URL(route.request().url()).searchParams.get('route');
+      const data = endpoint === 'auth/me'
+        ? {user:{id:'coverage-admin',email:'admin@example.invalid',displayName:'Próba admin',role:'admin'}}
+        : endpoint === 'auth/status'
+        ? {available:true,registrationEnabled:false}
+        : endpoint === 'progress'
+        ? {progress:null,revision:'0'.repeat(64)}
+        : endpoint === 'chat/status'
+        ? {mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}}
+        : endpoint === 'admin/users'
+        ? {users:[]}
+        : endpoint === 'admin/invitations'
+        ? {invitations:[]}
+        : endpoint === 'admin/sources'
+        ? {sources:[]}
+        : endpoint === 'admin/source-coverage' && reportMode === 'live'
+        ? liveFixture
+        : {error:'Fixture: live PHP report unavailable'};
+      return route.fulfill({status:data.error?503:200,contentType:'application/json',body:JSON.stringify(data)});
+    });
+    await reportPage.goto(root,{waitUntil:'domcontentloaded'});
+    await reportPage.getByRole('button',{name:'Admin',exact:true}).click();
+    if (reportMode === 'live') {
+      await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).waitFor();
+      await reportPage.getByText(/PHP: 2 forráscsoport, 2800 szövegrész · Csomag: 3 forráscsoport, 3800 szövegrész/).waitFor();
+      await reportPage.getByText(/A két jelentés eltér/).waitFor();
+    } else {
+      await reportPage.getByText(/Az élő PHP keresőindex nem érhető el/).waitFor();
+      if (await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).count())
+        throw new Error('Static coverage report mislabeled as live PHP');
+    }
+    await reportPage.close();
+  }
+  console.log('Admin UI: PHP versus build source report comparison and explicit fallback verified');
+
   // Storage is not always available (privacy mode, denied site permissions).
   // Both a guest and an authenticated learner must remain usable.
   for (const accountAvailable of [false,true]) {
