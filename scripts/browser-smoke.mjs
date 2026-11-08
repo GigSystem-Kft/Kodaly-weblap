@@ -69,6 +69,15 @@ try {
   const initialPairs = await termButtons.count();
   if (initialPairs < 1 || initialPairs > 6)
     throw new Error('Unexpected matching round size: ' + initialPairs);
+  const normalized = text => text.normalize('NFC').trim().replace(/\\s+/g, ' ').toLocaleLowerCase('hu-HU');
+  for (const [label, selector] of [
+    ['terms', page.getByRole('button', { name: /^Fogalom:/ })],
+    ['answers', page.getByRole('button', { name: /^Jelentés:/ })]
+  ]) {
+    const values = (await selector.allTextContents()).map(normalized);
+    if (values.length !== initialPairs || new Set(values).size !== values.length)
+      throw new Error('Ambiguous or missing visible matching ' + label);
+  }
   if (initialPairs > 1) {
     const firstTerm = termButtons.first();
     const firstLabel = (await firstTerm.textContent())?.trim();
