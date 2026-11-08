@@ -22,7 +22,7 @@ import { RhythmResearchBookView } from './components/RhythmResearchBookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
-import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity } from './progress';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync } from './progress';
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress, safeBrowserStorage } from './pendingProgress';
 
 export default function App() {
@@ -148,7 +148,7 @@ export default function App() {
         // A previous account's in-flight save must never block the new
         // account's pending progress. Stale responses cannot update its data,
         // but releasing the save lock must wake the current account's writer.
-        if (reschedule || generation !== accountGenerationRef.current) {
+        if (shouldRescheduleProgressSync(reschedule, generation, accountGenerationRef.current)) {
           setSaveTick(previous => previous + 1);
         }
       }
