@@ -132,6 +132,9 @@ jobs:
           # glossary entries, even if its total chunk count differs from
           # the separately generated frontend/source-inventory.json report.
           php -r '$k=require "release/api/knowledge.php"; $n=0; foreach($k as $e){if(str_starts_with((string)($e["label"]??""), "09. Zenei kifejezések / ")) ++$n;} if($n!==1793){fwrite(STDERR, "Missing chapter 09 PHP glossary entries: $n/1793\\n"); exit(1);} echo "Chapter 09 PHP glossary coverage passed: $n/1793\\n";'
+          # A-08: protect all six student-facing teaching banks against
+          # missing PHP exports, while allowing different chunking strategies.
+          php -r '$k=require "release/api/knowledge.php"; $wanted=["Zeneelméleti Műhely – Szókártyák","Zeneelméleti Műhely – Teszt","Zeneelméleti Műhely – Párosító","Zeneelméleti Műhely – Hangzó hangsor és akkord","Zeneelméleti Műhely – Hangkészletek és pentaton példák","Zeneelméleti Műhely – Kvintkör"]; foreach($wanted as $source){$n=0;foreach($k as $e){if(($e["source"]??"")===$source)++$n;}if($n===0){fwrite(STDERR,"Missing PHP teaching bank: $source\n");exit(1);}echo "$source: $n indexed entries\n";}'
           php -r 'require "php/api/creative-answers.php"; $k=require "release/api/knowledge.php"; $a=creativePracticeAnswer("Ajánlj játékos módszert a ritmusérzék fejlesztésére!",$k); if(!is_string($a)||!str_contains($a,"Szirányi Borbála")||!str_contains($a,"**Forrás:**")) {fwrite(STDERR,"Creative tutor integration failed\\n"); exit(1);} echo "Creative tutor integration passed\\n";'
           php -r '$a=require "release/api/knowledge.php"; foreach($a as $e){if(stripos($e["source"]??"", "kesztler")!==false) {fwrite(STDERR,"Excluded OCR text found in index\\n"); exit(1);}} echo "Source blacklist verified\\n";'
           python3 scripts/verify-release-assets.py release
