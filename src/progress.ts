@@ -95,7 +95,8 @@ export function recordActivity(progress: UserProgress, amount: number, date = lo
   const days = [...new Set([...(progress.activityDays ?? []), date])].sort();
   return {
     ...progress,
-    xp: progress.xp + Math.max(0, amount),
+    // Never let a malformed reward poison the entire saved XP total.
+    xp: progress.xp + (Number.isFinite(amount) ? Math.max(0, amount) : 0),
     activityDays: days,
     streak: consecutiveDays(days, date),
     lastActiveDate: date
@@ -107,8 +108,10 @@ export function recordEarTrainingActivity(
   amount: number,
   date = localDay()
 ): UserProgress {
-  const current = progress.earTrainingDailyXp?.[date] ?? 0;
-  const earned = Math.max(0, Math.min(100 - current, Math.floor(amount)));
+  const previous = progress.earTrainingDailyXp?.[date] ?? 0;
+  const current = Number.isInteger(previous) && previous >= 0 && previous <= 100 ? previous : 0;
+  const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
+  const earned = Math.min(100 - current, safeAmount);
   const updated = Object.fromEntries(
     Object.entries({ ...(progress.earTrainingDailyXp ?? {}), [date]: current + earned })
       .sort(([a],[b])=>a.localeCompare(b)).slice(-366)
