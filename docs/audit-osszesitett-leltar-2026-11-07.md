@@ -288,3 +288,10 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - **Auditpontok:** a 24 tételből A-01 és A-18 zárható önállóan igazolt technikai követelményként; a többihez további szerepkörös, pedagógiai, jogi vagy valós telepítési elfogadás tartozik. Ez nem azt jelenti, hogy a többi 22 pont kódja hiányzik.
 - **Kiadási kapuk:** (1) teljes zenepedagógiai, kotta/hang/kvíz és 1793 fogalom lektorálása; (2) összes külső média és kiadói engedély ellenőrzése; (3) valódi CloudPanel PHP/MySQL migráció és telepítés; (4) éles szerepkörös és fizikai két eszközös próba; (5) manuális WCAG és mobil teszt; (6) opcionális Gemini élő API/adatkezelési validáció – AI nélkül a helyi keresős mód maradhat.
 - A `main` ágra nem történt összevezetés. A végleges letöltési csomag továbbra sem kiadható.
+
+
+## 2026-11-08 – PHP-függőségletöltési CI-helyreállítás és XP-regresszió
+
+- `98f835b31bc17708e5d6283cb5fe885913df6a32`: az XP-kód és regresszió után a Chromium `42472481460` és Linux `42472481538` ellenőrzések sikeresek, és **304 / 304 TypeScript/Node teszt átment**. A PHP `42472481550` futás nem kódhibával, hanem a PHPMailer 6.10.0 GitHub ZIP letöltése közben fellépő `curl error 56` kapcsolatszakadás miatt elbukott.
+- `.github/workflows/php-release.yml`: a Composer letöltés legfeljebb három próbálkozást kap, rövid visszavárással, de a hiányzó csomagot nem hagyja jóvá és a telepítési ZIP hiányos függőséggel továbbra sem készülhet el. Commit: `ffe63f5e87fafd0dc4b88d17f8bfcb45cea563bf`.
+- **A módosított folyamat új ellenőrzései:** Chromium `42472684234` **success**, PHP/MySQL/ZIP `42472684239` **success**, Linux `42472684300` **success**. A technikai javítás tesztelt, de a szakmai és produkciós kiadási feltételek továbbra is nyitottak.
