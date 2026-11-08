@@ -26,6 +26,13 @@ try {
   await checkAccessibility(page, 'főoldal');
 
   await page.getByRole('button',{name:'Kurzus indítása'}).click();
+  await page.getByRole('button',{name:'Mintaválasz megmutatása'}).first().click();
+  if (await page.getByRole('button',{name:'Válasz elrejtése'}).count()!==1)
+    throw new Error('Self-check answer did not open');
+  await page.getByRole('button',{name:/1\.2 /}).first().click();
+  if (await page.getByRole('button',{name:'Válasz elrejtése'}).count()!==0)
+    throw new Error('Self-check answer leaked to another subchapter');
+  await page.getByRole('button',{name:/1\.1 /}).first().click();
   await checkAccessibility(page, 'alapfejezet');
   await page.getByRole('button',{name:'Alfejezet tanulmányozva'}).click();
   await page.getByText('Tanulmányozottnak jelölve').waitFor();
