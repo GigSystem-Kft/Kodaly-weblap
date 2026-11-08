@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { MATCHING_PAIRS } from '../data/musicData';
-import { MatchingPair } from '../types';
-import { Layers, RotateCcw, Award, CheckCircle2 } from 'lucide-react';
+import { Layers, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { playNote } from '../utils/audio';
+
+// Use unbiased Fisher–Yates shuffling instead of a random comparator.
+const shuffle = <T,>(items: T[]): T[] => {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+};
+
+const matchingLabelKey = (text: string): string =>
+  text.normalize('NFC').trim().replace(/\\s+/g, ' ').toLocaleLowerCase('hu-HU');
 
 interface MatchingGameProps {
   onCompleted: (pairIds: string[]) => void;
@@ -17,7 +29,6 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
   const [selectedMatch, setSelectedMatch] = useState<string | null>(null);
   const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
-  const [score, setScore] = useState<number>(0);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
   const [feedback, setFeedback] = useState('');
 
@@ -25,16 +36,25 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
     const categoryPairs = selectedCategory !== 'all'
       ? MATCHING_PAIRS.filter((pair) => pair.category === selectedCategory)
       : MATCHING_PAIRS;
-    const shuffledPairs = [...categoryPairs].sort(() => Math.random() - 0.5);
-    const subset = shuffledPairs.slice(0, Math.min(6, shuffledPairs.length));
-    const tList = subset.map((p) => ({ id: p.id, text: p.term, pairId: p.id })).sort(() => Math.random() - 0.5);
-    const mList = subset.map((p) => ({ id: p.id + '-m', text: p.match, pairId: p.id })).sort(() => Math.random() - 0.5);
+    // Do not show visually indistinguishable answers with different pair IDs.
+    // Such rounds are impossible to solve reliably from their visible labels.
+    const termLabels = new Set<string>();
+    const answerLabels = new Set<string>();
+    const subset = shuffle(categoryPairs).filter(pair => {
+      const term = matchingLabelKey(pair.term);
+      const answer = matchingLabelKey(pair.match);
+      if (!term || !answer || termLabels.has(term) || answerLabels.has(answer)) return false;
+      termLabels.add(term);
+      answerLabels.add(answer);
+      return true;
+    }).slice(0, 6);
+    const tList = shuffle(subset.map(p => ({ id: p.id, text: p.term, pairId: p.id })));
+    const mList = shuffle(subset.map(p => ({ id: p.id + '-m', text: p.match, pairId: p.id })));
     setTerms(tList);
     setMatches(mList);
     setMatchedPairs([]);
     setSelectedTerm(null);
     setSelectedMatch(null);
-    setScore(0);
     setIsCompleted(false);
     setFeedback('');
   };
@@ -69,7 +89,6 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
       const newMatched = [...matchedPairs, termObj.pairId];
       setMatchedPairs(newMatched);
       setFeedback(`Helyes párosítás! ${newMatched.length} / ${terms.length} pár megtalálva.`);
-      setScore((prev) => prev + 20);
       setSelectedTerm(null);
       setSelectedMatch(null);
 
