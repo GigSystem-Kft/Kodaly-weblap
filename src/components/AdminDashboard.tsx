@@ -4,6 +4,7 @@ import { apiFetch } from '../api';
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
 type TutorSource = { id: string; title: string; createdAt: string; size: number };
+type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];mailConfigured:boolean;scope:string};
 type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
  sources:{source:string;chunks:number;characters:number;kind:string}[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
@@ -16,6 +17,8 @@ export const AdminDashboard: React.FC = () => {
   const [coverageOrigin, setCoverageOrigin] = useState<'live' | 'static' | null>(null);
   const [staticCoverage, setStaticCoverage] = useState<Coverage | null>(null);
   const [coverageError, setCoverageError] = useState('');
+  const [deploymentCheck, setDeploymentCheck] = useState<DeploymentCheck | null>(null);
+  const [deploymentError, setDeploymentError] = useState('');
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceTitle, setSourceTitle] = useState('');
   const [search, setSearch] = useState('');
@@ -35,6 +38,18 @@ export const AdminDashboard: React.FC = () => {
     setUsers((await u.json()).users);
     setInvites((await i.json()).invitations);
     setSources((await sourceResponse.json()).sources);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiFetch('/api/auth/deployment-check').then(async response => {
+      if (!response.ok) throw new Error('A telepítési önellenőrzés nem érhető el.');
+      const data = await response.json() as DeploymentCheck;
+      if (!cancelled) setDeploymentCheck(data);
+    }).catch(cause => {
+      if (!cancelled) setDeploymentError(cause instanceof Error ? cause.message : 'Telepítési ellenőrzési hiba.');
+    });
+    return () => { cancelled = true; };
   }, []);
 
   const [coverageRefreshToken, setCoverageRefreshToken] = useState(0);
@@ -141,6 +156,33 @@ export const AdminDashboard: React.FC = () => {
       <p className="text-sm text-slate-600 mb-5">Az adminisztráció kizárólag jogosult fiókkal érhető el. A meghívókat a rendszer automatikusan e-mailben küldi.</p>
       {message && <p role="status" className="mb-3 text-sm text-emerald-700">{message}</p>}
       {error && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
+      <section className="rounded-xl border border-slate-200 bg-white p-5 mb-6" aria-label="Telepítés állapota">
+        <h3 className="font-bold mb-2">Telepítés és fájlok ellenőrzése</h3>
+        <p className="text-sm text-slate-600 mb-2">
+          Csak olvasási célú szerverellenőrzés. A fájlkészlet megfelelő állapota nem bizonyítja az SMTP, a tananyagok vagy a teljes hallgatói életút helyességét.
+        </p>
+        {deploymentError && <p role="alert" className="text-sm text-amber-800">{deploymentError}</p>}
+        {!deploymentError && !deploymentCheck && <p className="text-sm">A telepítés állapotának lekérdezése...</p>}
+        {deploymentCheck && <>
+          <p role={deploymentCheck.ready ? 'status' : 'alert'} className={'text-sm font-semibold mb-2 ' + (deploymentCheck.ready ? 'text-emerald-800' : 'text-red-800')}>
+            {deploymentCheck.ready ? 'A kötelező fájlok és belépési állományok jelen vannak.' : 'A telepítés fájlkészlete ellenőrzést igényel.'}
+          </p>
+          {deploymentCheck.missing.length > 0 && (
+            <div className="text-sm text-red-800 mb-2">
+              <strong>Hiányzó vagy üres fájlok ({deploymentCheck.missing.length}):</strong>
+              <ul className="list-disc pl-6">{deploymentCheck.missing.map(item=><li key={item}>{item}</li>)}</ul>
+            </div>
+          )}
+          {deploymentCheck.publicArchives.length > 0 && (
+            <div role="alert" className="text-sm text-red-800 mb-2">
+              <strong>Nyilvános helyre került biztonsági mentések ({deploymentCheck.publicArchives.length}):</strong>
+              <ul className="list-disc pl-6">{deploymentCheck.publicArchives.map(item=><li key={item}>{item}</li>)}</ul>
+              Az ellenőrzött archívumokat a webgyökéren kívül kell megőrizni; ez a felület semmit nem töröl.
+            </div>
+          )}
+          <p className="text-xs text-slate-600">SMTP-konfiguráció: {deploymentCheck.mailConfigured ? 'beállítva (kézbesítés nincs itt tesztelve)' : 'nincs igazolva'} · Ellenőrizve: {deploymentCheck.checkedAt}</p>
+        </>}
+      </section>
       <form className="rounded-xl border bg-white p-5 mb-6 flex flex-wrap gap-3 items-end"
         onSubmit={e => { e.preventDefault(); if (email.trim() && !busy) void action('invite', { email: email.trim() }, 'Meghívó elküldve.'); }}>
         <label className="text-sm flex-1 min-w-56">Új hallgató meghívása
