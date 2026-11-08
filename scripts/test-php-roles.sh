@@ -59,7 +59,7 @@ test "$student_escalation" = 403
 # not affect it, even though both accounts share a single tenant/database.
 curl -fsS -b /tmp/zm-admin-cookies "${base}progress" > /tmp/zm-role-admin-before.json
 curl -fsS -b "$student_jar" "${base}progress" > /tmp/zm-role-student-before.json
-php -r '$j=json_decode(file_get_contents("/tmp/zm-role-student-before.json"),true); if(($j["progress"]??"INVALID")!==null) exit(1);'
+php -r '$j=json_decode(file_get_contents("/tmp/zm-role-student-before.json"),true); if(!is_array($j) || !array_key_exists("progress",$j) || $j["progress"]!==null) exit(1);'
 student_revision="$(php -r '$j=json_decode(file_get_contents("/tmp/zm-role-student-before.json"),true);echo $j["revision"];')"
 test "${#student_revision}" = 64
 student_progress='{"completedChapters":["szolfézs"],"completedSubchapters":[],"quizScores":{"ritmus":77},"flashcardsMastered":[],"matchingCompleted":[],"xp":10,"streak":0,"lastActiveDate":"","activityDays":[]}'
