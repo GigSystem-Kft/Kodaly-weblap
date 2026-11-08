@@ -128,6 +128,10 @@ jobs:
           cp php/api/tutor-search.php release/api/tutor-search.php
           cp -a php/api/vendor release/api/vendor
           node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
+          # A-07: the live PHP assistant must contain all 1,793 chapter 09
+          # glossary entries, even if its total chunk count differs from
+          # the separately generated frontend/source-inventory.json report.
+          php -r '$k=require "release/api/knowledge.php"; $n=0; foreach($k as $e){if(str_starts_with((string)($e["label"]??""), "09. Zenei kifejezések / ")) ++$n;} if($n!==1793){fwrite(STDERR, "Missing chapter 09 PHP glossary entries: $n/1793\\n"); exit(1);} echo "Chapter 09 PHP glossary coverage passed: $n/1793\\n";'
           php -r 'require "php/api/creative-answers.php"; $k=require "release/api/knowledge.php"; $a=creativePracticeAnswer("Ajánlj játékos módszert a ritmusérzék fejlesztésére!",$k); if(!is_string($a)||!str_contains($a,"Szirányi Borbála")||!str_contains($a,"**Forrás:**")) {fwrite(STDERR,"Creative tutor integration failed\\n"); exit(1);} echo "Creative tutor integration passed\\n";'
           php -r '$a=require "release/api/knowledge.php"; foreach($a as $e){if(stripos($e["source"]??"", "kesztler")!==false) {fwrite(STDERR,"Excluded OCR text found in index\\n"); exit(1);}} echo "Source blacklist verified\\n";'
           python3 scripts/verify-release-assets.py release
