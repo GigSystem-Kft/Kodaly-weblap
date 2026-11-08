@@ -295,3 +295,11 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - `98f835b31bc17708e5d6283cb5fe885913df6a32`: az XP-kód és regresszió után a Chromium `42472481460` és Linux `42472481538` ellenőrzések sikeresek, és **304 / 304 TypeScript/Node teszt átment**. A PHP `42472481550` futás nem kódhibával, hanem a PHPMailer 6.10.0 GitHub ZIP letöltése közben fellépő `curl error 56` kapcsolatszakadás miatt elbukott.
 - `.github/workflows/php-release.yml`: a Composer letöltés legfeljebb három próbálkozást kap, rövid visszavárással, de a hiányzó csomagot nem hagyja jóvá és a telepítési ZIP hiányos függőséggel továbbra sem készülhet el. Commit: `ffe63f5e87fafd0dc4b88d17f8bfcb45cea563bf`.
 - **A módosított folyamat új ellenőrzései:** Chromium `42472684234` **success**, PHP/MySQL/ZIP `42472684239` **success**, Linux `42472684300` **success**. A technikai javítás tesztelt, de a szakmai és produkciós kiadási feltételek továbbra is nyitottak.
+
+
+## 2026-11-08 – jelszóváltási adatvesztés-védelem és vendég eredmények böngészős tartóssága
+
+- **A-06/A-21:** A jelszóváltás minden eszközön érvénytelenítheti a bejelentkezést. Az `AccountPanel.tsx` ezért most a kijelentkezéshez hasonlóan megerősítést kér, ha a profil utolsó tanulási változásai még nem kerültek a szerverre. A figyelmeztetés visszautasításakor a jelszóváltási POST nem indul el. A már fiókonként elkülönített függőben lévő helyi mentéseket a változtatás nem törli.
+- **A-04/A-05/A-06/A-24:** A Chromium-füstteszt egy teljesen sikeres párosító kör után most ténylegesen újratölti a böngészőoldalt, és összeveti a vendég helyi tanulási naplójában a megtalált pár-ID-ket és XP-t. A teszt az előző feladatsor állapotmentésének megtörténtét kivárja.
+- Kódcommitok: `77fbc1d2f89e176b7f6deafcfbb6f3739f623013`, `ed66d569b6ab673d2cf270979389c6bdc41683aa`. Az eredményeket csak a friss Chromium, Linux és PHP CI lezárása után szabad sikeresnek minősíteni.
+- **Maradék:** valós bejelentkezéses jelszóváltás, többeszközös fiókszinkron, tanár/admin jogosultság, CloudPanel-telepítés, a teljes szakmai és licencellenőrzés, manuális WCAG. A `main` változatlan, végleges csomag nem készül.
