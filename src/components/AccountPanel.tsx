@@ -156,6 +156,36 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
     }
   };
 
+  const exportPersonalData = async () => {
+    if (!user || busy) return;
+    setBusy(true); setError(''); setSuccess('');
+    try {
+      const response = await apiFetch('/api/auth/export-data', {credentials:'same-origin'});
+      if (!response.ok) throw new Error('A személyes adatok exportálása nem sikerült.');
+      const payload = await response.json();
+      if (payload?.format !== 'zeneelmeleti-muhely-personal-data-v1' ||
+          payload?.profile?.id !== user.id)
+        throw new Error('A kiszolgáló nem a megfelelő fiók adatait adta vissza.');
+      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json;charset=utf-8'});
+      const href = URL.createObjectURL(blob);
+      try {
+        const anchor = document.createElement('a');
+        anchor.href = href;
+        anchor.download = 'zeneelmeleti-muhely-sajat-adataim-' + new Date().toISOString().slice(0,10) + '.json';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+      } finally {
+        URL.revokeObjectURL(href);
+      }
+      setSuccess('A személyes adataid JSON formátumban letöltésre kerültek.');
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Az exportálás nem sikerült.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const signOut = async () => {
     if (hasUnsavedProgress && !window.confirm(
       'A legutóbbi tanulási eredményeid még nem kerültek a szerverre. ' +
@@ -239,8 +269,13 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
             </button>
           </div>}
           {success && <p role="status" className="text-sm text-emerald-700 mt-2">{success}</p>}
+          {error && <p role="alert" className="text-sm text-rose-700 mt-2">{error}</p>}
           <div className="flex flex-wrap gap-2 mt-4">
             <button type="button" onClick={onImportLocal} className="rounded-lg px-4 py-2 bg-indigo-600 text-white text-sm hover:bg-indigo-500">Korábbi helyi eredmények átvitele</button>
+            <button type="button" disabled={busy} onClick={()=>{void exportPersonalData();}}
+              className="rounded-lg px-4 py-2 border border-slate-300 text-slate-800 text-sm hover:bg-slate-100 disabled:opacity-50">
+              Saját adataim exportálása (JSON)
+            </button>
             <button type="button" onClick={() => {setMode('change-password');setError('');}} className="rounded-lg px-4 py-2 border border-indigo-300 text-indigo-700 text-sm hover:bg-indigo-50">Jelszó módosítása</button>
             <button type="button" disabled={busy} onClick={signOut} className="rounded-lg px-4 py-2 border border-slate-300 text-slate-700 text-sm hover:bg-slate-100 flex items-center gap-2"><LogOut className="w-4 h-4" />Kijelentkezés</button>
             {user.role !== 'admin' && (
