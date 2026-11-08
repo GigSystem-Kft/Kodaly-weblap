@@ -158,6 +158,10 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
 
   const exportPersonalData = async () => {
     if (!user || busy) return;
+    if (hasUnsavedProgress) {
+      setError('Az exportálás előtt várd meg a tanulási eredmények szerveroldali mentését, hogy ne maradjanak ki a legutóbbi változások.');
+      return;
+    }
     setBusy(true); setError(''); setSuccess('');
     try {
       const response = await apiFetch('/api/auth/export-data', {credentials:'same-origin'});
@@ -272,7 +276,8 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
           {error && <p role="alert" className="text-sm text-rose-700 mt-2">{error}</p>}
           <div className="flex flex-wrap gap-2 mt-4">
             <button type="button" onClick={onImportLocal} className="rounded-lg px-4 py-2 bg-indigo-600 text-white text-sm hover:bg-indigo-500">Korábbi helyi eredmények átvitele</button>
-            <button type="button" disabled={busy} onClick={()=>{void exportPersonalData();}}
+            <button type="button" disabled={busy || hasUnsavedProgress} onClick={()=>{void exportPersonalData();}}
+              title={hasUnsavedProgress ? 'Az export előtt várd meg az eredmények szinkronizálását.' : undefined}
               className="rounded-lg px-4 py-2 border border-slate-300 text-slate-800 text-sm hover:bg-slate-100 disabled:opacity-50">
               Saját adataim exportálása (JSON)
             </button>
