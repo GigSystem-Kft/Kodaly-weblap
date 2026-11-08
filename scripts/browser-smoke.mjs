@@ -166,6 +166,43 @@ try {
     console.log('Account UI: '+role+' navigation verified');
   }
 
+  // Storage is not always available (privacy mode, denied site permissions).
+  // Both a guest and an authenticated learner must remain usable.
+  for (const accountAvailable of [false,true]) {
+    const lockedContext = await browser.newContext();
+    await lockedContext.addInitScript(() => {
+      Object.defineProperty(window,'localStorage',{
+        configurable:true,
+        get(){ throw new DOMException('Storage blocked by browser','SecurityError'); }
+      });
+    });
+    const lockedPage = await lockedContext.newPage();
+    await lockedPage.route('**/api/index.php?*', route => {
+      const endpoint = new URL(route.request().url()).searchParams.get('route');
+      const data = endpoint === 'auth/me'
+        ? {user:accountAvailable
+          ? {id:'storage-locked-user',email:'locked@example.invalid',displayName:'Tárolástiltás-fiók',role:'student'}
+          : null}
+        : endpoint === 'progress'
+        ? {progress:null,revision:'0'.repeat(64)}
+        : endpoint === 'auth/status'
+        ? {available:true,registrationEnabled:false}
+        : endpoint === 'chat/status'
+        ? {mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}}
+        : {error:'Fixture endpoint unavailable'};
+      return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
+    });
+    await lockedPage.goto(root,{waitUntil:'domcontentloaded'});
+    await lockedPage.getByRole('button',{name:/06\. Profil/}).click();
+    if(accountAvailable){
+      await lockedPage.getByText('Tárolástiltás-fiók').first().waitFor();
+    }else{
+      await lockedPage.getByRole('alert').filter({hasText:/helyi tárolója/}).waitFor();
+    }
+    await lockedContext.close();
+    console.log('Storage denied: '+(accountAvailable?'authenticated':'guest')+' UI usable');
+  }
+
   console.log('Browser smoke checks PASSED');
 } catch(error) {
   failures.push(error instanceof Error ? error.stack : String(error));
