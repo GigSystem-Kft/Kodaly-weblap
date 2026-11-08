@@ -13,6 +13,8 @@ export const AdminDashboard: React.FC = () => {
   const [invites, setInvites] = useState<Invite[]>([]);
   const [sources, setSources] = useState<TutorSource[]>([]);
   const [coverage, setCoverage] = useState<Coverage | null>(null);
+  const [coverageOrigin, setCoverageOrigin] = useState<'live' | 'static' | null>(null);
+  const [staticCoverage, setStaticCoverage] = useState<Coverage | null>(null);
   const [coverageError, setCoverageError] = useState('');
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceTitle, setSourceTitle] = useState('');
@@ -37,19 +39,44 @@ export const AdminDashboard: React.FC = () => {
 
   useEffect(() => {
     void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
-    apiFetch('/api/admin/source-coverage').then(async response => {
-      if(!response.ok) throw new Error('A PHP forrásjelentés nem érhető el.');
-      setCoverage(await response.json() as Coverage);
-    }).catch(async () => {
-      try {
-        const response=await fetch('/source-inventory.json',{cache:'no-store'});
-        if(!response.ok) throw new Error('Nincs helyi forrásjelentés.');
-        setCoverage(await response.json() as Coverage);
-      } catch(error) {
-        setCoverageError(error instanceof Error ? error.message : 'Forrásjelentési hiba.');
+    let cancelled = false;
+    const readCoverage = async () => {
+      // Compare independent datasets, never silently label a static
+      // build-time report as the live PHP index.
+      const [live, stat] = await Promise.allSettled([
+        apiFetch('/api/admin/source-coverage').then(async response => {
+          if (!response.ok) throw new Error('A PHP-forrásjelentés nem érhető el.');
+          return await response.json() as Coverage;
+        }),
+        fetch('/source-inventory.json', {cache:'no-store'}).then(async response => {
+          if (!response.ok) throw new Error('A statikus forrásleltár nem érhető el.');
+          return await response.json() as Coverage;
+        })
+      ]);
+      if (cancelled) return;
+      const liveReport = live.status === 'fulfilled' ? live.value : null;
+      const staticReport = stat.status === 'fulfilled' ? stat.value : null;
+      setStaticCoverage(staticReport);
+      setCoverage(liveReport ?? staticReport);
+      setCoverageOrigin(liveReport ? 'live' : staticReport ? 'static' : null);
+      if (!liveReport && !staticReport) {
+        setCoverageError('Sem az élő PHP-jelentés, sem a statikus forrásleltár nem érhető el.');
+      } else {
+        setCoverageError('');
       }
-    });
+    };
+    void readCoverage();
+    return () => { cancelled = true; };
   }, [load]);
+
+  const liveSourceNames = new Set(coverageOrigin === 'live' ? coverage?.sources.map(item => item.source) : []);
+  const staticSourceNames = new Set(staticCoverage?.sources.map(item => item.source) ?? []);
+  const staticOnly = coverageOrigin === 'live'
+    ? (staticCoverage?.sources ?? []).filter(item => !liveSourceNames.has(item.source))
+    : [];
+  const liveOnly = coverageOrigin === 'live'
+    ? (coverage?.sources ?? []).filter(item => !staticSourceNames.has(item.source))
+    : [];
 
   const uploadSource = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -138,13 +165,36 @@ export const AdminDashboard: React.FC = () => {
         {coverageError && <p role="alert" className="text-red-700 text-sm">{coverageError}</p>}
         {!coverage && !coverageError && <p className="text-sm">A forrásjegyzék betöltése...</p>}
         {coverage && <>
+          {coverageOrigin === 'live' ? (
+            <p role="status" className="mb-3 text-sm font-semibold text-emerald-800">Élő PHP keresőindex – a kiszolgáló ténylegesen használt szövegrészletei.</p>
+          ) : (
+            <p role="alert" className="mb-3 text-sm font-semibold text-amber-800">
+              Az élő PHP keresőindex nem érhető el. Az alábbi számok kizárólag a buildkor létrehozott statikus forrásleltárból származnak, és nem bizonyítják a szerver aktuális tartalmát.
+            </p>
+          )}
+          {coverageOrigin === 'live' && staticCoverage && (
+            <div className="mb-4 rounded-lg border border-slate-200 p-3 text-sm">
+              <p className="font-semibold mb-1">Élő PHP és statikus csomagjelentés összehasonlítása</p>
+              <p>PHP: {coverage.sources.length} forráscsoport, {coverage.indexChunks} szövegrész · Csomag: {staticCoverage.sources.length} forráscsoport, {staticCoverage.indexChunks} szövegrész.</p>
+              {((coverage.indexChunks !== staticCoverage.indexChunks || liveOnly.length > 0 || staticOnly.length > 0)) && (
+                <p className="mt-1 text-amber-800">A két jelentés eltér. Más adatforrások és indexelési szabályok is okozhatják az eltérést; ez önmagában nem bizonyít adatvesztést.</p>
+              )}
+              {(staticOnly.length > 0 || liveOnly.length > 0) && (
+                <details className="mt-2">
+                  <summary className="cursor-pointer font-semibold">Forráscsoport-eltérések (csak név alapján)</summary>
+                  <p className="mt-2">Csak a csomagleltárban ({staticOnly.length}): {staticOnly.map(item => item.source).join('; ') || 'nincs'}</p>
+                  <p className="mt-2">Csak az élő PHP-indexben ({liveOnly.length}): {liveOnly.map(item => item.source).join('; ') || 'nincs'}</p>
+                </details>
+              )}
+            </div>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.sources.length}</strong>Indexelt forráscsoport</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.indexChunks}</strong>Indexelt szövegrész</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{Math.round(coverage.indexedCharacters/1000)} ezer</strong>Karakter</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{sources.length}</strong>Külön feltöltött forrás (PHP)</div>
           </div>
-          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. A külön feltöltött források is bekerülnek az élő PHP-jelentésbe; fejlesztői módban eltérhet a statikus csomagindex.</p>
+          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. Mérés: {coverageOrigin === 'live' ? 'élő PHP' : 'statikus csomag'}. A külön feltöltött források csak az élő PHP-jelentésbe kerülnek be.</p>
           <details className="mb-3"><summary className="cursor-pointer font-semibold">Indexelt dokumentumok – részletes bontás</summary>
             <div className="overflow-x-auto mt-2"><table className="w-full text-xs">
               <thead><tr className="border-b text-left"><th className="p-2">Forrás</th><th className="p-2">Részlet</th><th className="p-2">Karakter</th></tr></thead>
