@@ -39,3 +39,12 @@ test('study card and matching IDs are unique, nonempty and stable', () => {
   assert.ok(FLASHCARDS_DATA.every(card=>card.term.trim() && card.definition.trim()));
   assert.ok(MATCHING_PAIRS.every(pair=>pair.term.trim() && pair.match.trim()));
 });
+
+test('all curriculum questions avoid exact duplicate answer options',()=>{
+  for(const q of QUIZ_QUESTIONS){
+    const normalized=q.options.map(option=>
+      option.normalize('NFC').replace(/\s+/g,' ').trim().toLocaleLowerCase('hu-HU'));
+    assert.equal(new Set(normalized).size,q.options.length,
+      'Repeated text in question '+q.id+': '+JSON.stringify(q.options));
+  }
+});
