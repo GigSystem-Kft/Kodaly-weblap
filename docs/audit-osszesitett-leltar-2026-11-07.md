@@ -250,3 +250,11 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A kibővített Chromium-teszt első futása (`42467637714`) sikertelen volt: az oldal címe után még nem álltak rendelkezésre a `useEffect` által összeállított párok. A tesztet explicit, látható fogalomgombra várakozással javítottuk (`27761824d9b071cb97c88982c5510d264748ea48`).
 - **Chromium `42467713101`: success. PHP/MySQL/ZIP `42467713130`: success. Linux `42467713115`: success.** A párosító hibás választ, szöveges élő visszajelzést, teljes helyes feladatsort és újraindítást tartalmazó automatikus ellenőrzés ezzel sikeres.
 - A-05 párosítójáték-böngészős részpróbája lezárható; a teljes A-05 / A-23 kézi segédtechnológiás és éles fiókos elfogadása nem. **A `main` nincs módosítva, végleges csomagot nem adtunk ki.**
+
+
+## 2026-11-08 – gyors újraválasztás és párosító állapotverseny
+
+- **A-05/A-24:** A `MatchingGame.tsx` hibás párosítás után korábban 500 ms-mal később állította vissza a kijelöléseket. Ez a késleltetett visszaállítás egy gyorsan indított új kijelölést is törölhetett, ezért a hibás pár kijelölésének elengedése most azonnal megtörténik, miközben a magyar szöveges hibajelzés megmarad.
+- A `scripts/browser-smoke.mjs` külön regressziója azonnal ismét kijelöl egy fogalmat, majd az egykori 500 ms késleltetésnél tovább várva ellenőrzi, hogy a friss kijelölés nem tűnt el.
+- Commitok: `cec6cad6f836024da501042f6c1cbe11d6cc2361`, `12e4a4f7e4f8b35564d222c762b42e885e506385`. Az új ellenőrzések CI-futtatásai: Chromium `42468385846`, Linux `42468385850`, PHP `42468385907`. E bejegyzés készítésekor még folyamatban voltak.
+- A szakmai/jogi ellenőrzések és az éles jogosultsági, többeszközös, CloudPanel, manuális WCAG teszt továbbra is kiadásblokkoló. A `main` változatlan.
