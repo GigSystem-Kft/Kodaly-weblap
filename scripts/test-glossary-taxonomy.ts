@@ -10,8 +10,8 @@ test('glossary maintains exactly 1793 source terms, IDs and definitions', () => 
 });
 test('conservative taxonomy changes are visible and never hidden by the practice bank',()=>{
   const terms=MUSIC_EXPRESSIONS;
-  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,273);
-  for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció']){
+  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,0);
+  for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció','Általános zenei nyelv és utasítások']){
     assert.ok(MUSIC_EXPRESSION_CATEGORIES.includes(label));
     assert.ok(terms.some(t=>t.category===label));
     assert.ok(EXPRESSION_FLASHCARDS.some(c=>c.category==='Zenei kifejezések – '+label),label);
@@ -87,6 +87,24 @@ test('reclassified Hungarian harmony, articulation, vocal and historical glossar
     'drinking song':'Zenei műfajok és formák'
   };
   for(const [term,category] of Object.entries(expected)){
+    assert.equal(MUSIC_EXPRESSIONS.find(item=>item.term===term)?.category,category,term);
+  }
+});
+
+test('all 1793 historic source entries have explicit pedagogical domains without a catch-all',()=>{
+  const known = new Set(MUSIC_EXPRESSION_CATEGORIES);
+  assert.equal(new Set(MUSIC_EXPRESSIONS.map(item=>item.category)).size,12);
+  assert.equal(MUSIC_EXPRESSIONS.filter(item=>item.category==='Egyéb szakkifejezések').length,0);
+  assert.ok(MUSIC_EXPRESSIONS.every(item=>known.has(item.category)));
+  for(const [term,category] of Object.entries({
+    'con':'Általános zenei nyelv és utasítások',
+    'sempre':'Általános zenei nyelv és utasítások',
+    'senza':'Általános zenei nyelv és utasítások',
+    'drei':'Általános zenei nyelv és utasítások',
+    'hiatus':'Éneklés és kórus',
+    'gerade bewegung':'Hangsorok és harmóniák',
+    'főpróba':'Előadásmód és artikuláció',
+  })){
     assert.equal(MUSIC_EXPRESSIONS.find(item=>item.term===term)?.category,category,term);
   }
 });
