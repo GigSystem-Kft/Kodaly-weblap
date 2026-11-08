@@ -10,6 +10,6 @@ test('every glossary question has four unambiguous distinct choices', () => {
     const normalized=q.options.map(x=>x.replace(/\s+/g,' ').trim().toLocaleLowerCase('hu-HU'));
     assert.equal(new Set(normalized).size,4,'Repeated meaning makes answer ambiguous: '+q.id);
     assert.ok(normalized.every(x=>x.length>0),'Blank choice: '+q.id);
-    assert.ok(q.explanation.includes(q.options[q.correctIndex]),'Answer not backed by original glossary definition: '+q.id);
+    assert.ok(q.explanation.replace(/\s+/g,' ').includes(q.options[q.correctIndex]),'Answer not backed by original glossary definition: '+q.id);
   }
 });
