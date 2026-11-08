@@ -24,6 +24,12 @@ test('all quiz questions have unambiguous answers, descriptions and known curric
     assert.ok(known.has(question.chapterId), `Unknown quiz chapter: ${question.chapterId}`);
     assert.ok(question.question.trim() && question.explanation.trim(), `Missing question/explanation: ${question.id}`);
     assert.ok(question.options.length >= 2 && question.options.every(option=>option.trim()), `Invalid options: ${question.id}`);
+    const normalizedAnswers = question.options.map(option =>
+      option.trim().normalize('NFC').toLocaleLowerCase('hu-HU').replace(/\s+/g,' ')
+    );
+    assert.equal(new Set(normalizedAnswers).size, normalizedAnswers.length,
+      `Ambiguous duplicate answer options: ${question.id}`);
+
     assert.ok(Number.isInteger(question.correctIndex) && question.correctIndex >= 0 && question.correctIndex < question.options.length, `Invalid correct option: ${question.id}`);
   }
 });
