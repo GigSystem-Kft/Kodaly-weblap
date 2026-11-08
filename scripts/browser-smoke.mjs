@@ -390,6 +390,14 @@ try {
   await erasePage.route('**/api/index.php?*', route => {
     const request = route.request();
     const endpoint = new URL(request.url()).searchParams.get('route');
+    if (endpoint === 'auth/export-data') {
+      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+        format:'zeneelmeleti-muhely-personal-data-v1',
+        exportedAt:'2026-11-08T22:00:00Z',
+        profile:{id:'erase-fixture',email:'erase@example.invalid',display_name:'Törlési próbafiók',role:'student'},
+        progress:{completedChapters:['ritmus'],xp:10},progressUpdatedAt:null
+      })});
+    }
     if (endpoint === 'auth/delete-account') {
       erasureRequests++;
       const body = request.postDataJSON();
@@ -412,6 +420,12 @@ try {
   await erasePage.goto(root,{waitUntil:'domcontentloaded'});
   await erasePage.getByRole('button',{name:/06\. Profil/}).click();
   await erasePage.getByText('Törlési próbafiók').first().waitFor();
+  const [personalDownload] = await Promise.all([
+    erasePage.waitForEvent('download'),
+    erasePage.getByRole('button',{name:'Saját adataim exportálása (JSON)'}).click()
+  ]);
+  if (!personalDownload.suggestedFilename().startsWith('zeneelmeleti-muhely-sajat-adataim-'))
+    throw new Error('Personal data export did not download a user-scoped JSON file');
   await erasePage.evaluate(() => {
     localStorage.setItem('kodaly_pending_progress_erase-fixture', 'TEST_OFFLINE_SNAPSHOT');
   });
