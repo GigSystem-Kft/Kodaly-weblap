@@ -48,3 +48,19 @@ test('all curriculum questions avoid exact duplicate answer options',()=>{
       'Repeated text in question '+q.id+': '+JSON.stringify(q.options));
   }
 });
+
+
+test('perfect fourth and fifth matching definitions agree with the interval audio examples', () => {
+  const fourth = MATCHING_PAIRS.find(pair => pair.id === 'm10');
+  const fifth = MATCHING_PAIRS.find(pair => pair.id === 'm9');
+  assert.ok(fourth && fifth);
+  assert.equal(fourth.term, 'Tiszta kvart (T4)');
+  assert.equal(fourth.category, 'Hangközök');
+  assert.match(fourth.match, /Négy diatonikus fok, öt félhang/);
+  assert.equal(fifth.term, 'Tiszta kvint (T5)');
+  assert.equal(fifth.category, 'Hangközök');
+  assert.match(fifth.match, /Öt diatonikus fok, hét félhang/);
+  // Older stored achievements refer to these IDs, so never replace them.
+  assert.equal(fourth.id, 'm10');
+  assert.equal(fifth.id, 'm9');
+});
