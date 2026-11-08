@@ -48,6 +48,26 @@ try {
   await page.getByRole('button',{name:'Vissza a fejezetekhez'}).click();
   console.log('Guest: chapter and subchapter completion preserved; keyboard chapter navigation OK');
 
+  // A-12/A-19: the overview must count all five core chapters AND the four
+  // extended modules, and each extended module's completion must persist.
+  await page.getByText('TELJESÍTVE: 1/9 TANANYAGEGYSÉG').waitFor();
+  const modules = [
+    'Kreatív zenei nevelés', 'Zenetörténet',
+    'Ének-zene tantárgy-pedagógia', 'Zenei kifejezések'
+  ];
+  for (let i=0; i<modules.length; i++) {
+    const title = modules[i];
+    await page.getByRole('button',{name:new RegExp(title)}).click();
+    await page.getByRole('heading',{name:title,exact:true}).waitFor();
+    await page.getByRole('button',{name:'Modul tanulmányozva'}).click();
+    await page.getByText('Tanulmányozottnak jelölve').waitFor();
+    await page.getByRole('button',{name:'Vissza a tananyaghoz'}).click();
+    await page.getByText('TELJESÍTVE: '+(i+2)+'/9 TANANYAGEGYSÉG').waitFor();
+  }
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.getByText('TELJESÍTVE: 5/9 TANANYAGEGYSÉG').waitFor();
+  console.log('Guest: all four extended modules navigate and retain completion in nine-unit overview');
+
   await page.getByRole('button',{name:/02\. Szókártyák/}).click();
   await page.getByRole('heading',{name:'Zenei Szakkifejezések Gyakorlása'}).waitFor();
   const flashcard=page.locator('[aria-label^="Szókártya:"]');
