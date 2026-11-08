@@ -313,7 +313,7 @@ try {
             'invitationRequired'=>true
         ]);
     }
-    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/resend-verification','auth/reset-request','auth/reset','auth/change-password'], true)) {
+    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/resend-verification','auth/reset-request','auth/reset','auth/change-password','auth/delete-account'], true)) {
         method('POST');
         guardWrite($config);
     } elseif ($route === 'progress' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'PUT') {
@@ -533,6 +533,49 @@ try {
             }
             tokenCookie('', time()-3600);
             answer(200,['success'=>true]);
+
+        case 'auth/delete-account':
+            // User-initiated erasure of a student/teacher account. Production
+            // administrator accounts require a separate supervised process.
+            // Do not allow the browser to select which account to delete.
+            throttle('account-delete', 5);
+            $user=requireUser($pdo);
+            $body=getPayload();
+            $previous=$body['currentPassword'] ?? null;
+            $confirmation=$body['confirmation'] ?? null;
+            if (!is_string($previous) || strlen($previous)>128 ||
+                $previous==='' || $confirmation !== 'FIÓKOM TÖRLÉSE') {
+                fail(400,'A törléshez a jelenlegi jelszó és a pontos megerősítő szöveg szükséges.');
+            }
+            $pdo->beginTransaction();
+            try {
+                $stmt=$pdo->prepare('SELECT email,role,password_hash FROM zm_users WHERE id=? FOR UPDATE');
+                $stmt->execute([$user['id']]);
+                $stored=$stmt->fetch();
+                if (!$stored) { $pdo->rollBack(); fail(401,'A fiók nem található.'); }
+                if ($stored['role']==='admin') {
+                    $pdo->rollBack();
+                    fail(403,'Adminisztrátori fiók önkiszolgáló módon nem törölhető.');
+                }
+                if (!password_verify($previous,(string)$stored['password_hash'])) {
+                    $pdo->rollBack();
+                    fail(403,'A jelenlegi jelszó helytelen.');
+                }
+                // Invitations contain the user's email even after consumption.
+                $stmt=$pdo->prepare('DELETE FROM zm_invitations WHERE email=? OR used_by=?');
+                $stmt->execute([$stored['email'],$user['id']]);
+                // Foreign keys cascade to progress, all sessions and account
+                // tokens; no other user's rows are affected.
+                $stmt=$pdo->prepare('DELETE FROM zm_users WHERE id=? AND role IN (\'student\',\'teacher\')');
+                $stmt->execute([$user['id']]);
+                if ($stmt->rowCount()!==1) throw new RuntimeException('Account deletion did not affect exactly one user');
+                $pdo->commit();
+            } catch (Throwable $error) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $error;
+            }
+            tokenCookie('', time()-3600);
+            answer(200,['success'=>true,'message'=>'A fiókot és a hozzá tartozó szerveroldali tanulási adatokat töröltük.']);
 
         case 'auth/logout':
             $token=$_COOKIE[COOKIE_NAME] ?? '';
