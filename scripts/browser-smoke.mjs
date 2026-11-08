@@ -1,5 +1,6 @@
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
+import { MATCHING_PAIRS } from '../src/data/musicData.ts';
 
 const browser = await chromium.launch({headless:true});
 const root='http://127.0.0.1:4173/';
@@ -61,6 +62,32 @@ try {
   await page.getByRole('button',{name:/03\. Játék/}).click();
   await page.getByRole('heading',{name:/Párosítás|Párosítsd össze/}).waitFor();
   console.log('Guest: matching screen loaded');
+  // Complete the randomized round by matching visible terms against the actual
+  // source bank. This verifies successful completion, not only initial rendering.
+  const termButtons = page.getByRole('button', { name: /^Fogalom:/ });
+  const initialPairs = await termButtons.count();
+  if (initialPairs < 1 || initialPairs > 6)
+    throw new Error('Unexpected matching round size: ' + initialPairs);
+  for (let index = 0; index < initialPairs; index++) {
+    const term = termButtons.nth(index);
+    const termLabel = (await term.textContent())?.trim();
+    const candidatePairs = MATCHING_PAIRS.filter(pair => pair.term === termLabel);
+    const matching = [];
+    for (const candidate of candidatePairs) {
+      const answer = page.getByRole('button', { name: 'Jelentés: ' + candidate.match, exact: true });
+      if (await answer.count() === 1 && await answer.isEnabled()) matching.push(answer);
+    }
+    if (matching.length !== 1)
+      throw new Error('Cannot uniquely resolve visible matching term: ' + termLabel);
+    await term.click();
+    await matching[0].click();
+  }
+  await page.getByRole('heading', { name: 'Gratulálok! Sikeres Párosítás!' }).waitFor();
+  await page.getByRole('button', { name: 'Új játék indítása' }).click();
+  await page.getByText('Megtalált párok:').waitFor();
+  if (await page.getByRole('heading', { name: 'Gratulálok! Sikeres Párosítás!' }).count())
+    throw new Error('Matching restart did not clear completion state');
+  console.log('Guest: full matching round completed and restarted');
 
   await page.getByRole('button',{name:/04\. Teszt/}).click();
   await page.getByRole('heading',{name:'Interaktív Ellenőrző Teszt'}).waitFor();
