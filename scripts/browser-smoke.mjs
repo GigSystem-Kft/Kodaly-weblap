@@ -200,6 +200,9 @@ try {
       return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
     });
     await lockedPage.goto(root,{waitUntil:'domcontentloaded'});
+    if(!accountAvailable){
+      await lockedPage.getByRole('alert').filter({hasText:/helyi tárolója/}).waitFor();
+    }
     await lockedPage.getByRole('button',{name:/06\. Profil/}).click();
     if(accountAvailable){
       await lockedPage.getByText('Tárolástiltás-fiók').first().waitFor();
