@@ -4,7 +4,7 @@ import { apiFetch } from '../api';
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
 type TutorSource = { id: string; title: string; createdAt: string; size: number };
-type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number;
+type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
  sources:{source:string;chunks:number;characters:number;kind:string}[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
 
@@ -170,6 +170,13 @@ export const AdminDashboard: React.FC = () => {
           ) : (
             <p role="alert" className="mb-3 text-sm font-semibold text-amber-800">
               Az élő PHP keresőindex nem érhető el. Az alábbi számok kizárólag a buildkor létrehozott statikus forrásleltárból származnak, és nem bizonyítják a szerver aktuális tartalmát.
+            </p>
+          )}
+          {coverageOrigin === 'live' && typeof coverage.chapter09GlossaryEntries === 'number' && (
+            <p role={coverage.chapter09GlossaryEntries === 1793 ? 'status' : 'alert'}
+              className={'mb-3 text-sm ' + (coverage.chapter09GlossaryEntries === 1793 ? 'text-emerald-800' : 'font-semibold text-red-800')}>
+              09. fejezet – Zenei kifejezések: {coverage.chapter09GlossaryEntries} / 1793 tétel az élő PHP keresőindexben.
+              {coverage.chapter09GlossaryEntries !== 1793 ? ' A teljes fogalomtár nem található az éles indexben.' : ''}
             </p>
           )}
           {coverageOrigin === 'live' && staticCoverage && (
