@@ -19,6 +19,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
   const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
   const [score, setScore] = useState<number>(0);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState('');
 
   const initGame = () => {
     const categoryPairs = selectedCategory !== 'all'
@@ -35,6 +36,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
     setSelectedMatch(null);
     setScore(0);
     setIsCompleted(false);
+    setFeedback('');
   };
 
   useEffect(() => {
@@ -66,6 +68,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
       playNote('C5', 300);
       const newMatched = [...matchedPairs, termObj.pairId];
       setMatchedPairs(newMatched);
+      setFeedback(`Helyes párosítás! ${newMatched.length} / ${terms.length} pár megtalálva.`);
       setScore((prev) => prev + 20);
       setSelectedTerm(null);
       setSelectedMatch(null);
@@ -75,7 +78,8 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
         onCompleted(newMatched);
       }
     } else {
-      // Incorrect
+      // Incorrect: provide the same outcome without requiring audio.
+      setFeedback('Ez a két elem nem tartozik össze. Próbáld újra!');
       playNote('C3', 300);
       setTimeout(() => {
         setSelectedTerm(null);
@@ -105,6 +109,9 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
         </h2>
         <p className="text-slate-600 text-sm">
           Kattints egy kifejezésre, majd a hozzá tartozó jelentésre a párok megtalálásához!
+        </p>
+        <p role="status" aria-live="polite" aria-atomic="true" className="mt-3 min-h-5 text-sm font-semibold text-slate-800">
+          {feedback}
         </p>
       </div>
 
