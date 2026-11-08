@@ -162,10 +162,13 @@ function tutorSourceAudit(array $entries): array {
 
 /** Detailed inventory for authenticated admins; never expose titles of private sources publicly. */
 function tutorDetailedCoverage(array $entries): array {
-    $groups = []; $totalCharacters = 0;
+    $groups = []; $totalCharacters = 0; $glossaryEntries = 0;
     foreach ($entries as $entry) {
         if (!is_array($entry) || !is_string($entry['source'] ?? null)) continue;
         $name = $entry['source'];
+        if (str_starts_with((string)($entry['label'] ?? ''), '09. Zenei kifejezések / ')) {
+            ++$glossaryEntries;
+        }
         $characters = strlen((string)($entry['text'] ?? ''));
         if (!isset($groups[$name])) {
             $groups[$name] = ['source'=>$name,'chunks'=>0,'characters'=>0,'kind'=>'indexed'];
@@ -177,6 +180,9 @@ function tutorDetailedCoverage(array $entries): array {
     ksort($groups);
     $missing = [];
     if (!is_file(__DIR__.'/knowledge.php')) $missing[]='knowledge.php (beépített tudásbázis)';
+    // Each PHP release should index the complete 09. glossary; a partial
+    // manual upload must be visible to the administrator.
+    if ($glossaryEntries !== 1793) $missing[]='09. Zenei kifejezések – PHP keresőindex: ' . $glossaryEntries . '/1793 tétel';
     $omitted = [
         ['file'=>'Kesztler – ellenőrizetlen OCR-átirat',
          'reason'=>'A gépi szöveg szakmai ellenőrzéséig a PHP tudásbázisból kizárva']
@@ -184,6 +190,7 @@ function tutorDetailedCoverage(array $entries): array {
     return [
         'generatedAt'=>gmdate('c'),
         'indexChunks'=>count($entries),
+        'chapter09GlossaryEntries'=>$glossaryEntries,
         'indexedCharacters'=>$totalCharacters,
         'sources'=>array_values($groups),
         'missing'=>$missing,
