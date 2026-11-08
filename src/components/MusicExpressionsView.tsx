@@ -54,7 +54,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
     A mellékelt magyar nyelvű zenei szakkifejezés-gyűjtemény teljes, betűrendben rendezett feldolgozása. Az idegen nyelvű előadási utasítások mellett hangszeres, ritmikai, formai és zenetörténeti fogalmakat is kereshetsz.
    </p>
    <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-4">
-     Forrás: a szerző által mellékelt szótár, eredeti meghatározásokkal. Régi vagy pontatlan szóhasználat is előfordulhat; a Tanársegéd a szakmailag ellenőrzött tananyagokkal összevetve értelmezi. A kategóriák kulcsszavas, tanulást segítő csoportosítások.
+     Forrás: a szerző által mellékelt szótár, eredeti meghatározásokkal. Régi vagy pontatlan szóhasználat is előfordulhat; a Tanársegéd a szakmailag ellenőrzött tananyagokkal összevetve értelmezi. Mind az 1793 eredeti szócikk 12 pedagógiai kategóriában szerepel. A rövid idegen nyelvű utasítások külön csoportot kaptak. A besorolás a mellékelt magyar meghatározásokat követi, de nem helyettesíti a szakmai lektorálást.
    </p>
    <div className="grid sm:grid-cols-3 gap-3 mt-6">
      <button type="button" onClick={()=>onFlashcards('Zenei kifejezések – '+(category==='mind'?'Tempó és időkezelés':category))}
