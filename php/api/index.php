@@ -79,9 +79,20 @@ function guardWrite(array $config): void {
 function throttle(string $action, int $max = 16): void {
     // Single-server pilot throttle; deploy a shared store or edge limits if horizontally scaling.
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $file = sys_get_temp_dir() . '/zm_limit_' . hash('sha256', $action . '|' . $ip);
+    // A shared /tmp file can be owned by a previous PHP-FPM site user after
+    // a CloudPanel site restore. Keep the throttle store privately under
+    // this site's home, outside the public htdocs directory.
+    $directory = dirname(__DIR__, 3) . '/.zeneelmelet-rate-limits';
+    if (!is_dir($directory) && !@mkdir($directory, 0700) && !is_dir($directory)) {
+        error_log('Zeneelmelet: cannot create private login rate-limit directory');
+        fail(503, 'Nem érhető el a bejelentkezési védelem.');
+    }
+    $file = $directory . '/zm_limit_' . hash('sha256', $action . '|' . $ip);
     $f = @fopen($file, 'c+');
-    if (!$f || !flock($f, LOCK_EX)) fail(503, 'Nem érhető el a bejelentkezési védelem.');
+    if (!$f || !flock($f, LOCK_EX)) {
+        error_log('Zeneelmelet: cannot lock private login rate-limit file');
+        fail(503, 'Nem érhető el a bejelentkezési védelem.');
+    }
     $raw = stream_get_contents($f);
     $state = json_decode($raw ?: '{}', true);
     $now = time();
