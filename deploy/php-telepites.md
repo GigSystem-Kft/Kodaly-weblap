@@ -73,7 +73,7 @@ előtt migráció vagy biztonságos jelszó-visszaállítás szükséges.
 - A PHP API támogatja a regisztrációt, bejelentkezést, kijelentkezést és a profil eredménymentését.
 - A Tanársegéd PHP-kiadása a telepítőcsomagban található, lecke- és forrásrészletekből álló **helyi keresőmóddal** működik. Nem használ külső Gemini API-t és nem fogalmaz önálló AI-magyarázatot.
 - E-mail-megerősítés, jelszó-visszaállítás és jelszócsere megvalósult, de valós e-mail-kézbesítéssel és éles használattal még ellenőrizni kell. Fióktörlés és végleges adatvédelmi tájékoztató még hiányzik.
-- Az IP-alapú belépésvédelem a PHP szerver ideiglenes könyvtárát használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
+- Az IP-alapú belépésvédelem a webhely saját, nem nyilvános `~/.zeneelmelet-rate-limits/` mappáját használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
 - **Nyilvános regisztráció ne induljon az üzemeltetési és adatvédelmi ellenőrzésekig.**
 
 ## Meghívásos regisztráció (új kiadás)
@@ -260,3 +260,17 @@ A `Kreatív` módszertani oldalon külön létező 3 eredeti illusztrációhoz
 a felhasználási jogot külön kell tisztázni. Engedély hiányában az
 `images/kreativ/` alatt tárolt eredeti képrészleteket se terjeszd nyilvánosan.
 A szöveges, önálló összefoglalók nem igénylik az eredeti PDF közzétételét.
+
+## 2026-11-08 – helyreállítási tanulságok, teljes PHP-csomag és forráslefedettség
+
+**Éles incidens:** fájlok visszaállítása után a régebbi frontend nem küldött `revision` értéket a tanulási eredmények mentésekor, ezért `PUT /api/index.php?route=progress` **428** választ adott. A frontend és API azonos buildből telepített állományai megszüntették a hibát. A szerver `api/admin.php` hiánya miatt az összes `admin/*` végpont **503** válasszal állt le; a hiányzó fájl helyreállítása után mind a négy admin GET kérés **200** lett. A felhasználó phpMyAdminból igazolta a kedvencazonosító szerveroldali mentését; ez **nem** váltja ki a fizikai két eszközös vagy több felhasználós végtesztet.
+
+**Új telepítési szabályok:**
+
+1. Teljes SQL-export, publikus webhelyfájlok, privát `zeneelmelet-private.php` és `zeneelmelet-ai-sources` (ha létezik) mentése **a webgyökéren kívül**; legalább egy példányt a szerveren kívül tároljunk. Az adatbázis és privát konfiguráció a frontend frissítésekor **nem** írható felül.
+2. A teljes GitHub Actions által összeállított `index.html` + `assets/` + `api/` fájlkészletet kell összhangban tartani. Soha ne tekintsünk teljes telepítésnek egy külön feltöltött `api/index.php` vagy `index.html` fájlt. Az új `assets/` állományok kerüljenek fel az új `index.html` előtt. A média-, tankönyv- és `.well-known` könyvtárak maradjanak meg.
+3. A csomagellenőrző most kötelezően ellenőrzi `api/admin.php`, `api/tutor-sources.php`, `api/tutor-text-generation.php`, `api/knowledge.php`, `api/vendor/autoload.php` és a többi API-modul meglétét, valamint az `index.html` által hivatkozott `/assets/*.js` és `/assets/*.css` fájlokat. Ez a **csomag teljességét** ellenőrzi; az éles könyvtár kézi feltöltésének helyességét külön kell ellenőrizni.
+4. Biztonság: a `htdocs/` vagy `htdocs/.../api/` könyvtárban hagyott `archive.zip` vagy más biztonságimentés-archívum **nyilvánosan letölthető lehet**. Miután ellenőrzött, privát másolat készült, helyezzük át a webgyökéren kívülre; ne tároljuk szerverkonfigurációval együtt publikus helyen. A ZIP-re történő közvetlen HTTP-hozzáférést is tesztelni kell.
+5. Próba: `auth/status` a DB kapcsolatot ellenőrzi; bejelentkezett adminnál `admin/users`, `admin/invitations`, `admin/sources`, `admin/source-coverage` mind `200`; eredménymentés `GET` → `PUT` **64 hexadecimális revisionnel** → `200` → oldalfrissítés utáni visszatöltés; minden lépésben őrizzük meg a meglévő tanulói naplót.
+6. Az adminforrásleltár két külön indexrendszerből származhat: `server-knowledge.ts` statikus `source-inventory.json` és a PHP `knowledge.php` tényleges élő betöltése (plusz külön telepített, engedélyezett források). A 104/3806 és 75/2840 számkülönbség **nem bizonyít automatikusan elveszett dokumentumot**. Az új admin nézet forráscsoportonként különbözteti meg őket és jelzi, ha az élő jelentés helyett csak statikus van.
+7. Kiértékeléskor ne oszd meg a cookie-, session-, jelszó- vagy tokenadatokat. Éles jogosultsági, meghívó/e-mail, két fizikai eszközös szinkron, szakmai és szerzői jogi jóváhagyás továbbra is szükséges a végleges terjesztés előtt.
