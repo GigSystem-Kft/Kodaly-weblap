@@ -365,7 +365,7 @@ try {
       });
       await reportPage.getByRole('button',{name:'Forrás feltöltése'}).click();
       await reportPage.getByText(/PHP: 3 forráscsoport, 2801 szövegrész/).waitFor();
-      await reportPage.getByText('Új kontroll forrás',{exact:true}).first().waitFor();
+      await reportPage.getByRole('button',{name:'Eltávolítás'}).waitFor();
       reportPage.once('dialog', dialog => dialog.accept());
       await reportPage.getByRole('button',{name:'Eltávolítás'}).click();
       await reportPage.getByText(/PHP: 2 forráscsoport, 2800 szövegrész/).waitFor();
