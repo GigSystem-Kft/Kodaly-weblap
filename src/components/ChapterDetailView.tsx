@@ -39,6 +39,11 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
 
   const currentSub = chapter.subchapters.find((s) => s.id === activeSubId) || chapter.subchapters[0];
+  useEffect(() => {
+    setActiveSubId(chapter.subchapters[0]?.id || '');
+    setRevealedAnswers([]);
+    setZoom(null);
+  }, [chapter.id]);
   useEffect(() => () => stopEarTrainingInterval(), [activeSubId]);
   const illustrations = LESSON_ILLUSTRATIONS[currentSub.id] ?? [];
   const guide = getFoundationsSubchapterGuide(chapter.id, currentSub.id);
@@ -177,7 +182,8 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <div className="rounded-xl border border-indigo-200 p-5 mb-5">
                 <h4 className="font-semibold mb-3">Önellenőrzés</h4>
                 {guide.selfCheck.map((item,index) => {
-                  const key = chapter.id + ':' + index;
+                  // Distinct answers belong to distinct subchapters, even at the same question index.
+                  const key = chapter.id + ':' + currentSub.id + ':' + index;
                   const visible = revealedAnswers.includes(key);
                   return <div key={item.question} className="py-3 border-b border-slate-100 last:border-0">
                     <p className="text-sm font-medium mb-2">{index + 1}. {item.question}</p>
