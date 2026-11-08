@@ -243,3 +243,10 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - **A-05/A-23:** A párosító most sikeres és hibás próbálkozás esetén is magyar szöveges, `role=status` / `aria-live=polite` visszajelzést ad, ezért a feladat megoldása nem kizárólag a hangjelzésből érthető. Újrakezdésnél az előző visszajelzés törlődik. A Chromium-szkript a hibás választ, a visszajelzés szövegét, a hibás kijelölés elengedését, a teljes helyes sort és az újraindítás utáni állapotot is vizsgálja.
 - A további változások végső commitja `8fdb902425e67503a1a69b24a19495389b673ec2`; az ehhez tartozó Chromium, Linux és PHP CI-ellenőrzés e bejegyzéskor **folyamatban volt**, így az új hozzáférhetőségi módosítások még nem tekinthetők zöldnek.
 - A párosító teljesítési naplójának és XP-szabályainak szerveroldali jogosultsági/adatvédelmi elfogadása, továbbá a manuális képernyőolvasós teszt továbbra is nyitott. Nincs végleges kiadás vagy `main` összevezetés.
+
+
+## 2026-11-08 – párosító regresszió lezárása, három zöld CI
+
+- A kibővített Chromium-teszt első futása (`42467637714`) sikertelen volt: az oldal címe után még nem álltak rendelkezésre a `useEffect` által összeállított párok. A tesztet explicit, látható fogalomgombra várakozással javítottuk (`27761824d9b071cb97c88982c5510d264748ea48`).
+- **Chromium `42467713101`: success. PHP/MySQL/ZIP `42467713130`: success. Linux `42467713115`: success.** A párosító hibás választ, szöveges élő visszajelzést, teljes helyes feladatsort és újraindítást tartalmazó automatikus ellenőrzés ezzel sikeres.
+- A-05 párosítójáték-böngészős részpróbája lezárható; a teljes A-05 / A-23 kézi segédtechnológiás és éles fiókos elfogadása nem. **A `main` nincs módosítva, végleges csomagot nem adtunk ki.**
