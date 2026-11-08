@@ -236,7 +236,9 @@ try {
       if(endpoint==='auth/me'){
         data={user:{id:'role-fixture',email:'example@example.invalid',displayName:'Próbafiók',role}};
       } else if(endpoint==='progress'){
-        data={progress:null,revision:'0'.repeat(64)};
+        data=role==='student' && route.request().method()==='PUT'
+          ? {error:'Offline save simulated for account safety test'}
+          : {progress:null,revision:'0'.repeat(64)};
       } else if(endpoint==='auth/status'){
         data={available:true,registrationEnabled:false};
       } else if(endpoint==='chat/status'){
@@ -254,6 +256,25 @@ try {
         .filter({hasText:'Kedvenc fogalmak'}).first();
       await favoritesCount.getByText('1',{exact:true}).waitFor();
       console.log('Account UI: pending offline favorite restored after simulated reload');
+      // A password change logs the user out of all devices; declining the
+      // unsaved-progress warning must prevent the destructive POST.
+      await accountPage.getByText(/Mentés folyamatban – az utolsó változások/).waitFor();
+      await accountPage.getByRole('button', { name: 'Jelszó módosítása' }).click();
+      await accountPage.getByLabel('Jelenlegi jelszó').fill('test-current-password');
+      await accountPage.getByLabel('Új jelszó (legalább 12 karakter)').fill('test-new-password-safe');
+      let dialogs = 0;
+      let passwordPosts = 0;
+      accountPage.on('dialog', async dialog => {
+        dialogs++;
+        await dialog.dismiss();
+      });
+      accountPage.on('request', request => {
+        if (request.method() === 'POST' && request.url().includes('change-password')) passwordPosts++;
+      });
+      await accountPage.getByRole('button', { name: 'Jelszó mentése és kijelentkezés' }).click();
+      if (dialogs !== 1 || passwordPosts !== 0)
+        throw new Error('Password change ignored declined unsaved-progress warning');
+      console.log('Account UI: declined password change preserves unsaved progress');
     }
     const adminButton=accountPage.getByRole('button',{name:'Admin',exact:true});
     if(role==='admin' && await adminButton.count()!==1) throw new Error('Admin navigation missing for admin role');
