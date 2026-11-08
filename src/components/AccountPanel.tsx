@@ -87,11 +87,13 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (busy) return;
-    // A password change invalidates the current session on every device.
-    // Apply the same unsaved-learning warning used for explicit logout.
+    // Both password change and erasure can discard unsynced work. Explain
+    // the consequence of the specific action before issuing a server request.
     if ((mode === 'change-password' || mode === 'delete-account') && hasUnsavedProgress && !window.confirm(
       'A legutóbbi tanulási eredményeid még nem kerültek a szerverre. ' +
-      'A jelszó módosítása minden eszközön kijelentkeztethet, így ezek elveszhetnek. ' +
+      (mode === 'delete-account'
+        ? 'A fiók törlése a függőben lévő helyi mentést is eltávolítja, ezért ezek az adatok elvesznek. '
+        : 'A jelszó módosítása minden eszközön kijelentkeztethet, így ezek elveszhetnek. ') +
       'Biztosan folytatod?'
     )) return;
     if (mode === 'delete-account' && !window.confirm(
