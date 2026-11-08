@@ -81,10 +81,13 @@ try {
       throw new Error('Cannot uniquely resolve visible matching term: ' + termLabel);
     await term.click();
     await matching[0].click();
+    await page.getByRole('status').getByText(`Helyes párosítás! ${index + 1} / ${initialPairs} pár megtalálva.`).waitFor();
   }
   await page.getByRole('heading', { name: 'Gratulálok! Sikeres Párosítás!' }).waitFor();
   await page.getByRole('button', { name: 'Új játék indítása' }).click();
   await page.getByText('Megtalált párok:').waitFor();
+  if ((await page.getByRole('status').textContent())?.trim())
+    throw new Error('Matching restart retained stale spoken feedback');
   if (await page.getByRole('heading', { name: 'Gratulálok! Sikeres Párosítás!' }).count())
     throw new Error('Matching restart did not clear completion state');
   console.log('Guest: full matching round completed and restarted');
