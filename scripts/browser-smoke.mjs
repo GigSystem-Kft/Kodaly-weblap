@@ -158,6 +158,12 @@ try {
   await page.getByText(/Kérdés 1 \/ /).waitFor();
   console.log('Guest: chapter 04 quiz loaded');
   await checkAccessibility(page, 'kvíz');
+  await category.selectOption('hetfoku-hangsorok');
+  await page.getByText(/Kérdés 1 \/ /).waitFor();
+  if (await page.getByRole('heading',{name:'Ehhez a témakörhöz még nincs kérdés'}).count())
+    throw new Error('Chapter 05 quiz is unexpectedly empty');
+  console.log('Guest: chapter 05 scale and chord quiz loaded');
+  await checkAccessibility(page, '05. hangsorok kvíz');
 
   await page.getByRole('button',{name:/07\. Tankönyvek/}).click();
   await page.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
@@ -343,6 +349,7 @@ try {
     await reportPage.goto(root,{waitUntil:'domcontentloaded'});
     await reportPage.getByRole('button',{name:'Admin',exact:true}).click();
     if (reportMode === 'live') {
+      await checkAccessibility(reportPage, 'adminisztráció');
       await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).waitFor();
       await reportPage.getByText(/PHP: 2 forráscsoport, 2800 szövegrész · Csomag: 3 forráscsoport, 3800 szövegrész/).waitFor();
       await reportPage.getByText(/A két jelentés eltér/).waitFor();
@@ -430,6 +437,7 @@ try {
     localStorage.setItem('kodaly_pending_progress_erase-fixture', 'TEST_OFFLINE_SNAPSHOT');
   });
   await erasePage.getByRole('button',{name:'Fiók törlése'}).click();
+  await checkAccessibility(erasePage, 'fiók megszüntetése');
   await erasePage.getByLabel('Jelenlegi jelszó').fill('correct-learner-pass');
   await erasePage.getByLabel(/A megerősítéshez írd be pontosan/).fill('FIÓKOM TÖRLÉSE');
   erasePage.once('dialog', dialog => dialog.dismiss());
