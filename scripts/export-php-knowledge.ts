@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { MUSIC_CHAPTERS, FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from '../src/data/musicData';
 import { VERIFIED_GLOSSARY } from '../src/data/verifiedMusicGlossary';
 import { CURATED_MEDIA } from '../src/data/curatedMusicMedia';
 import { FOUNDATIONS_GUIDES } from '../src/data/musicFoundationsGuide';
@@ -14,6 +14,8 @@ import { COMPOSER_BIOGRAPHIES, GUIDED_LISTENING } from '../src/data/musicHistory
 import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS, HISTORY_VISUALS, HISTORY_RESOURCES, HISTORY_NOTE_SOURCE } from '../src/data/musicHistorySupplement';
 import MUSIC_EXPRESSIONS from '../src/data/musicExpressions.json';
 import { THEORY_DRILLS } from '../src/data/musicExpressionsPractice';
+import { MAJOR_SCALES, MINOR_SCALES, TRIADS, C_MAJOR_INVERSIONS, FIFTHS_CIRCLE } from '../src/data/tonalExamples';
+import { COLLECTION_EXAMPLES } from '../src/data/collectionLessonExamples';
 
 type Entry = { source: string; label: string; text: string; creativePractice?: {
   id: string; title: string; theme: string; goal: string; materials: string;
@@ -52,6 +54,52 @@ for (const chapter of MUSIC_CHAPTERS) {
       text: text.slice(0, 5000)
     });
   }
+}
+// Mirror the original student-facing practice content already indexed by the
+// Node/static assistant. These are lesson snippets, never user results or grades.
+for (const card of FLASHCARDS_DATA) {
+  entries.push({
+    source:'Zeneelméleti Műhely – Szókártyák',
+    label:card.category+' / '+card.term,
+    text:card.term+' – '+card.definition
+  });
+}
+for (const quiz of QUIZ_QUESTIONS) {
+  const answer=quiz.options[quiz.correctIndex] ?? '';
+  entries.push({
+    source:'Zeneelméleti Műhely – Teszt',
+    label:quiz.chapterId+' / '+quiz.id,
+    text:quiz.question+'\nHelyes válasz: '+answer+'\n'+(quiz.explanation ?? '')
+  });
+}
+for (const pair of MATCHING_PAIRS) {
+  entries.push({
+    source:'Zeneelméleti Műhely – Párosító',
+    label:pair.category+' / '+pair.term,
+    text:pair.term+' – '+pair.match
+  });
+}
+for (const scale of [...MAJOR_SCALES,...MINOR_SCALES,...TRIADS,...C_MAJOR_INVERSIONS]) {
+  entries.push({
+    source:'Zeneelméleti Műhely – Hangzó hangsor és akkord',
+    label:scale.name,
+    text:[scale.name,scale.labels.join(' – '),scale.description].join('\n')
+  });
+}
+for (const example of Object.values(COLLECTION_EXAMPLES).flat()) {
+  entries.push({
+    source:'Zeneelméleti Műhely – Hangkészletek és pentaton példák',
+    label:example.title,
+    text:[example.title,example.solfege,example.description,example.notes.join(', ')].join('\n')
+  });
+}
+for (const item of FIFTHS_CIRCLE) {
+  entries.push({
+    source:'Zeneelméleti Műhely – Kvintkör',
+    label:'Kvintkör / '+item.major+'-dúr / '+item.minor+'-moll',
+    text:item.major+'-dúr párhuzamos '+item.minor+'-moll; '+
+      Math.abs(item.accidentals)+' '+(item.accidentals>0?'kereszt':item.accidentals<0?'bé':'előjegyzés nélküli hangnem')
+  });
 }
 for (const guide of FOUNDATIONS_GUIDES) {
  const chapter=MUSIC_CHAPTERS.find(c=>c.id===guide.chapterId);
