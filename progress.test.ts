@@ -1,7 +1,7 @@
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './src/pendingProgress';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync } from './src/progress';
+import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, validStudyDay } from './src/progress';
 
 test('a new learner starts with zero experience and no fabricated days', () => {
   const progress = createEmptyProgress();
@@ -19,6 +19,32 @@ test('legacy progress keeps results but does not trust fabricated streak', () =>
   assert.equal(migrated.streak, 0);
   assert.deepEqual(migrated.completedChapters, ['ritmus']);
   assert.deepEqual(migrated.flashcardsMastered, ['f1']);
+});
+
+test('calendar validation removes impossible days and malformed score history before server sync', () => {
+  assert.equal(validStudyDay('2024-02-29'), true);
+  assert.equal(validStudyDay('2026-02-29'), false);
+  assert.equal(validStudyDay('2026-02-30'), false);
+  assert.equal(validStudyDay('2026-11-08'), true);
+  assert.equal(validStudyDay('2026-13-01'), false);
+  assert.equal(validStudyDay('2026-11-8'), false);
+  assert.equal(validStudyDay('0000-01-01'), false);
+  const initial = createEmptyProgress();
+  const converted = migrateProgress({
+    ...initial,
+    xp: 83.75,
+    activityDays: ['2026-11-08','2026-02-30','2026-02-29','2024-02-29'],
+    earTrainingDailyXp: {'2026-02-30':50,'2026-11-08':25},
+    quizAttempts: [
+      {id:'consistent',chapterId:'ritmus',score:90,correct:9,total:10,at:'2026-11-08T12:00:00Z'},
+      {id:'contradictory',chapterId:'ritmus',score:100,correct:2,total:10,at:'2026-11-08T12:00:00Z'}
+    ]
+  });
+  assert.equal(converted.xp,83);
+  assert.deepEqual(converted.activityDays,['2024-02-29','2026-11-08']);
+  assert.deepEqual(converted.earTrainingDailyXp,{'2026-11-08':25});
+  assert.deepEqual(converted.quizAttempts?.map(q => q.id),['consistent']);
+  assert.equal(consecutiveDays(['2026-02-30','2026-11-08'],'2026-11-08'),1);
 });
 
 test('activity only counts a study day once', () => {
