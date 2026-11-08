@@ -2,6 +2,7 @@
 """Fail a release with incomplete image-backed learning resources."""
 from pathlib import Path
 import json
+import re
 import sys
 
 root = Path(sys.argv[1] if len(sys.argv) > 1 else "release")
@@ -17,6 +18,42 @@ def valid_jpeg(path: Path) -> bool:
             return False
         stream.seek(-2, 2)
         return stream.read(2) == b"\xff\xd9"
+
+# Release-time application integrity: the site can render and login while its
+# administration fails if any of these PHP modules are missing from the upload.
+required_files = [
+    "index.html", "source-inventory.json",
+    "api/index.php", "api/admin.php", "api/knowledge.php",
+    "api/tutor-sources.php", "api/tutor-search.php",
+    "api/tutor-text-generation.php", "api/tutor-image-generation.php",
+    "api/tutor-visuals.php", "api/creative-answers.php",
+    "api/music-answers.php", "api/vendor/autoload.php",
+]
+for filename in required_files:
+    path = root / filename
+    if not path.is_file() or path.stat().st_size == 0:
+        errors.append(f"Missing or empty required application file: {path}")
+
+# Vite embeds a content-hashed JS/CSS URL in index.html. A partial deployment
+# may leave the HTML and assets from different versions, breaking progress sync.
+html = root / "index.html"
+if html.is_file():
+    try:
+        markup = html.read_text(encoding="utf-8")
+        links = re.findall(r"""(?:src|href)=["'](/assets/[^"']+\.(?:js|css))["']""", markup)
+        if not links:
+            errors.append(f"No Vite JS/CSS entrypoints found in {html}")
+        for link in links:
+            asset = root / link.lstrip("/")
+            if not asset.is_file() or asset.stat().st_size == 0:
+                errors.append(f"Missing frontend entrypoint referenced by {html}: {link}")
+    except UnicodeError as exc:
+        errors.append(f"Invalid UTF-8 index.html: {exc}")
+
+# Never bundle stray backups in the public webroot. Those archives can expose
+# application source and potentially private configuration when downloaded.
+for archive in root.rglob("*.zip"):
+    errors.append(f"Unexpected publicly accessible archive in webroot: {archive}")
 
 expected_pages = {1: 72, 2: 69, 3: 80, 4: 81}
 for book in range(1, 5):
