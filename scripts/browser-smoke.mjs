@@ -279,6 +279,8 @@ try {
     const adminButton=accountPage.getByRole('button',{name:'Admin',exact:true});
     if(role==='admin' && await adminButton.count()!==1) throw new Error('Admin navigation missing for admin role');
     if(role!=='admin' && await adminButton.count()!==0) throw new Error('Admin navigation exposed to '+role);
+    if (role === 'admin' && await accountPage.getByRole('button',{name:'Fiók törlése'}).count() !== 0)
+      throw new Error('Administrator self-erasure control must not appear');
     await accountPage.close();
     console.log('Account UI: '+role+' navigation verified');
   }
@@ -380,6 +382,53 @@ try {
     await reportPage.close();
   }
   console.log('Admin UI: PHP versus build source report comparison and explicit fallback verified');
+
+  // Self-service erasure is an irreversible operation. Verify browser-side
+  // confirmation and scoped offline cleanup without touching a real account.
+  const erasePage = await browser.newPage();
+  let erasureRequests = 0;
+  await erasePage.route('**/api/index.php?*', route => {
+    const request = route.request();
+    const endpoint = new URL(request.url()).searchParams.get('route');
+    if (endpoint === 'auth/delete-account') {
+      erasureRequests++;
+      const body = request.postDataJSON();
+      if (request.method() !== 'POST' || body.currentPassword !== 'correct-learner-pass' ||
+          body.confirmation !== 'FIÓKOM TÖRLÉSE')
+        return route.fulfill({status:400,contentType:'application/json',body:JSON.stringify({error:'Malformed deletion'})});
+      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({success:true})});
+    }
+    const data = endpoint === 'auth/me'
+      ? {user:{id:'erase-fixture',email:'erase@example.invalid',displayName:'Törlési próbafiók',role:'student'}}
+      : endpoint === 'auth/status'
+      ? {available:true,registrationEnabled:false}
+      : endpoint === 'progress'
+      ? {progress:null,revision:'0'.repeat(64)}
+      : endpoint === 'chat/status'
+      ? {mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}}
+      : {error:'Fixture endpoint unavailable'};
+    return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
+  });
+  await erasePage.goto(root,{waitUntil:'domcontentloaded'});
+  await erasePage.getByRole('button',{name:/06\\. Profil/}).click();
+  await erasePage.getByText('Törlési próbafiók').first().waitFor();
+  await erasePage.evaluate(() => {
+    localStorage.setItem('kodaly_pending_progress_erase-fixture', 'TEST_OFFLINE_SNAPSHOT');
+  });
+  await erasePage.getByRole('button',{name:'Fiók törlése'}).click();
+  await erasePage.getByLabel('Jelenlegi jelszó').fill('correct-learner-pass');
+  await erasePage.getByLabel(/A megerősítéshez írd be pontosan/).fill('FIÓKOM TÖRLÉSE');
+  erasePage.once('dialog', dialog => dialog.dismiss());
+  await erasePage.getByRole('button',{name:'Fiókom és adataim végleges törlése'}).click();
+  if (erasureRequests !== 0) throw new Error('Cancelled account deletion sent an HTTP request');
+  erasePage.once('dialog', dialog => dialog.accept());
+  await erasePage.getByRole('button',{name:'Fiókom és adataim végleges törlése'}).click();
+  await erasePage.getByText(/A fiókod törölve/).waitFor();
+  if (erasureRequests !== 1) throw new Error('Confirmed deletion did not send exactly one request');
+  if (await erasePage.evaluate(() => localStorage.getItem('kodaly_pending_progress_erase-fixture')) !== null)
+    throw new Error('Deleted account retained its offline progress snapshot');
+  await erasePage.close();
+  console.log('Account UI: erasure confirmation and per-account offline cleanup verified');
 
   // Storage is not always available (privacy mode, denied site permissions).
   // Both a guest and an authenticated learner must remain usable.
