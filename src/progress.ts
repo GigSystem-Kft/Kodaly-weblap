@@ -16,11 +16,17 @@ export function localDay(date: Date = new Date()): string {
   const year = date.getFullYear();
   return `${year}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
+/** A calendar date must exist; the regex alone accepts 2026-02-30. */
+export function validStudyDay(value: string): boolean {
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number(value.slice(0, 4)) < 1) return false;
+  const parsed = new Date(value + 'T00:00:00Z');
+  return Number.isFinite(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
+}
 function dayNumber(value: string): number {
   return Date.parse(value + 'T12:00:00Z') / DAY_MS;
 }
 export function consecutiveDays(days: string[], now = localDay()): number {
-  const set = new Set(days.filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day)));
+  const set = new Set(days.filter(validStudyDay));
   const today = dayNumber(now);
   let cursor = set.has(now) ? today : today - 1;
   let count = 0;
@@ -63,6 +69,7 @@ export function migrateProgress(raw: unknown): UserProgress {
         Number.isInteger(item.correct) && Number.isInteger(item.total) &&
         item.total > 0 && item.total <= 1000 && item.correct >= 0 && item.correct <= item.total &&
         typeof item.at === 'string' && !Number.isNaN(Date.parse(item.at)) &&
+        Math.abs(item.score - Math.round(item.correct / item.total * 100)) <= 1 &&
         (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 12 && item.wrongQuestionIds.every((id:unknown)=>typeof id === 'string' && id.length <= 120))) &&
         (item.durationSeconds === undefined || (Number.isInteger(item.durationSeconds) && item.durationSeconds >= 0 && item.durationSeconds <= 36_000))
       ).slice(-100)
@@ -70,11 +77,11 @@ export function migrateProgress(raw: unknown): UserProgress {
   const earTrainingDailyXp = value.earTrainingDailyXp &&
     typeof value.earTrainingDailyXp === 'object' && !Array.isArray(value.earTrainingDailyXp)
     ? Object.fromEntries(Object.entries(value.earTrainingDailyXp)
-        .filter(([day, points]) => /^\d{4}-\d{2}-\d{2}$/.test(day) &&
+        .filter(([day, points]) => validStudyDay(day) &&
           Number.isInteger(points) && (points as number) >= 0 && (points as number) <= 100)
         .sort(([a],[b])=>a.localeCompare(b)).slice(-366))
     : {};
-  const activityDays = strings(value.activityDays).filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day));
+  const activityDays = strings(value.activityDays).filter(validStudyDay).sort();
   return {
     completedChapters: strings(value.completedChapters),
     completedSubchapters: strings(value.completedSubchapters),
@@ -85,7 +92,7 @@ export function migrateProgress(raw: unknown): UserProgress {
     favoriteExpressions: strings(value.favoriteExpressions).slice(0, 1800),
     earTrainingDailyXp,
     // Historical XP cannot be reconstructed; keep the saved value, but never grant the old default 100 to new users.
-    xp: typeof value.xp === 'number' && Number.isFinite(value.xp) ? Math.max(0, value.xp) : 0,
+    xp: typeof value.xp === 'number' && Number.isFinite(value.xp) ? Math.min(100_000_000, Math.max(0, Math.floor(value.xp))) : 0,
     streak: consecutiveDays(activityDays),
     lastActiveDate: activityDays.at(-1) ?? '',
     activityDays
