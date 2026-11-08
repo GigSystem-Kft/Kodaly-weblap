@@ -278,3 +278,5 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - Kódcommitok: `20edda05bb5918a77186c191e899b20119a26dba`, `1ccb799b93222b9dc15ab6c85056126c1f024a9e`, `0c55527acd94d8285d551968341d980cbb6c0c6f`, `00d5ffac1af6126afccfb76fdeb8c52ab79f4a1f`.
 - Elindított ellenőrzések: PHP/MySQL/ZIP `42472071175`, Linux `42472071224`, Chromium `42472071172`. **Az új mentési versenyhelyzetet egyelőre a döntési szabály egységtesztje védi; teljes valós fiókváltós és fizikai többeszközös elfogadási teszt továbbra is nyitott.**
 - A projekt továbbra sem végleges: CloudPanel-élesítés, személyes adatok adatvédelmi jóváhagyása, teljes szakmai és jogi lektorálás, valamint manuális akadálymentességi teszt szükséges. Nincs `main` merge és nincs végleges letöltés.
+
+- **Ellenőrzött CI eredmény (2026-11-08):** a fiókváltási mentés javítását tartalmazó `00d5ffac1af6126afccfb76fdeb8c52ab79f4a1f` commitnál Chromium `42472071172` **success**, Linux `42472071224` **success**, PHP/MySQL/ZIP `42472071175` **success**. A teljes éles többfiókos, két eszközös teszt ettől még nem teljesült.
