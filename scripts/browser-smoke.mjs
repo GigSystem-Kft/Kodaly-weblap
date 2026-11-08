@@ -81,7 +81,9 @@ try {
       throw new Error('Cannot uniquely resolve visible matching term: ' + termLabel);
     await term.click();
     await matching[0].click();
-    await page.getByRole('status').getByText(`Helyes párosítás! ${index + 1} / ${initialPairs} pár megtalálva.`).waitFor();
+    const spokenFeedback = (await page.getByRole('status').textContent())?.trim();
+    if (spokenFeedback !== `Helyes párosítás! ${index + 1} / ${initialPairs} pár megtalálva.`)
+      throw new Error('Accessible matching announcement mismatch: ' + spokenFeedback);
   }
   await page.getByRole('heading', { name: 'Gratulálok! Sikeres Párosítás!' }).waitFor();
   await page.getByRole('button', { name: 'Új játék indítása' }).click();
