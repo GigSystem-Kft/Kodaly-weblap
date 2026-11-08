@@ -258,3 +258,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A `scripts/browser-smoke.mjs` külön regressziója azonnal ismét kijelöl egy fogalmat, majd az egykori 500 ms késleltetésnél tovább várva ellenőrzi, hogy a friss kijelölés nem tűnt el.
 - Commitok: `cec6cad6f836024da501042f6c1cbe11d6cc2361`, `12e4a4f7e4f8b35564d222c762b42e885e506385`. Az új ellenőrzések CI-futtatásai: Chromium `42468385846`, Linux `42468385850`, PHP `42468385907`. Utólag igazolt eredmények: Chromium `42468385846` **success**, Linux `42468385850` **success**, PHP `42468385907` **success**.
 - A szakmai/jogi ellenőrzések és az éles jogosultsági, többeszközös, CloudPanel, manuális WCAG teszt továbbra is kiadásblokkoló. A `main` változatlan.
+
+
+## 2026-11-08 – párosító feladatok egyértelműsége és véletlenszerűsége
+
+- **A-05/A-20/A-22:** A `MatchingGame.tsx` korábban `sort(() => Math.random() - 0.5)` keverést használt, amely nem ad egyenletes permutációkat. A fogalmak és jelentések most Fisher–Yates algoritmussal keverednek.
+- Ugyanabban a körben két azonos, normalizált feliratú fogalom vagy jelentés pedagógiailag kétértelmű, ezért a véletlenül kiválasztott elemekből csak eltérő megjelenített fogalom- és válaszfeliratot engedünk be. Ez nem változtatja meg az eredeti párok azonosítóit vagy a tanulói eredményeket. Ha az egyedi elemekből hatnál kevesebb van, rövidebb kör készül.
+- A `scripts/browser-smoke.mjs` most ellenőrzi, hogy mindkét oszlopban az összes látható felirat egyedi. A magyar Unicode- és whitespace-normalizálás hibás `\\s` escape-jét a kódban és a tesztben is javítottuk.
+- Implementációs commitok: `7ce4899f6b0216d29e7e7c3964c8f53c79556ee0`, `92772c71b13908314687e6c11586206449873c35`, `fdc7ef071fda4e41c5ff281e7043add919230b24`, `50518a3f7d70aa59dd72f7522be9459ae0462e73`.
+- A változtatások **nem** helyettesítik az eredeti fogalmak/jelentések zenepedagógiai lektorálását vagy a teljes kérdésbank tartalmi ellenőrzését. Éles CloudPanel, jogosultsági E2E, két fizikai eszköz, licencellenőrzés és manuális akadálymentességi vizsgálat továbbra is nyitott, ezért nincs `main` merge és nincs végleges letöltési csomag.
