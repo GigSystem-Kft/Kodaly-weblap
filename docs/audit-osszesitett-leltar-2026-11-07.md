@@ -10,7 +10,7 @@ Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-08. Forrás: a 2026-11-
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | MEGOLDVA: 13 eredeti, Git SHA-val bájtpontosan ellenőrzött JPG feltöltve a fejlesztési ágra; 42422196761 teljes PHP-telepítő CI sikeres |
 | P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás; magyar ékezet/kisbetű/szóközkeresés Chromium E2E sikeres; éles webhely ellenőrzése hátra |
-| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, háromutas kedvenc-összevezetés, fiókonként elkülönített offline függő mentés-visszaállítás; offline böngészős és migrációs tesztek; valós többeszközös éles próba hátra |
+| P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, háromutas összevezetés és fiókonkénti offline helyreállítás; valódi két PHP/MySQL munkamenetes 409-es konfliktus/újrapróba CI sikeres; éles két fizikai eszközös próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | MEGOLDVA: a kötelező 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép médiaellenőrzése zöld; 42422196761 PHP ZIP sikeresen összeállt |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Manuális fejezet-/alfejezetjelölés és tanulási állapotmegőrzés, Chromium E2E zöld; éles fiókos próba hátra |
@@ -29,8 +29,8 @@ Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-08. Forrás: a 2026-11-
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil és kedvenc-összevezetés tisztázva; párhuzamos kedvenc törlés háromutas összevezetése; XP-adat történeti eseménynaplója továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, rontott kérdések, magyarázatok, gyakorlási idő; azonos témakör utolsó 3 és előző 3 átlagának trendje elkészült, pedagógiai értékelés hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Mobil/keyboard tankönyvmenü és 5 tananyagkártya Enter/Space aktiválása; részletes Chromium navigációs teszt; teljes böngészős bejárás hátra |
-| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Kérdésbank-válaszopciók egyedisége, tananyag-egyezés és skála/ritmus/ütemmutató frekvenciatesztek; teljes szakmai lektorálás hátra |
-| P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
+| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | A teljes kvízbank és a fogalomtári kvízek normalizált válaszopció-egyedisége CI-vel védett, zenei hang- és tananyag-integritástesztek sikeresek; szakmai lektorálás hátra |
+| P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses témaköri gyakorlókörök, egyedi válaszlehetőségek, témakörönkénti 3+3 korábbi kör trend; pedagógiai értékelési standard hátra |
 | P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Hét nézetes axe WCAG 2.1 AA Chromium teszt (alapfejezet, profil, fogalomtár is), átmeneti kontraszthiba kijavítva és CI zöld; manuális audit hátra |
 
 ## Első javítási csomag
@@ -227,3 +227,11 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - Új regressziós teszt: `scripts/test-glossary-answer-integrity.ts` ellenőrzi a négy válasz meglétét, egyediségét és a helyes válasz szótári forrását a teljes generált kérdésbankon. A teszt a szótári szöveg elválasztó szóközeit is normalizálja; ez nem módosítja a forrásdefiníciókat.
 - Az aktuális besorolási állapot továbbra is: 1793 tétel, 12 kategória, **0 „Egyéb”**. Ez csak technikai taxonómiai teljesség; a független zenetudományi lektorálás, a szinonim meghatározások pedagógiai egyértelműségének ellenőrzése és az éles E2E továbbra is nyitott.
 - A teljes audit befejezéséig a PR draft és a `main` változatlan.
+
+## 2026-11-08 – teljes kvízválasz-koherencia és két fiókmunkamenetes próba
+
+- **A-20/A-22:** `src/data/musicExpressionsPractice.ts` zenei fogalomtári kvízgenerálásakor minden kérdéshez négy különböző, szótárban szereplő jelentést választunk. Azonos kategórián belüli alternatívák előnyt élveznek; csak szükség esetén más kategóriásak. Az ismétlődő válaszokat normalizált magyar szöveg alapján kiszűrjük. Eredeti kérdés-azonosítók és helyes válaszpozíciók megmaradnak. A `scripts/test-glossary-answer-integrity.ts` minden generált fogalomtári kérdésnél ellenőrzi a válaszok számát, egyediségét és a forrást. A `scripts/test-curriculum-integrity.ts` már a teljes kvízkészlet ismétlődő válaszopcióit is vizsgálja.
+- **A-06/A-21/A-24:** `scripts/test-php-two-device-sync.sh` két külön, tényleges bejelentkezett PHP/MySQL-munkamenetet hoz létre. Ugyanarról a verzióról A ment, B elavult verzióval **409** ütközést kap, majd az egyesített adatok új verzióval sikeresen menthetők. Ellenőrzi, hogy a korábbi eredmény, kvíznapló és az A/B eszközökről hozzáadott kedvencek is megmaradtak. A teszt automatikusan fut az ideiglenes MySQL szerverrel a PHP CI-ben. Ez még nem teljes éles böngészős multi-device vizsgálat.
+- **2026. november 8-i CI:** `f34ae02ffc53cba250f7c40d7ef61aa3d2c04f07`: Chromium `42464213579` **success**, PHP/MySQL tesztek + teljes ZIP `42464213583` **success**, Linux `42464213558` **success**.
+- A-10: az aktuális forrásfájlban 1793 eredeti, azonosítóval követett címszó 12 szakterületi kategóriában szerepel, 0 „Egyéb”. A besorolás teljessége nem egyenlő a független szakterületi kontrollal.
+- **Nincs éles kiadás és nincs `main` összevezetés:** a teljes tananyag/tételbank lektorálása, médiaszerzői jogi ellenőrzés, az éles CloudPanel beüzemelés, hitelesített hallgató/tanár/admin E2E és fizikai két eszközös szinkronvizsgálat továbbra is nyitott.
