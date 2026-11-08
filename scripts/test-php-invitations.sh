@@ -113,6 +113,21 @@ resetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http
 test "$resetStatus" = 200
 resetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"token\":\"$resetToken\",\"password\":\"UjabbJelszo2026!\"}")"
 test "$resetStatus" = 400
+# Invalid JSON shapes should give a controlled 400, never an internal
+# PHP type error / 500. This also checks that malformed login data does not
+# interfere with the valid existing account and later login.
+for malformed in \
+ '{"email":[],"password":"ValidLookingPassword2026!"}' \
+ '{"email":{"nested":"pilot@example.org"},"password":"ValidLookingPassword2026!"}' \
+ '{"email":"pilot@example.org","password":[]}' \
+ '{"email":"","password":"ValidLookingPassword2026!"}'; do
+  malformed_status="$(curl -sS -o /tmp/zm-malformed-login.json -w '%{http_code}' \
+   -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' \
+   -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+   -H 'Content-Type: application/json' --data "$malformed")"
+  test "$malformed_status" = 400
+done
+
 # Login with reset password, change it while signed in and verify old session is gone.
 loginStatus="$(curl -sS -c /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
 test "$loginStatus" = 200
