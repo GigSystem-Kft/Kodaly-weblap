@@ -349,6 +349,11 @@ try {
         ? {progress:null,revision:'0'.repeat(64)}
         : endpoint === 'chat/status'
         ? {mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}}
+        : endpoint === 'auth/deployment-check'
+        ? {checkedAt:'2026-11-09T00:41:00Z',ready:reportMode!=='live',
+          missing:reportMode==='live' ? ['api/admin.php'] : [],
+          publicArchives:reportMode==='live' ? ['api/archive.zip'] : [],
+          mailConfigured:false,scope:'Files only'}
         : endpoint === 'admin/users'
         ? {users:[]}
         : endpoint === 'admin/invitations'
@@ -369,6 +374,13 @@ try {
     });
     await reportPage.goto(root,{waitUntil:'domcontentloaded'});
     await reportPage.getByRole('button',{name:'Admin',exact:true}).click();
+    if (reportMode === 'live') {
+      await reportPage.getByText('A telepítés fájlkészlete ellenőrzést igényel.').waitFor();
+      await reportPage.getByText('api/archive.zip').waitFor();
+      await reportPage.getByText('api/admin.php').waitFor();
+    } else {
+      await reportPage.getByText('A kötelező fájlok és belépési állományok jelen vannak.').waitFor();
+    }
     if (reportMode === 'live') {
       await checkAccessibility(reportPage, 'adminisztráció');
       await reportPage.getByText(/Élő PHP keresőindex – a kiszolgáló/).waitFor();
