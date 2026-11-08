@@ -267,3 +267,5 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A `scripts/browser-smoke.mjs` most ellenőrzi, hogy mindkét oszlopban az összes látható felirat egyedi. A magyar Unicode- és whitespace-normalizálás hibás `\\s` escape-jét a kódban és a tesztben is javítottuk.
 - Implementációs commitok: `7ce4899f6b0216d29e7e7c3964c8f53c79556ee0`, `92772c71b13908314687e6c11586206449873c35`, `fdc7ef071fda4e41c5ff281e7043add919230b24`, `50518a3f7d70aa59dd72f7522be9459ae0462e73`.
 - A változtatások **nem** helyettesítik az eredeti fogalmak/jelentések zenepedagógiai lektorálását vagy a teljes kérdésbank tartalmi ellenőrzését. Éles CloudPanel, jogosultsági E2E, két fizikai eszköz, licencellenőrzés és manuális akadálymentességi vizsgálat továbbra is nyitott, ezért nincs `main` merge és nincs végleges letöltési csomag.
+
+- **Új javítás végső CI eredménye (2026-11-08):** Chromium `42469761747` **success**; PHP/MySQL/ZIP `42469761757` **success**; Linux `42469761830` **success**. A párosító címke-egyediségi regresszió a böngészőben is átment. Ez az A-05/A-20/A-22 technikai részének bővítése, nem teljes szakmai vagy éles elfogadás.
