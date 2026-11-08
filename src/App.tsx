@@ -300,6 +300,13 @@ export default function App() {
         streak={consecutiveDays(progress.activityDays ?? [])}
       />
 
+      {syncError && activeTab !== 'dashboard' && (
+        <div role="alert" className="mx-auto mt-3 w-[calc(100%-2rem)] max-w-5xl rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <strong className="font-semibold">{account ? 'Eredményszinkronizálás: ' : 'Tanulási adatok mentése: '}</strong>
+          {syncError}
+        </div>
+      )}
+
       <main className="flex-1 pb-16">
         {activeTab === 'chapters' && (
           <ChapterListView
