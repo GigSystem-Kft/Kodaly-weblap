@@ -85,6 +85,13 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (busy) return;
+    // A password change invalidates the current session on every device.
+    // Apply the same unsaved-learning warning used for explicit logout.
+    if (mode === 'change-password' && hasUnsavedProgress && !window.confirm(
+      'A legutóbbi tanulási eredményeid még nem kerültek a szerverre. ' +
+      'A jelszó módosítása minden eszközön kijelentkeztethet, így ezek elveszhetnek. ' +
+      'Biztosan folytatod?'
+    )) return;
     setBusy(true);
     setError('');
     setSuccess('');
