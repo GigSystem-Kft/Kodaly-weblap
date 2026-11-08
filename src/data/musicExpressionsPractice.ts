@@ -5,7 +5,7 @@ const categories=[
  'Tempó és időkezelés','Dinamika és karakter','Ritmus és hangértékek',
  'Hangsorok és harmóniák','Hangszer és játéktechnika','Éneklés és kórus',
  'Zenei műfajok és formák','Kottaírás és jelölések','Zenetörténet és stílus',
- 'Egyéb szakkifejezések','Díszítések és ornamentika','Előadásmód és artikuláció'
+ 'Általános zenei nyelv és utasítások','Díszítések és ornamentika','Előadásmód és artikuláció'
 ];
 const preferred=new Set([
  'a cappella','a tempo','accelerando','adagio','ad libitum','agitato','allegro','allegretto','allargando',
@@ -19,7 +19,7 @@ const preferred=new Set([
 ]);
 type Expression=typeof MUSIC_EXPRESSIONS[number];
 const clean=(item:Expression)=>!item.term.includes(',') && !item.term.includes('…') &&
- item.term.length<=42 && item.definition.length>=9&&item.definition.length<=120 &&
+ item.term.length<=42 && (item.category==='Általános zenei nyelv és utasítások' ? item.definition.length>=3 : item.definition.length>=9) && item.definition.length<=120 &&
  !/^\d+\./.test(item.definition)&&!/\b(mHz|nemzetközileg megállapított|őse)\b/i.test(item.definition);
 const unique=(list:Expression[])=>{
  const seen=new Set<string>();return list.filter(item=>{
