@@ -3,6 +3,15 @@ import type { UserProgress } from './types';
 const DAY_MS = 86_400_000;
 export const PROGRESS_KEY = 'kodaly_progress';
 
+/** Recheck pending saves when a stale in-flight request releases the writer lock. */
+export function shouldRescheduleProgressSync(
+  completedSaveNeedsFollowup: boolean,
+  requestGeneration: number,
+  activeGeneration: number
+): boolean {
+  return completedSaveNeedsFollowup || requestGeneration !== activeGeneration;
+}
+
 export function localDay(date: Date = new Date()): string {
   const year = date.getFullYear();
   return `${year}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
