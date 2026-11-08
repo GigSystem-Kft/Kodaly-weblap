@@ -222,3 +222,26 @@ test('stale account progress writes wake the new account without reusing the old
   assert.equal(shouldRescheduleProgressSync(false, 1, 1), false);
   assert.equal(shouldRescheduleProgressSync(true, 1, 2), true);
 });
+
+
+test('malformed XP rewards cannot corrupt learning totals or daily caps', () => {
+  const day = '2026-11-08';
+  const starting = createEmptyProgress();
+  starting.xp = 55;
+  for (const invalid of [NaN, Infinity, -Infinity]) {
+    const next = recordActivity(starting, invalid, day);
+    assert.equal(next.xp, 55);
+    const hearing = recordEarTrainingActivity(starting, invalid, day);
+    assert.equal(hearing.xp, 55);
+    assert.equal(hearing.earTrainingDailyXp?.[day], 0);
+    assert.ok(Number.isFinite(hearing.xp));
+  }
+  const corrupted = createEmptyProgress();
+  corrupted.earTrainingDailyXp = { [day]: NaN };
+  const recovered = recordEarTrainingActivity(corrupted, 25, day);
+  assert.equal(recovered.earTrainingDailyXp?.[day], 25);
+  assert.equal(recovered.xp, 25);
+  const negative = recordEarTrainingActivity(starting, -40, day);
+  assert.equal(negative.xp, 55);
+  assert.equal(negative.earTrainingDailyXp?.[day], 0);
+});
