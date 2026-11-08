@@ -303,3 +303,12 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - **A-04/A-05/A-06/A-24:** A Chromium-füstteszt egy teljesen sikeres párosító kör után most ténylegesen újratölti a böngészőoldalt, és összeveti a vendég helyi tanulási naplójában a megtalált pár-ID-ket és XP-t. A teszt az előző feladatsor állapotmentésének megtörténtét kivárja.
 - Kódcommitok: `77fbc1d2f89e176b7f6deafcfbb6f3739f623013`, `ed66d569b6ab673d2cf270979389c6bdc41683aa`. Az eredményeket csak a friss Chromium, Linux és PHP CI lezárása után szabad sikeresnek minősíteni.
 - **Maradék:** valós bejelentkezéses jelszóváltás, többeszközös fiókszinkron, tanár/admin jogosultság, CloudPanel-telepítés, a teljes szakmai és licencellenőrzés, manuális WCAG. A `main` változatlan, végleges csomag nem készül.
+
+
+## 2026-11-08 – jelszóváltás előtti mentésvédelem, regresszió és Composer forrás-fallback
+
+- **A-06/A-21:** A `src/components/AccountPanel.tsx` a globális kijelentkeztetést eredményező jelszóváltási kérés előtt megáll és jóváhagyást kér, ha vannak még nem szerverre mentett tanulói változások. A `scripts/browser-smoke.mjs` valódi Chromium UI-műveletekkel létrehoz egy mockolt bejelentkezett tanulói állapotot és sikertelen szervermentést, megnyitja a jelszóváltási űrlapot, elutasítja a figyelmeztetést, majd ellenőrzi, hogy nem küldődött ki jelszóváltási POST. Ez nem egyenértékű az éles PHP hitelesítéses E2E-vel.
+- **A-04/A-05/A-06/A-24:** A Chromium-regresszió a vendég párosító teljesítése után valódi oldalfrissítést végez, ellenőrzi, hogy a `matchingCompleted` ID-lista és a tanulói XP megegyezik-e az oldalfrissítés előtt tárolttal.
+- **Telepítő:** A Composer harmadik próbálkozása `--prefer-source` opcióval próbálkozik, ha a PHPMailer GitHub ZIP-letöltése többször megszakad; hiányzó `vendor` könyvtárral továbbra sem lehet kiadni a ZIP-et.
+- Kódcommitok: `77fbc1d2f89e176b7f6deafcfbb6f3739f623013`, `ed66d569b6ab673d2cf270979389c6bdc41683aa`, `f2935554567a1349470bb8d3d5e2e1be68c09783`, `05c3a08ff338fa09783969666215f36f4112be5d`.
+- A friss változat Chromium-futtatása `42478139405` **success**. PHP/MySQL/ZIP `42478139546` és Linux `42478139532` eredményét külön kell ellenőrizni. A szakmai, jogi, CloudPanel, kézi WCAG és fizikai két eszközös tesztek kiadásblokkolók maradnak; a `main` változatlan.
