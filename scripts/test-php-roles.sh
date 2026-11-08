@@ -104,6 +104,59 @@ test "$logout_status" = 200
 test "$(curl -sS -b "$student_jar" -o /tmp/zm-role-response.json -w '%{http_code}' "${base}progress")" = 401
 test "$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-role-response.json -w '%{http_code}' "${base}admin/users")" = 200
 
+# The administrator must remain protected from self-service erasure.
+admin_delete="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-role-response.json -w '%{http_code}' \
+ -X POST "${base}auth/delete-account" -H 'Origin: http://localhost:8000' \
+ -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
+ --data '{"currentPassword":"HarmadikTesztJelszo2026!","confirmation":"FIÓKOM TÖRLÉSE"}')"
+test "$admin_delete" = 403
+# Sign in the second user again after the explicit logout test.
+second_login="$(curl -sS -c "$student_jar" -o /tmp/zm-role-response.json -w '%{http_code}' \
+ -X POST "${base}auth/login" -H 'Origin: http://localhost:8000' \
+ -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
+ --data '{"email":"role-student@example.org","password":"RoleTestPassword2026!"}')"
+test "$second_login" = 200
+# Wrong confirmation and wrong password must not delete any database rows.
+for request in \
+ '{"currentPassword":"RoleTestPassword2026!","confirmation":"nem"}' \
+ '{"currentPassword":"NotTheCorrectPassword","confirmation":"FIÓKOM TÖRLÉSE"}'; do
+  result="$(curl -sS -b "$student_jar" -o /tmp/zm-role-response.json -w '%{http_code}' \
+   -X POST "${base}auth/delete-account" -H 'Origin: http://localhost:8000' \
+   -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
+   --data "$request")"
+  if [[ "$request" == *'"confirmation":"nem"'* ]]; then test "$result" = 400
+  else test "$result" = 403; fi
+done
+# Create an invitation tied to this user; both the invited email and its
+# persistent progress/session must disappear when the user confirms deletion.
+php -r '
+$p=new PDO("mysql:host=127.0.0.1;dbname=zeneelmelet;charset=utf8mb4","root","test-only-password",[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+$stmt=$p->prepare("INSERT INTO zm_invitations(token_hash,email,expires_at,used_at,used_by) VALUES(?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 7 DAY),UTC_TIMESTAMP(),?)");
+$stmt->execute([hash("sha256","delete-account-private-invitation"),"role-student@example.org",$argv[1]]);
+' "$second_id"
+before_deletion="$(php -r '$p=new PDO("mysql:host=127.0.0.1;dbname=zeneelmelet","root","test-only-password");$s=$p->prepare("SELECT COUNT(*) FROM zm_users WHERE id=?");$s->execute([$argv[1]]);echo $s->fetchColumn();' "$second_id")"
+test "$before_deletion" = 1
+delete_status="$(curl -sS -b "$student_jar" -o /tmp/zm-role-response.json -w '%{http_code}' \
+ -X POST "${base}auth/delete-account" -H 'Origin: http://localhost:8000' \
+ -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
+ --data '{"currentPassword":"RoleTestPassword2026!","confirmation":"FIÓKOM TÖRLÉSE"}')"
+test "$delete_status" = 200
+# Two independent signed-in sessions: deleted learner sees 401 while the
+# original admin remains authorized. FK cascades remove all user data/tokens.
+test "$(curl -sS -b "$student_jar" -o /tmp/zm-role-response.json -w '%{http_code}' "${base}progress")" = 401
+test "$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-role-response.json -w '%{http_code}' "${base}admin/users")" = 200
+php -r '
+$p=new PDO("mysql:host=127.0.0.1;dbname=zeneelmelet;charset=utf8mb4","root","test-only-password",[PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION]);
+$id=$argv[1];
+foreach (["zm_users"=>"id","zm_sessions"=>"user_id","zm_progress"=>"user_id","zm_account_tokens"=>"user_id"] as $table=>$column) {
+ $s=$p->prepare("SELECT COUNT(*) FROM $table WHERE $column=?");$s->execute([$id]);if((int)$s->fetchColumn()!==0) exit(1);
+}
+$s=$p->prepare("SELECT COUNT(*) FROM zm_invitations WHERE email=? OR used_by=?");
+$s->execute(["role-student@example.org",$id]);if((int)$s->fetchColumn()!==0)exit(1);
+if((int)$p->query("SELECT COUNT(*) FROM zm_users WHERE role=\x27admin\x27")->fetchColumn()!==1)exit(1);
+' "$second_id"
+echo 'PHP self-service erasure tests passed: password confirmation, FK cascades, admin protection'
+
 echo 'PHP two-user role transitions and isolated learning progress passed'
 
 echo 'PHP role tests passed: student and teacher blocked from admin, admin restored'
