@@ -67,7 +67,14 @@ jobs:
           # Retry transport errors, but still fail the release if installation
           # cannot complete; never assemble a ZIP without its mail dependency.
           for attempt in 1 2 3; do
-            if composer install --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader; then
+            # The third attempt uses Git source checkout if the dist ZIP
+            # service repeatedly drops the connection.
+            if [ "$attempt" -eq 3 ]; then
+              preference=--prefer-source
+            else
+              preference=--prefer-dist
+            fi
+            if composer install --no-dev "$preference" --no-interaction --no-progress --optimize-autoloader; then
               exit 0
             fi
             if [ "$attempt" -eq 3 ]; then
