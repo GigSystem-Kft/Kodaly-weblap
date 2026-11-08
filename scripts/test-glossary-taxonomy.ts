@@ -10,7 +10,7 @@ test('glossary maintains exactly 1793 source terms, IDs and definitions', () => 
 });
 test('conservative taxonomy changes are visible and never hidden by the practice bank',()=>{
   const terms=MUSIC_EXPRESSIONS;
-  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,609);
+  assert.equal(terms.filter(x=>x.category==='Egyéb szakkifejezések').length,418);
   for(const label of ['Díszítések és ornamentika','Előadásmód és artikuláció']){
     assert.ok(MUSIC_EXPRESSION_CATEGORIES.includes(label));
     assert.ok(terms.some(t=>t.category===label));
@@ -42,5 +42,30 @@ test('recent reviewed glossary terms appear in their exact specialist categories
   for(const [term,category] of Object.entries(expected)){
     const entry=MUSIC_EXPRESSIONS.find(item=>item.term===term);
     assert.equal(entry?.category,category,`Incorrect reviewed taxonomy: ${term}`);
+  }
+});
+
+test('newly reviewed orchestration, expressive and theory terms retain exact categories',()=>{
+  const expected: Record<string,string>={
+    'bocca chiusa':'Éneklés és kórus',
+    'bariton':'Éneklés és kórus',
+    'ars antiqua':'Zenetörténet és stílus',
+    'consort':'Zenei műfajok és formák',
+    'attacca':'Előadásmód és artikuláció',
+    'da capo':'Kottaírás és jelölések',
+    'dal segno':'Kottaírás és jelölések',
+    'con sordino':'Egyéb szakkifejezések',
+    'con fuoco':'Dinamika és karakter',
+    'con dolore':'Dinamika és karakter',
+    'diatonikus félhang/félhanglépés':'Hangsorok és harmóniák',
+    'diesis':'Kottaírás és jelölések',
+    'diabolus in musica':'Hangsorok és harmóniák',
+    'bagpipe':'Hangszer és játéktechnika',
+    'bandoneon':'Hangszer és játéktechnika',
+    'demi jeu':'Dinamika és karakter'
+  };
+  for(const [term,category] of Object.entries(expected)){
+    const entry=MUSIC_EXPRESSIONS.find(item=>item.term===term);
+    assert.equal(entry?.category,category,term);
   }
 });
