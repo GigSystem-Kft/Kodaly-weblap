@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MUSIC_EXPRESSIONS, MUSIC_EXPRESSION_CATEGORIES } from '../src/components/MusicExpressionsView';
-import { EXPRESSION_FLASHCARDS, EXPRESSION_MATCHING } from '../src/data/musicExpressionsPractice';
+import { EXPRESSION_FLASHCARDS, EXPRESSION_MATCHING, EXPRESSION_QUIZZES } from '../src/data/musicExpressionsPractice';
 
 test('glossary maintains exactly 1793 source terms, IDs and definitions', () => {
   assert.equal(MUSIC_EXPRESSIONS.length,1793);
@@ -106,5 +106,17 @@ test('all 1793 historic source entries have explicit pedagogical domains without
     'főpróba':'Előadásmód és artikuláció',
   })){
     assert.equal(MUSIC_EXPRESSIONS.find(item=>item.term===term)?.category,category,term);
+  }
+});
+
+test('every one of the twelve glossary domains is reachable through card, game and quiz practice',()=>{
+  const termsById = new Map(MUSIC_EXPRESSIONS.map(term=>[term.id,term]));
+  const quizDomains = new Set(EXPRESSION_QUIZZES.map(quiz=>
+    termsById.get(quiz.id.replace(/^expr-q-/,'') )?.category
+  ));
+  for(const label of MUSIC_EXPRESSION_CATEGORIES){
+    assert.ok(EXPRESSION_FLASHCARDS.some(card=>card.category==='Zenei kifejezések – '+label),'Missing flashcard category: '+label);
+    assert.ok(EXPRESSION_MATCHING.some(pair=>pair.category==='Zenei kifejezések – '+label),'Missing matching category: '+label);
+    assert.ok(quizDomains.has(label),'Missing quiz domain: '+label);
   }
 });
