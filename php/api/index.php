@@ -145,7 +145,7 @@ function tokenToUuid(string $hex): string {
 }
 /** Require real calendar dates rather than matching only the text pattern. */
 function validStudyDay(string $day): bool {
-    if (!validStudyDay($day)) return false;
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/D', $day)) return false;
     [$year, $month, $date] = array_map('intval', explode('-', $day));
     return checkdate($month, $date, $year);
 }
@@ -163,7 +163,7 @@ function progressOk(mixed $p): bool {
         if (!is_array($p['earTrainingDailyXp']) ||
             count($p['earTrainingDailyXp']) > 366) return false;
         foreach ($p['earTrainingDailyXp'] as $day => $points) {
-            if (!is_string($day) || !preg_match('/^\d{4}-\d{2}-\d{2}$/D', $day) ||
+            if (!is_string($day) || !validStudyDay($day) ||
                 !is_int($points) || $points < 0 || $points > 100) return false;
         }
     }
