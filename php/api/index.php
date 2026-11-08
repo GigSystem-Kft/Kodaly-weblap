@@ -333,6 +333,26 @@ try {
         case 'auth/me':
             method('GET');
             answer(200, ['user'=>currentUser($pdo)]);
+        case 'auth/export-data':
+            method('GET');
+            $user=requireUser($pdo);
+            $stmt=$pdo->prepare('SELECT id,email,display_name,role,created_at,email_verified_at FROM zm_users WHERE id=?');
+            $stmt->execute([$user['id']]);
+            $profile=$stmt->fetch();
+            if (!$profile) fail(401,'A fiók nem található.');
+            $stmt=$pdo->prepare('SELECT progress_json,updated_at FROM zm_progress WHERE user_id=?');
+            $stmt->execute([$user['id']]);
+            $saved=$stmt->fetch();
+            // Export only this account's profile and learning records.
+            // Never expose password hashes, cookies, invitation tokens, or
+            // another user's private records in the download.
+            answer(200,[
+                'format'=>'zeneelmeleti-muhely-personal-data-v1',
+                'exportedAt'=>gmdate('c'),
+                'profile'=>$profile,
+                'progress'=>$saved?json_decode((string)$saved['progress_json'],true):null,
+                'progressUpdatedAt'=>$saved?$saved['updated_at']:null
+            ]);
         case 'auth/register':
             if (($config['invite_registration'] ?? false) !== true) {
                 fail(403, 'A meghívásos regisztráció még nincs engedélyezve.');
