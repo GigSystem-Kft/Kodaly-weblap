@@ -65,6 +65,7 @@ try {
   // Complete the randomized round by matching visible terms against the actual
   // source bank. This verifies successful completion, not only initial rendering.
   const termButtons = page.getByRole('button', { name: /^Fogalom:/ });
+  await termButtons.first().waitFor({ state: 'visible' });
   const initialPairs = await termButtons.count();
   if (initialPairs < 1 || initialPairs > 6)
     throw new Error('Unexpected matching round size: ' + initialPairs);
