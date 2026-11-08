@@ -1,35 +1,37 @@
-# Zeneelméleti Műhely – összevont auditleltár (v1.1)
+# Zeneelméleti Műhely – összevont auditleltár (v1.2)
 
-Dátum: 2026-11-07. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6 ellenőrzési terület. A-19–A-24 vizsgálati hatókör, nem mind igazolt hiba.
+Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-08. Forrás: a 2026-11-07-i 18 pontos kódaudit és a további 6 ellenőrzési terület. A-19–A-24 vizsgálati hatókör, nem mind igazolt hiba.
+
+**A korábbi javítási egységek korabeli, történeti állapotjelentések; az aktuális helyzetet az alábbi A-01–A-24 táblázat és a legutolsó egység mutatja.**
 
 **Változtatási szabály:** meglévő tanulói adatokat nem törlünk; éles kiadás előtt CI + szerepkörös és telepítési ellenőrzés; státuszt csak bizonyíték alapján zárunk.
 
 | Prioritás | ID | Téma | Állapot |
 |---|---|---|---|
 | P0 | A-01 | 13 ritmikai oldalkép hiányzik a kiadásból | MEGOLDVA: 13 eredeti, Git SHA-val bájtpontosan ellenőrzött JPG feltöltve a fejlesztési ágra; 42422196761 teljes PHP-telepítő CI sikeres |
-| P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás és CI build/tesztek sikeresek; élő magyar kereső-E2E még hátra |
+| P0 | A-02 | Tankönyvkereső ékezet- és szóközkezelése hibás | Kódjavítás; magyar ékezet/kisbetű/szóközkeresés Chromium E2E sikeres; éles webhely ellenőrzése hátra |
 | P0 | A-06 | Párhuzamos profilmentések felülírhatják egymást | Compare-and-swap mentés, háromutas kedvenc-összevezetés, fiókonként elkülönített offline függő mentés-visszaállítás; offline böngészős és migrációs tesztek; valós többeszközös éles próba hátra |
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | MEGOLDVA: a kötelező 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép médiaellenőrzése zöld; 42422196761 PHP ZIP sikeresen összeállt |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
-| P1 | A-04 | Alfejezet-teljesítések nem íródnak | Manuális alfejezet- és fejezetjelölés; Chromium E2E navigáció/újranyitás-teszt bekerült; böngészős javítás újrafuttatása hátra |
-| P1 | A-05 | Párosító teljesítési naplója hiányzik | Kód javítva: stabil pár-ID-k, teszt hátra |
+| P1 | A-04 | Alfejezet-teljesítések nem íródnak | Manuális fejezet-/alfejezetjelölés és tanulási állapotmegőrzés, Chromium E2E zöld; éles fiókos próba hátra |
+| P1 | A-05 | Párosító teljesítési naplója hiányzik | Stabil pár-ID-k és idempotens XP, egységtesztek; valódi sikeres párosítás végigjátszása böngészőben hátra |
 | P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Kódjavítás és PHP forrásteszt sikeres; éles tudásindex hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
-| P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése és összegzése implementálva; teszt hátra |
+| P1 | A-12 | Csak öt alapfejezet teljesítéskövetése teljes | Kilenc modul manuális tanulási jelölése, összegzése és CI-tesztje sikeres |
 | P1 | A-21 | Vendég/hallgató/tanár/admin end-to-end életút | PHP/MySQL CI szerepkörteszt és Chromium-böngészős mockolt student/teacher/admin navigáció sikeres; fogalomtárkedvencek profilszinkronja implementálva, valódi hitelesített éles próba hátra |
 | P1 | A-24 | Valós telepítési E2E és regressziótesztek | Chromium CI 42415390838 sikeres: vendég, szókártya, párosító, 04 kvíz, keresés, mobil touch/AI, szerepkörös UI; valódi éles hitelesítés/telepítés tesztje hátra |
-| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | 62+127+69+78=336 tétel definíció alapján átsorolva, 945 helyett 609 Egyéb; maradék kézi lektorálás szükséges |
+| P2 | A-10 | Szótári taxonómia túl sok Egyéb elemmel | BESOROLÁS KÉSZ: mind az 1793 tétel 12 konkrét kategóriában, 0 Egyéb; 945 tétel átsorolva, új általános nyelvi kategória. Eredeti szöveg/azonosítók változatlanok; független zenetudományi lektorálás hátra |
 | P2 | A-11 | XP kliensoldalról tetszőlegesen halmozható | Párosító 5 XP/új pár (max. 50/kör), hallásfeladat 100 XP/nap, PHP-validált napló és tesztek; az XP továbbra is kliensoldali gyakorlási pont, teljes szerveroldali anti-cheat hátra |
-| P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | A kvíz témakörmenüje közvetlenül az 5 alap- és 4 bővített modulkatalógusból épül; a többi párhuzamos tananyagforrás egyeztetése hátra |
+| P2 | A-13 | Párhuzamos, egyenetlen tananyag-adatforrások | 5 alap- és 4 bővített modulkatalógus, egységes 5 fejezetes alfejezeti útmutatók; önellenőrzési válaszok alfejezetenként elkülönítve, teljes szakmai szerkesztői egyeztetés hátra |
 | P2 | A-14 | H/B hangnevek és MIDI megfeleltetése | WebAudio B/H megfeleltetés és G5 (783,99 Hz) javítva; a nagy szeptim hangsor H4-re javítva; teljes 12-TET és 12 hangköz frekvenciateszt bekerült; további lejátszás-E2E hátra |
-| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | OSZK gyűjtőoldalak korrektül megnevezve; 2026-10-13-án lejárt MédiaKlikk-videó helyett LFZE magyar dokumentumfilm; dátumozott forrásleltár és CI, teljes licencellenőrzés hátra |
+| P2 | A-15 | Kotta/média URL licenc és forrásellenőrzés | OSZK és LFZE forráshelyesbítések, 8 Commons-képfájl jogállásleltára, 1927-es Bartók portré; történeti tónárium pontosítva. Tankönyv/1979-es kottakiadás jogi ellenőrzése hátra |
 | P2 | A-16 | Progress egyesítés max XP szabálya nem nyilvánvaló | Profil és kedvenc-összevezetés tisztázva; párhuzamos kedvenc törlés háromutas összevezetése; XP-adat történeti eseménynaplója továbbra sincs |
 | P2 | A-17 | Kérdésenkénti tesztmetrikák hiányoznak | Időbélyeges kvízpróbálkozások, rontott kérdések, magyarázatok, gyakorlási idő; azonos témakör utolsó 3 és előző 3 átlagának trendje elkészült, pedagógiai értékelés hátra |
 | P2 | A-19 | Teljes menü- és navigációs mátrix | Mobil/keyboard tankönyvmenü és 5 tananyagkártya Enter/Space aktiválása; részletes Chromium navigációs teszt; teljes böngészős bejárás hátra |
-| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Kérdésbank/fejezet/szókártya/párosító strukturális teszt, valamint skálák, ritmusok és ütemmutatók MIDI/számított hangzótesztje; teljes pedagógiai lektorálás hátra |
+| P2 | A-20 | Szakmai egyezés: definíció, kotta, hang, teszt, AI | Kérdésbank-válaszopciók egyedisége, tananyag-egyezés és skála/ritmus/ütemmutató frekvenciatesztek; teljes szakmai lektorálás hátra |
 | P2 | A-22 | Egységes pedagógiai teljesítési/értékelési rendszer | 15 kérdéses véletlen gyakorlókörök és külön vegyes eredményazonosító; pedagógiai értékelési standard és élő validálás hátra |
-| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Chromium/axe WCAG 2.1 AA CI sikeres a főoldalon/kvíz/tankönyv/mobil AI nézeten; alapfejezet/profil/fogalomtár új bővített WCAG CI tesztje ellenőrzés alatt; kézi audit hátra |
+| P2 | A-23 | Reszponzivitás, sötét/világos téma, kontraszt, WCAG | Hét nézetes axe WCAG 2.1 AA Chromium teszt (alapfejezet, profil, fogalomtár is), átmeneti kontraszthiba kijavítva és CI zöld; manuális audit hátra |
 
 ## Első javítási csomag
 
@@ -207,3 +209,14 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A-15: a Wikimedia Commons aquincumi víziorgona-képénél a szerzőt (Kaboldy) és CC BY-SA 3.0 Unported feltételeket közvetlen licenclinkkel tüntetjük fel; külön regresszió ellenőrzi a forrás- és licencadatokat.
 - A technikai PHP ZIP, Linux és Chromium csomagteszt a `12d8fd8fbf4d7b9c9cfd5e857601b3e3639ca854` commitnál háromszorosan zöld. Az azóta hozzáadott trend és licencváltozások friss CI státuszát külön kell ellenőrizni.
 - A **main merge továbbra is nincs engedélyezve**, mert az éles hitelesítéses, többeszközös és telepítési E2E, a 609 glosszárium tétel teljes szakszerű besorolása, a teljes tananyag szakmai lektorálása és a médiák maradéktalan jogi ellenőrzése hátravan.
+
+## Huszonnyolcadik javítási egység – 2026-11-08, fogalomtár, fiókállapot, magyar zenetörténet
+
+- **A-10:** a korábbi 609 „Egyéb” tétel további jelentésalapú rendezése (192+144+223+50) után az eredetileg 945 vegyes szócikkből **0** maradt az általános gyűjtőkategóriában. A teljes 1793 elem 12 konkrét pedagógiai kategóriába került; a nem műfajhoz vagy zenei fogalomhoz tartozó olasz, német és francia szavakat új „Általános zenei nyelv és utasítások” kategória fogja össze. A 1793 eredeti ID, fogalom és definíció változatlan. Regressziós tesztek ellenőrzik az új eloszlást, valamint az összes kategória megjelenését a szókártyák, párosítók és kvízfeladatok között. Az **értelmezések hibáinak független szakmai lektorálása nem ugyanaz**, mint a kategóriák teljes rendezése: továbbra is szükséges.
+- **A-06/A-21:** a böngésző helyi tárolójának tiltása (privacy / `SecurityError`) már nem blokkolhatja a bejelentkezett fiók szerverről történő betöltését. Vendégként az alkalmazás jól láthatóan jelzi, ha a helyi eredménymentés nem működik. Ezt külön mockolt fiókos és vendég Chromium-próbával teszteljük; a szerveroldali mentés ettől független.
+- **A-13:** az önellenőrző mintaválaszok most fejezet + alfejezet + kérdés index alapján elkülönülnek, és fejezetváltáskor a korábbi szakasz képi/megoldási állapota is törlődik. Chromium E2E teszt ellenőrzi, hogy a megmutatott mintaválasz nem szivárog át a másik alfejezet kérdésére.
+- **A-20:** a teljes kilencmodulos kvízbank minden kérdésénél Unicode-normalizált, kis/nagybetűtől és többszörös szóköztől független válaszopció-egyediségi ellenőrzés került az egységtesztekbe.
+- **A-23:** gyors alfejezetváltásnál az átmenetileg gyenge kontrasztú gombszín-animáció megszűnt. A `42462557360` Chromium és a `42462557616` PHP, valamint `42462557356` Linux CI együttesen sikeres volt. A későbbi kódváltoztatások után új CI szükséges.
+- **A-15:** a 2026-11-08-i forrásellenőrzés mind a nyolc használatban lévő Commons-képfájl oldalát dokumentálta a `docs/media-linkellenorzes-2026-11-07.md` fájlban. A Bartók-képet egy ismeretlen szerzőjű, 1927-es, Commons közkincsjelzésű portréra cseréltük a jogilag bizonytalanabb, 1982-es könyvre hivatkozó fájl helyett. A limoges-i tónárium képaláírása szakmailag pontosabb lett; az 1979-es Graduale Romanum-ból származtatott gregorián képtartalom jogainak független ellenőrzése továbbra is nyitott.
+
+**Végleges kiadás előfeltétele:** valódi PHP-auth hallgató/tanár/admin és két eszközös éles próba, adatkezelési ellenőrzés és manuális WCAG-folyamat; teljes tananyag zenetudományi és kiadói jogi lektorálása; zöld végső CI és próba CloudPanel telepítés. Csak ezután `main` merge és végleges terjesztés.
