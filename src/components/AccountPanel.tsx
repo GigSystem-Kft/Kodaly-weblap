@@ -156,6 +156,7 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         <Cloud className="w-5 h-5 text-indigo-600" />
         <h3 className="font-bold text-lg">Hallgatói fiók</h3>
       </div>
+      {!user && syncError && <p role="alert" className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">{syncError}</p>}
       {loadingStatus ? (
         <p className="text-sm text-slate-500">Fiókszolgáltatás ellenőrzése…</p>
       ) : !available ? (
