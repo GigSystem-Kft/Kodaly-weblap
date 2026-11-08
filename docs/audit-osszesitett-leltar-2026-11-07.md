@@ -14,7 +14,7 @@ Kezdő dátum: 2026-11-07. Legutóbb frissítve: 2026-11-08. Forrás: a 2026-11-
 | P0 | A-18 | Release csomag teljessége nincs ellenőrizve | MEGOLDVA: a kötelező 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép médiaellenőrzése zöld; 42422196761 PHP ZIP sikeresen összeállt |
 | P1 | A-03 | 04/05 tesztkategóriák hiányoznak | Kódjavítás és kategória-regresszió CI sikeres; valódi böngészőteszt hátra |
 | P1 | A-04 | Alfejezet-teljesítések nem íródnak | Manuális fejezet-/alfejezetjelölés és tanulási állapotmegőrzés, Chromium E2E zöld; éles fiókos próba hátra |
-| P1 | A-05 | Párosító teljesítési naplója hiányzik | Stabil pár-ID-k és idempotens XP, egységtesztek; valódi sikeres párosítás végigjátszása böngészőben hátra |
+| P1 | A-05 | Párosító teljesítési naplója hiányzik | Stabil pár-ID-k és idempotens XP; a teljes párosító kör, hibás válasz, újraindítás, egyedi feliratok és gyors újraválasztás Chromium E2E sikeres; éles fiókos eredménymentés és manuális hozzáférhetőség hátra |
 | P1 | A-07 | 09. fejezet hiányzik a PHP AI forrásriportból | Kódjavítás és PHP forrásteszt sikeres; éles tudásindex hátra |
 | P1 | A-08 | Statikus AI leltár eltér az élő index mérésétől | Külön élő és buildleltár megjelenítés implementálva; éles ellenőrzés hátra |
 | P1 | A-09 | PHP Tanársegéd fallback kereső, nem Gemini chat | Opcionális, alapból kikapcsolt és bejelentkezéshez kötött Gemini PHP-útvonal, nyilvános tananyagból RAG, licencelt forrás kizárva; konfiguráció, élő API- és szakmai választeszt hátra |
@@ -280,3 +280,11 @@ Az eredeti MTA–SZTE 13 oldalas PDF a korábbi feltöltések között megtalál
 - A projekt továbbra sem végleges: CloudPanel-élesítés, személyes adatok adatvédelmi jóváhagyása, teljes szakmai és jogi lektorálás, valamint manuális akadálymentességi teszt szükséges. Nincs `main` merge és nincs végleges letöltés.
 
 - **Ellenőrzött CI eredmény (2026-11-08):** a fiókváltási mentés javítását tartalmazó `00d5ffac1af6126afccfb76fdeb8c52ab79f4a1f` commitnál Chromium `42472071172` **success**, Linux `42472071224` **success**, PHP/MySQL/ZIP `42472071175` **success**. A teljes éles többfiókos, két eszközös teszt ettől még nem teljesült.
+
+## 2026-11-08 – A-11 adatintegritási javítás és hátralévő elfogadási kapuk
+
+- **A-11:** A `recordActivity` nem véges (`NaN`, `Infinity`, `-Infinity`) jutalompont esetén korábban érvénytelen `xp` értéket képezhetett. A `recordEarTrainingActivity` napi számlálója ugyanezeknél a bemeneteknél szintén romolhatott. Most az ilyen bemenet 0 pontot ad, és a negatív jutalom is 0-ra korlátozódik. Érvénytelen korábban betöltött napi számláló helyett biztonságos 0-ról indul. A már helyesen tárolt XP, valamint a napi 100 pontos korlát változatlan.
+- Egységteszt: `progress.test.ts` ellenőrzi a nem véges, negatív és hibás napi számlálóval érkező pontokat. Commitok: `708ea8aae6cf2da9e15313b77fe09e9caa6e9d19`, `98f835b31bc17708e5d6283cb5fe885913df6a32`.
+- **Auditpontok:** a 24 tételből A-01 és A-18 zárható önállóan igazolt technikai követelményként; a többihez további szerepkörös, pedagógiai, jogi vagy valós telepítési elfogadás tartozik. Ez nem azt jelenti, hogy a többi 22 pont kódja hiányzik.
+- **Kiadási kapuk:** (1) teljes zenepedagógiai, kotta/hang/kvíz és 1793 fogalom lektorálása; (2) összes külső média és kiadói engedély ellenőrzése; (3) valódi CloudPanel PHP/MySQL migráció és telepítés; (4) éles szerepkörös és fizikai két eszközös próba; (5) manuális WCAG és mobil teszt; (6) opcionális Gemini élő API/adatkezelési validáció – AI nélkül a helyi keresős mód maradhat.
+- A `main` ágra nem történt összevezetés. A végleges letöltési csomag továbbra sem kiadható.
