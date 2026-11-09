@@ -208,8 +208,8 @@ try {
     await answers.nth(wrongOption).click();
     // The selected wrong answer must actually be marked as incorrect before
     // advancing, otherwise the final progress assertion has no meaning.
-    if (await answers.nth(wrongOption).getAttribute('class') === null ||
-        !(await answers.nth(wrongOption).getAttribute('class')).includes('border-rose-500'))
+    const feedbackClass = await answers.nth(wrongOption).getAttribute('class') || '';
+    if (!feedbackClass.includes('border-rose-500'))
       throw new Error('Expected wrong-answer feedback was not shown for: '+question);
     await page.getByRole('button',{name:n===14 ? 'Kvíz befejezése' : 'Következő kérdés'}).click();
   }
@@ -221,7 +221,7 @@ try {
       return attempts.some(attempt => attempt.chapterId==='vegyes-gyakorlas' &&
         attempt.correct===0 && attempt.total===15 &&
         attempt.wrongQuestionIds?.length===15);
-    }, { timeout: 5000 });
+    }, null, { timeout: 5000 });
   } catch {
     const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('kodaly_progress') || 'null'));
     throw new Error('15-error quiz summary missing or invalid: '+JSON.stringify({
