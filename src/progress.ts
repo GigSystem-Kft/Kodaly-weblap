@@ -6,7 +6,7 @@ const MAX_QUIZ_CATEGORIES = 500;
 const MAX_ID_UTF8_BYTES = 120;
 const utf8Encoder = new TextEncoder();
 function validProgressId(input: unknown): input is string {
-  return typeof input === 'string' && utf8Encoder.encode(input).length <= MAX_ID_UTF8_BYTES;
+  return typeof input === 'string' && input.trim().length > 0 && utf8Encoder.encode(input).length <= MAX_ID_UTF8_BYTES;
 }
 export const PROGRESS_KEY = 'kodaly_progress';
 
