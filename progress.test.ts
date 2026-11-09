@@ -116,6 +116,22 @@ test('invalid and overlong quiz history cannot break legacy progress',()=>{
   assert.ok(restored.quizAttempts?.every(a=>a.score<=100));
 });
 
+test('a 15-question all-incorrect round keeps every wrong question ID through migration', () => {
+  const attempt = {
+    id:'all-wrong-15',chapterId:'vegyes-gyakorlas',score:0,correct:0,total:15,
+    at:'2026-11-09T09:00:00Z',
+    wrongQuestionIds:Array.from({length:15},(_,i)=>'question-'+(i+1))
+  };
+  const progress = createEmptyProgress();
+  progress.quizAttempts = [attempt];
+  const restored = migrateProgress(JSON.parse(JSON.stringify(progress)));
+  assert.deepEqual(restored.quizAttempts?.[0]?.wrongQuestionIds,attempt.wrongQuestionIds);
+  const tooMany = {
+    ...attempt, wrongQuestionIds:[...attempt.wrongQuestionIds,'question-16']
+  };
+  assert.deepEqual(migrateProgress({...progress,quizAttempts:[tooMany]}).quizAttempts,[]);
+});
+
 test('quiz mistake IDs survive account merge, while oversized diagnostics are discarded',()=>{
  const server=createEmptyProgress();
  const attempt={id:'quiz-a',chapterId:'ritmus',score:50,correct:1,total:2,at:'2026-11-07T10:00:00Z',wrongQuestionIds:['q-2']};
@@ -125,7 +141,7 @@ test('quiz mistake IDs survive account merge, while oversized diagnostics are di
  const merged=mergeProgress(server,guest);
  assert.equal(merged.quizAttempts?.length,1);
  assert.deepEqual(migrateProgress(merged).quizAttempts?.[0]?.wrongQuestionIds,['q-2']);
- const bad={...server,quizAttempts:[{...attempt,wrongQuestionIds:Array.from({length:13},(_,i)=>'q-'+i)}]};
+ const bad={...server,quizAttempts:[{...attempt,wrongQuestionIds:Array.from({length:16},(_,i)=>'q-'+i)}]};
  assert.deepEqual(migrateProgress(bad).quizAttempts,[]);
 });
 
