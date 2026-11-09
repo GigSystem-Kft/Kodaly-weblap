@@ -24,6 +24,7 @@ def valid_jpeg(path: Path) -> bool:
 required_files = [
     "index.html", "source-inventory.json",
     "api/index.php", "api/admin.php", "api/knowledge.php",
+    "api/deployment-audit.php",
     "api/tutor-sources.php", "api/tutor-search.php",
     "api/tutor-text-generation.php", "api/tutor-image-generation.php",
     "api/tutor-visuals.php", "api/creative-answers.php",
@@ -50,13 +51,25 @@ if html.is_file():
     except UnicodeError as exc:
         errors.append(f"Invalid UTF-8 index.html: {exc}")
 
-# Never bundle stray backups in the public webroot. Those archives can expose
-# application source and potentially private configuration when downloaded.
-for suffix in ("*.zip", "*.sql", "*.bak", "*.tar.gz"):
-    for archive in root.rglob(suffix):
-        errors.append(f"Unexpected publicly accessible backup/archive in webroot: {archive}")
-for private_env in root.rglob(".env"):
-    errors.append(f"Private .env file cannot be deployed inside public webroot: {private_env}")
+# A-24: match the runtime deployment scanner. A nested SQL dump, any .env.*
+# variant, or an external symlink is unsafe even if the homepage loads.
+# This build-time check is deliberately independent of the PHP runtime check.
+risky_file = re.compile(
+    r"(?:^\.env(?:\..+)?$|^\.htpasswd(?:\..+)?$|"
+    r"\.(?:zip|sql|bak|backup|tar|tgz|7z|dump|sqlite|sqlite3|db|pem|key)$|"
+    r"\.sql\.(?:gz|bz2|xz)$|\.tar\.(?:gz|bz2|xz)$)",
+    re.IGNORECASE,
+)
+resolved_root = root.resolve()
+for item in root.rglob("*"):
+    if item.is_symlink():
+        target = item.resolve()
+        if not target.is_relative_to(resolved_root):
+            errors.append(f"External symlink in public webroot: {item}")
+    elif item.is_dir() and item.name.lower() in {".git", ".svn", ".hg"}:
+        errors.append(f"Version control data in public webroot: {item}")
+    elif item.is_file() and risky_file.search(item.name):
+        errors.append(f"Sensitive backup or configuration in public webroot: {item}")
 
 expected_pages = {1: 72, 2: 69, 3: 80, 4: 81}
 for book in range(1, 5):
