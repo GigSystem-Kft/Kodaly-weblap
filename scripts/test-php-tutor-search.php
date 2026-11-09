@@ -48,6 +48,13 @@ ensureTutorSearch(!tutorTermMatch('kvintkorhajo','kvintkor'),
  'Reject an unrelated longer word with the same prefix');
 ensureTutorSearch(rankLessons('Mi a kvintkorhajo?', $inflectedEntries)===[],
  'Unrelated compound is not treated as a kvintkör search hit');
+// Shared-hosting PHP may omit mbstring: never truncate Hungarian answers
+// in the middle of an accented UTF-8 code point or count bytes as letters.
+ensureTutorSearch(mbSafeLength('Őő')===2,'UTF-8 character count, not bytes');
+ensureTutorSearch(mbSafeCut('Őszinte',2)==='Ős','UTF-8 character-safe truncation');
+$trimmed=mbSafeCut(str_repeat('ő',240),200);
+ensureTutorSearch(mbSafeLength($trimmed)===200 && preg_match('//u',$trimmed)===1,
+ '200 visible accented letters without malformed UTF-8');
 $coverage=tutorSourceAudit([
  ['source'=>'Fogalomtár', 'label'=>'09. Zenei kifejezések', 'text'=>'Allegro'],
  ['source'=>'Tananyag', 'label'=>'08. Ének-zene tantárgy-pedagógia', 'text'=>'Kodály'],
