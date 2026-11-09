@@ -44,6 +44,17 @@ export const ChatAssistant: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const zoomCloseButtonRef = useRef<HTMLButtonElement>(null);
   const zoomTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const openTutorButtonRef = useRef<HTMLButtonElement>(null);
+  const tutorQuestionRef = useRef<HTMLInputElement>(null);
+
+  const closeTutorPanel = () => {
+    setIsOpen(false);
+    window.requestAnimationFrame(() => openTutorButtonRef.current?.focus());
+  };
+
+  useEffect(() => {
+    if (isOpen) tutorQuestionRef.current?.focus();
+  }, [isOpen]);
 
   const closeZoom = () => {
     setZoomGenerated(null);
@@ -146,6 +157,7 @@ export const ChatAssistant: React.FC = () => {
       {!isOpen && (
         <button
           type="button"
+          ref={openTutorButtonRef}
           aria-label="Tanársegéd AI megnyitása"
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 z-50 bg-gradient-to-tr from-indigo-600 to-violet-500 hover:from-indigo-500 hover:to-violet-400 text-white p-4 rounded-full shadow-2xl shadow-indigo-600/40 flex items-center space-x-2 transition-all hover:scale-105"
@@ -157,7 +169,9 @@ export const ChatAssistant: React.FC = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-96 max-h-[calc(100dvh-1.5rem)] h-[min(500px,calc(100dvh-1.5rem))] bg-slate-900 border border-indigo-500/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-96 max-h-[calc(100dvh-1.5rem)] h-[min(500px,calc(100dvh-1.5rem))] bg-slate-900 border border-indigo-500/30 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+          role="dialog" aria-label="Zeneelméleti Tanársegéd beszélgetés"
+          onKeyDown={event => { if (event.key === 'Escape') { event.stopPropagation(); closeTutorPanel(); } }}>
           {/* Header */}
           <div className="bg-slate-800/90 border-b border-slate-700/60 p-4 flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -191,7 +205,7 @@ export const ChatAssistant: React.FC = () => {
             <button
               type="button"
               aria-label="Tanársegéd bezárása"
-              onClick={() => setIsOpen(false)}
+              onClick={closeTutorPanel}
               className="p-1.5 rounded-lg hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
@@ -305,6 +319,7 @@ export const ChatAssistant: React.FC = () => {
           <form onSubmit={handleSend} className="p-3 bg-slate-800/80 border-t border-slate-700/60 flex items-center space-x-2">
             <input
               type="text"
+              ref={tutorQuestionRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Kérdezz a ritmusról, hangközökről..."
