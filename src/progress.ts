@@ -1,6 +1,13 @@
 import type { UserProgress } from './types';
 
 const DAY_MS = 86_400_000;
+const MAX_LIST_ITEMS = 10_000;
+const MAX_QUIZ_CATEGORIES = 500;
+const MAX_ID_UTF8_BYTES = 120;
+const utf8Encoder = new TextEncoder();
+function validProgressId(input: unknown): input is string {
+  return typeof input === 'string' && utf8Encoder.encode(input).length <= MAX_ID_UTF8_BYTES;
+}
 export const PROGRESS_KEY = 'kodaly_progress';
 
 /** Recheck pending saves when a stale in-flight request releases the writer lock. */
@@ -56,21 +63,23 @@ export function migrateProgress(raw: unknown): UserProgress {
   const empty = createEmptyProgress();
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return empty;
   const value = raw as Partial<UserProgress>;
-  const strings = (input: unknown) => Array.isArray(input) ? [...new Set(input.filter((s): s is string => typeof s === 'string'))] : [];
+  const strings = (input: unknown, max = MAX_LIST_ITEMS) =>
+    Array.isArray(input) ? [...new Set(input.filter(validProgressId))].slice(0, max) : [];
   const scores = value.quizScores && typeof value.quizScores === 'object' && !Array.isArray(value.quizScores)
-    ? Object.fromEntries(Object.entries(value.quizScores).filter(([key, v]) => key.length < 120 && typeof v === 'number' && Number.isFinite(v)).map(([key, v]) => [key, Math.min(100, Math.max(0, v))]))
+    ? Object.fromEntries(Object.entries(value.quizScores).filter(([key, v]) => validProgressId(key) && typeof v === 'number' && Number.isFinite(v))
+        .slice(0, MAX_QUIZ_CATEGORIES).map(([key, v]) => [key, Math.min(100, Math.max(0, v))]))
     : {};
   const quizAttempts = Array.isArray(value.quizAttempts)
     ? value.quizAttempts.filter((item): item is NonNullable<UserProgress['quizAttempts']>[number] =>
         !!item && typeof item === 'object' &&
-        typeof item.id === 'string' && item.id.length <= 120 &&
-        typeof item.chapterId === 'string' && item.chapterId.length <= 120 &&
+        validProgressId(item.id) &&
+        validProgressId(item.chapterId) &&
         typeof item.score === 'number' && Number.isFinite(item.score) && item.score >= 0 && item.score <= 100 &&
         Number.isInteger(item.correct) && Number.isInteger(item.total) &&
         item.total > 0 && item.total <= 1000 && item.correct >= 0 && item.correct <= item.total &&
-        typeof item.at === 'string' && !Number.isNaN(Date.parse(item.at)) &&
+        typeof item.at === 'string' && item.at.length <= 40 && !Number.isNaN(Date.parse(item.at)) &&
         Math.abs(item.score - Math.round(item.correct / item.total * 100)) <= 1 &&
-        (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 15 && item.wrongQuestionIds.every((id:unknown)=>typeof id === 'string' && id.length <= 120))) &&
+        (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 15 && item.wrongQuestionIds.every(validProgressId))) &&
         (item.durationSeconds === undefined || (Number.isInteger(item.durationSeconds) && item.durationSeconds >= 0 && item.durationSeconds <= 36_000))
       ).slice(-100)
     : [];
@@ -81,7 +90,7 @@ export function migrateProgress(raw: unknown): UserProgress {
           Number.isInteger(points) && (points as number) >= 0 && (points as number) <= 100)
         .sort(([a],[b])=>a.localeCompare(b)).slice(-366))
     : {};
-  const activityDays = strings(value.activityDays).filter(validStudyDay).sort();
+  const activityDays = strings(value.activityDays, Number.POSITIVE_INFINITY).filter(validStudyDay).sort().slice(-MAX_LIST_ITEMS);
   return {
     completedChapters: strings(value.completedChapters),
     completedSubchapters: strings(value.completedSubchapters),
@@ -89,7 +98,7 @@ export function migrateProgress(raw: unknown): UserProgress {
     quizAttempts,
     flashcardsMastered: strings(value.flashcardsMastered),
     matchingCompleted: strings(value.matchingCompleted),
-    favoriteExpressions: strings(value.favoriteExpressions).slice(0, 1800),
+    favoriteExpressions: strings(value.favoriteExpressions, 1800),
     earTrainingDailyXp,
     // Historical XP cannot be reconstructed; keep the saved value, but never grant the old default 100 to new users.
     xp: typeof value.xp === 'number' && Number.isFinite(value.xp) ? Math.min(100_000_000, Math.max(0, Math.floor(value.xp))) : 0,
@@ -148,7 +157,7 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     quizScores[chapter] = Math.max(score, quizScores[chapter] ?? 0);
   }
   const days = union(account.activityDays ?? [], guest.activityDays ?? []).sort();
-  return {
+  return migrateProgress({
     ...account,
     completedChapters: union(account.completedChapters, guest.completedChapters),
     completedSubchapters: union(account.completedSubchapters, guest.completedSubchapters),
@@ -168,8 +177,7 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     activityDays: days,
     lastActiveDate: days.at(-1) ?? '',
     streak: consecutiveDays(days)
-  };
-}
+  });}
 
 /**
  * Three-way conflict resolution for a concurrent account sync.
