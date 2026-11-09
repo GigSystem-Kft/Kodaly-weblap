@@ -50,12 +50,14 @@ function database(array $config): PDO {
         ]
     );
 }
-function getPayload(): array {
+function getPayload(int $maxBytes=65536): array {
     if (!str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''), 'application/json')) {
         fail(415, 'JSON adatokat vár a szerver.');
     }
-    $raw = file_get_contents('php://input', false, null, 0, 65537);
-    if (!is_string($raw) || strlen($raw) > 65536) fail(413, 'Túl nagy kérés.');
+    // Login, invitations and other privileged routes retain their 64 KiB
+    // request cap. Only the revision-protected progress PUT uses 1 MB.
+    $raw = file_get_contents('php://input', false, null, 0, $maxBytes + 1);
+    if (!is_string($raw) || strlen($raw) > $maxBytes) fail(413, 'Túl nagy kérés.');
     try { $data = json_decode($raw, true, 24, JSON_THROW_ON_ERROR); }
     catch (JsonException) { fail(400, 'Érvénytelen JSON.'); }
     if (!is_array($data) || array_is_list($data)) fail(400, 'Érvénytelen adatok.');
@@ -720,7 +722,9 @@ try {
                 ]);
             }
             if ($httpMethod !== 'PUT') { header('Allow: GET, PUT'); fail(405,'Nem támogatott kérés.'); }
-            $body=getPayload();
+            // Large but valid activity histories used to be rejected by
+            // the global 64 KiB JSON cap despite passing list validation.
+            $body=getPayload(1000256);
             $progress=$body['progress'] ?? null;
             if (!progressOk($progress)) fail(400,'Érvénytelen tanulási adatok.');
             $expected=$body['revision'] ?? null;
@@ -728,7 +732,7 @@ try {
                 fail(428,'Az eredménymentéshez előzetes szerververzió szükséges.');
             }
             $text=json_encode($progress,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
-            if (strlen($text)>64000) fail(413,'Túl nagy tanulási napló.');
+            if (strlen($text)>1000000) fail(413,'Túl nagy tanulási napló.');
             $pdo->beginTransaction();
             try {
                 // Serialize first-time writes too, when no progress row exists yet.
