@@ -22,7 +22,7 @@ def valid_jpeg(path: Path) -> bool:
 # Release-time application integrity: the site can render and login while its
 # administration fails if any of these PHP modules are missing from the upload.
 required_files = [
-    "index.html", "source-inventory.json",
+    "index.html", "source-inventory.json", "release-build.json", "api/release-build.php",
     "api/index.php", "api/admin.php", "api/knowledge.php",
     "api/deployment-audit.php",
     "api/tutor-sources.php", "api/tutor-search.php",
@@ -50,6 +50,37 @@ if html.is_file():
                 errors.append(f"Missing frontend entrypoint referenced by {html}: {link}")
     except UnicodeError as exc:
         errors.append(f"Invalid UTF-8 index.html: {exc}")
+
+# Stamp parity is necessary to prevent a new frontend talking to an old PHP
+# API, or vice versa (which previously broke learner revision-based saves).
+# The three stamps contain only a public Git revision, never secrets.
+try:
+    manifest = json.loads((root / "release-build.json").read_text(encoding="utf-8"))
+    revision = manifest.get("sha") if isinstance(manifest, dict) else None
+    if (
+        not isinstance(manifest, dict)
+        or manifest.get("schema") != 1
+        or not isinstance(revision, str)
+        or re.fullmatch(r"[a-f0-9]{40}", revision) is None
+    ):
+        errors.append("Invalid or missing release-build.json revision")
+    else:
+        markup = html.read_text(encoding="utf-8")
+        html_stamps = re.findall(
+            r'<meta\s+name="zeneelmelet-build-sha"\s+content="([a-f0-9]{40})"\s*/?>',
+            markup,
+        )
+        if html_stamps != [revision]:
+            errors.append("Mixed or duplicated HTML/JSON release revision")
+        php_stamp = (root / "api/release-build.php").read_text(encoding="utf-8")
+        expected_php = (
+            "<?php\n// Public, non-secret checked-out release revision.\n"
+            "return '" + revision + "';\n"
+        )
+        if php_stamp != expected_php:
+            errors.append("Mixed PHP/JSON release revision")
+except (OSError, ValueError, UnicodeError) as exc:
+    errors.append(f"Unreadable three-layer release fingerprint: {exc}")
 
 # A-24: match the runtime deployment scanner. A nested SQL dump, any .env.*
 # variant, or an external symlink is unsafe even if the homepage loads.
