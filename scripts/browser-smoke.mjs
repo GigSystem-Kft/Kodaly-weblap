@@ -511,7 +511,7 @@ try {
   });
   const liveFixture = {...reportFixture(['Tananyag', 'Fogalomtár'], 2800), chapter09GlossaryEntries: 1793};
   const staticFixture = reportFixture(['Tananyag', 'Fogalomtár', 'Szemléltetés'], 3800);
-  for (const reportMode of ['live', 'static', 'incomplete']) {
+  for (const reportMode of ['live', 'static', 'incomplete', 'mixed']) {
     const reportContext = await browser.newContext();
     const reportPage = await reportContext.newPage();
     let extraSource = null;
@@ -544,6 +544,8 @@ try {
           missing:reportMode==='live' ? ['api/admin.php'] : [],
           publicArchives:reportMode==='live' ? ['api/archive.zip'] : [],
           scanComplete:reportMode!=='incomplete',scannedItems:1342,
+          buildConsistent:reportMode!=='mixed',
+          releaseRevision:reportMode==='mixed' ? null : 'a'.repeat(40),
           mailConfigured:false,scope:'Files only'}
         : endpoint === 'admin/users'
         ? {users:[]}
@@ -574,8 +576,12 @@ try {
       // unless the complete recursive scan is explicitly confirmed.
       await reportPage.getByText('A telepítés fájlkészlete ellenőrzést igényel.').waitFor();
       await reportPage.getByText(/A nyilvános mappák teljes biztonsági átvizsgálása nem igazolt/).waitFor();
+    } else if (reportMode === 'mixed') {
+      await reportPage.getByText('A telepítés fájlkészlete ellenőrzést igényel.').waitFor();
+      await reportPage.getByText(/Nem igazolt az egységes telepítőverzió/).waitFor();
     } else {
       await reportPage.getByText(/A kötelező fájlok és belépési állományok jelen vannak; a nyilvános fájlfák ellenőrzése teljes/).waitFor();
+      await reportPage.getByText(/Ellenőrzött közös Git-verzió/).waitFor();
     }
     if (reportMode === 'live') {
       await checkAccessibility(reportPage, 'adminisztráció');
