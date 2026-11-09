@@ -134,8 +134,33 @@ test "$loginStatus" = 200
 statusMe="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=auth/me')"
 test "$statusMe" = 200
 php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j["user"]["email"]??null)!=="pilot@example.org") exit(1);'
+# A second signed-in device has its own independent cookie.
+secondDeviceLogin="$(curl -sS -c /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
+test "$secondDeviceLogin" = 200
+wrongPasswordChange="$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"currentPassword":"EgyHelytelenJelszo2026!","newPassword":"Tilthatatlan2026!?"}')"
+test "$wrongPasswordChange" = 403
+test "$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/me')" = 200
 changeStatus="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HarmadikTesztJelszo2026!"}')"
 test "$changeStatus" = 200
+# Password rotation revokes the other device, not just the current browser.
+curl -fsS -b /tmp/zm-second-device-cookies \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-second-device-me.json
+php -r '$j=json_decode(file_get_contents("/tmp/zm-second-device-me.json"),true); if(!array_key_exists("user",$j)||$j["user"]!==null)exit(1);'
+staleChange="$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HelytelenNegyedik2026!"}')"
+test "$staleChange" = 401
 curl -fsS -b /tmp/zm-cookies.txt 'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-response.json
 php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(!array_key_exists("user",$j) || $j["user"]!==null) exit(1);'
 loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
