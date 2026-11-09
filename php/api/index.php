@@ -606,13 +606,20 @@ try {
             $body=getPayload();
             $previous=$body['currentPassword'] ?? null;
             validateNewPassword($body['newPassword'] ?? null);
-            if (!is_string($previous)) fail(400,'A jelenlegi jelszó megadása kötelező.');
-            $stmt=$pdo->prepare('SELECT password_hash FROM zm_users WHERE id=?');
-            $stmt->execute([$user['id']]);
-            $stored=$stmt->fetchColumn();
-            if (!$stored || !password_verify($previous, (string)$stored)) fail(403, 'A jelenlegi jelszó helytelen.');
+            if (!is_string($previous) || $previous==='' || strlen($previous)>128)
+                fail(400,'A jelenlegi jelszó megadása kötelező.');
+            // Serialize password changes (and account erasure) on this user row.
+            // A concurrent request cannot validate the previously correct
+            // password and overwrite a newly changed password afterward.
             $pdo->beginTransaction();
             try {
+                $stmt=$pdo->prepare('SELECT password_hash FROM zm_users WHERE id=? FOR UPDATE');
+                $stmt->execute([$user['id']]);
+                $stored=$stmt->fetchColumn();
+                if (!$stored || !password_verify($previous, (string)$stored)) {
+                    $pdo->rollBack();
+                    fail(403, 'A jelenlegi jelszó helytelen.');
+                }
                 $stmt=$pdo->prepare('UPDATE zm_users SET password_hash=? WHERE id=?');
                 $stmt->execute([password_hash($body['newPassword'], PASSWORD_ARGON2ID),$user['id']]);
                 $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
