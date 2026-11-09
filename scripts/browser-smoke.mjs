@@ -305,7 +305,7 @@ try {
   });
   try {
     await halfLoginPage.goto(root,{waitUntil:'domcontentloaded'});
-    await halfLoginPage.getByRole('button',{name:/06\\. Profil/}).click();
+    await halfLoginPage.getByRole('button',{name:/06\. Profil/}).click();
     await halfLoginPage.getByLabel('E-mail-cím').fill('partial@example.invalid');
     await halfLoginPage.getByLabel('Jelszó',{exact:true}).fill('sample-password-12345');
     await halfLoginPage.locator('form button[type="submit"]').click();
