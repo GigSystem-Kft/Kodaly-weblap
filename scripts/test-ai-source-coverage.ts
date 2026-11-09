@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { localKnowledgeReply, searchKnowledge, sourceCoverageReport, unicodeCharacterCount } from '../server-knowledge';
 
 /**
@@ -65,4 +66,22 @@ test('A-08: Unicode character totals are consistent even for accents and music s
  assert.equal(report.indexedCharacters,
   report.sources.reduce((sum,source)=>sum+source.characters,0),
   'Global and per-source Unicode counts agree');
+});
+
+test('A-08: admin and PHP both check the same six mandatory tutor banks',()=>{
+ const ui=readFileSync('src/components/AdminDashboard.tsx','utf8');
+ const php=readFileSync('php/api/tutor-search.php','utf8');
+ for(const source of [
+  'Zeneelméleti Műhely – Szókártyák',
+  'Zeneelméleti Műhely – Teszt',
+  'Zeneelméleti Műhely – Párosító',
+  'Zeneelméleti Műhely – Hangzó hangsor és akkord',
+  'Zeneelméleti Műhely – Hangkészletek és pentaton példák',
+  'Zeneelméleti Műhely – Kvintkör'
+ ]) {
+  assert.ok(ui.includes(source),'Admin report missing bank: '+source);
+  assert.ok(php.includes(source),'PHP live report missing bank: '+source);
+ }
+ assert.ok(ui.includes('indexelt tétel') && ui.includes('HIÁNYZIK'),
+  'Admin report must show live bank counts and missing items');
 });
