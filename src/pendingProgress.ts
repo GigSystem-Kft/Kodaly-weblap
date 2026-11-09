@@ -4,7 +4,11 @@ import { migrateProgress, mergeConcurrentProgress } from './progress';
 // Local offline recovery is scoped to an account id; never import another
 // account's unsaved data. This is device-local recovery, not server backup.
 const PREFIX = 'kodaly_pending_progress_';
-const MAX_BYTES = 1_000_000;
+// The recovery record stores BOTH the last server snapshot and the edited
+// local snapshot. A legitimate ~1 MB account history therefore needs more
+// than 1 MB in this account-scoped local backup.
+const MAX_BYTES = 3_000_000;
+const utf8Bytes = (value: string): number => new TextEncoder().encode(value).length;
 /**
  * localStorage can be inaccessible under browser privacy policies or disabled
  * site storage. Account sync must remain usable even when offline recovery is not.
@@ -27,7 +31,7 @@ export function pendingProgressKey(userId: string): string {
 export function loadPendingProgress(storage: Pick<Storage,'getItem'>, userId: string): Pending | null {
   try {
     const raw = storage.getItem(pendingProgressKey(userId));
-    if (!raw || raw.length > MAX_BYTES) return null;
+    if (!raw || utf8Bytes(raw) > MAX_BYTES) return null;
     const value: unknown = JSON.parse(raw);
     if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
     const data = value as Partial<Pending>;
@@ -56,7 +60,7 @@ export function savePendingProgress(
 ): void {
   const data: Pending = {version: 1, ownerId: userId, base, local};
   const serialized = JSON.stringify(data);
-  if (serialized.length > MAX_BYTES) throw new Error('A függőben lévő tanulási mentés túl nagy a helyi tároláshoz.');
+  if (utf8Bytes(serialized) > MAX_BYTES) throw new Error('A függőben lévő tanulási mentés túl nagy a helyi tároláshoz.');
   storage.setItem(pendingProgressKey(userId), serialized);
 }
 
