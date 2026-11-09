@@ -41,11 +41,15 @@ invalidBlankFavorite="$(php -r '
 $p=json_decode($argv[1],true);$p["favoriteExpressions"]=[" "];
 echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
 ' "$updated")"
+invalidUnicodeFavorite="$(php -r '
+$p=json_decode($argv[1],true);$p["favoriteExpressions"]=["\u{00A0}"];
+echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
 invalidBlankWrongQuestion="$(php -r '
 $p=json_decode($argv[1],true);$p["quizAttempts"][0]["wrongQuestionIds"]=[""];
 echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
 ' "$updated")"
-for malformedProgress in "$invalidDay" "$invalidActivity" "$invalidScore" "$invalidQuizString" "$invalidXp" "$invalidBlankChapter" "$invalidBlankFavorite" "$invalidBlankWrongQuestion"; do
+for malformedProgress in "$invalidDay" "$invalidActivity" "$invalidScore" "$invalidQuizString" "$invalidXp" "$invalidBlankChapter" "$invalidBlankFavorite" "$invalidUnicodeFavorite" "$invalidBlankWrongQuestion"; do
   status="$(put_progress "{\"progress\":$malformedProgress,\"revision\":\"$saved\"}")"
   test "$status" = 400
 done
