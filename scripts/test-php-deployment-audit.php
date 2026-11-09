@@ -55,6 +55,34 @@ try {
         }
     }
 
+    // The real release records one checked-out SHA in HTML, JSON and PHP.
+    // A partially deployed or accidentally mixed revision must never pass.
+    $releaseSha = str_repeat('a', 40);
+    $otherSha = str_repeat('b', 40);
+    $meta = '<meta name="zeneelmelet-build-sha" content="' . $releaseSha . '">';
+    file_put_contents($root . '/index.html', '<html><head>' . $meta . '</head><body>Test</body></html>');
+    file_put_contents($root . '/release-build.json', json_encode(['schema'=>1,'sha'=>$releaseSha], JSON_THROW_ON_ERROR));
+    $expectedPhp = "<?php\n// Public, non-secret checked-out release revision.\nreturn '" . $releaseSha . "';\n";
+    file_put_contents($root . '/api/release-build.php', $expectedPhp);
+    $fingerprint = deploymentBuildFingerprint($root);
+    checkDeployment($fingerprint['buildConsistent'] === true &&
+        $fingerprint['releaseRevision'] === $releaseSha,
+        'identical three-layer release stamps must pass');
+
+    file_put_contents($root . '/release-build.json', json_encode(['schema'=>1,'sha'=>$otherSha], JSON_THROW_ON_ERROR));
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'mixing static and PHP revisions must be blocked');
+
+    file_put_contents($root . '/release-build.json', json_encode(['schema'=>1,'sha'=>$releaseSha], JSON_THROW_ON_ERROR));
+    file_put_contents($root . '/index.html', '<html><head>' . $meta . $meta . '</head></html>');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'duplicate injected HTML stamps are invalid');
+
+    file_put_contents($root . '/index.html', '<html><head>' . $meta . '</head></html>');
+    unlink($root . '/api/release-build.php');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'missing backend revision stamp fails closed');
+
     $unavailable = deploymentPublicRiskScan($base . '/does-not-exist');
     checkDeployment(!$unavailable['scanComplete'], 'missing webroot must fail closed');
     fwrite(STDOUT, "Recursive public deployment safety audit tests passed\n");
