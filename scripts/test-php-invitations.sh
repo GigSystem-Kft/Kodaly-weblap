@@ -149,8 +149,24 @@ wrongPasswordChange="$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-resp
 test "$wrongPasswordChange" = 403
 test "$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
  'http://127.0.0.1:8000/api/index.php?route=auth/me')" = 200
+# A reset email already sent before a manual password change must no
+# longer authorize a second password rotation.
+pendingResetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset-request' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"email":"pilot@example.org"}')"
+test "$pendingResetStatus" = 200
+pendingResetToken="$(grep -oE 'account=reset&token=[a-f0-9]{64}' /tmp/zm-test-mail.txt | tail -1 | cut -d= -f3)"
+test "${#pendingResetToken}" = 64
 changeStatus="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HarmadikTesztJelszo2026!"}')"
 test "$changeStatus" = 200
+staleResetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data "{\"token\":\"$pendingResetToken\",\"password\":\"IlletektelenVisszaallitas2026!\"}")"
+test "$staleResetStatus" = 400
 # Password rotation revokes the other device, not just the current browser.
 curl -fsS -b /tmp/zm-second-device-cookies \
  'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-second-device-me.json
