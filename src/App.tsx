@@ -44,23 +44,27 @@ export default function App() {
 
   useEffect(() => {
     let active = true;
+    const startingGeneration = accountGenerationRef.current;
+    const isCurrentLoad = () => active && startingGeneration === accountGenerationRef.current;
     const initialize = async () => {
       try {
         const response = await apiFetch('/api/auth/me');
         if (!response.ok) throw new Error('Nem elérhető a fiókszolgáltatás.');
         const data = await response.json();
+        // A sign-in/sign-out can complete while an old bootstrap request is
+        // pending. Never allow the old cookie identity to win afterward.
+        if (!isCurrentLoad()) return;
         if (data.user) {
           const progressResponse = await apiFetch('/api/progress');
           if (!progressResponse.ok) throw new Error('Nem sikerült betölteni a mentett eredményeket.');
           const saved = await progressResponse.json();
-          if (active) {
+          if (isCurrentLoad()) {
             const restored = migrateProgress(saved.progress);
             const user = data.user as AccountUser;
             const pending = (safeBrowserStorage() ? loadPendingProgress(safeBrowserStorage()!, user.id) : null);
             const recovered = recoverPendingProgress(restored, pending);
             savedSnapshotRef.current = JSON.stringify(restored);
             revisionRef.current = saved.revision;
-            accountGenerationRef.current++;
             if (pending && JSON.stringify(restored) === JSON.stringify(recovered)) {
               const storage = safeBrowserStorage();
               if (storage) clearSavedPendingProgress(storage, user.id, restored);
@@ -73,9 +77,9 @@ export default function App() {
           }
         }
       } catch (error) {
-        if (active) setSyncError(error instanceof Error ? error.message : 'Fiókbetöltési hiba.');
+        if (isCurrentLoad()) setSyncError(error instanceof Error ? error.message : 'Fiókbetöltési hiba.');
       } finally {
-        if (active) setAccountReady(true);
+        if (isCurrentLoad()) setAccountReady(true);
       }
     };
     void initialize();
@@ -184,21 +188,30 @@ export default function App() {
   }, [accountReady, account, progress]);
 
   const signIn = async (user: AccountUser) => {
-    const response = await apiFetch('/api/progress');
-    if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
-    const saved = await response.json();
-    const restored = migrateProgress(saved.progress);
-    const pending = (safeBrowserStorage() ? loadPendingProgress(safeBrowserStorage()!, user.id) : null);
-    const recovered = recoverPendingProgress(restored, pending);
-    accountGenerationRef.current++;
-    savedSnapshotRef.current = JSON.stringify(restored);
-    revisionRef.current = saved.revision;
-    setProgress(recovered);
-    setSyncError(pending && JSON.stringify(restored) !== JSON.stringify(recovered)
-      ? 'Korábban mentetlen eredményeket állítottunk helyre; szinkronizálás folyamatban.'
-      : '');
-    setAccount(user);
-    setAccountReady(true);
+    // Invalidate an older auth/me bootstrap before awaiting the new account's
+    // progress. A delayed bootstrap must never replace a freshly signed-in user.
+    const generation = ++accountGenerationRef.current;
+    try {
+      const response = await apiFetch('/api/progress');
+      if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
+      const saved = await response.json();
+      if (generation !== accountGenerationRef.current) return;
+      const restored = migrateProgress(saved.progress);
+      const storage = safeBrowserStorage();
+      const pending = storage ? loadPendingProgress(storage, user.id) : null;
+      const recovered = recoverPendingProgress(restored, pending);
+      savedSnapshotRef.current = JSON.stringify(restored);
+      revisionRef.current = saved.revision;
+      setProgress(recovered);
+      setSyncError(pending && JSON.stringify(restored) !== JSON.stringify(recovered)
+        ? 'Korábban mentetlen eredményeket állítottunk helyre; szinkronizálás folyamatban.'
+        : '');
+      setAccount(user);
+      setAccountReady(true);
+    } catch (error) {
+      if (generation === accountGenerationRef.current) setAccountReady(true);
+      throw error;
+    }
   };
 
   const signOut = () => {
