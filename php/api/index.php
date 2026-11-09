@@ -346,7 +346,7 @@ try {
         $operator=requireUser($pdo);
         if (($operator['role'] ?? '') !== 'admin') fail(403,'Nincs adminisztrátori jogosultságod.');
         $root=dirname(__DIR__);
-        $required=['index.html','source-inventory.json',
+        $required=['index.html','source-inventory.json','release-build.json','api/release-build.php',
             'api/index.php','api/admin.php','api/tutor-search.php',
             'api/deployment-audit.php',
             'api/tutor-sources.php','api/tutor-text-generation.php',
@@ -383,14 +383,20 @@ try {
         // not just the webroot and api/. Never return a green status when
         // traversal failed or was capped for safety.
         $scan=deploymentPublicRiskScan($root);
+        $build=deploymentBuildFingerprint($root);
+        if ($build['buildConsistent'] !== true) {
+            $missing[]='Verzióütközés: index.html / release-build.json / api/release-build.php';
+        }
         $archives=$scan['publicArchives'];
         answer(200,[
             'checkedAt'=>gmdate('c'),
-            'ready'=>count($missing)===0 && count($archives)===0 && $scan['scanComplete']===true,
+            'ready'=>count($missing)===0 && count($archives)===0 && $scan['scanComplete']===true && $build['buildConsistent']===true,
             'missing'=>array_values(array_unique($missing)),
             'publicArchives'=>$archives,
             'scanComplete'=>$scan['scanComplete'],
             'scannedItems'=>$scan['scannedItems'],
+            'buildConsistent'=>$build['buildConsistent'],
+            'releaseRevision'=>$build['releaseRevision'],
             'mailConfigured'=>($config['mail_enabled'] ?? false)===true &&
                 ($config['mail_transport'] ?? '')==='smtp',
             'scope'=>'Fájlkészlet-ellenőrzés, nem helyettesíti az éles funkcionális próbát'
