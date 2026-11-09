@@ -60,6 +60,52 @@ test('streak includes today or yesterday but resets after a gap', () => {
   assert.equal(consecutiveDays(['2026-11-01'], '2026-11-04'), 0);
 });
 
+test('legacy lists and UTF-8 identifiers are clamped to PHP progress constraints', () => {
+  const tooLongInUtf8 = 'ő'.repeat(61); // 61 characters, 122 UTF-8 bytes
+  const oversized = Array.from({length:10_005},(_,i)=>'lesson-'+i);
+  const old = migrateProgress({
+    ...createEmptyProgress(),
+    completedChapters:[...oversized, tooLongInUtf8],
+    activityDays:['2026-11-08','2026-11-09'],
+    quizScores:Object.fromEntries(
+      Array.from({length:510},(_,i)=>['chapter-'+i, 75])
+    ),
+    flashcardsMastered:['ok',tooLongInUtf8],
+    favoriteExpressions:['valid-favorite', tooLongInUtf8],
+    quizAttempts:[{
+      id:tooLongInUtf8,chapterId:'ritmus',score:100,correct:1,total:1,
+      at:'2026-11-09T10:00:00Z'
+    },{
+      id:'valid',chapterId:'ritmus',score:100,correct:1,total:1,
+      at:'2026-11-09T10:00:00Z'
+    }]
+  });
+  assert.equal(old.completedChapters.length,10_000);
+  assert.equal(Object.keys(old.quizScores).length,500);
+  assert.deepEqual(old.flashcardsMastered,['ok']);
+  assert.deepEqual(old.favoriteExpressions,['valid-favorite']);
+  assert.deepEqual(old.quizAttempts?.map(attempt=>attempt.id),['valid']);
+  assert.deepEqual(old.activityDays,['2026-11-08','2026-11-09']);
+});
+
+test('two devices merging oversized legacy progress stay within server acceptance limits', () => {
+  const server=createEmptyProgress();
+  server.completedChapters=Array.from({length:6000},(_,i)=>'server-'+i);
+  server.xp=100;
+  const offline=createEmptyProgress();
+  offline.completedChapters=Array.from({length:6000},(_,i)=>'offline-'+i);
+  offline.xp=110;
+  offline.quizScores=Object.fromEntries(
+    Array.from({length:510},(_,i)=>['topic-'+i, 80])
+  );
+  const merged=mergeConcurrentProgress(server,offline,createEmptyProgress());
+  assert.equal(merged.completedChapters.length,10_000);
+  assert.equal(Object.keys(merged.quizScores).length,500);
+  assert.equal(merged.xp,110);
+  assert.ok(merged.completedChapters.includes('server-0'));
+  assert.ok(merged.completedChapters.includes('offline-0'));
+});
+
 test('guest import merges achievements instead of overwriting another account', () => {
   const account = createEmptyProgress();
   account.completedChapters = ['ritmus'];
