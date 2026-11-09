@@ -196,7 +196,7 @@ function tutorDetailedCoverage(array $entries): array {
         if (str_starts_with((string)($entry['label'] ?? ''), '09. Zenei kifejezések / ')) {
             ++$glossaryEntries;
         }
-        $characters = strlen((string)($entry['text'] ?? ''));
+        $characters = mbSafeLength((string)($entry['text'] ?? ''));
         if (!isset($groups[$name])) {
             $groups[$name] = ['source'=>$name,'chunks'=>0,'characters'=>0,'kind'=>'indexed'];
         }
@@ -210,6 +210,22 @@ function tutorDetailedCoverage(array $entries): array {
     // Each PHP release should index the complete 09. glossary; a partial
     // manual upload must be visible to the administrator.
     if ($glossaryEntries !== 1793) $missing[]='09. Zenei kifejezések – PHP keresőindex: ' . $glossaryEntries . '/1793 tétel';
+    // A-08: a on-server report must flag missing teaching banks even when
+    // knowledge.php exists (e.g. an incomplete or mixed-version upload).
+    // Full item-by-item equality is still enforced by release-time parity CI.
+    $requiredTeachingBanks = [
+        'Zeneelméleti Műhely – Szókártyák',
+        'Zeneelméleti Műhely – Teszt',
+        'Zeneelméleti Műhely – Párosító',
+        'Zeneelméleti Műhely – Hangzó hangsor és akkord',
+        'Zeneelméleti Műhely – Hangkészletek és pentaton példák',
+        'Zeneelméleti Műhely – Kvintkör',
+    ];
+    foreach ($requiredTeachingBanks as $bank) {
+        if (!isset($groups[$bank]) || $groups[$bank]['chunks'] < 1) {
+            $missing[] = 'Hiányzik a PHP Tanársegédből: ' . $bank;
+        }
+    }
     $omitted = [
         ['file'=>'Kesztler – ellenőrizetlen OCR-átirat',
          'reason'=>'A gépi szöveg szakmai ellenőrzéséig a PHP tudásbázisból kizárva']
@@ -224,6 +240,8 @@ function tutorDetailedCoverage(array $entries): array {
         'omitted'=>$omitted,
         'limitations'=>[
             'Az index valóban felhasznált PHP-szövegrészleteit mutatja; a források teljes fájlmérete eltérhet.',
+            'A karakterek Unicode-jelek száma, nem UTF-8 bájtok; a statikus és élő index eltérő darabolása nem jelent automatikus hiányt.',
+            'A kötelező gyakorlóbankok jelenlétének ellenőrzése nem bizonyítja a teljes kérdésszámot; ezt a kiadási paritásteszt vizsgálja.',
             'A PDF-ek ábrái és a külső videók hangja nem automatikusan részei a keresőindexnek.',
             'A knowledge-pedagogy.php csak jogszerű, külön engedélyezett telepítés esetén kerül a szerverre.',
             'A forrás elérhetősége önmagában nem igazolja a generált AI-válasz tartalmi helyességét.'
