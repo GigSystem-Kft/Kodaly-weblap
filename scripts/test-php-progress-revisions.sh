@@ -71,4 +71,40 @@ test "$status" = 409
 php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["quizScores"]["ritmus"]??null)!==90)exit(1);'
 get_progress
 php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["xp"]??null)!==50 || count($j["progress"]["quizAttempts"]??[])!==1 || ($j["progress"]["earTrainingDailyXp"]["2026-11-07"]??null)!==75 || ($j["progress"]["favoriteExpressions"][0]??null)!=="favorite-a")exit(1);'
-echo 'PHP progress revision and stale-write protection passed'
+# Large genuine progress must fit, unlike the former generic 64 KiB cap.
+# Other JSON endpoints still reject bodies over 64 KiB.
+get_progress
+largeBase="$(revision)"
+php -r '
+ $p=json_decode($argv[1],true);
+ $p["completedSubchapters"]=[];
+ for($i=0;$i<850;$i++)$p["completedSubchapters"][]=sprintf("subchapter-%04d-", $i).str_repeat("s",95);
+ $json=json_encode(["progress"=>$p,"revision"=>$argv[2]],JSON_UNESCAPED_UNICODE);
+ if(strlen($json)<=65536 || strlen($json)>=1000000)exit(1);
+ file_put_contents("/tmp/zm-valid-large-progress.json",$json);
+' "$updated" "$largeBase"
+largeStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-progress-response.json -w '%{http_code}' \
+ -X PUT "$url" -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' --data-binary @/tmp/zm-valid-large-progress.json)"
+test "$largeStatus" = 200
+get_progress
+php -r '
+ $j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);
+ if(count($j["progress"]["completedSubchapters"]??[])!==850)exit(1);
+'
+largeRevision="$(revision)"
+php -r '
+ $p=json_decode($argv[1],true);
+ $p["completedSubchapters"]=array_fill(0,10000,str_repeat("z",115));
+ $json=json_encode(["progress"=>$p,"revision"=>$argv[2]],JSON_UNESCAPED_UNICODE);
+ if(strlen($json)<=1000256)exit(1);
+ file_put_contents("/tmp/zm-rejected-huge-progress.json",$json);
+' "$updated" "$largeRevision"
+hugeStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-progress-response.json -w '%{http_code}' \
+ -X PUT "$url" -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' --data-binary @/tmp/zm-rejected-huge-progress.json)"
+test "$hugeStatus" = 413
+get_progress
+test "$(revision)" = "$largeRevision"
+rm -f /tmp/zm-valid-large-progress.json /tmp/zm-rejected-huge-progress.json
+echo 'PHP progress revision, large learner history and upload size protection passed'
