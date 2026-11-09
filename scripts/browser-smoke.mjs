@@ -190,21 +190,44 @@ try {
   await page.getByText('Kérdés 1 / 15').waitFor();
   for (let n=0; n<15; n++) {
     const question = await page.locator('h3.text-xl.font-bold.text-white').innerText();
-    const known = QUIZ_QUESTIONS.find(item => item.question === question);
-    if (!known || known.options.length<2)
-      throw new Error('Cannot match visible quiz question to the source bank: '+question);
-    const wrongOption = (known.correctIndex+1)%known.options.length;
-    await page.locator('div.space-y-3.mb-6 button').nth(wrongOption).click();
+    const answers = page.locator('div.space-y-3.mb-6 button');
+    const visibleOptions = (await answers.allTextContents()).map(s => s.trim());
+    // Some pedagogical banks reuse a question prompt with different option
+    // sets. Matching solely by prompt can select the *correct* answer, making
+    // the 15-errors persistence test intermittent and misleading.
+    const candidates = QUIZ_QUESTIONS.filter(item => item.question === question &&
+      JSON.stringify(item.options.map(s => s.trim())) === JSON.stringify(visibleOptions));
+    if (!candidates.length || visibleOptions.length < 2)
+      throw new Error('Cannot identify visible quiz item and options: '+question+
+        ' | '+JSON.stringify(visibleOptions));
+    const indexes = new Set(candidates.map(item => item.correctIndex));
+    if (indexes.size !== 1)
+      throw new Error('Conflicting answer keys for identical quiz question and options: '+question);
+    const correctIndex = [...indexes][0];
+    const wrongOption = (correctIndex + 1) % visibleOptions.length;
+    await answers.nth(wrongOption).click();
+    // The selected wrong answer must actually be marked as incorrect before
+    // advancing, otherwise the final progress assertion has no meaning.
+    if (await answers.nth(wrongOption).getAttribute('class') === null ||
+        !(await answers.nth(wrongOption).getAttribute('class')).includes('border-rose-500'))
+      throw new Error('Expected wrong-answer feedback was not shown for: '+question);
     await page.getByRole('button',{name:n===14 ? 'Kvíz befejezése' : 'Következő kérdés'}).click();
   }
   await page.getByRole('heading',{name:'Kvíz Teljesítve!'}).waitFor();
-  await page.waitForFunction(() => {
-    const value=JSON.parse(localStorage.getItem('kodaly_progress')||'null');
-    const attempts=value?.quizAttempts??[];
-    return attempts.some(attempt => attempt.chapterId==='vegyes-gyakorlas' &&
-      attempt.correct===0 && attempt.total===15 &&
-      attempt.wrongQuestionIds?.length===15);
-  });
+  try {
+    await page.waitForFunction(() => {
+      const value=JSON.parse(localStorage.getItem('kodaly_progress')||'null');
+      const attempts=value?.quizAttempts??[];
+      return attempts.some(attempt => attempt.chapterId==='vegyes-gyakorlas' &&
+        attempt.correct===0 && attempt.total===15 &&
+        attempt.wrongQuestionIds?.length===15);
+    }, { timeout: 5000 });
+  } catch {
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('kodaly_progress') || 'null'));
+    throw new Error('15-error quiz summary missing or invalid: '+JSON.stringify({
+      quizAttempts:saved?.quizAttempts?.slice(-3), quizScores:saved?.quizScores
+    }));
+  }
   await page.reload({waitUntil:'domcontentloaded'});
   await page.waitForFunction(() => {
     const attempts=JSON.parse(localStorage.getItem('kodaly_progress')||'null')?.quizAttempts??[];
