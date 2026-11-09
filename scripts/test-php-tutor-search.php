@@ -71,4 +71,10 @@ ensureTutorSearch($coverageDetail['chapter09GlossaryEntries']===1,
 ensureTutorSearch(count(array_filter($coverageDetail['missing'], static fn($v) =>
  str_contains($v,'09. Zenei kifejezések') && str_contains($v,'1/1793')))===1,
  'live report flags incomplete chapter 09 glossary');
+ensureTutorSearch($coverageDetail['indexedCharacters']===mbSafeLength('Mérsékelten lassú tempó')+mbSafeLength('Ütem, szinkópa'),
+ 'A-08 live source report counts Hungarian Unicode characters, not UTF-8 bytes');
+$missingBanks=array_values(array_filter($coverageDetail['missing'],
+ static fn($message)=>str_starts_with($message,'Hiányzik a PHP Tanársegédből: ')));
+ensureTutorSearch(count($missingBanks)===6,
+ 'A-08 partial deployments flag all six missing student-facing practice banks');
 fwrite(STDOUT,"Hungarian tutor search regression tests passed\n");
