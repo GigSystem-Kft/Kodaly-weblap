@@ -55,7 +55,7 @@ export interface QuizAttempt {
   correct: number;
   total: number;
   at: string;
-  wrongQuestionIds?: string[]; // at most 12 question IDs from the latest attempt
+  wrongQuestionIds?: string[]; // at most 15 wrong-question IDs from a 15-question practice round
   durationSeconds?: number; // practice duration, not an exam-time limit
 }
 
