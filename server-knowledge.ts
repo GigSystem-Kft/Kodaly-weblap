@@ -429,6 +429,10 @@ export function knowledgeContext(question: string): string {
   ).join('\n\n');
 }
 
+export function unicodeCharacterCount(text: string): number {
+  return Array.from(text).length;
+}
+
 /** Forráslefedettségi jelentés: Unicode-karaktereket mér, nem UTF-8 bájtokat vagy UTF-16 kódegységeket. */
 export function sourceCoverageReport() {
   const groups = new Map<string, { source: string; chunks: number; characters: number; kind: string }>();
@@ -436,7 +440,7 @@ export function sourceCoverageReport() {
     const key = entry.source;
     const previous = groups.get(key) ?? { source: key, chunks: 0, characters: 0, kind: entry.kind };
     previous.chunks++;
-    previous.characters += Array.from(entry.text).length;
+    previous.characters += unicodeCharacterCount(entry.text);
     groups.set(key, previous);
   }
   const files = existsSync(SOURCES_DIR) ? readdirSync(SOURCES_DIR).filter(f => /\.(txt|md)$/i.test(f)).sort() : [];
@@ -450,7 +454,7 @@ export function sourceCoverageReport() {
   return {
     generatedAt: new Date().toISOString(),
     indexChunks: INDEX.length,
-    indexedCharacters: INDEX.reduce((n,e) => n + Array.from(e.text).length, 0),
+    indexedCharacters: INDEX.reduce((n,e) => n + unicodeCharacterCount(e.text), 0),
     sources: [...groups.values()].sort((a,b) => a.source.localeCompare(b.source,'hu')),
     omitted: [...omitted.map(file => ({ file, reason: file.startsWith('_') ?
       'Sablon vagy nem jóváhagyott fájl' : 'Az OCR-átirat szakmai ellenőrzésig szándékosan kizárva' })),
