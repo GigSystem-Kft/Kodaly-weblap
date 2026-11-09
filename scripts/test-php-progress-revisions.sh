@@ -32,7 +32,20 @@ invalidActivity="${updated/\"activityDays\":\[\]/\"activityDays\":[\"2026-02-30\
 invalidScore="${updated/\"score\":90,\"correct\":9/\"score\":100,\"correct\":9}"
 invalidQuizString="${updated/\"ritmus\":90/\"ritmus\":\"90\"}"
 invalidXp="${updated/\"xp\":50/\"xp\":\"50\"}"
-for malformedProgress in "$invalidDay" "$invalidActivity" "$invalidScore" "$invalidQuizString" "$invalidXp"; do
+# A-16: blank IDs should not pollute saved achievements or question history.
+invalidBlankChapter="$(php -r '
+$p=json_decode($argv[1],true);$p["completedChapters"][]="  ";
+echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
+invalidBlankFavorite="$(php -r '
+$p=json_decode($argv[1],true);$p["favoriteExpressions"]=[" "];
+echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
+invalidBlankWrongQuestion="$(php -r '
+$p=json_decode($argv[1],true);$p["quizAttempts"][0]["wrongQuestionIds"]=[""];
+echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
+for malformedProgress in "$invalidDay" "$invalidActivity" "$invalidScore" "$invalidQuizString" "$invalidXp" "$invalidBlankChapter" "$invalidBlankFavorite" "$invalidBlankWrongQuestion"; do
   status="$(put_progress "{\"progress\":$malformedProgress,\"revision\":\"$saved\"}")"
   test "$status" = 400
 done
