@@ -232,8 +232,11 @@ echo 'Live authenticated deployment diagnostic flags nested public archives'
 # fingerprint. An incomplete upload of old frontend/new PHP must be rejected.
 REVISION="$(printf 'a%.0s' {1..40})"
 MIXED_REVISION="$(printf 'b%.0s' {1..40})"
+mkdir -p php/assets
+printf 'console.log("ci test")\n' > php/assets/index-ci.js
+printf '%s\n' '<?php return [];' > php/api/knowledge.php
 cat > php/index.html <<HTML
-<html><head><meta name="zeneelmelet-build-sha" content="$REVISION"></head><body>Test</body></html>
+<html><head><script src="/assets/index-ci.js"></script></head><body>Test</body></html>
 HTML
 python3 scripts/stamp-php-release.py php "$REVISION"
 printf "<?php\n// Public, non-secret checked-out release revision.\nreturn '%s';\n" "$REVISION" > php/api/release-build.php
