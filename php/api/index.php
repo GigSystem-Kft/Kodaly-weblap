@@ -592,6 +592,10 @@ try {
                 $stmt->execute([password_hash($body['password'], PASSWORD_ARGON2ID), $row['user_id']]);
                 $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
                 $stmt->execute([$row['user_id']]);
+                // Previously issued reset links cannot supersede this newly
+                // established password, including links not yet redeemed.
+                $stmt=$pdo->prepare("DELETE FROM zm_account_tokens WHERE user_id=? AND purpose='reset'");
+                $stmt->execute([$row['user_id']]);
                 $pdo->commit();
             } catch (Throwable $e) {
                 if ($pdo->inTransaction()) $pdo->rollBack();
@@ -623,6 +627,10 @@ try {
                 $stmt=$pdo->prepare('UPDATE zm_users SET password_hash=? WHERE id=?');
                 $stmt->execute([password_hash($body['newPassword'], PASSWORD_ARGON2ID),$user['id']]);
                 $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
+                $stmt->execute([$user['id']]);
+                // Invalidate pending password-reset links as well as all
+                // active sessions after a successful password rotation.
+                $stmt=$pdo->prepare("DELETE FROM zm_account_tokens WHERE user_id=? AND purpose='reset'");
                 $stmt->execute([$user['id']]);
                 $pdo->commit();
             } catch (Throwable $e) {
