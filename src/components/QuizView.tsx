@@ -47,7 +47,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
       playNote('C5', 300);
       setCorrectCount((prev) => prev + 1);
     } else {
-      setWrongQuestionIds(previous => [...previous, currentQ.id].slice(0, 12));
+      setWrongQuestionIds(previous => [...previous, currentQ.id].slice(0, 15));
       playNote('C3', 300);
     }
   };
