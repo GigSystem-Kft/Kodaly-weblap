@@ -30,7 +30,7 @@ A `docs/audit-osszesitett-leltar-2026-11-07.md` a részletes, commitokkal alát�
 | A-21 | Két fiók PHP/MySQL izolációja, szerepkörök, export és törlés; jelszócsere és resetlink-visszavonás; valódi MySQL-zár alatt HTTP-bejelentkezési versenyhelyzet, amely nem adhat ki lejárt jelszóval sessiont (CI sikeres) | Valódi meghívó és SMTP-kézbesítés, tanár/hallgató életút, mentés-törlés csak tesztfiókon, többeszközös éles próba; adatvédelmi jóváhagyás | **Éles blokkoló** |
 | A-22 | 15 kérdéses gyakorlókör, 3+3 trend és saját tanulási jelölések | Egyetemi pedagógiai mérés/értékelési szabályok jóváhagyása | Nyitott szakmai |
 | A-23 | Bővített axe WCAG 2.1 AA CI, admin/profil/fióktörlés és mobil vizsgálatok; Tanársegéd képnagyító/bezáró Escape-, Tab- és fókuszvisszaállítás Playwright-regresszióval | Képernyőolvasós, zoom/kontraszt, sötét-világos téma és valódi billentyűzetes kézi audit | Nyitott kézi |
-| A-24 | GitHub Actions Chromium/PHP/MySQL/Linux; CloudPanel bejelentkezés és alap admin/progress helyreállt | Új build valós telepítés, Rollback, könyvtárjogok, HTTPS, SMTP, forrásindex, két fizikai eszköz és adatmegőrzés | **Kiadási blokkoló** |
+| A-24 | GitHub Actions Chromium/PHP/MySQL/Linux; admin-only rekurzív webgyökér- és titokkeresés; hiányos vizsgálat lezárásának tiltása; azonos Git-revízió ellenőrzése HTML/JSON/PHP között; éles bejelentkezés és alap admin/progress korábban helyreállt | Új build valós telepítés, **valós verzióegyezés és tiszta fájlvizsgálat**, rollback, könyvtárjogok, HTTPS, SMTP, forrásindex, két fizikai eszköz és adatmegőrzés | **Kiadási blokkoló** |
 
 ## Kiadási döntési protokoll
 
@@ -49,5 +49,21 @@ A Tanársegéd nyitásakor a kérdésmező kap fókuszt; az Escape bezárja a ne
 A `scripts/browser-smoke.mjs` automatizált próba ellenőrzi a mobil Tanársegédet, az ábra-/jegyzetnagyítást, a fókusz-visszaállítást és a párbeszédablakból való kilépést. A `a6434df2` SHA Chromium, PHP/MySQL+ZIP és Linux workflow-ja teljesen sikeres. Az újonnan hozzáadott **generált képes** eset is igazolt: a `61eaf916` SHA Chromium `42695509995`, PHP/MySQL/ZIP `42695509567` és Linux `42695509794` folyamata **mind sikeres**. A teszt kontrollált képadatot használ, nem éles külső AI-generálást.
 
 **Változatlanul nyitott:** manuális képernyőolvasó, valódi kisegítő technológia, 200%-os zoom, alacsony kontraszt, mobilon fizikai billentyűzet és sötét/világos színtéma vizsgálata. Az A-23 státusza továbbra is **Nyitott kézi**; a jelen bejegyzés nem jelent éles kiadási jóváhagyást.
+
+
+## 2026-11-09 – A-24 szerveroldali részleges-telepítés- és titokellenőrzés
+
+**Megtalált technikai hiány:** az adminisztrációs `auth/deployment-check` korábban csak a webgyökér és az `api/` könyvtár közvetlen szintjén vizsgált néhány archiválási fájlt, így egy `assets/alappélda/mentés.SQL.GZ`, `.env.production` vagy egy külső szimbolikus link kimaradhatott. A zöld fájlállapot még akkor is megjelenhetett, ha a fájlvizsgálat hiányos volt, illetve a HTML és a PHP API más kiadásból származott.
+
+**Elkészült műszaki védelem:**
+- `php/api/deployment-audit.php`: legfeljebb 50 000 bejegyzést és 100 kockázatos találatot feldolgozó, teljes webgyökeret bejáró, szimbolikus linkeket nem követő ellenőrző. Mélyen lévő bizalmas archívumok, `.env.*`, .git/.svn/.hg és külső fájlhivatkozások jelzése. Túl nagy vagy olvashatatlan fa esetén **`scanComplete=false`**, ezért nincs `ready=true`.
+- `scripts/stamp-php-release.py`: ugyanannak a ténylegesen buildelt Git-commitnak az azonosítója kerül a `index.html` metaadatába, a `release-build.json` és az `api/release-build.php` fájlokba. A `deploymentBuildFingerprint` olvasási alapon összehasonlítja a három jelölőt; eltérés vagy hiány esetén **`buildConsistent=false`** és **`ready=false`**. A PHP-jelölőt a vizsgálat nem futtatja.
+- `src/components/AdminDashboard.tsx`: hiányos vizsgálat, nyilvános titkos fájl és vegyes kiadás esetén külön figyelmeztetés, és csak bizonyítottan egyező kiadásnál zöld fájlkészlet-státusz. Az ellenőrzés nem töröl semmit.
+- `scripts/verify-release-assets.py`: a ZIP-összeállítás során is tiltja a rejtett titkokat, tömörített adatbázismentéseket, verziókezelési könyvtárakat, és vizsgálja a három verziójelölő egyezését.
+- Külön PHP-s egységteszt, valós MySQL-es bejelentkezett admin HTTP-integrációs teszt, valamint böngészős szimuláció a teljes/hiányos fájlvizsgálatra és az egyező/eltérő kiadásra.
+
+**CI-bizonyíték:** a `fb9860de` állapot teljes kiadási próbája mindhárom workflow-n sikeres: Chromium `42699297630`, PHP/MySQL/ZIP `42699297596`, Linux `42699297595`. Ez az összesített **műszaki részfeladat**, nem az A-24 éles elfogadása.
+
+**Nyitott:** a valós CloudPanel-fájlrendszer ellenőrzése (régi állományok és jogosultságok), a telepítési visszaállítás tényleges kipróbálása, az éles SMTP és azonosított felhasználói szerepkörök, két külön fizikai eszköz, a valódi tanulói adatok megtartása és a jogi/szakmai megfelelés. Az A-24 ezért továbbra is **kiadási blokkoló**, sem `main` összevezetés, sem végleges ZIP-link nem engedélyezett.
 
 **E dokumentum önmagában nem zár le új pontot.** A fő auditban két buildoldali pont igazoltan lezárt; a többi lezárásához a fenti ellenőrzésből származó bizonyítékot kell rögzíteni. Végleges letöltési csomagot és `main` összevezetést tilos kiadni a kapuk teljesülése előtt.
