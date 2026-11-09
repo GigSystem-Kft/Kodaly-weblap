@@ -304,7 +304,7 @@ try {
   await imageDialog.waitFor({state:'detached'});
   await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Kvintkör nagyítása');
 
-  const pageTrigger=page.getByRole('button',{name:/1\\. oldal · nagyítás/});
+  const pageTrigger=page.getByRole('button',{name:/1\. oldal · nagyítás/});
   await pageTrigger.waitFor();
   await pageTrigger.click();
   const pageDialog=page.getByRole('dialog',{name:'Jegyzetkép nagyítása'});
