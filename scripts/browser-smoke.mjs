@@ -270,6 +270,8 @@ try {
   await page.setViewportSize({width:390,height:844});
   await page.getByRole('button',{name:'Tanársegéd AI megnyitása'}).click();
   await page.getByRole('heading',{name:'Zeneelmélet Tanársegéd'}).waitFor();
+  await page.waitForFunction(() => document.activeElement?.getAttribute('placeholder') === 'Kérdezz a ritmusról, hangközökről...');
+  console.log('Tutor: opening the panel focuses the question field');
   const panel=page.locator('div.fixed').filter({has:page.getByRole('heading',{name:'Zeneelmélet Tanársegéd'})}).first();
   const bounds=await panel.boundingBox();
   if(!bounds || bounds.x < -1 || bounds.x+bounds.width>391 ||
@@ -313,6 +315,12 @@ try {
   await pageDialog.waitFor({state:'detached'});
   await page.waitForFunction(() => document.activeElement?.textContent?.includes('1. oldal · nagyítás'));
   console.log('Tutor: zoomed illustrations and notes restore keyboard focus and close with Escape');
+  // Esc works for the chat popover as well, returning the user to its launcher.
+  await page.getByPlaceholder('Kérdezz a ritmusról, hangközökről...').focus();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button',{name:'Tanársegéd AI megnyitása'}).waitFor();
+  await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Tanársegéd AI megnyitása');
+  console.log('Tutor: Escape closes conversation and restores launcher focus');
 
   // A-21: a successful auth/login followed by a failed progress GET must
   // revoke the newly created session and keep guest work isolated.
