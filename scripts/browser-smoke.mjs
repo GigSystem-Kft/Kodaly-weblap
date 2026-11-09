@@ -344,6 +344,64 @@ try {
     console.log('Account UI: '+role+' navigation verified');
   }
 
+  // Account isolation: a delayed initial auth/me must not overwrite the
+  // new account after the learner logs in during the bootstrap request.
+  const accountRaceContext = await browser.newContext();
+  const accountRacePage = await accountRaceContext.newPage();
+  let releaseOldBootstrap;
+  const oldBootstrapGate = new Promise(resolve => { releaseOldBootstrap = resolve; });
+  let initialRequestSeen;
+  const initialRequestGate = new Promise(resolve => { initialRequestSeen = resolve; });
+  let progressReads = 0;
+  await accountRacePage.route('**/api/index.php?*', async route => {
+    const endpoint = new URL(route.request().url()).searchParams.get('route');
+    if (endpoint === 'auth/me') {
+      initialRequestSeen();
+      await oldBootstrapGate;
+      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+        user:{id:'stale-user',email:'stale@example.invalid',displayName:'Régi fiók',role:'admin'}
+      })});
+    }
+    if (endpoint === 'progress') {
+      progressReads++;
+      return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+        progress:{completedChapters:['ritmus'],xp:17},revision:'0'.repeat(64)
+      })});
+    }
+    const data = endpoint === 'auth/status'
+      ? {available:true,registrationEnabled:false}
+      : endpoint === 'auth/login'
+      ? {user:{id:'fresh-user',email:'fresh@example.invalid',displayName:'Friss fiók',role:'student'}}
+      : endpoint === 'chat/status'
+      ? {mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}}
+      : {error:'Fixture endpoint unavailable'};
+    return route.fulfill({status:data.error?404:200,contentType:'application/json',body:JSON.stringify(data)});
+  });
+  try {
+    await accountRacePage.goto(root,{waitUntil:'domcontentloaded'});
+    await initialRequestGate;
+    await accountRacePage.getByRole('button',{name:/06\\. Profil/}).click();
+    await accountRacePage.getByLabel('E-mail-cím').fill('fresh@example.invalid');
+    await accountRacePage.getByLabel('Jelszó',{exact:true}).fill('new-account-password');
+    await accountRacePage.locator('form button[type="submit"]').click();
+    await accountRacePage.getByText('Friss fiók',{exact:true}).waitFor();
+    const staleResponse = accountRacePage.waitForResponse(response =>
+      new URL(response.url()).searchParams.get('route') === 'auth/me');
+    releaseOldBootstrap();
+    await staleResponse;
+    await accountRacePage.waitForTimeout(250);
+    if (!await accountRacePage.getByText('Friss fiók',{exact:true}).isVisible() ||
+        await accountRacePage.getByText('Régi fiók',{exact:true}).count() !== 0 ||
+        await accountRacePage.getByRole('button',{name:'Admin',exact:true}).count() !== 0)
+      throw new Error('Stale startup session replaced newly logged-in learner');
+    if (progressReads !== 1)
+      throw new Error('Stale bootstrap unexpectedly loaded another account progress');
+    console.log('Account UI: late startup auth response cannot replace newly signed-in user');
+  } finally {
+    releaseOldBootstrap();
+    await accountRaceContext.close();
+  }
+
   // The admin coverage panel must not silently present build-time statistics
   // as live PHP results, especially after a partial server restore.
   const reportFixture = (sources, chunks) => ({
