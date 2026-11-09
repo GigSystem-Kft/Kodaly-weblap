@@ -197,6 +197,37 @@ adminLogin="$(curl -sS -c /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{h
 test "$adminLogin" = 200
 adminList="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=admin/users')"
 test "$adminList" = 200
+
+# A-24: authenticate as an actual administrator, then prove that the live
+# read-only CloudPanel diagnostic catches a confidential file buried beneath
+# an innocuous public asset directory (the old shallow glob missed it).
+AUDIT_DIR="php/assets/zeneelmelet-ci-audit/nested"
+mkdir -p "$AUDIT_DIR"
+printf 'disposable test-only SQL dump' > "$AUDIT_DIR/backup.SQL.GZ"
+diagnosticStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$diagnosticStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"), true);
+if (($j["scanComplete"]??null)!==true || ($j["ready"]??null)!==false ||
+    ($j["scannedItems"]??0)<1 ||
+    !in_array("assets/zeneelmelet-ci-audit/nested/backup.SQL.GZ", $j["publicArchives"]??[], true)) {
+    fwrite(STDERR,"Admin diagnostic did not flag nested public archive\n");exit(1);
+}
+'
+rm -rf "php/assets/zeneelmelet-ci-audit"
+diagnosticStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$diagnosticStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"), true);
+if (($j["scanComplete"]??null)!==true ||
+    in_array("assets/zeneelmelet-ci-audit/nested/backup.SQL.GZ", $j["publicArchives"]??[], true)) {
+    fwrite(STDERR,"Deleted audit fixture remains in deployment report\n");exit(1);
+}
+'
+echo 'Live authenticated deployment diagnostic flags nested public archives'
+
 # Invite is sent by mail; server stores only the hash.
 inviteStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=admin/invite' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"second@example.org"}')"
 test "$inviteStatus" = 201
