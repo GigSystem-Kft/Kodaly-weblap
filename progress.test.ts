@@ -271,3 +271,21 @@ test('malformed XP rewards cannot corrupt learning totals or daily caps', () => 
   assert.equal(negative.xp, 55);
   assert.equal(negative.earTrainingDailyXp?.[day], 0);
 });
+
+
+test('practice XP stays integral and nonexistent calendar days never corrupt sync', () => {
+  const base = createEmptyProgress();
+  base.xp = 50;
+  const fractional = recordActivity(base, 4.8, '2026-11-09');
+  assert.equal(fractional.xp, 54);
+  assert.deepEqual(fractional.activityDays, ['2026-11-09']);
+  assert.equal(recordActivity(base, 3, '2026-02-30'), base);
+  assert.equal(recordEarTrainingActivity(base, 30, '2026-02-30'), base);
+  const nearLimit = createEmptyProgress();
+  nearLimit.xp = 99_999_999;
+  assert.equal(recordActivity(nearLimit, 25, '2026-11-09').xp, 100_000_000);
+  const withMalformedHistory = createEmptyProgress();
+  withMalformedHistory.activityDays = ['2026-02-30'];
+  const clean = recordActivity(withMalformedHistory, 1, '2026-11-09');
+  assert.deepEqual(clean.activityDays, ['2026-11-09']);
+});
