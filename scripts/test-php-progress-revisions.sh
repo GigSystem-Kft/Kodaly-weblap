@@ -38,6 +38,32 @@ for malformedProgress in "$invalidDay" "$invalidActivity" "$invalidScore" "$inva
 done
 get_progress
 test "$(revision)" = "$saved"
+# A-17: a 15-question practice round may have 15 errors. A 16th
+# diagnostic ID must be rejected, but a valid full round must be retained.
+allWrong="$(php -r '
+ $j=json_decode($argv[1],true);
+ $j["quizAttempts"][0]["correct"]=0;
+ $j["quizAttempts"][0]["total"]=15;
+ $j["quizAttempts"][0]["score"]=0;
+ $j["quizAttempts"][0]["wrongQuestionIds"]=[];
+ for($i=1;$i<=15;$i++)$j["quizAttempts"][0]["wrongQuestionIds"][]="question-".$i;
+ echo json_encode($j,JSON_UNESCAPED_UNICODE);
+' "$updated")"
+oversizedWrong="$(php -r '
+ $j=json_decode($argv[1],true);
+ $j["quizAttempts"][0]["wrongQuestionIds"][]="question-16";
+ echo json_encode($j,JSON_UNESCAPED_UNICODE);
+' "$allWrong")"
+test "$(put_progress "{\"progress\":$oversizedWrong,\"revision\":\"$saved\"}")" = 400
+test "$(put_progress "{\"progress\":$allWrong,\"revision\":\"$saved\"}")" = 200
+saved="$(revision)"
+get_progress
+php -r '
+ $j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);
+ $a=$j["progress"]["quizAttempts"][0]??null;
+ if(!$a||$a["correct"]!==0||$a["total"]!==15||count($a["wrongQuestionIds"]??[])!==15)exit(1);
+'
+test "$(revision)" = "$saved"
 status="$(put_progress "{\"progress\":$updated,\"revision\":\"$saved\"}")"
 test "$status" = 200
 status="$(put_progress "{\"progress\":$payload,\"revision\":\"$saved\"}")"
