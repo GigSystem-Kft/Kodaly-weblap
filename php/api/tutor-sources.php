@@ -35,6 +35,29 @@ function tutorSourceList(): array {
     usort($result,static fn($a,$b)=>strcmp($b['createdAt'],$a['createdAt']));
     return $result;
 }
+/**
+ * Split long teacher-approved UTF-8 lines into intact, byte-limited pieces.
+ * The former substr(..., 0, 1400) dropped the remaining text and could
+ * corrupt accented Hungarian characters. No mbstring extension is required.
+ */
+function tutorSourceUtf8Pieces(string $line, int $byteLimit = 900): array {
+    $remaining = trim($line);
+    $pieces = [];
+    while (strlen($remaining) > $byteLimit) {
+        $cut = $byteLimit;
+        while ($cut > 0 && preg_match('//u', substr($remaining, 0, $cut)) !== 1) --$cut;
+        if ($cut === 0) return [];
+        $prefix = substr($remaining, 0, $cut);
+        $space = strrpos($prefix, ' ');
+        if ($space !== false && $space >= intdiv($byteLimit, 2)) $cut = $space;
+        $piece = trim(substr($remaining, 0, $cut));
+        if ($piece !== '') $pieces[] = $piece;
+        $remaining = ltrim(substr($remaining, $cut));
+    }
+    if ($remaining !== '') $pieces[] = $remaining;
+    return $pieces;
+}
+
 function tutorExtraKnowledge(): array {
     $entries=[];
     foreach (tutorSourceList() as $source) {
@@ -49,15 +72,21 @@ function tutorExtraKnowledge(): array {
         foreach ($paras as $paragraph) {
             $lines=preg_split('/(?<=\.)\s+/u',trim($paragraph)) ?: [];
             $current='';
+            $emittedInParagraph=false;
             foreach ($lines as $line) {
-                if (strlen($current)+strlen($line)>1000 && strlen($current)>40) {
-                    $entries[]=['source'=>$source['title'],'label'=>(++$part).'. szövegrész','text'=>$current];
-                    $current='';
+                foreach (tutorSourceUtf8Pieces($line) as $piece) {
+                    $separator=$current!=='' ? ' ' : '';
+                    if (strlen($current)+strlen($separator)+strlen($piece)>1000 && $current!=='') {
+                        $entries[]=['source'=>$source['title'],'label'=>(++$part).'. szövegrész','text'=>$current];
+                        $emittedInParagraph=true;
+                        $current='';
+                        $separator='';
+                    }
+                    $current.=$separator.$piece;
                 }
-                if (strlen($line)>1400) $line=substr($line,0,1400);
-                $current.=(strlen($current)>0 ? ' ' : '') . $line;
             }
-            if (strlen($current)>40) {
+            // Retain short tails of a split paragraph, but ignore isolated headings.
+            if ($current!=='' && (strlen($current)>40 || $emittedInParagraph)) {
                 $entries[]=['source'=>$source['title'],'label'=>(++$part).'. szövegrész','text'=>$current];
             }
         }
