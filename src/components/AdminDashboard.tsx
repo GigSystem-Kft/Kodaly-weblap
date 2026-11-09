@@ -9,6 +9,15 @@ type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:numbe
  sources:{source:string;chunks:number;characters:number;kind:string}[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
 
+const REQUIRED_PHP_TUTOR_BANKS = [
+  'Zeneelméleti Műhely – Szókártyák',
+  'Zeneelméleti Műhely – Teszt',
+  'Zeneelméleti Műhely – Párosító',
+  'Zeneelméleti Műhely – Hangzó hangsor és akkord',
+  'Zeneelméleti Műhely – Hangkészletek és pentaton példák',
+  'Zeneelméleti Műhely – Kvintkör'
+] as const;
+
 export const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
@@ -250,6 +259,26 @@ export const AdminDashboard: React.FC = () => {
                   <p className="mt-2">Csak az élő PHP-indexben ({liveOnly.length}): {liveOnly.map(item => item.source).join('; ') || 'nincs'}</p>
                 </details>
               )}
+            </div>
+          )}
+          {coverageOrigin === 'live' && (
+            <div className="mb-4 rounded-lg border border-slate-200 p-3 text-sm" aria-label="Kötelező AI-gyakorlóbankok">
+              <h4 className="font-semibold mb-2">Hat kötelező gyakorlóbank az élő PHP-indexben</h4>
+              <ul className="space-y-1">
+                {REQUIRED_PHP_TUTOR_BANKS.map(bank => {
+                  const count = coverage.sources.find(item => item.source === bank)?.chunks ?? 0;
+                  return <li key={bank} className="flex flex-wrap justify-between gap-2 border-b border-slate-100 pb-1">
+                    <span>{bank.replace('Zeneelméleti Műhely – ', '')}</span>
+                    <strong className={count > 0 ? 'text-emerald-800' : 'text-red-800'}>
+                      {count > 0 ? count + ' indexelt tétel' : 'HIÁNYZIK'}
+                    </strong>
+                  </li>;
+                })}
+              </ul>
+              <p className="mt-2 text-xs text-slate-600">
+                A jelenlét és darabszám nem bizonyítja minden kérdés vagy meghatározás helyességét.
+                A teljes gyakorlóbank-egyezést külön kiadási teszt ellenőrzi.
+              </p>
             </div>
           )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
