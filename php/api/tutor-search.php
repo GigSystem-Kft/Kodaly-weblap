@@ -139,10 +139,18 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
     return $pieces ? implode("\n\n",$pieces) :
         'Nem találtam eléggé releváns, rövid választ a helyi forrásokban.';
 }
-function mbSafeLength(string $text): int { return strlen($text); }
+/** Character-safe fallback on PHP hosts without the optional mbstring extension. */
+function mbSafeLength(string $text): int {
+    if (function_exists('mb_strlen')) return mb_strlen($text, 'UTF-8');
+    $count=preg_match_all('/./us', $text, $unused);
+    return $count===false ? strlen($text) : $count;
+}
 function mbSafeCut(string $text,int $max): string {
-    $s=substr($text,0,$max);
-    return preg_replace('/[^\\x00-\\x7F][\\x80-\\xBF]*$/','',$s) ?? $s;
+    if ($max<=0) return '';
+    if (function_exists('mb_substr')) return mb_substr($text, 0, $max, 'UTF-8');
+    $characters=preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
+    if ($characters===false) return '';
+    return implode('',array_slice($characters,0,$max));
 }
 
 
