@@ -15,6 +15,7 @@ on:
       - 'database/**'
       - 'scripts/verify-release-assets.py'
       - 'scripts/test-php-deployment-audit.php'
+      - 'scripts/stamp-php-release.py'
       - 'scripts/create-invitation.mjs'
       - 'scripts/test-php-invitations.sh'
       - 'scripts/export-php-knowledge.ts'
@@ -142,6 +143,9 @@ jobs:
           php -r '$k=require "release/api/knowledge.php"; $wanted=["Zeneelméleti Műhely – Szókártyák","Zeneelméleti Műhely – Teszt","Zeneelméleti Műhely – Párosító","Zeneelméleti Műhely – Hangzó hangsor és akkord","Zeneelméleti Műhely – Hangkészletek és pentaton példák","Zeneelméleti Műhely – Kvintkör"]; foreach($wanted as $source){$n=0;foreach($k as $e){if(($e["source"]??"")===$source)++$n;}if($n===0){fwrite(STDERR,"Missing PHP teaching bank: $source\n");exit(1);}echo "$source: $n indexed entries\n";}'
           php -r 'require "php/api/creative-answers.php"; $k=require "release/api/knowledge.php"; $a=creativePracticeAnswer("Ajánlj játékos módszert a ritmusérzék fejlesztésére!",$k); if(!is_string($a)||!str_contains($a,"Szirányi Borbála")||!str_contains($a,"**Forrás:**")) {fwrite(STDERR,"Creative tutor integration failed\\n"); exit(1);} echo "Creative tutor integration passed\\n";'
           php -r '$a=require "release/api/knowledge.php"; foreach($a as $e){if(stripos($e["source"]??"", "kesztler")!==false) {fwrite(STDERR,"Excluded OCR text found in index\\n"); exit(1);}} echo "Source blacklist verified\\n";'
+          # Stamp the exact checked-out source tree in both frontend and
+          # PHP metadata; detect mixed-version CloudPanel uploads at runtime.
+          python3 scripts/stamp-php-release.py release "$(git rev-parse HEAD)"
           python3 scripts/verify-release-assets.py release
           cd release
           zip -q -r ../zeneelmeleti-muhely-php.zip .
