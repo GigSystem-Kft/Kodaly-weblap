@@ -70,7 +70,7 @@ export function migrateProgress(raw: unknown): UserProgress {
         item.total > 0 && item.total <= 1000 && item.correct >= 0 && item.correct <= item.total &&
         typeof item.at === 'string' && !Number.isNaN(Date.parse(item.at)) &&
         Math.abs(item.score - Math.round(item.correct / item.total * 100)) <= 1 &&
-        (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 12 && item.wrongQuestionIds.every((id:unknown)=>typeof id === 'string' && id.length <= 120))) &&
+        (item.wrongQuestionIds === undefined || (Array.isArray(item.wrongQuestionIds) && item.wrongQuestionIds.length <= 15 && item.wrongQuestionIds.every((id:unknown)=>typeof id === 'string' && id.length <= 120))) &&
         (item.durationSeconds === undefined || (Number.isInteger(item.durationSeconds) && item.durationSeconds >= 0 && item.durationSeconds <= 36_000))
       ).slice(-100)
     : [];
