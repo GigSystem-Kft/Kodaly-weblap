@@ -1,5 +1,18 @@
 # Zeneelméleti Műhely – PHP telepítés CloudPanelben
 
+> **AKTUÁLIS KIADÁSI FIGYELMEZTETÉS · 2026-11-09**
+>
+> A dokumentum alsóbb, dátumozott fejezetei a fejlesztés **történeti lépéseit** is tartalmazzák. A régi Node.js-telepítésre, `mail()`-re, részleges `api/index.php`-feltöltésre vagy külön képfájlcsomagra vonatkozó részletek **nem tekinthetők a jelenlegi, teljes kiadás utasításának**.
+>
+> **Jelenleg nincs jóváhagyott végleges kiadás.** A fejlesztési PR #2 Draft, a `main` összevezetése és a végleges letöltési link a [24 pontos elfogadási jegyzőkönyv](../docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md) szerint blokkolt.
+>
+> Ha a kiadási kapuk teljesülnek, kizárólag az **azonos Git commitból** származó `php-release.yml` csomag teljes `index.html` + `assets/` + `api/` + médiaállomány-készletével szabad dolgozni. Előtte ellenőrzött, webgyökéren kívüli és szerveren kívüli mentés kell az SQL-adatbázisról, a webhelyről, a privát konfigurációról és a privát AI-forrásokról. A migrációkat csak a tényleges adatbázisállapot felmérése után alkalmazzuk; tanulói eredményeket nem törlünk.
+>
+> Az éles backend **PHP 8.4/8.5 + MySQL/Percona**, a levélküldés **PHPMailer + Rackhost hitelesített SMTP**; a privát `zeneelmelet-private.php` kizárólag a `htdocs` könyvtáron kívül lehet. A nyilvános regisztráció és a generatív AI alapból tiltott maradjon. A régi dokumentáció alapján az éles rendszeren **ne módosíts beállítást**.
+>
+> Rövid, naprakész üzemeltetési lista: [CloudPanel ellenőrzőlista](../docs/cloudpanel-telepites.md). A szakmai és jogi jóváhagyások, az éles SMTP, a két fizikai eszközös adatmegőrzés és a manuális akadálymentességi elfogadás nem helyettesíthetők zöld CI-futással.
+
+
 ## Elkészült kiszolgáló
 
 - React + Vite frontend, kizárólag statikus fájlként publikálva
