@@ -153,7 +153,7 @@ function validStudyDay(string $day): bool {
 }
 /** Achievement identifiers are persisted across devices and must be meaningful. */
 function progressIdOk(mixed $value): bool {
-    return is_string($value) && trim($value) !== '' && strlen($value) <= 120;
+    return is_string($value) && strlen($value) <= 120 && preg_match('/\S/u', $value) === 1;
 }
 function progressOk(mixed $p): bool {
     if (!is_array($p) || array_is_list($p)) return false;
