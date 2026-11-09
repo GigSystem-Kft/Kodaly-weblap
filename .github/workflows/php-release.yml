@@ -14,6 +14,7 @@ on:
       - 'php/**'
       - 'database/**'
       - 'scripts/verify-release-assets.py'
+      - 'scripts/test-php-deployment-audit.php'
       - 'scripts/create-invitation.mjs'
       - 'scripts/test-php-invitations.sh'
       - 'scripts/export-php-knowledge.ts'
@@ -99,6 +100,8 @@ jobs:
           php scripts/test-php-tutor-text-generation.php
           php -l php/api/tutor-sources.php
           php -l php/api/tutor-search.php
+          php -l php/api/deployment-audit.php
+          php scripts/test-php-deployment-audit.php
           php scripts/test-php-tutor-search.php
           php scripts/test-php-tutor-sources.php
           php scripts/test-php-tutor-image-generation.php
@@ -119,6 +122,7 @@ jobs:
           cp -a dist/. release/
           cp php/api/index.php release/api/index.php
           cp php/api/admin.php release/api/admin.php
+          cp php/api/deployment-audit.php release/api/deployment-audit.php
           cp php/api/music-answers.php release/api/music-answers.php
           cp php/api/creative-answers.php release/api/creative-answers.php
           cp php/api/tutor-visuals.php release/api/tutor-visuals.php
