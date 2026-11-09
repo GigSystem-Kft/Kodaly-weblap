@@ -429,14 +429,14 @@ export function knowledgeContext(question: string): string {
   ).join('\n\n');
 }
 
-/** Forráslefedettségi jelentés: a valóban létrejött keresési indexről, nyers szövegek nélkül. */
+/** Forráslefedettségi jelentés: Unicode-karaktereket mér, nem UTF-8 bájtokat vagy UTF-16 kódegységeket. */
 export function sourceCoverageReport() {
   const groups = new Map<string, { source: string; chunks: number; characters: number; kind: string }>();
   for (const entry of INDEX) {
     const key = entry.source;
     const previous = groups.get(key) ?? { source: key, chunks: 0, characters: 0, kind: entry.kind };
     previous.chunks++;
-    previous.characters += entry.text.length;
+    previous.characters += Array.from(entry.text).length;
     groups.set(key, previous);
   }
   const files = existsSync(SOURCES_DIR) ? readdirSync(SOURCES_DIR).filter(f => /\.(txt|md)$/i.test(f)).sort() : [];
@@ -450,7 +450,7 @@ export function sourceCoverageReport() {
   return {
     generatedAt: new Date().toISOString(),
     indexChunks: INDEX.length,
-    indexedCharacters: INDEX.reduce((n,e) => n + e.text.length, 0),
+    indexedCharacters: INDEX.reduce((n,e) => n + Array.from(e.text).length, 0),
     sources: [...groups.values()].sort((a,b) => a.source.localeCompare(b.source,'hu')),
     omitted: [...omitted.map(file => ({ file, reason: file.startsWith('_') ?
       'Sablon vagy nem jóváhagyott fájl' : 'Az OCR-átirat szakmai ellenőrzésig szándékosan kizárva' })),
