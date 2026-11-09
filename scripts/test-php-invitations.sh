@@ -228,6 +228,40 @@ if (($j["scanComplete"]??null)!==true ||
 '
 echo 'Live authenticated deployment diagnostic flags nested public archives'
 
+# A-24: the real authenticated endpoint also verifies a three-layer release
+# fingerprint. An incomplete upload of old frontend/new PHP must be rejected.
+REVISION="$(printf 'a%.0s' {1..40})"
+MIXED_REVISION="$(printf 'b%.0s' {1..40})"
+cat > php/index.html <<HTML
+<html><head><meta name="zeneelmelet-build-sha" content="$REVISION"></head><body>Test</body></html>
+HTML
+printf '{"schema":1,"sha":"%s"}\n' "$REVISION" > php/release-build.json
+printf "<?php\n// Public, non-secret checked-out release revision.\nreturn '%s';\n" "$REVISION" > php/api/release-build.php
+fingerprintStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$fingerprintStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==true ||
+    ($j["releaseRevision"]??null)!==str_repeat("a",40)) {
+    fwrite(STDERR,"Matching build stamps rejected by admin endpoint\n");exit(1);
+}
+'
+printf '{"schema":1,"sha":"%s"}\n' "$MIXED_REVISION" > php/release-build.json
+mixedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$mixedStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false ||
+    !in_array("Verzióütközés: index.html / release-build.json / api/release-build.php", $j["missing"]??[],true)) {
+    fwrite(STDERR,"Mixed build stamps did not block admin deployment readiness\n");exit(1);
+}
+'
+rm -f php/index.html php/release-build.json php/api/release-build.php
+echo 'Live admin diagnostic blocks mixed frontend/PHP source revisions'
+
+
 # Invite is sent by mail; server stores only the hash.
 inviteStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=admin/invite' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"second@example.org"}')"
 test "$inviteStatus" = 201
