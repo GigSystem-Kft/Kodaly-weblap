@@ -235,7 +235,7 @@ MIXED_REVISION="$(printf 'b%.0s' {1..40})"
 cat > php/index.html <<HTML
 <html><head><meta name="zeneelmelet-build-sha" content="$REVISION"></head><body>Test</body></html>
 HTML
-printf '{"schema":1,"sha":"%s"}\n' "$REVISION" > php/release-build.json
+python3 scripts/stamp-php-release.py php "$REVISION"
 printf "<?php\n// Public, non-secret checked-out release revision.\nreturn '%s';\n" "$REVISION" > php/api/release-build.php
 fingerprintStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
  'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
