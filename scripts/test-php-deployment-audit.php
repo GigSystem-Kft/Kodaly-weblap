@@ -55,30 +55,69 @@ try {
         }
     }
 
-    // The real release records one checked-out SHA in HTML, JSON and PHP.
-    // A partially deployed or accidentally mixed revision must never pass.
+    // A release must agree on the Git SHA AND on actual frontend/PHP bytes.
+    // The historical three labels alone could not detect a stale JS/CSS file.
     $releaseSha = str_repeat('a', 40);
     $otherSha = str_repeat('b', 40);
     $meta = '<meta name="zeneelmelet-build-sha" content="' . $releaseSha . '">';
-    file_put_contents($root . '/index.html', '<html><head>' . $meta . '</head><body>Test</body></html>');
-    file_put_contents($root . '/release-build.json', json_encode(['schema'=>1,'sha'=>$releaseSha], JSON_THROW_ON_ERROR));
+    $jsPath = $root . '/assets/index-ci.js';
+    file_put_contents($jsPath, 'console.log("correct release")');
+    $coreFiles = [
+        'api/index.php', 'api/admin.php', 'api/deployment-audit.php',
+        'api/tutor-search.php', 'api/tutor-sources.php', 'api/knowledge.php'
+    ];
+    foreach ($coreFiles as $relative) {
+        file_put_contents($root . '/' . $relative, "<?php // CI fixture {$relative}\n");
+    }
+    $markup = '<html><head>' . $meta .
+        '<script src="/assets/index-ci.js"></script></head><body>Test</body></html>';
+    file_put_contents($root . '/index.html', $markup);
+    $fileHashes = [];
+    foreach ([...$coreFiles, 'assets/index-ci.js'] as $relative) {
+        $fileHashes[$relative] = hash_file('sha256', $root . '/' . $relative);
+    }
+    $writeManifest = static function (string $sha, array $hashes) use ($root): void {
+        file_put_contents($root . '/release-build.json', json_encode([
+            'schema'=>2,'sha'=>$sha,'files'=>$hashes
+        ], JSON_THROW_ON_ERROR));
+    };
+    $writeManifest($releaseSha, $fileHashes);
     $expectedPhp = "<?php\n// Public, non-secret checked-out release revision.\nreturn '" . $releaseSha . "';\n";
     file_put_contents($root . '/api/release-build.php', $expectedPhp);
     $fingerprint = deploymentBuildFingerprint($root);
     checkDeployment($fingerprint['buildConsistent'] === true &&
         $fingerprint['releaseRevision'] === $releaseSha,
-        'identical three-layer release stamps must pass');
+        'matching Git and actual JS/PHP release checksums pass');
 
-    file_put_contents($root . '/release-build.json', json_encode(['schema'=>1,'sha'=>$otherSha], JSON_THROW_ON_ERROR));
+    file_put_contents($jsPath, 'console.log("stale JS asset")');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'stale JavaScript must be caught even when all three revision labels agree');
+    file_put_contents($jsPath, 'console.log("correct release")');
+
+    $phpPath = $root . '/api/tutor-search.php';
+    file_put_contents($phpPath, '<?php // a different backend build');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'mixed PHP source must be caught even when three revision labels agree');
+    file_put_contents($phpPath, "<?php // CI fixture api/tutor-search.php\n");
+
+    $writeManifest($otherSha, $fileHashes);
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
         'mixing static and PHP revisions must be blocked');
+    $writeManifest($releaseSha, $fileHashes);
 
-    file_put_contents($root . '/release-build.json', json_encode(['schema'=>1,'sha'=>$releaseSha], JSON_THROW_ON_ERROR));
-    file_put_contents($root . '/index.html', '<html><head>' . $meta . $meta . '</head></html>');
+    file_put_contents($root . '/index.html',
+        '<html><head>' . $meta . $meta . '<script src="/assets/index-ci.js"></script></head></html>');
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
         'duplicate injected HTML stamps are invalid');
+    file_put_contents($root . '/index.html', $markup);
 
-    file_put_contents($root . '/index.html', '<html><head>' . $meta . '</head></html>');
+    $incomplete = $fileHashes;
+    unset($incomplete['assets/index-ci.js']);
+    $writeManifest($releaseSha, $incomplete);
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'manifests omitting required JS must not pass');
+    $writeManifest($releaseSha, $fileHashes);
+
     unlink($root . '/api/release-build.php');
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
         'missing backend revision stamp fails closed');
