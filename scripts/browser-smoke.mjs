@@ -237,6 +237,11 @@ try {
   await page.getByRole('button',{name:/06\. Profil/}).click();
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
   console.log('Guest: personal learning dashboard loaded');
+  const missedQuestions = page.locator('details').filter({hasText:'Átismétlendő kérdések (15)'});
+  await missedQuestions.getByText('Átismétlendő kérdések (15)').click();
+  if (await missedQuestions.locator('li').count()!==15)
+    throw new Error('Learner dashboard does not show all 15 mistakes from the quiz');
+  console.log('Guest: all 15 missed questions are reviewable in the learning dashboard');
   await checkAccessibility(page, 'tanulási profil');
 
   await page.getByRole('button',{name:/01\. Tananyag/}).click();
