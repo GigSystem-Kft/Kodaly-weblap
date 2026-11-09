@@ -23,7 +23,7 @@ type Entry = { source: string; label: string; text: string; creativePractice?: {
 } };
 const entries: Entry[] = [];
 for(const item of MUSIC_EXPRESSIONS)entries.push({
- source:'Zenei kifejezések – saját mellékelt teljes szótár (eredeti fogalommeghatározás)',
+ source:'Zenei kifejezések – mellékelt, nem minden címszóban lektorált teljes szótár',
  label:'09. Zenei kifejezések / '+item.category+' / '+item.term+' / eredeti '+item.line+'. sor',
  text:item.term+' – '+item.definition
 });
