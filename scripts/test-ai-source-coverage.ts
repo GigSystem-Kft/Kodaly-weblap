@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { localKnowledgeReply, searchKnowledge, sourceCoverageReport } from '../server-knowledge';
+import { localKnowledgeReply, searchKnowledge, sourceCoverageReport, unicodeCharacterCount } from '../server-knowledge';
 
 /**
  * 80 Hungarian question variants test the local retrieval + source attribution.
@@ -57,4 +57,12 @@ test('hexachord válaszhoz tényleges forrás és magyar fogalmi magyarázat kap
  const reply=localKnowledgeReply('mit jelent az hogy hexachord');
  assert.ok(/hat|hathang|diatonikus/i.test(reply));
  assert.ok(/forrás|Zeneelméleti|Kelemen|Zempléni/i.test(reply));
+});
+
+test('A-08: Unicode character totals are consistent even for accents and music symbols',()=>{
+ assert.equal(unicodeCharacterCount('Őő🎼'),3,'Unicode code points, not UTF-8 bytes');
+ const report=sourceCoverageReport();
+ assert.equal(report.indexedCharacters,
+  report.sources.reduce((sum,source)=>sum+source.characters,0),
+  'Global and per-source Unicode counts agree');
 });
