@@ -75,7 +75,7 @@ assertBank('Zeneelméleti Műhely – Kvintkör',
 
 // The entire 09. glossary must remain intact, not merely 1,793 labels.
 assert.equal(MUSIC_EXPRESSIONS.length, 1793);
-assertBank('Zenei kifejezések – saját mellékelt teljes szótár (eredeti fogalommeghatározás)',
+assertBank('Zenei kifejezések – mellékelt, nem minden címszóban lektorált teljes szótár',
   MUSIC_EXPRESSIONS.map(item => ({
     label: '09. Zenei kifejezések / ' + item.category + ' / ' + item.term +
       ' / eredeti ' + item.line + '. sor',
