@@ -348,6 +348,7 @@ try {
         $root=dirname(__DIR__);
         $required=['index.html','source-inventory.json',
             'api/index.php','api/admin.php','api/tutor-search.php',
+            'api/deployment-audit.php',
             'api/tutor-sources.php','api/tutor-text-generation.php',
             'api/tutor-image-generation.php','api/tutor-visuals.php',
             'api/knowledge.php','api/music-answers.php','api/creative-answers.php',
@@ -377,20 +378,19 @@ try {
                 }
             }
         }
-        $archives=[];
-        foreach ([''=>$root,'api/'=>__DIR__] as $prefix=>$folder) {
-            foreach (['*.zip','*.sql','*.bak','*.tar.gz','.env'] as $pattern) {
-                foreach (glob($folder.'/'.$pattern) ?: [] as $file) {
-                    if (is_file($file)) $archives[]=$prefix.basename($file);
-                }
-            }
-        }
-        $archives=array_values(array_unique($archives));
+        require_once __DIR__ . '/deployment-audit.php';
+        // A-24: catch confidential files in *every* public subdirectory,
+        // not just the webroot and api/. Never return a green status when
+        // traversal failed or was capped for safety.
+        $scan=deploymentPublicRiskScan($root);
+        $archives=$scan['publicArchives'];
         answer(200,[
             'checkedAt'=>gmdate('c'),
-            'ready'=>count($missing)===0 && count($archives)===0,
+            'ready'=>count($missing)===0 && count($archives)===0 && $scan['scanComplete']===true,
             'missing'=>array_values(array_unique($missing)),
             'publicArchives'=>$archives,
+            'scanComplete'=>$scan['scanComplete'],
+            'scannedItems'=>$scan['scannedItems'],
             'mailConfigured'=>($config['mail_enabled'] ?? false)===true &&
                 ($config['mail_transport'] ?? '')==='smtp',
             'scope'=>'Fájlkészlet-ellenőrzés, nem helyettesíti az éles funkcionális próbát'
