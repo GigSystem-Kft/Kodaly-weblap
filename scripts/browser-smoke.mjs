@@ -276,6 +276,44 @@ try {
       bounds.y< -1 || bounds.y+bounds.height>845) throw new Error('Tutor panel overflows mobile viewport');
   console.log('Mobile: assistant remains inside screen');
   await checkAccessibility(page, 'mobil Tanársegéd');
+
+  // A-23: all tutor image zooms must form real keyboard-operated dialogs.
+  // A controlled chat fixture exercises both pre-approved diagrams and
+  // page scans without requiring access to the live PHP/MySQL service.
+  await page.route('**/api/index.php?route=chat', route => route.fulfill({
+    status:200, contentType:'application/json',
+    body:JSON.stringify({
+      mode:'fallback',
+      reply:'A kvintkör mellé egy jegyzetoldal is tartozik. [[kep: 1]]',
+      visuals:['kvintkor']
+    })
+  }));
+  await page.getByPlaceholder('Kérdezz a ritmusról, hangközökről...').fill('Mutasd a kvintkört és a jegyzetet!');
+  await page.getByRole('button',{name:'Kérdés elküldése'}).click();
+  const visualTrigger=page.getByRole('button',{name:'Kvintkör nagyítása'});
+  await visualTrigger.waitFor();
+  await visualTrigger.click();
+  const imageDialog=page.getByRole('dialog',{name:'Kottakép nagyítása'});
+  await imageDialog.waitFor();
+  if(!(await imageDialog.getByRole('button',{name:'Bezárás'}).evaluate(element => document.activeElement === element)))
+    throw new Error('Tutor diagram did not focus its modal close button');
+  await page.keyboard.press('Tab');
+  if(!(await imageDialog.getByRole('button',{name:'Bezárás'}).evaluate(element => document.activeElement === element)))
+    throw new Error('Tutor diagram leaked keyboard focus outside modal');
+  await page.keyboard.press('Escape');
+  await imageDialog.waitFor({state:'detached'});
+  await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'Kvintkör nagyítása');
+
+  const pageTrigger=page.getByRole('button',{name:/1\\. oldal · nagyítás/});
+  await pageTrigger.waitFor();
+  await pageTrigger.click();
+  const pageDialog=page.getByRole('dialog',{name:'Jegyzetkép nagyítása'});
+  await pageDialog.waitFor();
+  await pageDialog.getByRole('button',{name:'Bezárás'}).click();
+  await pageDialog.waitFor({state:'detached'});
+  await page.waitForFunction(() => document.activeElement?.textContent?.includes('1. oldal · nagyítás'));
+  console.log('Tutor: zoomed illustrations and notes restore keyboard focus and close with Escape');
+
   // A-21: a successful auth/login followed by a failed progress GET must
   // revoke the newly created session and keep guest work isolated.
   const halfLoginContext = await browser.newContext();
