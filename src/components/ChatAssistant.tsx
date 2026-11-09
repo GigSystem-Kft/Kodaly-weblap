@@ -42,6 +42,33 @@ export const ChatAssistant: React.FC = () => {
   const [aiMode, setAiMode] = useState<AiMode>('checking');
   const [knowledgeSummary, setKnowledgeSummary] = useState<string>('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const zoomCloseButtonRef = useRef<HTMLButtonElement>(null);
+  const zoomTriggerRef = useRef<HTMLButtonElement | null>(null);
+
+  const closeZoom = () => {
+    setZoomGenerated(null);
+    setZoomVisual(null);
+    setZoomPage(null);
+    // Return focus to the image's original trigger after the modal is removed.
+    window.requestAnimationFrame(() => zoomTriggerRef.current?.focus());
+  };
+
+  useEffect(() => {
+    if (!zoomGenerated && !zoomVisual && zoomPage === null) return;
+    zoomCloseButtonRef.current?.focus();
+    const onModalKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeZoom();
+      } else if (event.key === 'Tab') {
+        // Each of these image dialogs has only one keyboard action.
+        event.preventDefault();
+        zoomCloseButtonRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onModalKeyDown);
+    return () => document.removeEventListener('keydown', onModalKeyDown);
+  }, [zoomGenerated, zoomVisual, zoomPage]);
 
   useEffect(() => {
     apiFetch('/api/chat/status')
@@ -211,7 +238,7 @@ export const ChatAssistant: React.FC = () => {
                         {m.generatedImage && (
                           <figure className="mt-3 overflow-hidden rounded-xl bg-white border border-slate-600">
                             <button type="button" className="w-full cursor-zoom-in"
-                              onClick={() => setZoomGenerated(m.generatedImage ?? null)}
+                              onClick={event => { zoomTriggerRef.current = event.currentTarget; setZoomGenerated(m.generatedImage ?? null); }}
                               aria-label="AI által készített ábra nagyítása">
                               <img src={m.generatedImage} alt="AI által készített zeneelméleti szemléltető kép"
                                 className="w-full max-h-80 object-contain" />
@@ -229,7 +256,7 @@ export const ChatAssistant: React.FC = () => {
                               return (
                                 <figure key={id} className="overflow-hidden rounded-xl bg-white border border-slate-600">
                                   <button type="button" className="block w-full cursor-zoom-in"
-                                    onClick={() => setZoomVisual(id)} aria-label={visual.title + ' nagyítása'}>
+                                    onClick={event => { zoomTriggerRef.current = event.currentTarget; setZoomVisual(id); }} aria-label={visual.title + ' nagyítása'}>
                                     <img src={visual.image} alt={visual.title} loading="lazy" className="w-full h-auto max-h-80 object-contain" />
                                   </button>
                                   <figcaption className="px-3 py-2 text-xs text-slate-700">
@@ -248,7 +275,7 @@ export const ChatAssistant: React.FC = () => {
                               <button
                                 key={n}
                                 type="button"
-                                onClick={() => setZoomPage(n)}
+                                onClick={event => { zoomTriggerRef.current = event.currentTarget; setZoomPage(n); }}
                                 className="block text-left rounded-lg overflow-hidden border border-slate-600 hover:border-indigo-400 transition-colors bg-white"
                               >
                                 <img src={PAGE_IMG(n)} alt={`Jegyzet ${n}. oldal`} loading="lazy" className="w-full" />
@@ -297,8 +324,8 @@ export const ChatAssistant: React.FC = () => {
       {zoomGenerated && (
         <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-5"
           role="dialog" aria-modal="true" aria-label="Generált ábra nagyítása"
-          onClick={() => setZoomGenerated(null)}>
-          <button type="button" aria-label="Bezárás" onClick={() => setZoomGenerated(null)}
+          onClick={closeZoom}>
+          <button type="button" ref={zoomCloseButtonRef} aria-label="Bezárás" onClick={closeZoom}
             className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white"><X className="w-5 h-5" /></button>
           <img src={zoomGenerated} alt="AI által generált ábra" className="max-w-full max-h-full rounded-lg bg-white object-contain" onClick={e=>e.stopPropagation()} />
         </div>
@@ -306,8 +333,8 @@ export const ChatAssistant: React.FC = () => {
       {zoomVisual && TUTOR_VISUALS[zoomVisual] && (
         <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-5"
           role="dialog" aria-modal="true" aria-label="Kottakép nagyítása"
-          onClick={() => setZoomVisual(null)}>
-          <button type="button" aria-label="Bezárás" onClick={() => setZoomVisual(null)}
+          onClick={closeZoom}>
+          <button type="button" ref={zoomCloseButtonRef} aria-label="Bezárás" onClick={closeZoom}
             className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white"><X className="w-5 h-5" /></button>
           <img src={TUTOR_VISUALS[zoomVisual].image} alt={TUTOR_VISUALS[zoomVisual].title}
             className="max-w-full max-h-full rounded-lg bg-white object-contain"
@@ -317,13 +344,15 @@ export const ChatAssistant: React.FC = () => {
       {zoomPage !== null && (
         <div
           className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setZoomPage(null)}
+          role="dialog" aria-modal="true" aria-label="Jegyzetkép nagyítása"
+          onClick={closeZoom}
         >
           <button
             type="button"
+            ref={zoomCloseButtonRef}
             aria-label="Bezárás"
             className="absolute top-4 right-4 p-2 rounded-full bg-slate-800 text-white"
-            onClick={() => setZoomPage(null)}
+            onClick={closeZoom}
           >
             <X className="w-5 h-5" />
           </button>
