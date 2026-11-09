@@ -250,7 +250,7 @@ if (($j["buildConsistent"]??null)!==true ||
     fwrite(STDERR,"Matching build stamps rejected by admin endpoint\n");exit(1);
 }
 '
-printf '{"schema":1,"sha":"%s"}\n' "$MIXED_REVISION" > php/release-build.json
+sed -i "s/$REVISION/$MIXED_REVISION/" php/release-build.json
 mixedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
  'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
 test "$mixedStatus" = 200
@@ -261,7 +261,7 @@ if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false ||
     fwrite(STDERR,"Mixed build stamps did not block admin deployment readiness\n");exit(1);
 }
 '
-rm -f php/index.html php/release-build.json php/api/release-build.php
+rm -f php/index.html php/release-build.json php/api/release-build.php php/api/knowledge.php php/assets/index-ci.js
 echo 'Live admin diagnostic blocks mixed frontend/PHP source revisions'
 
 
