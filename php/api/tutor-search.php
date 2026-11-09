@@ -20,11 +20,29 @@ function searchTerms(string $value): array {
         if (strlen($word)<=2 || in_array($word,$stop,true)) continue;
         // Equivalent historical and Hungarian spellings.
         if (in_array($word,['hexachord','hexachordum','hexachordok','hexachordot',
-            'hexakord','hexakordok','hexakordot'],true)) $word='hexachord';
+            'hexachordokrol','hexachordrol','hexakord','hexakordok','hexakordot',
+            'hexakordokrol','hexakordrol'],true)) $word='hexachord';
         if (in_array($word,['guidoni','guidofele'],true)) $word='guido';
         $terms[$word]=true;
     }
     return array_keys($terms);
+}
+/**
+ * A short Hungarian case suffix may follow a complete indexed concept.
+ * Avoid unrestricted fuzzy substring matches: "kvintkör" should match
+ * "kvintkörről", but unrelated words sharing a few letters must not.
+ */
+function tutorTermMatch(string $query, string $indexed): bool {
+    if ($query === $indexed) return true;
+    if (strlen($query) >= 5 && str_starts_with($indexed, $query)) return true;
+    if (strlen($indexed) < 5 || !str_starts_with($query, $indexed)) return false;
+    $suffix = substr($query, strlen($indexed));
+    return in_array($suffix, [
+        't','at','et','ot','ok','ek','ak','okrol','ekrol','akrol',
+        'rol','tol','hoz','hez','hon','on','en','an',
+        'ban','ben','bol','nal','nel','nak','nek','ra','re',
+        'ig','kent','val','vel','ert','roluk','okon','eken','akat','eket'
+    ], true);
 }
 function knowledgeEntries(): array {
     $file=__DIR__ . '/knowledge.php';
@@ -65,12 +83,12 @@ function rankLessons(string $question, array $entries, int $limit=4): array {
         foreach($tokens as $token) {
             $isMatch=false;
             foreach ($labelWords as $word) {
-                if ($token===$word || (strlen($token)>=5 && str_starts_with($word,$token))) {
+                if (tutorTermMatch($token,$word)) {
                     $labelMatched++; $isMatch=true; break;
                 }
             }
             if (!$isMatch) foreach($bodyWords as $word) {
-                if ($token===$word || (strlen($token)>=5 && str_starts_with($word,$token))) {
+                if (tutorTermMatch($token,$word)) {
                     $isMatch=true; break;
                 }
             }
@@ -101,7 +119,7 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
             $matches=0;
             foreach ($tokens as $token) {
                 foreach ($terms as $term) {
-                    if (str_starts_with($term,$token) || str_starts_with($token,$term)) {
+                    if (tutorTermMatch($token,$term)) {
                         $matches++; break;
                     }
                 }
