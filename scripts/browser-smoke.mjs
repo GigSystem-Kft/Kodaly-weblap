@@ -276,6 +276,50 @@ try {
       bounds.y< -1 || bounds.y+bounds.height>845) throw new Error('Tutor panel overflows mobile viewport');
   console.log('Mobile: assistant remains inside screen');
   await checkAccessibility(page, 'mobil Tanársegéd');
+  // A-21: a successful auth/login followed by a failed progress GET must
+  // revoke the newly created session and keep guest work isolated.
+  const halfLoginContext = await browser.newContext();
+  const halfLoginPage = await halfLoginContext.newPage();
+  let halfLoginPosts=0;
+  let rolledBackSessions=0;
+  await halfLoginPage.route('**/api/index.php?*', route => {
+    const endpoint=new URL(route.request().url()).searchParams.get('route');
+    const payload=endpoint==='auth/me'
+      ? {user:null}
+      : endpoint==='auth/status'
+      ? {available:true,registrationEnabled:false}
+      : endpoint==='auth/login'
+      ? (++halfLoginPosts,{user:{id:'partial-login',displayName:'Félbeszakadt fiók',
+          email:'partial@example.invalid',role:'student'}})
+      : endpoint==='auth/logout'
+      ? (++rolledBackSessions,{success:true})
+      : endpoint==='progress'
+      ? {error:'A tanulási napló ideiglenesen nem érhető el.'}
+      : endpoint==='chat/status'
+      ? {mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}}
+      : {error:'Fixture route unavailable'};
+    return route.fulfill({
+      status:payload.error?503:200,contentType:'application/json',
+      body:JSON.stringify(payload)
+    });
+  });
+  try {
+    await halfLoginPage.goto(root,{waitUntil:'domcontentloaded'});
+    await halfLoginPage.getByRole('button',{name:/06\\. Profil/}).click();
+    await halfLoginPage.getByLabel('E-mail-cím').fill('partial@example.invalid');
+    await halfLoginPage.getByLabel('Jelszó',{exact:true}).fill('sample-password-12345');
+    await halfLoginPage.locator('form button[type="submit"]').click();
+    await halfLoginPage.getByRole('alert')
+      .filter({hasText:'A fiók létrejött, de a tanulási adatok betöltése nem sikerült.'})
+      .waitFor();
+    if (halfLoginPosts!==1 || rolledBackSessions!==1 ||
+        await halfLoginPage.getByText('Félbeszakadt fiók',{exact:true}).count()!==0)
+      throw new Error('Failed initial progress load did not revoke half-open login');
+    console.log('Account UI: failed progress load revokes half-open login session');
+  } finally {
+    await halfLoginContext.close();
+  }
+
   // UI role visibility tests use intercepted API responses; the real PHP
   // authorization is independently tested against the disposable MySQL server.
   for(const role of ['student','teacher','admin']){
