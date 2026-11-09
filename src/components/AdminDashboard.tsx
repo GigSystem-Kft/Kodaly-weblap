@@ -4,7 +4,7 @@ import { apiFetch } from '../api';
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
 type TutorSource = { id: string; title: string; createdAt: string; size: number };
-type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];mailConfigured:boolean;scope:string};
+type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;mailConfigured:boolean;scope:string};
 type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
  sources:{source:string;chunks:number;characters:number;kind:string}[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
@@ -28,6 +28,7 @@ export const AdminDashboard: React.FC = () => {
   const [coverageError, setCoverageError] = useState('');
   const [deploymentCheck, setDeploymentCheck] = useState<DeploymentCheck | null>(null);
   const [deploymentError, setDeploymentError] = useState('');
+  const deploymentReady = deploymentCheck?.ready === true && deploymentCheck?.scanComplete === true;
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceTitle, setSourceTitle] = useState('');
   const [search, setSearch] = useState('');
@@ -173,9 +174,15 @@ export const AdminDashboard: React.FC = () => {
         {deploymentError && <p role="alert" className="text-sm text-amber-800">{deploymentError}</p>}
         {!deploymentError && !deploymentCheck && <p className="text-sm">A telepítés állapotának lekérdezése...</p>}
         {deploymentCheck && <>
-          <p role={deploymentCheck.ready ? 'status' : 'alert'} className={'text-sm font-semibold mb-2 ' + (deploymentCheck.ready ? 'text-emerald-800' : 'text-red-800')}>
-            {deploymentCheck.ready ? 'A kötelező fájlok és belépési állományok jelen vannak.' : 'A telepítés fájlkészlete ellenőrzést igényel.'}
+          <p role={deploymentReady ? 'status' : 'alert'} className={'text-sm font-semibold mb-2 ' + (deploymentReady ? 'text-emerald-800' : 'text-red-800')}>
+            {deploymentReady ? 'A kötelező fájlok és belépési állományok jelen vannak; a nyilvános fájlfák ellenőrzése teljes.' : 'A telepítés fájlkészlete ellenőrzést igényel.'}
           </p>
+          {deploymentCheck.scanComplete !== true && (
+            <p role="alert" className="text-sm text-red-800 mb-2">
+              A nyilvános mappák teljes biztonsági átvizsgálása nem igazolt vagy megszakadt.
+              Ilyenkor a telepítés NEM tekinthető ellenőrzöttnek.
+            </p>
+          )}
           {deploymentCheck.missing.length > 0 && (
             <div className="text-sm text-red-800 mb-2">
               <strong>Hiányzó vagy üres fájlok ({deploymentCheck.missing.length}):</strong>
@@ -184,10 +191,16 @@ export const AdminDashboard: React.FC = () => {
           )}
           {deploymentCheck.publicArchives.length > 0 && (
             <div role="alert" className="text-sm text-red-800 mb-2">
-              <strong>Nyilvános helyre került biztonsági mentések ({deploymentCheck.publicArchives.length}):</strong>
+              <strong>Nyilvános kockázatos állományok vagy hivatkozások ({deploymentCheck.publicArchives.length}):</strong>
               <ul className="list-disc pl-6">{deploymentCheck.publicArchives.map(item=><li key={item}>{item}</li>)}</ul>
               Az ellenőrzött archívumokat a webgyökéren kívül kell megőrizni; ez a felület semmit nem töröl.
             </div>
+          )}
+          {typeof deploymentCheck.scannedItems === 'number' && (
+            <p className="text-xs text-slate-600 mb-2">
+              Átvizsgált fájl- és mappabejegyzések: {deploymentCheck.scannedItems.toLocaleString('hu-HU')}.
+              Ez kizárólag az adminisztrátornak látható, olvasási célú ellenőrzés.
+            </p>
           )}
           <p className="text-xs text-slate-600">SMTP-konfiguráció: {deploymentCheck.mailConfigured ? 'beállítva (kézbesítés nincs itt tesztelve)' : 'nincs igazolva'} · Ellenőrizve: {deploymentCheck.checkedAt}</p>
         </>}
