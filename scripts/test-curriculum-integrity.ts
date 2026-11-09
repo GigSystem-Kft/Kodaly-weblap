@@ -33,6 +33,27 @@ test('all quiz questions have unambiguous answers, descriptions and known curric
     assert.ok(Number.isInteger(question.correctIndex) && question.correctIndex >= 0 && question.correctIndex < question.options.length, `Invalid correct option: ${question.id}`);
   }
 });
+test('quiz items with the same visible question and choices cannot disagree on the correct key', () => {
+  // An E2E learner only sees the prompt and the choices, not the stable ID.
+  // If identical displayed questions have conflicting keys, the assessment
+  // cannot be answered unambiguously and automated grading becomes flaky.
+  const visibleItems = new Map<string, {id:string;correctIndex:number}>();
+  const normalize = (text:string) => text.trim().normalize('NFC').replace(/\\s+/g, ' ').toLocaleLowerCase('hu-HU');
+  for (const question of QUIZ_QUESTIONS) {
+    const visible = JSON.stringify([
+      normalize(question.question),
+      question.options.map(normalize)
+    ]);
+    const previous = visibleItems.get(visible);
+    if (previous) {
+      assert.equal(question.correctIndex, previous.correctIndex,
+        `Conflicting answer keys for visually identical items: ${previous.id} / ${question.id}`);
+    } else {
+      visibleItems.set(visible, {id:question.id,correctIndex:question.correctIndex});
+    }
+  }
+});
+
 test('study card and matching IDs are unique, nonempty and stable', () => {
   unique(FLASHCARDS_DATA.map(card => card.id), 'flashcard');
   unique(MATCHING_PAIRS.map(pair => pair.id), 'matching pair');
