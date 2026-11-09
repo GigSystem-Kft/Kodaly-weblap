@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Fail a release with incomplete image-backed learning resources."""
 from pathlib import Path
+import hashlib
 import json
 import re
 import sys
@@ -57,13 +58,15 @@ if html.is_file():
 try:
     manifest = json.loads((root / "release-build.json").read_text(encoding="utf-8"))
     revision = manifest.get("sha") if isinstance(manifest, dict) else None
+    digests = manifest.get("files") if isinstance(manifest, dict) else None
     if (
         not isinstance(manifest, dict)
-        or manifest.get("schema") != 1
+        or manifest.get("schema") != 2
         or not isinstance(revision, str)
         or re.fullmatch(r"[a-f0-9]{40}", revision) is None
+        or not isinstance(digests, dict)
     ):
-        errors.append("Invalid or missing release-build.json revision")
+        errors.append("Invalid release-build.json revision or file integrity map")
     else:
         markup = html.read_text(encoding="utf-8")
         html_stamps = re.findall(
@@ -79,6 +82,29 @@ try:
         )
         if php_stamp != expected_php:
             errors.append("Mixed PHP/JSON release revision")
+        entrypoints = set(re.findall(
+            r"""(?:src|href)=["']/(assets/[A-Za-z0-9._-]+\.(?:js|css))["']""",
+            markup,
+        ))
+        core = {
+            "api/index.php", "api/admin.php", "api/deployment-audit.php",
+            "api/tutor-search.php", "api/tutor-sources.php", "api/knowledge.php",
+        }
+        expected_files = core | entrypoints
+        if not any(item.endswith(".js") for item in entrypoints):
+            errors.append("Missing JavaScript file for release integrity check")
+        if set(digests) != expected_files:
+            errors.append("Release manifest does not enumerate exact required PHP and JS/CSS files")
+        else:
+            for name in sorted(expected_files):
+                item = root / name
+                expected = digests[name]
+                if (not isinstance(expected, str) or
+                    re.fullmatch(r"[a-f0-9]{64}", expected) is None or
+                    not item.is_file() or item.is_symlink()):
+                    errors.append(f"Invalid or missing release manifest file: {name}")
+                elif hashlib.sha256(item.read_bytes()).hexdigest() != expected:
+                    errors.append(f"Checksum mismatch in release file: {name}")
 except (OSError, ValueError, UnicodeError) as exc:
     errors.append(f"Unreadable three-layer release fingerprint: {exc}")
 
