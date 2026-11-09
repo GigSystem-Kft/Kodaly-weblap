@@ -278,6 +278,37 @@ test('daily XP caps survive import and reject forged daily counter shapes', () =
   assert.deepEqual(migrated.earTrainingDailyXp,{'2026-11-08':25});
 });
 
+test('large account histories retain their own pending changes across reload', () => {
+  const cache=new Map<string,string>();
+  const storage={
+    getItem:(key:string)=>cache.get(key)??null,
+    setItem:(key:string,value:string)=>{cache.set(key,value);},
+    removeItem:(key:string)=>{cache.delete(key);}
+  };
+  const base=createEmptyProgress();
+  base.completedSubchapters=Array.from({length:7000},(_,i)=>
+    'lesson-'+String(i).padStart(5,'0')+'-'+('r'.repeat(95)));
+  const local=migrateProgress(base);
+  local.completedChapters=['newly-completed'];
+  const oldLimit=JSON.stringify({version:1,ownerId:'large-account',base,local}).length;
+  assert.ok(oldLimit>1_000_000, 'The case must exceed the old 1 MB recovery cap');
+  assert.ok(oldLimit<3_000_000, 'Two valid server-sized snapshots must fit');
+  savePendingProgress(storage,'large-account',base,local);
+  assert.equal(loadPendingProgress(storage,'other-account'),null);
+  const restored=recoverPendingProgress(base,loadPendingProgress(storage,'large-account'));
+  assert.equal(restored.completedSubchapters.length,7000);
+  assert.deepEqual(restored.completedChapters,['newly-completed']);
+  clearSavedPendingProgress(storage,'large-account',base);
+  assert.ok(loadPendingProgress(storage,'large-account'));
+  clearSavedPendingProgress(storage,'large-account',local);
+  assert.equal(loadPendingProgress(storage,'large-account'),null);
+});
+
+test('recovery snapshot cap counts UTF-8 bytes, not JavaScript code units', () => {
+  const oversized='ő'.repeat(1_500_001); // 3,000,002 UTF-8 bytes
+  assert.equal(loadPendingProgress({getItem:()=>oversized},'account'),null);
+});
+
 test('offline unsaved scores survive a reload only for their own account', () => {
   const cache = new Map<string,string>();
   const storage = {
