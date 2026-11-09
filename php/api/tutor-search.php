@@ -13,6 +13,7 @@ function searchTerms(string $value): array {
         'jelent','jelentese','azt','az','hogy','es','ha','mi','ki','miert',
         'hogyan','mikor','van-e','tudsz','mondani','meselj','szolj','arra',
         'nevezunk','nevezik','fogalma','definicio','fogalmat','nekem',
+        'tanulunk','tanulhatunk','tanulhatok','tanulni','tanits','szeretnem',
         'legyszi','magyarazd','magyarazat','kicsit','lehet','keresek'];
     $words = preg_split('/[^a-z0-9]+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
     $terms=[];
