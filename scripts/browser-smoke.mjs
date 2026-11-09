@@ -511,7 +511,7 @@ try {
   });
   const liveFixture = {...reportFixture(['Tananyag', 'Fogalomtár'], 2800), chapter09GlossaryEntries: 1793};
   const staticFixture = reportFixture(['Tananyag', 'Fogalomtár', 'Szemléltetés'], 3800);
-  for (const reportMode of ['live', 'static']) {
+  for (const reportMode of ['live', 'static', 'incomplete']) {
     const reportContext = await browser.newContext();
     const reportPage = await reportContext.newPage();
     let extraSource = null;
@@ -543,6 +543,7 @@ try {
         ? {checkedAt:'2026-11-09T00:41:00Z',ready:reportMode!=='live',
           missing:reportMode==='live' ? ['api/admin.php'] : [],
           publicArchives:reportMode==='live' ? ['api/archive.zip'] : [],
+          scanComplete:reportMode!=='incomplete',scannedItems:1342,
           mailConfigured:false,scope:'Files only'}
         : endpoint === 'admin/users'
         ? {users:[]}
@@ -568,8 +569,13 @@ try {
       await reportPage.getByText('A telepítés fájlkészlete ellenőrzést igényel.').waitFor();
       await reportPage.getByText('api/archive.zip').waitFor();
       await reportPage.getByText('api/admin.php').waitFor();
+    } else if (reportMode === 'incomplete') {
+      // Even a stale backend answering ready:true must not get a green badge
+      // unless the complete recursive scan is explicitly confirmed.
+      await reportPage.getByText('A telepítés fájlkészlete ellenőrzést igényel.').waitFor();
+      await reportPage.getByText(/A nyilvános mappák teljes biztonsági átvizsgálása nem igazolt/).waitFor();
     } else {
-      await reportPage.getByText('A kötelező fájlok és belépési állományok jelen vannak.').waitFor();
+      await reportPage.getByText(/A kötelező fájlok és belépési állományok jelen vannak; a nyilvános fájlfák ellenőrzése teljes/).waitFor();
     }
     if (reportMode === 'live') {
       await checkAccessibility(reportPage, 'adminisztráció');
