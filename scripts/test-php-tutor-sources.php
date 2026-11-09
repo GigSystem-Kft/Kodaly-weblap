@@ -19,6 +19,30 @@ assertSource($list[0]['title']==='Tanár által ellenőrzött anyag','source tit
 $chunks=tutorExtraKnowledge();
 assertSource(count($chunks)===2,'private text is split into relevant excerpts');
 assertSource(str_contains($chunks[0]['text'],'C-dúr'),'retrieved text accurate');
+
+// Regression: a single long, unbroken Hungarian line used to be truncated at
+// 1,400 bytes. A cut could split an 'ő' byte sequence and discard the ending.
+$longText=str_repeat('ő',1049).' VÉGE-HEXACHORD';
+file_put_contents(tutorSourceFile($id),json_encode([
+    'title'=>'Tanár által ellenőrzött anyag','text'=>$longText,'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+$longChunks=tutorExtraKnowledge();
+assertSource(count($longChunks)>=3,'long Unicode line becomes multiple indexed excerpts');
+assertSource(implode('',array_column($longChunks,'text'))===$longText,
+    'entire long Hungarian text, including the last concept, remains indexed');
+foreach ($longChunks as $longChunk) {
+    assertSource(preg_match('//u',$longChunk['text'])===1,'source excerpt remains valid UTF-8');
+    assertSource(strlen($longChunk['text'])<=1000,'source excerpt keeps 1000-byte limit');
+    assertSource(json_encode($longChunk,JSON_THROW_ON_ERROR)!==false,'source excerpt can be returned as JSON');
+}
+// A short final piece must not vanish after a very long preceding chunk.
+$shortTail=str_repeat('ő',450).'a';
+file_put_contents(tutorSourceFile($id),json_encode([
+    'title'=>'Tanár által ellenőrzött anyag','text'=>$shortTail,'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+$tailChunks=tutorExtraKnowledge();
+assertSource(implode('',array_column($tailChunks,'text'))===$shortTail,
+    'short tail after 900-byte split must be preserved');
 unlink(tutorSourceFile($id));rmdir($dir);
 assertSource(tutorSourceList()===[],'deleted sources excluded');
 fwrite(STDOUT,"Private tutor source tests passed\n");
