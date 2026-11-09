@@ -99,11 +99,15 @@ export function migrateProgress(raw: unknown): UserProgress {
   };
 }
 export function recordActivity(progress: UserProgress, amount: number, date = localDay()): UserProgress {
-  const days = [...new Set([...(progress.activityDays ?? []), date])].sort();
+  // A malformed date must never produce a diary entry or an XP reward that
+  // would later be rejected by the server's strict calendar validator.
+  if (!validStudyDay(date)) return progress;
+  const days = [...new Set([...(progress.activityDays ?? []).filter(validStudyDay), date])].sort();
+  const previousXp = Number.isFinite(progress.xp) ? Math.max(0, Math.floor(progress.xp)) : 0;
+  const earned = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
   return {
     ...progress,
-    // Never let a malformed reward poison the entire saved XP total.
-    xp: progress.xp + (Number.isFinite(amount) ? Math.max(0, amount) : 0),
+    xp: Math.min(100_000_000, previousXp + earned),
     activityDays: days,
     streak: consecutiveDays(days, date),
     lastActiveDate: date
@@ -115,6 +119,7 @@ export function recordEarTrainingActivity(
   amount: number,
   date = localDay()
 ): UserProgress {
+  if (!validStudyDay(date)) return progress;
   const previous = progress.earTrainingDailyXp?.[date] ?? 0;
   const current = Number.isInteger(previous) && previous >= 0 && previous <= 100 ? previous : 0;
   const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
