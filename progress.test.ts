@@ -106,6 +106,17 @@ test('two devices merging oversized legacy progress stay within server acceptanc
   assert.ok(merged.completedChapters.includes('offline-0'));
 });
 
+test('three-way offline favorite recovery sanitizes overlong UTF-8 identifiers', () => {
+  const base=createEmptyProgress();
+  const remote=createEmptyProgress();
+  remote.favoriteExpressions=['remote-kept','ő'.repeat(61)];
+  const local=createEmptyProgress();
+  local.favoriteExpressions=['local-kept'];
+  const merged=mergeConcurrentProgress(remote,local,base);
+  assert.deepEqual(merged.favoriteExpressions,['remote-kept','local-kept']);
+  assert.equal(merged.xp,0);
+});
+
 test('guest import merges achievements instead of overwriting another account', () => {
   const account = createEmptyProgress();
   account.completedChapters = ['ritmus'];
