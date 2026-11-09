@@ -151,13 +151,17 @@ function validStudyDay(string $day): bool {
     [$year, $month, $date] = array_map('intval', explode('-', $day));
     return checkdate($month, $date, $year);
 }
+/** Achievement identifiers are persisted across devices and must be meaningful. */
+function progressIdOk(mixed $value): bool {
+    return is_string($value) && trim($value) !== '' && strlen($value) <= 120;
+}
 function progressOk(mixed $p): bool {
     if (!is_array($p) || array_is_list($p)) return false;
     foreach (['completedChapters','completedSubchapters','flashcardsMastered','matchingCompleted','activityDays'] as $key) {
         if (!isset($p[$key]) || !is_array($p[$key]) || !array_is_list($p[$key]) ||
             count($p[$key]) > 10000) return false;
         foreach ($p[$key] as $v) {
-            if (!is_string($v) || strlen($v) > 120) return false;
+            if (!progressIdOk($v)) return false;
             if ($key === 'activityDays' && !validStudyDay($v)) return false;
         }
     }
@@ -173,12 +177,12 @@ function progressOk(mixed $p): bool {
         if (!is_array($p['favoriteExpressions']) || !array_is_list($p['favoriteExpressions']) ||
             count($p['favoriteExpressions']) > 1800) return false;
         foreach ($p['favoriteExpressions'] as $id)
-            if (!is_string($id) || strlen($id) > 120) return false;
+            if (!progressIdOk($id)) return false;
     }
     if (!isset($p['quizScores']) || !is_array($p['quizScores']) ||
         count($p['quizScores']) > 500) return false;
     foreach ($p['quizScores'] as $key => $score) {
-        if (strlen((string)$key) > 120 || (!is_int($score) && !is_float($score)) ||
+        if (!progressIdOk((string)$key) || (!is_int($score) && !is_float($score)) ||
             !is_finite((float)$score) || $score < 0 || $score > 100) return false;
     }
     if (array_key_exists('quizAttempts',$p)) {
@@ -187,8 +191,8 @@ function progressOk(mixed $p): bool {
         foreach ($p['quizAttempts'] as $a) {
             if (!is_array($a) || array_is_list($a) ||
                 !isset($a['id'],$a['chapterId'],$a['score'],$a['correct'],$a['total'],$a['at']) ||
-                !is_string($a['id']) || strlen($a['id']) > 120 ||
-                !is_string($a['chapterId']) || strlen($a['chapterId']) > 120 ||
+                !progressIdOk($a['id']) ||
+                !progressIdOk($a['chapterId']) ||
                 (!is_int($a['score']) && !is_float($a['score'])) ||
                 !is_finite((float)$a['score']) || $a['score'] < 0 || $a['score'] > 100 ||
                 !is_int($a['correct']) || !is_int($a['total']) ||
@@ -205,7 +209,7 @@ function progressOk(mixed $p): bool {
                 if (!is_array($a['wrongQuestionIds']) || !array_is_list($a['wrongQuestionIds']) ||
                     count($a['wrongQuestionIds']) > 15) return false;
                 foreach ($a['wrongQuestionIds'] as $id) {
-                    if (!is_string($id) || strlen($id) > 120) return false;
+                    if (!progressIdOk($id)) return false;
                 }
             }
         }
