@@ -22,7 +22,7 @@ A `docs/audit-osszesitett-leltar-2026-11-07.md` a részletes, commitokkal alát�
 | A-13 | 5 alaptananyag és 4 kiegészítő modul szerkezeti tesztjei | Egységes fejezetmélység, terminológia, belső hivatkozás szakmai szerkesztése | Nyitott szakmai |
 | A-14 | H/B magyar hangnevek, 12-TET hangok és 12 hangköz tesztjei | Valódi hangkimenet, fülhallgató/hangszóró, külön böngészők, lejátszóindítás | Nyitott akusztikai |
 | A-15 | Médiaforrás-metaadatok és 9 forráscsoportból álló jogállási bizonyítéknyilvántartás (`docs/a15-forras-es-jogallasi-nyilvantartas-2026-11-09.md`) | Tankönyv, kotta, kép, jegyzet, szótár és videó tételes felhasználási engedélye/licence még nem igazolt; jóváhagyási bizonyíték kell | **Jogi blokkoló** |
-| A-16 | XP-max összevezetés és kedvencek háromutas konfliktusfeloldása | Oktatói döntés az XP-kimutatás jelentéséről és esetleges historikus eseménynaplóról | Nyitott termékdöntés |
+| A-16 | XP-max összevezetés és kedvencek háromutas konfliktusfeloldása; hibás és Unicode-szóköz azonosítók elutasítása böngészőben/PHP-ben, regressziós próbával | Oktatói döntés az XP-kimutatás jelentéséről, esetleges historikus eseménynaplóról és valós többeszközös elfogadásról | Nyitott termékdöntés |
 | A-17 | Kvízpróbálkozás, hibás kérdések, időtartam, 3+3 trend; számszerű konzisztencia | Pedagógiai validálás: mit jelent pontszám, hibaarány, ismétlés és trend | Nyitott szakmai |
 | A-18 | 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép, PHP modulok és JS/CSS ellenőrzése | Éles feltöltés külön A-24 alatt; a CI-build csomagszerkezete teljes | **Build lezárva** |
 | A-19 | Alap/extra tananyagútvonalak, 5 könyv, mobil menü, Enter/Space és reload Chromium | Teljes menübejárás mobilon és asztali gépen, külső linkek és visszalépés | Nyitott kézi |
@@ -67,6 +67,13 @@ A `scripts/browser-smoke.mjs` automatizált próba ellenőrzi a mobil Tanárseg�
 **CI-bizonyíték:** a `fb9860de` állapot teljes kiadási próbája mindhárom workflow-n sikeres: Chromium `42699297630`, PHP/MySQL/ZIP `42699297596`, Linux `42699297595`. Ez az összesített **műszaki részfeladat**, nem az A-24 éles elfogadása.
 
 **Nyitott:** a valós CloudPanel-fájlrendszer ellenőrzése (régi állományok és jogosultságok), a telepítési visszaállítás tényleges kipróbálása, az éles SMTP és azonosított felhasználói szerepkörök, két külön fizikai eszköz, a valódi tanulói adatok megtartása és a jogi/szakmai megfelelés. Az A-24 ezért továbbra is **kiadási blokkoló**, sem `main` összevezetés, sem végleges ZIP-link nem engedélyezett.
+
+
+## 2026-11-09 – A-16 adatminőségi megerősítés
+
+A korábbi `migrateProgress` és PHP `progressOk` ellenőrzés legfeljebb 120 bájtos azonosítókat engedett, de a teljesen üres vagy kizárólag szóközökből álló `completedChapters`, `favoriteExpressions`, `quizAttempts` és `wrongQuestionIds` tételeket nem szűrte megfelelően. Az új `validProgressId` a böngészőben kizárja ezeket; a PHP `progressIdOk` Unicode-tudatosan, `preg_match('/\\S/u')` segítségével ugyanezt követeli meg. Külön próbák vizsgálják a normál és a nem törhető Unicode szóközt, a fejezet-, kedvenc- és hibás kérdésazonosítókat.
+
+A korábbi `413a485a` SHA-n az első A-16 teljes CI-kör sikeresen lezárult: Chromium `42703393883`, PHP/MySQL/ZIP `42703393577`, Linux `42703393645`. A Unicode-szóközre bővített változat végső CI-jét külön ellenőrizni kell. Ez a műszaki hibásadat-védelem **nem dönti el**, hogyan kell az XP-t történeti, pedagógiai mutatóként kezelni, és nem váltja ki a valódi két eszközös tesztet. Az A-16 nyitott marad.
 
 **E dokumentum önmagában nem zár le új pontot.** A fő auditban két buildoldali pont igazoltan lezárt; a többi lezárásához a fenti ellenőrzésből származó bizonyítékot kell rögzíteni. Végleges letöltési csomagot és `main` összevezetést tilos kiadni a kapuk teljesülése előtt.
 
