@@ -70,3 +70,35 @@ function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $m
         'scannedItems'=>min($examined, $maxItems),
     ];
 }
+
+
+/**
+ * Detect a mixed frontend/backend deployment before claiming the release is
+ * consistent. All three stamps are made by stamp-php-release.py from one
+ * checked-out Git commit. Never execute a file from the public directory:
+ * the PHP stamp is compared as plain text, without include/eval.
+ */
+function deploymentBuildFingerprint(string $webroot): array {
+    $root = rtrim($webroot, DIRECTORY_SEPARATOR);
+    $rawJson = @file_get_contents($root . '/release-build.json');
+    $html = @file_get_contents($root . '/index.html');
+    $php = @file_get_contents($root . '/api/release-build.php');
+    if (!is_string($rawJson) || !is_string($html) || !is_string($php)) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
+    try { $manifest = json_decode($rawJson, true, 8, JSON_THROW_ON_ERROR); }
+    catch (Throwable) { return ['buildConsistent'=>false, 'releaseRevision'=>null]; }
+    $revision = is_array($manifest) ? ($manifest['sha'] ?? null) : null;
+    if (($manifest['schema'] ?? null) !== 1 || !is_string($revision) ||
+        !preg_match('/^[0-9a-f]{40}$/D', $revision)) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
+    $expectedPhp = "<?php\n// Public, non-secret checked-out release revision.\nreturn '" . $revision . "';\n";
+    preg_match_all(
+        '/<meta\s+name="zeneelmelet-build-sha"\s+content="([0-9a-f]{40})"\s*\/?>/',
+        $html, $htmlStamps
+    );
+    $consistent = $php === $expectedPhp && count($htmlStamps[1] ?? []) === 1 &&
+        hash_equals($revision, $htmlStamps[1][0]);
+    return ['buildConsistent'=>$consistent, 'releaseRevision'=>$consistent ? $revision : null];
+}
