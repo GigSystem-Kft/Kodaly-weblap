@@ -218,3 +218,7 @@ bash scripts/test-php-two-device-sync.sh
 
 # The account must not retain administrator permissions after a role downgrade.
 bash scripts/test-php-roles.sh
+
+# A real SQL row lock overlaps a PHP HTTP login: the retired password may
+# never create a session after the password has been replaced.
+bash scripts/test-php-login-revocation-race.sh
