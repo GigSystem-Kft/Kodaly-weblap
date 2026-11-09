@@ -250,6 +250,17 @@ if (($j["buildConsistent"]??null)!==true ||
     fwrite(STDERR,"Matching build stamps rejected by admin endpoint\n");exit(1);
 }
 '
+# An old JavaScript file must not pass just because the version labels match.
+printf 'console.log("obsolete client")\n' > php/assets/index-ci.js
+tamperedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$tamperedStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false) {
+    fwrite(STDERR,"Outdated client asset passed deployment check\n");exit(1);
+}'
+printf 'console.log("ci test")\n' > php/assets/index-ci.js
 sed -i "s/$REVISION/$MIXED_REVISION/" php/release-build.json
 mixedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
  'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
