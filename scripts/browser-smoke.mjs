@@ -287,7 +287,8 @@ try {
     body:JSON.stringify({
       mode:'fallback',
       reply:'A kvintkör mellé egy jegyzetoldal is tartozik. [[kep: 1]]',
-      visuals:['kvintkor']
+      visuals:['kvintkor'],
+      generatedImage:'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO1pYhQAAAAASUVORK5CYII='
     })
   }));
   await page.getByPlaceholder('Kérdezz a ritmusról, hangközökről...').fill('Mutasd a kvintkört és a jegyzetet!');
@@ -314,6 +315,14 @@ try {
   await pageDialog.getByRole('button',{name:'Bezárás'}).click();
   await pageDialog.waitFor({state:'detached'});
   await page.waitForFunction(() => document.activeElement?.textContent?.includes('1. oldal · nagyítás'));
+  const generatedTrigger=page.getByRole('button',{name:'AI által készített ábra nagyítása'});
+  await generatedTrigger.waitFor();
+  await generatedTrigger.click();
+  const generatedDialog=page.getByRole('dialog',{name:'Generált ábra nagyítása'});
+  await generatedDialog.waitFor();
+  await page.keyboard.press('Escape');
+  await generatedDialog.waitFor({state:'detached'});
+  await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === 'AI által készített ábra nagyítása');
   console.log('Tutor: zoomed illustrations and notes restore keyboard focus and close with Escape');
   // Esc works for the chat popover as well, returning the user to its launcher.
   await page.getByPlaceholder('Kérdezz a ritmusról, hangközökről...').focus();
