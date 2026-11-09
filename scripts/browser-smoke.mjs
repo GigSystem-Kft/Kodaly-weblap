@@ -380,7 +380,7 @@ try {
   try {
     await accountRacePage.goto(root,{waitUntil:'domcontentloaded'});
     await initialRequestGate;
-    await accountRacePage.getByRole('button',{name:/06\\. Profil/}).click();
+    await accountRacePage.getByRole('button',{name:/06\. Profil/}).click();
     await accountRacePage.getByLabel('E-mail-cím').fill('fresh@example.invalid');
     await accountRacePage.getByLabel('Jelszó',{exact:true}).fill('new-account-password');
     await accountRacePage.locator('form button[type="submit"]').click();
