@@ -14,7 +14,7 @@ A `docs/audit-osszesitett-leltar-2026-11-07.md` a részletes, commitokkal alát�
 | A-05 | Párosító teljes kör, helytelen választás, XP-idempotencia, újrajátszás | Valós fiók és billentyűzetes/érintős kézi akadálymentesség | Nyitott éles |
 | A-06 | CAS `revision`, 409 és két konkurens PHP/MySQL munkamenet | Két külön fizikai eszköz, azonos fiók, offline/online változtatások és újratöltés | Nyitott éles |
 | A-07 | PHP-indexben 1793/1793 fogalom követelmény; csomagellenőrző és adminstatisztika | CloudPanel tényleges `source-coverage` válasz és kérdés-válasz ellenőrzés | Nyitott éles |
-| A-08 | PHP/JSON statikus jelentés elkülönítése és forráscsoport-lista különbsége | 75/2840 és 104/3806 eltérés csoportonkénti feloldása és hiányzó források listája | Nyitott forrás |
+| A-08 | PHP és statikus forrásjelentés elkülönítve; a 2026-11-09-i builden statikus **104 forráscsoport / 4041 részlet**, PHP-export **4228 részlet**; hat kötelező gyakorlóbank jelenlét- és egyezésvizsgálata CI-ben | A külön darabolt indexek tartalmának szemantikus, forráscsoportonkénti és éles CloudPanel-lefedettségi ellenőrzése; hiányzó/licencelt külön források tételes leltára | Nyitott forrás |
 | A-09 | Beépített magyar nyelvű kereső, forrásmegjelölés és opcionális, alapból kikapcsolt generatív mód | Reprezentatív magyar oktatói kérdésbank alapján szakmai válaszellenőrzés; AI mód egyértelmű megnevezése | Nyitott szakmai |
 | A-10 | 1793 fogalom 12 kategóriában, nulla `Egyéb`; azonosítók változatlanok | Szakmai mintavétel, terminológiai egységesség és kényes fogalmak tételes lektorálása | Nyitott szakmai |
 | A-11 | Napi hallás-XP és párosító limit, új szigorú dátum-/XP-típusvalidáció | Döntés: maradjon csak gyakorlási pont vagy készül szerveroldali hiteles eseménynapló; anti-cheat nem teljes | Nyitott termékdöntés |
@@ -50,6 +50,8 @@ A `scripts/browser-smoke.mjs` automatizált próba ellenőrzi a mobil Tanárseg�
 
 **Változatlanul nyitott:** manuális képernyőolvasó, valódi kisegítő technológia, 200%-os zoom, alacsony kontraszt, mobilon fizikai billentyűzet és sötét/világos színtéma vizsgálata. Az A-23 státusza továbbra is **Nyitott kézi**; a jelen bejegyzés nem jelent éles kiadási jóváhagyást.
 
+
+**A-08 számlálófrissítés:** a korábbi 75/2840 és 104/3806 számok történeti pillanatképek, nem a jelenlegi build értékei. A `fb9860de` PHP/ZIP workflow `42699297596` naplója alapján az új statikus index 104 forráscsoportból 4041 keresési részletet, a PHP export 4228 részletet állít elő; 1793/1793 fogalom, 460/460 szókártya, 439/439 kvízkérdés és 449/449 párosító tétel igazolt. Ezek az eltérő darabolási módszerekből álló számok nem jelentenek önmagukban adatvesztést vagy szakmai teljességet. A külön telepített, licencelt forrásokat a CI nem tudja igazolni.
 
 ## 2026-11-09 – A-24 szerveroldali részleges-telepítés- és titokellenőrzés
 
