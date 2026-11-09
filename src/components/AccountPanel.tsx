@@ -147,7 +147,26 @@ export const AccountPanel: React.FC<AccountPanelProps> = ({
         setMode('login');
         setSuccess('A fiókod törölve. Az ehhez az eszközhöz tartozó függőben lévő fiókmentést is eltávolítottuk.');
       } else {
-        await onSignedIn(data.user as AccountUser);
+        // The POST may already have created a server session while the
+        // subsequent progress GET fails. Revoke that half-open session
+        // rather than leaving the screen in guest mode with a live cookie.
+        try {
+          await onSignedIn(data.user as AccountUser);
+        } catch (progressError) {
+          let revoked = false;
+          try {
+            const logout = await apiFetch('/api/auth/logout', {
+              method: 'POST', credentials: 'same-origin'
+            });
+            revoked = logout.ok;
+          } catch { /* network down: warn explicitly, do not claim logout */ }
+          if (!revoked) {
+            throw new Error(
+              'A bejelentkezés létrejött, de a tanulási napló nem tölthető be, és a munkamenetet sem sikerült visszavonni. Frissítsd az oldalt a kapcsolat helyreállítása után; addig ne dolgozz ebben a fiókban.'
+            );
+          }
+          throw progressError;
+        }
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Ismeretlen hiba.');
