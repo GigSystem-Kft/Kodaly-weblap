@@ -177,7 +177,8 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     activityDays: days,
     lastActiveDate: days.at(-1) ?? '',
     streak: consecutiveDays(days)
-  });}
+  });
+}
 
 /**
  * Three-way conflict resolution for a concurrent account sync.
@@ -198,5 +199,7 @@ export function mergeConcurrentProgress(
   merged.favoriteExpressions = [
     ...new Set([...(server.favoriteExpressions ?? []), ...locallyAdded])
   ].filter(id => !locallyRemoved.has(id)).slice(0, 1800);
-  return merged;
+  // This path also handles restored offline snapshots: apply the same limits
+  // after the three-way favorite merge before the next PHP progress save.
+  return migrateProgress(merged);
 }
