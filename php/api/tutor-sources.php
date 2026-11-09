@@ -49,10 +49,10 @@ function tutorSourceUtf8Pieces(string $line, int $byteLimit = 900): array {
         if ($cut === 0) return [];
         $prefix = substr($remaining, 0, $cut);
         $space = strrpos($prefix, ' ');
-        if ($space !== false && $space >= intdiv($byteLimit, 2)) $cut = $space;
-        $piece = trim(substr($remaining, 0, $cut));
+        if ($space !== false && $space >= intdiv($byteLimit, 2)) $cut = $space + 1;
+        $piece = substr($remaining, 0, $cut);
         if ($piece !== '') $pieces[] = $piece;
-        $remaining = ltrim(substr($remaining, $cut));
+        $remaining = substr($remaining, $cut);
     }
     if ($remaining !== '') $pieces[] = $remaining;
     return $pieces;
@@ -74,8 +74,10 @@ function tutorExtraKnowledge(): array {
             $current='';
             $emittedInParagraph=false;
             foreach ($lines as $line) {
+                $firstPieceOfSentence=true;
                 foreach (tutorSourceUtf8Pieces($line) as $piece) {
-                    $separator=$current!=='' ? ' ' : '';
+                    $separator=$firstPieceOfSentence && $current!=='' ? ' ' : '';
+                    $firstPieceOfSentence=false;
                     if (strlen($current)+strlen($separator)+strlen($piece)>1000 && $current!=='') {
                         $entries[]=['source'=>$source['title'],'label'=>(++$part).'. szövegrész','text'=>$current];
                         $emittedInParagraph=true;
