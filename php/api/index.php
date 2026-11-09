@@ -129,15 +129,15 @@ function currentUser(PDO $pdo): ?array {
 function requireUser(PDO $pdo): array {
     return currentUser($pdo) ?? fail(401, 'Bejelentkezés szükséges.');
 }
-function newSession(PDO $pdo, array $user): never {
+/** Only call while holding the user's FOR UPDATE lock in a transaction. */
+function insertSession(PDO $pdo, array $user): string {
     $token = bin2hex(random_bytes(32));
     $s = $pdo->prepare(
         'INSERT INTO zm_sessions(token_hash,user_id,expires_at)
          VALUES(?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 7 DAY))'
     );
     $s->execute([hash('sha256', $token), $user['id']]);
-    tokenCookie($token, time() + 7 * 86400);
-    answer(200, ['user' => $user]);
+    return $token;
 }
 function tokenToUuid(string $hex): string {
     return substr($hex,0,8) . '-' . substr($hex,8,4) . '-' .
@@ -506,17 +506,32 @@ try {
                 !is_string($pass) || $pass === '' || strlen($pass)>128) {
                 fail(400, 'Érvénytelen adatok.');
             }
-            $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash,email_verified_at FROM zm_users WHERE email=? LIMIT 1');
-            $stmt->execute([$email]);
-            $row=$stmt->fetch();
-            if (!$row || !password_verify($pass, $row['password_hash'])) {
-                fail(401,'Hibás e-mail-cím vagy jelszó.');
+            // Password verification and session issuance are one atomic
+            // operation. A concurrent password reset/change cannot slip a
+            // session authenticated with the old password past revocation.
+            $pdo->beginTransaction();
+            try {
+                $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash,email_verified_at FROM zm_users WHERE email=? LIMIT 1 FOR UPDATE');
+                $stmt->execute([$email]);
+                $row=$stmt->fetch();
+                if (!$row || !password_verify($pass, $row['password_hash'])) {
+                    $pdo->rollBack();
+                    fail(401,'Hibás e-mail-cím vagy jelszó.');
+                }
+                if ($row['email_verified_at'] === null) {
+                    $pdo->rollBack();
+                    fail(403, 'A belépés előtt erősítsd meg az e-mail-címedet.');
+                }
+                $sessionUser=['id'=>$row['id'],'email'=>$row['email'],
+                    'displayName'=>$row['display_name'],'role'=>$row['role']];
+                $token=insertSession($pdo, $sessionUser);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
             }
-            if ($row['email_verified_at'] === null) {
-                fail(403, 'A belépés előtt erősítsd meg az e-mail-címedet.');
-            }
-            newSession($pdo, ['id'=>$row['id'],'email'=>$row['email'],
-                'displayName'=>$row['display_name'],'role'=>$row['role']]);
+            tokenCookie($token, time() + 7 * 86400);
+            answer(200, ['user'=>$sessionUser]);
 
         case 'auth/verify':
             throttle('verify', 30);
