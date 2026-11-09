@@ -201,7 +201,7 @@ function progressOk(mixed $p): bool {
             }
             if (array_key_exists('wrongQuestionIds', $a)) {
                 if (!is_array($a['wrongQuestionIds']) || !array_is_list($a['wrongQuestionIds']) ||
-                    count($a['wrongQuestionIds']) > 12) return false;
+                    count($a['wrongQuestionIds']) > 15) return false;
                 foreach ($a['wrongQuestionIds'] as $id) {
                     if (!is_string($id) || strlen($id) > 120) return false;
                 }
