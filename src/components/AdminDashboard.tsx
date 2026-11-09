@@ -4,7 +4,7 @@ import { apiFetch } from '../api';
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
 type TutorSource = { id: string; title: string; createdAt: string; size: number };
-type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;mailConfigured:boolean;scope:string};
+type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;buildConsistent?:boolean;releaseRevision?:string|null;mailConfigured:boolean;scope:string};
 type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
  sources:{source:string;chunks:number;characters:number;kind:string}[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
@@ -28,7 +28,7 @@ export const AdminDashboard: React.FC = () => {
   const [coverageError, setCoverageError] = useState('');
   const [deploymentCheck, setDeploymentCheck] = useState<DeploymentCheck | null>(null);
   const [deploymentError, setDeploymentError] = useState('');
-  const deploymentReady = deploymentCheck?.ready === true && deploymentCheck?.scanComplete === true;
+  const deploymentReady = deploymentCheck?.ready === true && deploymentCheck?.scanComplete === true && deploymentCheck?.buildConsistent === true;
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceTitle, setSourceTitle] = useState('');
   const [search, setSearch] = useState('');
@@ -181,6 +181,17 @@ export const AdminDashboard: React.FC = () => {
             <p role="alert" className="text-sm text-red-800 mb-2">
               A nyilvános mappák teljes biztonsági átvizsgálása nem igazolt vagy megszakadt.
               Ilyenkor a telepítés NEM tekinthető ellenőrzöttnek.
+            </p>
+          )}
+          {deploymentCheck.buildConsistent !== true && (
+            <p role="alert" className="text-sm text-red-800 mb-2">
+              Nem igazolt az egységes telepítőverzió: a frontend, a PHP API és a kiadási jegyzék nem feltétlenül azonos Git-commitból származik.
+              Ilyen állapotban ne indíts adatokat módosító éles próbát.
+            </p>
+          )}
+          {deploymentCheck.buildConsistent === true && deploymentCheck.releaseRevision && (
+            <p className="text-xs text-slate-600 mb-2">
+              Ellenőrzött közös Git-verzió: <code>{deploymentCheck.releaseRevision.slice(0, 12)}</code>
             </p>
           )}
           {deploymentCheck.missing.length > 0 && (
