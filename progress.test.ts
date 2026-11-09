@@ -393,3 +393,32 @@ test('practice XP stays integral and nonexistent calendar days never corrupt syn
   const clean = recordActivity(withMalformedHistory, 1, '2026-11-09');
   assert.deepEqual(clean.activityDays, ['2026-11-09']);
 });
+
+test('blank achievement and quiz identifiers are discarded before account sync',()=>{
+  const progress=createEmptyProgress();
+  const acceptedAttempt={
+    id:'quiz-ok',chapterId:'ritmus',score:50,correct:1,total:2,
+    at:'2026-11-09T20:00:00Z',wrongQuestionIds:['q2']
+  };
+  const migrated=migrateProgress({
+    ...progress,
+    completedChapters:['ritmus','','   '],
+    completedSubchapters:['','lesson-1'],
+    flashcardsMastered:['','card-1'],
+    matchingCompleted:['pair-1','  '],
+    favoriteExpressions:[' ','term-1'],
+    quizScores:{'':10,'  ':20,ritmus:50},
+    quizAttempts:[
+      {...acceptedAttempt,id:' '},
+      {...acceptedAttempt,id:'quiz-bad',wrongQuestionIds:[' ']},
+      acceptedAttempt
+    ]
+  });
+  assert.deepEqual(migrated.completedChapters,['ritmus']);
+  assert.deepEqual(migrated.completedSubchapters,['lesson-1']);
+  assert.deepEqual(migrated.flashcardsMastered,['card-1']);
+  assert.deepEqual(migrated.matchingCompleted,['pair-1']);
+  assert.deepEqual(migrated.favoriteExpressions,['term-1']);
+  assert.deepEqual(migrated.quizScores,{ritmus:50});
+  assert.deepEqual(migrated.quizAttempts,[acceptedAttempt]);
+});
