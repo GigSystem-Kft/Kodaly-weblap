@@ -23,6 +23,31 @@ $reply=lessonReply($hits,'mit jelent az hogy hexachord?',true);
 ensureTutorSearch(str_contains($reply,'hat hangú'),'concrete definition survives fallback reply');
 ensureTutorSearch(str_contains($reply,'Forrás'),'source attribution present');
 ensureTutorSearch(rankLessons('Hogyan készül a tritónusz?', $entries)===[],'no unrelated fake answer');
+// Natural inflected Hungarian queries must find the same teaching facts as
+// dictionary forms without introducing broad unrelated substring matches.
+$inflectedEntries=[
+ ['source'=>'Tananyag','label'=>'Kvintkör', 'text'=>'A kvintkör a hangnemek előjegyzéseit és rokonságát szemlélteti.'],
+ ['source'=>'Tananyag','label'=>'Szinkópa', 'text'=>'A szinkópa hangsúlyeltolódást eredményez.'],
+ ['source'=>'Történeti szótár','label'=>'Hexachord', 'text'=>'A hexachord hat diatonikus hangból áll.'],
+ ['source'=>'Egyéb','label'=>'Más jelenség', 'text'=>'Az orgona egy billentyűs hangszer.']
+];
+foreach ([
+ 'Mi a kvintkör?' => 'Kvintkör',
+ 'Mesélj a kvintkörről!' => 'Kvintkör',
+ 'Mit tanulunk a szinkópáról?' => 'Szinkópa',
+ 'Mesélj a hexachordokról!' => 'Hexachord',
+ 'Mesélj a hexakordokról!' => 'Hexachord'
+] as $question=>$expected) {
+ $found=rankLessons($question,$inflectedEntries,2);
+ ensureTutorSearch(count($found)>0 && $found[0]['label']===$expected,
+   'Hungarian concept inflection: '.$question);
+ $answer=lessonReply($found,$question,true);
+ ensureTutorSearch(str_contains($answer,'_Forrás:'),'Inflected reply includes attribution: '.$question);
+}
+ensureTutorSearch(!tutorTermMatch('kvintkorhajo','kvintkor'),
+ 'Reject an unrelated longer word with the same prefix');
+ensureTutorSearch(rankLessons('Mi a kvintkorhajo?', $inflectedEntries)===[],
+ 'Unrelated compound is not treated as a kvintkör search hit');
 $coverage=tutorSourceAudit([
  ['source'=>'Fogalomtár', 'label'=>'09. Zenei kifejezések', 'text'=>'Allegro'],
  ['source'=>'Tananyag', 'label'=>'08. Ének-zene tantárgy-pedagógia', 'text'=>'Kodály'],
