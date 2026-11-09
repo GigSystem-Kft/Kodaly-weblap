@@ -406,7 +406,7 @@ test('blank achievement and quiz identifiers are discarded before account sync',
     completedSubchapters:['','lesson-1'],
     flashcardsMastered:['','card-1'],
     matchingCompleted:['pair-1','  '],
-    favoriteExpressions:[' ','term-1'],
+    favoriteExpressions:[' ','\u00a0','term-1'],
     quizScores:{'':10,'  ':20,ritmus:50},
     quizAttempts:[
       {...acceptedAttempt,id:' '},
