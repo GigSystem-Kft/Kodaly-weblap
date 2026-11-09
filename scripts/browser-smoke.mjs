@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
-import { MATCHING_PAIRS } from '../src/data/musicData.ts';
+import { MATCHING_PAIRS, QUIZ_QUESTIONS } from '../src/data/musicData.ts';
 
 const browser = await chromium.launch({headless:true});
 const root='http://127.0.0.1:4173/';
@@ -184,6 +184,34 @@ try {
     throw new Error('Chapter 05 quiz is unexpectedly empty');
   console.log('Guest: chapter 05 scale and chord quiz loaded');
   await checkAccessibility(page, '05. hangsorok kvíz');
+  // A-17: completing a whole mixed round with 15 wrong answers must
+  // retain all 15 question IDs, not silently clip the last three.
+  await category.selectOption('all');
+  await page.getByText('Kérdés 1 / 15').waitFor();
+  for (let n=0; n<15; n++) {
+    const question = await page.locator('h3.text-xl.font-bold.text-white').innerText();
+    const known = QUIZ_QUESTIONS.find(item => item.question === question);
+    if (!known || known.options.length<2)
+      throw new Error('Cannot match visible quiz question to the source bank: '+question);
+    const wrongOption = (known.correctIndex+1)%known.options.length;
+    await page.locator('div.space-y-3.mb-6 button').nth(wrongOption).click();
+    await page.getByRole('button',{name:n===14 ? 'Kvíz befejezése' : 'Következő kérdés'}).click();
+  }
+  await page.getByRole('heading',{name:'Kvíz Teljesítve!'}).waitFor();
+  await page.waitForFunction(() => {
+    const value=JSON.parse(localStorage.getItem('kodaly_progress')||'null');
+    const attempts=value?.quizAttempts??[];
+    return attempts.some(attempt => attempt.chapterId==='vegyes-gyakorlas' &&
+      attempt.correct===0 && attempt.total===15 &&
+      attempt.wrongQuestionIds?.length===15);
+  });
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.waitForFunction(() => {
+    const attempts=JSON.parse(localStorage.getItem('kodaly_progress')||'null')?.quizAttempts??[];
+    return attempts.some(attempt => attempt.chapterId==='vegyes-gyakorlas' &&
+      attempt.wrongQuestionIds?.length===15);
+  });
+  console.log('Guest: all 15 wrong quiz answers and question IDs persisted across reload');
 
   await page.getByRole('button',{name:/07\. Tankönyvek/}).click();
   await page.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
