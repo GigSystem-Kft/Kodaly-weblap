@@ -142,7 +142,8 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
 /** Character-safe fallback on PHP hosts without the optional mbstring extension. */
 function mbSafeLength(string $text): int {
     if (function_exists('mb_strlen')) return mb_strlen($text, 'UTF-8');
-    $count=preg_match_all('/./us', $text, $unused);
+    // Count code points without allocating an array of every character.
+    $count=preg_match_all('/./us', $text);
     return $count===false ? strlen($text) : $count;
 }
 function mbSafeCut(string $text,int $max): string {
