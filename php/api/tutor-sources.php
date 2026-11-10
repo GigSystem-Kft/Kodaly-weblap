@@ -15,33 +15,55 @@ function tutorSourceFile(string $id): string {
     }
     return tutorSourceDirectory() . '/' . $id . '.json';
 }
+/**
+ * Read only a regular, well-formed source record from the private store.
+ * Never accept a second read whose content differs from the source inventory:
+ * an upload replaced between listing and indexing must not be silently mixed.
+ */
+function tutorReadSourceRecord(string $id, ?string $expectedSha256 = null): ?array {
+    if (!preg_match('/^[a-f0-9]{32}$/D', $id)) return null;
+    $file=tutorSourceFile($id);
+    if (is_link($file) || !is_file($file)) return null;
+    $size=@filesize($file);
+    if ($size===false || $size<=0 || $size>330000) return null;
+    $raw=@file_get_contents($file);
+    // The second link check protects the common replace-during-read case.
+    // The directory must still be owner-only (0700) on the production server.
+    if (is_link($file) || !is_string($raw) ||
+        strlen($raw)>330000 || strlen($raw)===0) return null;
+    $entry=json_decode($raw,true);
+    if (!is_array($entry) ||
+        !is_string($entry['title'] ?? null) ||
+        !is_string($entry['text'] ?? null) ||
+        preg_match('//u',$entry['title'])!==1 ||
+        preg_match('//u',$entry['text'])!==1 ||
+        str_contains($entry['title'],"\0") ||
+        str_contains($entry['text'],"\0") ||
+        str_contains($entry['text'],"\u{FFFD}")) return null;
+    $digest=hash('sha256',$entry['text']);
+    if ($expectedSha256!==null && !hash_equals($expectedSha256,$digest)) return null;
+    return [
+        'title'=>$entry['title'],
+        'text'=>$entry['text'],
+        'createdAt'=>is_string($entry['createdAt'] ?? null) ? $entry['createdAt'] : '',
+        'sha256'=>$digest
+    ];
+}
 function tutorSourceList(): array {
     $dir = tutorSourceDirectory();
     if (!is_dir($dir)) return [];
     $result=[];
     foreach (glob($dir.'/*.json') ?: [] as $file) {
         $id=basename($file, '.json');
-        if (!preg_match('/^[a-f0-9]{32}$/D', $id)) continue;
-        // Private source records must be regular, locally stored JSON files.
-        // Reject symlinks into unrelated filesystem locations and overlarge
-        // files *before* loading their contents into the PHP worker.
-        if (is_link($file) || !is_file($file)) continue;
-        $size=@filesize($file);
-        if ($size===false || $size>330000) continue;
-        $raw=@file_get_contents($file);
-        if (!is_string($raw) || strlen($raw)>330000) continue;
-        $entry=json_decode($raw,true);
-        if (!is_array($entry) ||
-            !is_string($entry['title'] ?? null) || !is_string($entry['text'] ?? null) ||
-            preg_match('//u',$entry['text'])!==1 ||
-            str_contains($entry['text'],"\0")) continue;
+        $entry=tutorReadSourceRecord($id);
+        if ($entry===null) continue;
         $result[]=[
             'id'=>$id,'title'=>$entry['title'],
-            'createdAt'=>is_string($entry['createdAt'] ?? null) ? $entry['createdAt'] : '',
+            'createdAt'=>$entry['createdAt'],
             'size'=>strlen($entry['text']),
             // The original teacher-approved text is the checksum baseline.
             // Expose it only to authenticated administrators via admin/sources.
-            'sha256'=>hash('sha256',$entry['text']),
+            'sha256'=>$entry['sha256'],
         ];
     }
     usort($result,static fn($a,$b)=>strcmp($b['createdAt'],$a['createdAt']));
@@ -89,11 +111,11 @@ function tutorSourceUtf8Pieces(string $line, int $byteLimit = 900): array {
 function tutorExtraKnowledge(): array {
     $entries=[];
     foreach (tutorSourceList() as $source) {
-        $raw=@file_get_contents(tutorSourceFile($source['id']));
-        if (!is_string($raw)) continue;
-        $payload=json_decode($raw,true);
-        $text=$payload['text'] ?? null;
-        if (!is_string($text) || preg_match('//u',$text)!==1) continue;
+        // Recheck after the inventory read: no stale, partial, swapped, or
+        // newly symlinked source may enter the live tutor index.
+        $record=tutorReadSourceRecord($source['id'],$source['sha256']);
+        if ($record===null) continue;
+        $text=$record['text'];
         // Preserve every character from the teacher-reviewed upload, not only
         // paragraphs longer than 40 bytes. The previous short-tail/heading
         // threshold silently removed short musical terms such as "Dó–ré".
