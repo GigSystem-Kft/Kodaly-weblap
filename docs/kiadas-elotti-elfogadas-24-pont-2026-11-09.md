@@ -23,14 +23,14 @@ A `docs/audit-osszesitett-leltar-2026-11-07.md` a részletes, commitokkal alát�
 | A-14 | H/B magyar hangnevek, 12-TET hangok és 12 hangköz tesztjei | Valódi hangkimenet, fülhallgató/hangszóró, külön böngészők, lejátszóindítás | Nyitott akusztikai |
 | A-15 | Médiaforrás-metaadatok és 9 forráscsoportból álló jogállási bizonyítéknyilvántartás (`docs/a15-forras-es-jogallasi-nyilvantartas-2026-11-09.md`) | Tankönyv, kotta, kép, jegyzet, szótár és videó tételes felhasználási engedélye/licence még nem igazolt; jóváhagyási bizonyíték kell | **Jogi blokkoló** |
 | A-16 | XP-max összevezetés és kedvencek háromutas konfliktusfeloldása; hibás és Unicode-szóköz azonosítók elutasítása böngészőben/PHP-ben, regressziós próbával | Oktatói döntés az XP-kimutatás jelentéséről, esetleges historikus eseménynaplóról és valós többeszközös elfogadásról | Nyitott termékdöntés |
-| A-17 | Kvízpróbálkozás, hibás kérdések, időtartam, 3+3 trend; számszerű konzisztencia | Pedagógiai validálás: mit jelent pontszám, hibaarány, ismétlés és trend | Nyitott szakmai |
+| A-17 | Kvízpróbálkozás, hibás kérdések, időtartam, 3+3 trend; számszerű konzisztencia; hibás kérdésazonosítók duplikációjának és a helytelen válaszok számát meghaladó listának tiltása JS/PHP-ben | Pedagógiai validálás: mit jelent pontszám, hibaarány, ismétlés és trend | Nyitott szakmai |
 | A-18 | 302 tankönyvoldal, 13 ritmikai és 64 jegyzetkép, PHP modulok és JS/CSS ellenőrzése | Éles feltöltés külön A-24 alatt; a CI-build csomagszerkezete teljes | **Build lezárva** |
 | A-19 | Alap/extra tananyagútvonalak, 5 könyv, mobil menü, Enter/Space és reload Chromium | Teljes menübejárás mobilon és asztali gépen, külső linkek és visszalépés | Nyitott kézi |
 | A-20 | Adatstruktúra és kérdésválasz-egyediség automatikus vizsgálata | Definíció–kotta–hang–kvíz–AI kereszthivatkozások független zenei lektorálása | **Szakmai blokkoló** |
 | A-21 | Két fiók PHP/MySQL izolációja, szerepkörök, export és törlés; jelszócsere és resetlink-visszavonás; valódi MySQL-zár alatt HTTP-bejelentkezési versenyhelyzet, amely nem adhat ki lejárt jelszóval sessiont (CI sikeres) | Valódi meghívó és SMTP-kézbesítés, tanár/hallgató életút, mentés-törlés csak tesztfiókon, többeszközös éles próba; adatvédelmi jóváhagyás | **Éles blokkoló** |
 | A-22 | 15 kérdéses gyakorlókör, 3+3 trend és saját tanulási jelölések | Egyetemi pedagógiai mérés/értékelési szabályok jóváhagyása | Nyitott szakmai |
 | A-23 | Bővített axe WCAG 2.1 AA CI, admin/profil/fióktörlés és mobil vizsgálatok; Tanársegéd képnagyító/bezáró Escape-, Tab- és fókuszvisszaállítás Playwright-regresszióval | Képernyőolvasós, zoom/kontraszt, sötét-világos téma és valódi billentyűzetes kézi audit | Nyitott kézi |
-| A-24 | GitHub Actions Chromium/PHP/MySQL/Linux; admin-only rekurzív webgyökér- és titokkeresés; hiányos vizsgálat lezárásának tiltása; azonos Git-revízió ellenőrzése HTML/JSON/PHP között; éles bejelentkezés és alap admin/progress korábban helyreállt | Új build valós telepítés, **valós verzióegyezés és tiszta fájlvizsgálat**, rollback, könyvtárjogok, HTTPS, SMTP, forrásindex, két fizikai eszköz és adatmegőrzés | **Kiadási blokkoló** |
+| A-24 | GitHub Actions Chromium/PHP/MySQL/Linux; admin-only rekurzív webgyökér- és titokkeresés; hiányos vizsgálat lezárásának tiltása; közös Git-revízió és 12 PHP/JS/CSS-alapállomány SHA-256 ellenőrzése a HTML/JSON/PHP csomagban; éles bejelentkezés és alap admin/progress korábban helyreállt | Új build valós telepítés, **valós verzióegyezés és tiszta fájlvizsgálat**, rollback, könyvtárjogok, HTTPS, SMTP, forrásindex, két fizikai eszköz és adatmegőrzés | **Kiadási blokkoló** |
 
 ## Kiadási döntési protokoll
 
@@ -85,3 +85,11 @@ A korábbi `413a485a` SHA-n az első A-16 teljes CI-kör sikeresen lezárult: Ch
 
 **Bizonyíték:** `6b15eac6ffb58497a1fbffefeb49857d8c984692` SHA – Chromium `42702327442`, PHP/MySQL/ZIP `42702327370`, Linux `42702327534`: **mindhárom sikeres**. Az A-17 és A-24 végleges elfogadása ettől **nem változik**: valódi felhasználói, szakmai és éles CloudPanel/rollback ellenőrzések hiányoznak. Sem `main` merge, sem végleges csomag nem engedélyezett.
 
+
+## 2026-11-10 – A-17/A-24: további műszaki integritási vizsgálatok
+
+**A-17 – kvízstatisztika:** a `src/progress.ts` és a `php/api/index.php` azonos szabállyal ellenőrzi a hibás kérdésazonosítókat. `wrongQuestionIds` nem tartalmazhat duplikátumot, és száma nem haladhatja meg a `total - correct` értéket (a meglévő maximum 15 mellett). A frontend regressziója a hibátlan, a valóságos 4/5 és a több hibát jelző 4/5 esetet; a PHP/MySQL integráció a szerverrevízió változatlanságát is vizsgálja hibás adatoknál. Az A-17 szakmai jóváhagyása továbbra is nyitott.
+
+**A-24 – fájlintegritás:** a `scripts/stamp-php-release.py`, `scripts/verify-release-assets.py` és a `php/api/deployment-audit.php` ellenőrzőlista immár 12 kritikus PHP-fájlt fed le: a fő alkalmazás- és admin-útvonalat, a Tanársegéd minden saját tartalmi modulját, a PHP tudásindexet és a Composer autoload belépési pontját. A normál HTML-ből hivatkozott JavaScript/CSS belépési fájlokat változatlanul automatikusan felveszi. A regresszió külön kicseréli a képgeneráló PHP-modult és a Composer-betöltőt azonos Git-címkék mellett; hibás fájl esetén a telepítés nem kaphat zöld állapotot.
+
+**Automatizált státusz:** az A-24 kiterjesztés `d98844e9` commitján Chromium `42781697939`, PHP ZIP `42781698058` és Linux `42781697932` sikeres. Az A-17 legutolsó változtatásának a teljes CI-eredményét az aktuális kiadási ág végleges ellenőrzése dönti el. A CloudPanel éles telepítés, visszaállítás, SMTP, két eszköz, zenei szaklektorálás, jogok és kézi akadálymentességi elfogadás továbbra sem igazolt.
