@@ -42,14 +42,27 @@ if markup.count("</head>") != 1 or "zeneelmelet-build-sha" in markup:
 meta = f'<meta name="zeneelmelet-build-sha" content="{revision}">'
 html.write_text(markup.replace("</head>", meta + "</head>", 1), encoding="utf-8")
 
-assets = set(re.findall(
-    r"""(?:src|href)=["']/((?:assets/[A-Za-z0-9._-]+)\.(?:js|css))["']""",
+entrypoints = set(re.findall(
+    r"""(?:src|href)=["']/(assets/[A-Za-z0-9._-]+\.(?:js|css))["']""",
     markup,
 ))
-# The regex includes the extension in each returned path.
-assets = {name for name in assets}
-if not any(name.endswith(".js") for name in assets):
+if not any(name.endswith(".js") for name in entrypoints):
     raise SystemExit("Build has no JavaScript entrypoint to fingerprint")
+
+# The HTML lists only entrypoints; Vite can also emit lazy-loaded JS/CSS.
+# Hash every shipped script/style, including nested chunks, so a partial
+# CloudPanel upload cannot pass with a stale dynamically imported module.
+assets_dir = root / "assets"
+if not assets_dir.is_dir() or assets_dir.is_symlink():
+    raise SystemExit("Missing or unsafe frontend assets directory")
+assets = {
+    path.relative_to(root).as_posix()
+    for path in assets_dir.rglob("*")
+    if path.suffix.lower() in (".js", ".css") and
+       (path.is_file() or path.is_symlink())
+}
+if not entrypoints.issubset(assets):
+    raise SystemExit("HTML references a missing Vite entrypoint")
 files = sorted(set(CORE_PHP) | assets)
 digests = {}
 for name in files:
