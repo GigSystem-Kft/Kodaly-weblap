@@ -48,7 +48,17 @@ for (const media of CURATED_MEDIA) {
 }
 for (const chapter of MUSIC_CHAPTERS) {
   for (const sub of chapter.subchapters) {
-    const text = [sub.summary, ...sub.content].filter(Boolean).join('\n\n');
+    // Include every example and attributed quotation shown to students.
+    // The static tutor already indexed audio examples, but the PHP release
+    // used to export only summaries and paragraphs.
+    const text = [
+      sub.summary, ...sub.content,
+      ...(sub.examples ?? []).flatMap(example => [
+        example.title, example.description, ...(example.notes ?? []),
+        ...(example.audioNotes ?? [])
+      ]),
+      ...(sub.quotes ?? []).map(quote => quote.text + ' – ' + quote.source)
+    ].filter(Boolean).join('\n\n');
     if (text.length > 12) {
       // Keep the entire lesson instead of silently dropping every character
       // after the old 5000 UTF-16-unit cut. Preserve original labels for the
