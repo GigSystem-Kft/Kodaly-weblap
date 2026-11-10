@@ -223,6 +223,38 @@ assertSource(in_array('Hiányzik a PHP Tanársegédből: Zeneelméleti Műhely �
     'an uploaded title cannot falsify the required flashcard-bank status');
 unlink(tutorSourceFile($fakeId));
 unlink(tutorSourceFile($duplicateId));
-unlink(tutorSourceFile($id));rmdir($dir);
+unlink(tutorSourceFile($id));
+unlink($dir.'/.source-writes.lock');
+rmdir($dir);
 assertSource(tutorSourceList()===[],'deleted sources excluded');
+
+// A-24: the upload limit must be checked while holding the same exclusive
+// lock as atomic publication, not once before another admin writes a file.
+$limitDir=sys_get_temp_dir().'/zm-tutor-limit-'.bin2hex(random_bytes(8));
+putenv('ZM_TEST_SOURCE_DIR='.$limitDir);
+$limitPayload=json_encode([
+    'title'=>'Próba – 25 forrásos határ',
+    'text'=>'Zeneelméleti magyar tananyag és hangszeres példa.',
+    'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+for ($i=0; $i<25; $i++) {
+    tutorStoreSourceRecord(bin2hex(random_bytes(16)),$limitPayload);
+}
+assertSource(count(tutorSourceList())===25,
+    'exactly 25 owner-only documents may be published');
+$extraId=bin2hex(random_bytes(16));
+$overLimit=false;
+try {tutorStoreSourceRecord($extraId,$limitPayload);}
+catch (OverflowException $e) {$overLimit=true;}
+assertSource($overLimit && count(tutorSourceList())===25 &&
+    !file_exists(tutorSourceFile($extraId)),
+    'the 26th private source is refused before any file publication');
+assertSource(glob($limitDir.'/.'.'*.tmp')===[],
+    'capacity rejection leaves no partial staging files');
+foreach (glob($limitDir.'/*.json') ?: [] as $file) unlink($file);
+unlink($limitDir.'/.source-writes.lock');
+rmdir($limitDir);
+putenv('ZM_TEST_SOURCE_DIR='.$dir);
+assertSource(tutorSourceList()===[],'capacity test left no private sources');
+
 fwrite(STDOUT,"Private tutor source tests passed\n");
