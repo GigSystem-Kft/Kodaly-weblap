@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { QUIZ_QUESTIONS, MUSIC_CHAPTERS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES } from '../data/learningProgressSummary';
 import { QuizQuestion } from '../types';
@@ -20,6 +20,15 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   const [wrongQuestionIds, setWrongQuestionIds] = useState<string[]>([]);
   const [round, setRound] = useState(0);
   const [startedAt, setStartedAt] = useState(() => Date.now());
+  // Guard discrete controls against two clicks in the same React render.
+  // Without a synchronous latch, double-clicking Next can skip a question;
+  // double-clicking Finish can record the same quiz twice.
+  const answeringRef = useRef(false);
+  const advancingRef = useRef(false);
+  useEffect(() => {
+    answeringRef.current = false;
+    advancingRef.current = false;
+  }, [currentIndex, selectedChapter, round]);
 
   // A practice round is deliberately short; the full bank remains available over
   // repeated rounds, while a single all-topics session no longer needs hundreds of clicks.
@@ -38,7 +47,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   const currentQ = questions[currentIndex] || questions[0];
 
   const handleSelectOption = (index: number) => {
-    if (isAnswered) return;
+    if (isAnswered || answeringRef.current || advancingRef.current) return;
+    answeringRef.current = true;
     setSelectedOption(index);
     setIsAnswered(true);
 
@@ -53,6 +63,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   };
 
   const handleNext = () => {
+    if (!isAnswered || advancingRef.current || isFinished) return;
+    advancingRef.current = true;
     setSelectedOption(null);
     setIsAnswered(false);
     if (currentIndex + 1 < questions.length) {
@@ -67,6 +79,8 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   };
 
   const restartQuiz = () => {
+    answeringRef.current = false;
+    advancingRef.current = false;
     setCurrentIndex(0);
     setSelectedOption(null);
     setIsAnswered(false);
