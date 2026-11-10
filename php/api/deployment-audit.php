@@ -118,8 +118,33 @@ function deploymentBuildFingerprint(string $webroot): array {
         '~(?:src|href)=["\x27]/(assets/[A-Za-z0-9._-]+\.(?:js|css))["\x27]~',
         $html, $assetMatches
     );
-    $assets = array_values(array_unique($assetMatches[1] ?? []));
-    if (!array_filter($assets, static fn($asset)=>str_ends_with($asset,'.js'))) {
+    $entrypoints = array_values(array_unique($assetMatches[1] ?? []));
+    if (!array_filter($entrypoints, static fn($asset)=>str_ends_with($asset,'.js'))) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
+    // index.html does not list dynamically imported Vite chunks. Compare
+    // the complete deployed JS/CSS inventory with the stamped manifest.
+    $assetRoot = $root . '/assets';
+    if (!is_dir($assetRoot) || is_link($assetRoot)) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
+    $assets = [];
+    try {
+        $files = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($assetRoot, FilesystemIterator::SKIP_DOTS)
+        );
+        foreach ($files as $file) {
+            if (!preg_match('/\\.(?:js|css)$/iD', $file->getFilename())) continue;
+            if (!$file->isFile() && !$file->isLink()) continue;
+            $assets[] = 'assets/' . str_replace(
+                DIRECTORY_SEPARATOR, '/',
+                substr($file->getPathname(), strlen($assetRoot) + 1)
+            );
+        }
+    } catch (Throwable) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
+    if (array_diff($entrypoints, $assets) !== []) {
         return ['buildConsistent'=>false, 'releaseRevision'=>null];
     }
     $expectedFiles = array_values(array_unique(array_merge($corePhp, $assets)));
