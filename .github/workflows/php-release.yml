@@ -133,6 +133,18 @@ jobs:
           python3 scripts/verify-release-assets.py release
           cd release
           zip -q -r ../zeneelmeleti-muhely-php.zip .
+      - name: Verify the actual ZIP after packaging
+        shell: bash
+        run: |
+          set -euo pipefail
+          unzip -tq zeneelmeleti-muhely-php.zip
+          unpacked="$(mktemp -d)"
+          trap 'rm -rf "$unpacked"' EXIT
+          unzip -q zeneelmeleti-muhely-php.zip -d "$unpacked"
+          # Validate exactly what will be downloaded, not only the staging folder.
+          python3 scripts/verify-release-assets.py "$unpacked"
+          test "$(find "$unpacked" -type f | wc -l)" -gt 100
+          sha256sum zeneelmeleti-muhely-php.zip
       - name: Upload deploy ZIP
         uses: actions/upload-artifact@v4
         with:
