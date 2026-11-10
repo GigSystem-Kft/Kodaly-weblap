@@ -202,6 +202,23 @@ test('quiz mistake IDs survive account merge, while oversized diagnostics are di
  assert.deepEqual(migrateProgress(bad).quizAttempts,[]);
 });
 
+test('quiz error history never records more or duplicate mistakes than the answers allow', () => {
+  const initial = createEmptyProgress();
+  const base = {
+    id:'quiz-coherence',chapterId:'ritmus',score:80,correct:4,total:5,
+    at:'2026-11-09T20:30:00Z',wrongQuestionIds:['q5']
+  };
+  const restored=migrateProgress({...initial,quizAttempts:[base]});
+  assert.deepEqual(restored.quizAttempts?.[0],base);
+  const overcount = {...base,wrongQuestionIds:['q3','q5']};
+  const duplicate = {...base,score:60,correct:3,wrongQuestionIds:['q5','q5']};
+  const perfect = {...base,score:100,correct:5,wrongQuestionIds:['q5']};
+  for (const invalid of [overcount,duplicate,perfect]) {
+    assert.deepEqual(migrateProgress({...initial,quizAttempts:[invalid]}).quizAttempts,[],
+      'Contradictory wrong-answer IDs must not survive a server-bound restoration');
+  }
+});
+
 test('quiz practice timing is preserved but rejects invalid or excessive durations',()=>{
  const progress=createEmptyProgress();
  const base={id:'timed-quiz',chapterId:'ritmus',score:80,correct:4,total:5,at:'2026-11-07T20:00:00Z',durationSeconds:95};
