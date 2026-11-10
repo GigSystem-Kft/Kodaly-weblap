@@ -232,8 +232,9 @@ echo 'Live authenticated deployment diagnostic flags nested public archives'
 # fingerprint. An incomplete upload of old frontend/new PHP must be rejected.
 REVISION="$(printf 'a%.0s' {1..40})"
 MIXED_REVISION="$(printf 'b%.0s' {1..40})"
-mkdir -p php/assets
+mkdir -p php/assets/lazy
 printf 'console.log("ci test")\n' > php/assets/index-ci.js
+printf 'export const moduleVersion = "current";\n' > php/assets/lazy/chunk.js
 printf '%s\n' '<?php return [];' > php/api/knowledge.php
 cat > php/index.html <<HTML
 <html><head><script src="/assets/index-ci.js"></script></head><body>Test</body></html>
@@ -250,6 +251,19 @@ if (($j["buildConsistent"]??null)!==true ||
     fwrite(STDERR,"Matching build stamps rejected by admin endpoint\n");exit(1);
 }
 '
+# A dynamically loaded module has no direct index.html reference, but
+# authenticated diagnostics must still catch a partially uploaded old chunk.
+printf 'export const moduleVersion = "stale";\n' > php/assets/lazy/chunk.js
+lazyStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$lazyStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false) {
+    fwrite(STDERR,"Stale lazy-loaded module passed authenticated deployment check\n");exit(1);
+}'
+printf 'export const moduleVersion = "current";\n' > php/assets/lazy/chunk.js
+
 # An old JavaScript file must not pass just because the version labels match.
 printf 'console.log("obsolete client")\n' > php/assets/index-ci.js
 tamperedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
