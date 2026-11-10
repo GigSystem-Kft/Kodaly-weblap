@@ -58,6 +58,8 @@ $fakeDir=sys_get_temp_dir().'/zm-source-directory-link-'.bin2hex(random_bytes(8)
 assertSource(symlink($dir,$fakeDir),'test directory symlink created');
 putenv('ZM_TEST_SOURCE_DIR='.$fakeDir);
 assertSource(tutorSourceList()===[],'symlinked private source directory is ignored');
+assertSource(tutorReadSourceRecord($id)===null,
+    'a direct private source read also rejects symlinked directories');
 $rejectedDirectory=false;
 try {tutorStoreSourceRecord(bin2hex(random_bytes(16)),$atomicPayload);}
 catch (RuntimeException $e) {$rejectedDirectory=true;}
