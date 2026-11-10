@@ -663,6 +663,7 @@ try {
     const reportContext = await browser.newContext();
     const reportPage = await reportContext.newPage();
     let extraSource = null;
+    let corruptSourceReceipt = false;
     let invitationAttempts = 0;
     let sourceReportLoads = 0;
     await reportPage.route('**/source-inventory.json', route =>
@@ -676,8 +677,14 @@ try {
       const currentReport = {...liveFixture,
         indexChunks:2800+(extraSource ? 1 : 0),
         sources:extraSource
-          ? [...liveFixture.sources, {source:extraSource.title,chunks:1,characters:100,kind:'indexed'}]
-          : liveFixture.sources
+          ? [...liveFixture.sources, {source:extraSource.title,sourceId:extraSource.id,
+              chunks:1,characters:100,kind:'teacher-upload'}]
+          : liveFixture.sources,
+        privateSourceIntegrity:extraSource ? [{
+          id:extraSource.id,title:extraSource.title,sourceBytes:100,
+          indexedBytes:corruptSourceReceipt ? 88 : 100,indexedChunks:1,
+          sha256:'a'.repeat(64),complete:!corruptSourceReceipt
+        }] : []
       };
       const data = endpoint === 'auth/me'
         ? {user:{id:'coverage-admin',email:'admin@example.invalid',displayName:'Próba admin',role:'admin'}}
@@ -757,6 +764,15 @@ try {
       });
       await reportPage.getByRole('button',{name:'Forrás feltöltése'}).click();
       await reportPage.getByText(/PHP: 3 forráscsoport, 2801 szövegrész/).waitFor();
+      await reportPage.getByText(/1 \/ 1 forrás teljes UTF-8 szövege/).waitFor();
+      await reportPage.getByText('Egyezik',{exact:true}).waitFor();
+      // A same-sized or truncated private source must become visibly red in
+      // the admin panel rather than looking like a healthy upload.
+      corruptSourceReceipt = true;
+      await reportPage.reload({waitUntil:'domcontentloaded'});
+      await reportPage.getByRole('button',{name:'Admin',exact:true}).click();
+      await reportPage.getByText(/0 \/ 1 forrás teljes UTF-8 szövege/).waitFor();
+      await reportPage.getByText('HIÁNYOS / ELTÉR',{exact:true}).waitFor();
       await reportPage.getByRole('button',{name:'Eltávolítás'}).waitFor();
       reportPage.once('dialog', dialog => dialog.accept());
       await reportPage.getByRole('button',{name:'Eltávolítás'}).click();
