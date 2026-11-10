@@ -124,6 +124,24 @@ function tutorSourceList(): array {
     return $result;
 }
 /**
+ * Reveal corrupted/unsafe private source records to the authenticated audit
+ * without indexing their contents or exposing file-system paths.
+ * Previously they silently disappeared from both the tutor and inventory.
+ */
+function tutorRejectedSourceIds(): array {
+    $dir=tutorSourceDirectory();
+    if (is_link($dir) || !is_dir($dir)) return [];
+    $rejected=[];
+    foreach (glob($dir.'/*.json') ?: [] as $file) {
+        $id=basename($file,'.json');
+        if (!preg_match('/^[a-f0-9]{32}$/D',$id)) continue;
+        if (tutorReadSourceRecord($id)===null) $rejected[]=$id;
+    }
+    sort($rejected);
+    return $rejected;
+}
+
+/**
  * Split long teacher-approved UTF-8 lines into intact, byte-limited pieces.
  * The former substr(..., 0, 1400) dropped the remaining text and could
  * corrupt accented Hungarian characters. No mbstring extension is required.
