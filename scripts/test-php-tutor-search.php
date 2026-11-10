@@ -92,6 +92,32 @@ $coverage=tutorSourceAudit([
  ['source'=>'Fogalomtár', 'label'=>'09. Zenei kifejezések', 'text'=>'Allegro'],
  ['source'=>'Tananyag', 'label'=>'08. Ének-zene tantárgy-pedagógia', 'text'=>'Kodály'],
 ]);
+// A-08: a teacher's first and second indexed paragraphs are NOT chapters
+// one and two. Duplicate document titles also must not hide distinct uploads
+// from the anonymous aggregate count or forge an official lesson.
+$privateFirst=str_repeat('a',32);
+$privateSecond=str_repeat('b',32);
+$syntheticCoverage=[
+ ['source'=>'Zeneelméleti Műhely – Tananyag','contextApproved'=>true,
+  'label'=>'01. Hangértékek / negyed','text'=>'A negyedhang értéke egy egység.'],
+ ['source'=>'Zeneelméleti Műhely – Tananyag','sourceId'=>$privateFirst,
+  'label'=>'1. szövegrész','text'=>'Tanári jegyzet másolható címmel.'],
+ ['source'=>'Zeneelméleti Műhely – Tananyag','sourceId'=>$privateSecond,
+  'label'=>'2. szövegrész','text'=>'Másik forrás azonos címmel.'],
+ ['source'=>'Zenei fogalomtár','sourceId'=>$privateSecond,
+  'label'=>'9. szövegrész','text'=>'Ez nem a kötelező, ellenőrzött szótár.']
+];
+$counts=tutorKnowledgeCounts($syntheticCoverage);
+ensureTutorSearch($counts['lessonChunks']===1,'only verified first-party passage is an official lesson');
+ensureTutorSearch($counts['indexedSources']===2,'each private source ID counted independently of duplicate titles');
+ensureTutorSearch($counts['indexedChunks']===4,'all passages counted in public aggregate');
+$chapterReport=tutorSourceAudit($syntheticCoverage);
+ensureTutorSearch($chapterReport['chapters']['1']===1 &&
+    $chapterReport['chapters']['2']===0 && $chapterReport['chapters']['9']===0,
+    'private numbered excerpts cannot inflate the official chapter coverage');
+ensureTutorSearch($chapterReport['verifiedGlossaryChunks']===0,
+    'private title cannot masquerade as the official glossary');
+
 ensureTutorSearch(count($coverage['chapters'])===9,'all nine curriculum chapters audited');
 ensureTutorSearch(($coverage['chapters']['9']??0)===1,'ninth chapter coverage counted');
 ensureTutorSearch(($coverage['chapters']['8']??0)===1,'eighth chapter coverage counted');
