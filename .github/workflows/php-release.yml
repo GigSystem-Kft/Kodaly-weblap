@@ -6,26 +6,10 @@ on:
     branches:
       - main
       - 'feature/reszletes-tananyag-tobb-feladat-20261104'
+  # The release gate must run for every PR update, including docs-only changes.
+  # Restricting paths can leave checks absent for the eventual merge commit.
   pull_request:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'php/**'
-      - 'database/**'
-      - 'scripts/verify-release-assets.py'
-      - 'scripts/test-php-deployment-audit.php'
-      - 'scripts/stamp-php-release.py'
-      - 'scripts/create-invitation.mjs'
-      - 'scripts/test-php-invitations.sh'
-      - 'scripts/export-php-knowledge.ts'
-      - 'server-data/**'
-      - 'deploy/php-telepites.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'vite.config.ts'
-      - 'index.html'
-      - '.github/workflows/php-release.yml'
 
 permissions:
   contents: read
