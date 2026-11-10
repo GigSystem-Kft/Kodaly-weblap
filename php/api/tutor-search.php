@@ -281,6 +281,10 @@ function tutorDetailedCoverage(array $entries): array {
     }
     require_once __DIR__ . '/tutor-sources.php';
     $privateIntegrity=tutorPrivateSourceIntegrity($entries);
+    $rejectedSourceIds=tutorRejectedSourceIds();
+    foreach ($rejectedSourceIds as $rejectedId) {
+        $missing[]='Sérült, veszélyes vagy nem olvasható tanári forrásfájl: '.$rejectedId;
+    }
     foreach ($privateIntegrity as $source) {
         if ($source['complete'] !== true) {
             $missing[]='Tanári forrás hiányosan indexelve: ' . $source['title'] .
@@ -298,6 +302,7 @@ function tutorDetailedCoverage(array $entries): array {
         'indexedCharacters'=>$totalCharacters,
         'sources'=>array_values($groups),
         'privateSourceIntegrity'=>$privateIntegrity,
+        'rejectedSourceIds'=>$rejectedSourceIds,
         'missing'=>$missing,
         'omitted'=>$omitted,
         'limitations'=>[
