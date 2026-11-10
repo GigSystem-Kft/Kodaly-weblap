@@ -72,6 +72,27 @@ oversizedWrong="$(php -r '
  echo json_encode($j,JSON_UNESCAPED_UNICODE);
 ' "$allWrong")"
 test "$(put_progress "{\"progress\":$oversizedWrong,\"revision\":\"$saved\"}")" = 400
+# A-17: a valid 9/10 score allows at most one wrong-question ID.
+# Reject invented duplicates and impossible analytics without changing revision.
+wrongOvercount="$(php -r '
+ $p=json_decode($argv[1],true);
+ $p["quizAttempts"][0]["wrongQuestionIds"]=["wrong-1","wrong-2"];
+ echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
+duplicateWrong="$(php -r '
+ $p=json_decode($argv[1],true);
+ $p["quizAttempts"][0]["correct"]=0;
+ $p["quizAttempts"][0]["total"]=15;
+ $p["quizAttempts"][0]["score"]=0;
+ $p["quizAttempts"][0]["wrongQuestionIds"]=array_fill(0,15,"same-question");
+ echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
+for badHistory in "$wrongOvercount" "$duplicateWrong"; do
+  test "$(put_progress "{\"progress\":$badHistory,\"revision\":\"$saved\"}")" = 400
+done
+get_progress
+test "$(revision)" = "$saved"
+
 test "$(put_progress "{\"progress\":$allWrong,\"revision\":\"$saved\"}")" = 200
 saved="$(revision)"
 get_progress
