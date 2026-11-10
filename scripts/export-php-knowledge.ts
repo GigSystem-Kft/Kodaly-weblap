@@ -1,5 +1,6 @@
 import { mkdirSync, readFileSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { splitKnowledgeText } from './knowledge-chunks';
 import { MUSIC_CHAPTERS, FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from '../src/data/musicData';
 import { VERIFIED_GLOSSARY } from '../src/data/verifiedMusicGlossary';
 import { CURATED_MEDIA } from '../src/data/curatedMusicMedia';
@@ -48,11 +49,16 @@ for (const media of CURATED_MEDIA) {
 for (const chapter of MUSIC_CHAPTERS) {
   for (const sub of chapter.subchapters) {
     const text = [sub.summary, ...sub.content].filter(Boolean).join('\n\n');
-    if (text.length > 12) entries.push({
-      source: 'Zeneelméleti Műhely – Tananyag',
-      label: `${chapter.title} / ${sub.title}`,
-      text: text.slice(0, 5000)
-    });
+    if (text.length > 12) {
+      // Keep the entire lesson instead of silently dropping every character
+      // after the old 5000 UTF-16-unit cut. Preserve original labels for the
+      // first passage and distinguish subsequent pages for retrieval.
+      splitKnowledgeText(text).forEach((passage, index) => entries.push({
+        source: 'Zeneelméleti Műhely – Tananyag',
+        label: `${chapter.title} / ${sub.title}` + (index ? ` / ${index + 1}. részlet` : ''),
+        text: passage
+      }));
+    }
   }
 }
 // Mirror the original student-facing practice content already indexed by the
@@ -257,9 +263,12 @@ for (const item of files) {
     text: raw.slice(m.index!+m[0].length, boundaries[i+1]?.index ?? raw.length)
   })) : [{label:'forrásrészlet',text:raw}];
   for (const part of parts) {
-    for (let offset=0;offset<part.text.length;offset+=1200) {
-      const text=part.text.slice(offset,offset+1200).trim();
-      if (text.length > 30) entries.push({source:item.label,label:part.label,text});
+    // JS slice operates on UTF-16 units and can bisect 𝄞, emoji or a
+    // combining-accent grapheme. It also used to discard tails <=30 units.
+    // The splitter keeps every source character, including short tails and
+    // boundary whitespace, while breaking on whole visible graphemes.
+    for (const text of splitKnowledgeText(part.text)) {
+      entries.push({source:item.label,label:part.label,text});
     }
   }
 }
