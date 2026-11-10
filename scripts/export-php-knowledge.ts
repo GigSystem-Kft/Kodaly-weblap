@@ -18,7 +18,7 @@ import { THEORY_DRILLS } from '../src/data/musicExpressionsPractice';
 import { MAJOR_SCALES, MINOR_SCALES, TRIADS, C_MAJOR_INVERSIONS, FIFTHS_CIRCLE } from '../src/data/tonalExamples';
 import { COLLECTION_EXAMPLES } from '../src/data/collectionLessonExamples';
 
-type Entry = { source: string; label: string; text: string; creativePractice?: {
+type Entry = { source: string; label: string; text: string; contextApproved?: boolean; creativePractice?: {
   id: string; title: string; theme: string; goal: string; materials: string;
   steps: string[]; observation: string; extension: string; page: string;
 } };
@@ -65,6 +65,10 @@ for (const chapter of MUSIC_CHAPTERS) {
       // first passage and distinguish subsequent pages for retrieval.
       splitKnowledgeText(text).forEach((passage, index) => entries.push({
         source: 'Zeneelméleti Műhely – Tananyag',
+        // Only the first-party curriculum may be forwarded as evidence for
+        // an OPTIONAL external text model. Source titles are not trustworthy:
+        // a separately uploaded document can copy this exact name.
+        contextApproved: true,
         label: `${chapter.title} / ${sub.title}` + (index ? ` / ${index + 1}. részlet` : ''),
         text: passage
       }));
