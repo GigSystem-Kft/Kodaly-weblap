@@ -62,6 +62,10 @@ try {
     $meta = '<meta name="zeneelmelet-build-sha" content="' . $releaseSha . '">';
     $jsPath = $root . '/assets/index-ci.js';
     file_put_contents($jsPath, 'console.log("correct release")');
+    mkdir($root . '/assets/lazy', 0700, true);
+    $lazyPath = $root . '/assets/lazy/lesson.js';
+    file_put_contents($lazyPath, 'export const lesson = "új kiadás";');
+    file_put_contents($root . '/assets/lazy/lesson.css', '.lesson { display: block; }');
     $coreFiles = [
         'api/index.php', 'api/admin.php', 'api/deployment-audit.php',
         'api/tutor-text-generation.php', 'api/tutor-image-generation.php',
@@ -77,7 +81,8 @@ try {
         '<script src="/assets/index-ci.js"></script></head><body>Test</body></html>';
     file_put_contents($root . '/index.html', $markup);
     $fileHashes = [];
-    foreach ([...$coreFiles, 'assets/index-ci.js'] as $relative) {
+    foreach ([...$coreFiles, 'assets/index-ci.js',
+        'assets/lazy/lesson.js', 'assets/lazy/lesson.css'] as $relative) {
         $fileHashes[$relative] = hash_file('sha256', $root . '/' . $relative);
     }
     $writeManifest = static function (string $sha, array $hashes) use ($root): void {
@@ -97,6 +102,17 @@ try {
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
         'stale JavaScript must be caught even when all three revision labels agree');
     file_put_contents($jsPath, 'console.log("correct release")');
+
+    file_put_contents($lazyPath, 'export const lesson = "régi kiadás";');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'stale lazy-loaded JavaScript must be caught even when the HTML entrypoint matches');
+    file_put_contents($lazyPath, 'export const lesson = "új kiadás";');
+    file_put_contents($root . '/assets/leftover.css', '.stale { color: red; }');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'unlisted old CSS after partial deployment must prevent release approval');
+    unlink($root . '/assets/leftover.css');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+        'all lazy chunks and styles matching the manifest restore release readiness');
 
     $phpPath = $root . '/api/tutor-search.php';
     file_put_contents($phpPath, '<?php // a different backend build');
