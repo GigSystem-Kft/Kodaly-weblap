@@ -8,6 +8,7 @@ type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicAr
 type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
  sources:{source:string;sourceId?:string|null;chunks:number;characters:number;kind:string}[];
  privateSourceIntegrity?:{id:string;title:string;sourceBytes:number;indexedBytes:number;indexedChunks:number;sha256:string;complete:boolean}[];
+ rejectedSourceIds?:string[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
 
 const REQUIRED_PHP_TUTOR_BANKS = [
@@ -366,7 +367,14 @@ export const AdminDashboard: React.FC = () => {
               <thead><tr className="border-b text-left"><th className="p-2">Forrás</th><th className="p-2">Részlet</th><th className="p-2">Karakter</th></tr></thead>
               <tbody>{coverage.sources.map((item,i)=><tr key={i} className="border-b"><td className="p-2 break-all">{item.source}{item.sourceId ? <span className="block text-slate-500">Azonosító: {item.sourceId.slice(0,12)}</span> : null}</td><td className="p-2">{item.chunks}</td><td className="p-2">{item.characters.toLocaleString('hu-HU')}</td></tr>)}</tbody>
             </table></div></details>
-          {coverage.missing.length>0 && <div className="text-red-800 text-sm mb-3"><strong>Hiányzó kötelező fájlok:</strong> {coverage.missing.join(', ')}</div>}
+          {coverageOrigin === 'live' && (coverage.rejectedSourceIds?.length ?? 0) > 0 && (
+            <p role="alert" className="mb-3 text-sm font-semibold text-red-800">
+              {coverage.rejectedSourceIds?.length} sérült vagy nem biztonságosan olvasható tanári forrásfájl
+              kimaradt az indexből. Azonosítók: {coverage.rejectedSourceIds?.map(id => id.slice(0,12)).join(', ')}.
+              Ellenőrizd a külön források szerveroldali mentését és jogosultságait.
+            </p>
+          )}
+          {coverage.missing.length>0 && <div className="text-red-800 text-sm mb-3"><strong>Hiányzó kötelező tartalom és forráshibák:</strong> {coverage.missing.join(', ')}</div>}
           <details className="mb-3" open={coverage.omitted.length>0}><summary className="cursor-pointer font-semibold">Nem indexelt fájlok ({coverage.omitted.length})</summary>
             {coverage.omitted.map(item=><p key={item.file} className="text-sm mt-2"><strong>{item.file}</strong> – {item.reason}</p>)}
           </details>
