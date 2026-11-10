@@ -55,6 +55,10 @@ try {
         }
     }
 
+    // The earlier scanner fixture is not part of the assembled release:
+    // leftover unmanifested JS is now rejected as a mixed deployment.
+    unlink($root . '/assets/site-abcdef.js');
+
     // A release must agree on the Git SHA AND on actual frontend/PHP bytes.
     // The historical three labels alone could not detect a stale JS/CSS file.
     $releaseSha = str_repeat('a', 40);
