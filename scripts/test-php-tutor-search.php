@@ -44,6 +44,21 @@ foreach ([
  $answer=lessonReply($found,$question,true);
  ensureTutorSearch(str_contains($answer,'_Forrás:'),'Inflected reply includes attribution: '.$question);
 }
+// A-09: browsers and text editors can submit decomposed Unicode letters
+// ("o" + combining diaeresis) even when the source uses precomposed "ö".
+foreach ([
+    "Mi a kvintko\u{0308}r?" => 'Kvintkör',
+    "Mesélj a kvintko\u{0308}rről!" => 'Kvintkör',
+    "Mit tanulunk a szinko\u{0301}pa\u{0301}ról?" => 'Szinkópa',
+    "Mesélj a he\u{0301}xachordokról!" => 'Hexachord'
+] as $question=>$expected) {
+    $found=rankLessons($question,$inflectedEntries,2);
+    ensureTutorSearch(count($found)>0 && $found[0]['label']===$expected,
+        'Decomposed Hungarian accents preserve retrieval: '.$question);
+}
+ensureTutorSearch(searchTerms("ko\u{0308}r")===searchTerms('kör'),
+    'Precomposed and decomposed search terms normalize identically');
+
 ensureTutorSearch(!tutorTermMatch('kvintkorhajo','kvintkor'),
  'Reject an unrelated longer word with the same prefix');
 ensureTutorSearch(rankLessons('Mi a kvintkorhajo?', $inflectedEntries)===[],
@@ -52,6 +67,12 @@ ensureTutorSearch(rankLessons('Mi a kvintkorhajo?', $inflectedEntries)===[],
 // in the middle of an accented UTF-8 code point or count bytes as letters.
 ensureTutorSearch(mbSafeLength('Őő')===2,'UTF-8 character count, not bytes');
 ensureTutorSearch(mbSafeCut('Őszinte',2)==='Ős','UTF-8 character-safe truncation');
+ensureTutorSearch(mbSafeLength("e\u{0301}👩‍🎼𝄞")===3,
+ 'Count complete grapheme clusters, including Hungarian accents and music emoji');
+ensureTutorSearch(mbSafeCut("e\u{0301}👩‍🎼𝄞",1)==="e\u{0301}",
+ 'Keep the combining accent attached to its base when shortening an answer');
+ensureTutorSearch(mbSafeCut("e\u{0301}👩‍🎼𝄞",2)==="e\u{0301}👩‍🎼",
+ 'Never split an emoji/ZWJ sequence in a generated study answer');
 $trimmed=mbSafeCut(str_repeat('ő',240),200);
 ensureTutorSearch(mbSafeLength($trimmed)===200 && preg_match('//u',$trimmed)===1,
  '200 visible accented letters without malformed UTF-8');
