@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { splitKnowledgeText } from './scripts/knowledge-chunks';
 import { MUSIC_CHAPTERS, FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from './src/data/musicData';
 import { RHYTHM_RESEARCH_PAGES, RHYTHM_RESEARCH_SOURCE } from './src/data/rhythmResearchPages';
 import { RESEARCH_RHYTHM_GAMES } from './src/data/rhythmResearchGames';
@@ -76,9 +77,16 @@ function splitLongText(text: string, maxLength = 1300): string[] {
       current = '';
     }
     if (part.length > maxLength) {
-      for (let pos = 0; pos < part.length; pos += maxLength) {
-        if (current) { result.push(current.trim()); current = ''; }
-        result.push(part.slice(pos, pos + maxLength).trim());
+      if (current) { result.push(current.trim()); current = ''; }
+      // Avoid cutting UTF-16 surrogate pairs or combining accents. The
+      // searchable Node index may trim paragraph boundaries, but may not
+      // corrupt music notation glyphs or discard a short final sentence.
+      const pieces = splitKnowledgeText(part, maxLength);
+      if (pieces.length > 1 && pieces[pieces.length - 1].trim().length < 20) {
+        pieces[pieces.length - 2] += pieces.pop();
+      }
+      for (const piece of pieces) {
+        if (piece.trim()) result.push(piece.trim());
       }
     } else {
       current += (current ? '\n\n' : '') + part;
@@ -120,7 +128,7 @@ function buildIndex(): KnowledgeChunk[] {
   for (const chapter of MUSIC_CHAPTERS) {
     for (const sub of chapter.subchapters) {
       // A lecke rövid és részletes szövege együtt kereshető, az eredeti fejezetnévvel.
-      const body = [sub.summary, ...sub.content, ...(sub.examples ?? []).flatMap(example=>[example.title,example.description,...(example.audioNotes??[])]), ...(sub.quotes ?? []).map(q=>q.text+' – '+q.source)].join('\n\n');
+      const body = [sub.summary, ...sub.content, ...(sub.examples ?? []).flatMap(example=>[example.title,example.description,...(example.notes??[]),...(example.audioNotes??[])]), ...(sub.quotes ?? []).map(q=>q.text+' – '+q.source)].join('\n\n');
       const label = `${chapter.title} / ${sub.title}`;
       for (const piece of splitLongText(body, 1200)) {
         const chunk = makeChunk('Zeneelméleti Műhely – Tananyag', label, piece, 'lesson');
