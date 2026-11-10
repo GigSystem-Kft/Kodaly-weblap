@@ -86,6 +86,31 @@ assertSource(str_starts_with($emojiPieces[1],'👩‍🎼'),
     'complete musical emoji stays in one indexed chunk');
 assertSource(count(tutorSourceUtf8Pieces("Dó–ré",900))===1,
     'short musical example must be indexed');
+// A-24: a private JSON source is never allowed to point through a symlink
+// outside the dedicated (non-public) teacher source directory.
+$outsideFile=sys_get_temp_dir().'/zm-external-test-'.bin2hex(random_bytes(8)).'.json';
+$outsideRecord=json_encode([
+    'title'=>'NEM INDEXELHETŐ KÜLSŐ FORRÁS',
+    'text'=>str_repeat('Egy idegen fájl zenei állománynak álcázva. ',4),
+    'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+file_put_contents($outsideFile,$outsideRecord);
+$symlinkId=bin2hex(random_bytes(16));
+$symlinkPath=tutorSourceFile($symlinkId);
+assertSource(symlink($outsideFile,$symlinkPath),'symlink fixture could be created');
+assertSource(count(tutorSourceList())===1,'external symlink never listed as approved source');
+assertSource(count(array_filter(tutorExtraKnowledge(), static fn($entry)=>
+    str_contains($entry['source'],'KÜLSŐ FORRÁS')))===0,
+    'external symlink never indexed by the tutor');
+unlink($symlinkPath);
+unlink($outsideFile);
+// Malformed JSON records must also fail closed, not trigger array-to-string
+// warnings or expose private values in the administrator's inventory.
+$badId=bin2hex(random_bytes(16));
+$badPath=tutorSourceFile($badId);
+file_put_contents($badPath,'{"title":[],"text":[],"createdAt":3}');
+assertSource(count(tutorSourceList())===1,'invalid source payload is ignored');
+unlink($badPath);
 unlink(tutorSourceFile($id));rmdir($dir);
 assertSource(tutorSourceList()===[],'deleted sources excluded');
 fwrite(STDOUT,"Private tutor source tests passed\n");
