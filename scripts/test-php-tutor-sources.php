@@ -43,6 +43,29 @@ file_put_contents(tutorSourceFile($id),json_encode([
 $tailChunks=tutorExtraKnowledge();
 assertSource(implode('',array_column($tailChunks,'text'))===$shortTail,
     'short tail after 900-byte split must be preserved');
+// A-08: the complete teacher-approved text must survive indexing, including
+// isolated headings, one-word musical examples and exact paragraph separators.
+$privateSource="𝄞 Magyar kottajel\n\nDó–ré\n\nRitmus: \u{0151} és \u{0171}.\r\n \t\r\n" .
+    str_repeat("hangköz🎼",145) . "\r\n\nZárás.";
+file_put_contents(tutorSourceFile($id),json_encode([
+    'title'=>'Unicode pedagógiai jegyzet','text'=>$privateSource,'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+$privateChunks=tutorExtraKnowledge();
+assertSource(count($privateChunks)>2,'independent private source paragraphs indexed');
+assertSource(implode('',array_column($privateChunks,'text'))===$privateSource,
+    'every original UTF-8 byte and short paragraph is present after indexing');
+assertSource(str_contains($privateChunks[0]['text'],"𝄞 Magyar kottajel"),
+    'music notation and source heading preserved');
+assertSource(array_reduce($privateChunks,static fn($found,$item)=>
+    $found || str_contains($item['text'],"Dó–ré"),false),
+    'short music example no longer dropped');
+assertSource(array_reduce($privateChunks,static fn($found,$item)=>
+    $found || str_contains($item['text'],"Zárás."),false),
+    'short source tail no longer dropped');
+foreach($privateChunks as $chunk) {
+    assertSource(preg_match('//u',$chunk['text'])===1,'private source chunk valid UTF-8');
+    assertSource(strlen($chunk['text'])<=1000,'private source chunk within search limit');
+}
 unlink(tutorSourceFile($id));rmdir($dir);
 assertSource(tutorSourceList()===[],'deleted sources excluded');
 fwrite(STDOUT,"Private tutor source tests passed\n");
