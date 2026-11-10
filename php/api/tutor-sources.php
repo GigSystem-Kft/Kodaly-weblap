@@ -32,29 +32,46 @@ function tutorStoreSourceRecord(string $id, string $payload): void {
     if (!is_dir($dir) && !mkdir($dir,0700,true) && !is_dir($dir)) {
         throw new RuntimeException('Cannot create private source directory');
     }
-    $target=tutorSourceFile($id);
-    $temporary=$dir.'/.'.bin2hex(random_bytes(16)).'.tmp';
-    $handle=@fopen($temporary,'x+b');
-    if ($handle===false) throw new RuntimeException('Cannot create private source staging file');
+    // Limit and publication must be one serialized operation: otherwise two
+    // admin uploads that both see 24/25 entries can publish 26 sources.
+    $lockFile=$dir.'/.source-writes.lock';
+    if (is_link($lockFile)) throw new RuntimeException('Private source lock cannot be a symlink');
+    $lock=@fopen($lockFile,'c+b');
+    if ($lock===false) throw new RuntimeException('Cannot create private source lock');
     try {
-        if (!chmod($temporary,0600)) throw new RuntimeException('Cannot secure private source staging file');
-        $size=strlen($payload);
-        $offset=0;
-        while ($offset<$size) {
-            $count=fwrite($handle,substr($payload,$offset));
-            if ($count===false || $count===0) throw new RuntimeException('Incomplete private source write');
-            $offset+=$count;
+        if (!chmod($lockFile,0600) || !flock($lock,LOCK_EX)) {
+            throw new RuntimeException('Cannot lock private source publication');
         }
-        if (!fflush($handle)) throw new RuntimeException('Cannot flush private source');
-    } catch (Throwable $error) {
+        if (count(tutorSourceList())>=25) {
+            throw new OverflowException('Private teacher source limit reached');
+        }
+        $target=tutorSourceFile($id);
+        $temporary=$dir.'/.'.bin2hex(random_bytes(16)).'.tmp';
+        $handle=@fopen($temporary,'x+b');
+        if ($handle===false) throw new RuntimeException('Cannot create private source staging file');
+        try {
+            if (!chmod($temporary,0600)) throw new RuntimeException('Cannot secure private source staging file');
+            $size=strlen($payload);
+            $offset=0;
+            while ($offset<$size) {
+                $count=fwrite($handle,substr($payload,$offset));
+                if ($count===false || $count===0) throw new RuntimeException('Incomplete private source write');
+                $offset+=$count;
+            }
+            if (!fflush($handle)) throw new RuntimeException('Cannot flush private source');
+        } catch (Throwable $error) {
+            fclose($handle);
+            @unlink($temporary);
+            throw $error;
+        }
         fclose($handle);
-        @unlink($temporary);
-        throw $error;
-    }
-    fclose($handle);
-    if (file_exists($target) || is_link($target) || !@rename($temporary,$target)) {
-        @unlink($temporary);
-        throw new RuntimeException('Cannot publish private source record');
+        if (file_exists($target) || is_link($target) || !@rename($temporary,$target)) {
+            @unlink($temporary);
+            throw new RuntimeException('Cannot publish private source record');
+        }
+    } finally {
+        flock($lock,LOCK_UN);
+        fclose($lock);
     }
 }
 function tutorReadSourceRecord(string $id, ?string $expectedSha256 = null): ?array {
@@ -246,8 +263,6 @@ function tutorSourcesAdminRoute(array $config, string $route): never {
             preg_match('/[\x{FFFD}]/u',$text)) {
             fail(400,'Nem megfelelő UTF-8 szöveg vagy hibás karakterfelismerés. Ellenőrizd a fájlt.');
         }
-        $sources=tutorSourceList();
-        if (count($sources)>=25) fail(409,'Legfeljebb 25 további forrás tölthető fel.');
         $title=trim((string)($_POST['title'] ?? ''));
         if ($title==='' || strlen($title)>120 || preg_match('/[\x00-\x1F]/',$title)) {
             fail(400,'Adj meg egy legfeljebb 120 karakteres forráscímet.');
@@ -258,7 +273,11 @@ function tutorSourcesAdminRoute(array $config, string $route): never {
             'text'=>$text,
             'createdAt'=>gmdate('c'),
         ],JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
-        tutorStoreSourceRecord($id,$payload);
+        try {
+            tutorStoreSourceRecord($id,$payload);
+        } catch (OverflowException) {
+            fail(409,'Legfeljebb 25 további forrás tölthető fel.');
+        }
         answer(201,['success'=>true,'source'=>['id'=>$id,'title'=>$title]]);
     }
     if ($route === 'admin/source-delete') {
