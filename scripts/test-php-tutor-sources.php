@@ -148,6 +148,8 @@ $symlinkId=bin2hex(random_bytes(16));
 $symlinkPath=tutorSourceFile($symlinkId);
 assertSource(symlink($outsideFile,$symlinkPath),'symlink fixture could be created');
 assertSource(count(tutorSourceList())===1,'external symlink never listed as approved source');
+assertSource(tutorRejectedSourceIds()===[$symlinkId],
+    'external symlink reported to authenticated source inventory');
 assertSource(count(array_filter(tutorExtraKnowledge(), static fn($entry)=>
     str_contains($entry['source'],'KÜLSŐ FORRÁS')))===0,
     'external symlink never indexed by the tutor');
@@ -159,10 +161,22 @@ $badId=bin2hex(random_bytes(16));
 $badPath=tutorSourceFile($badId);
 file_put_contents($badPath,'{"title":[],"text":[],"createdAt":3}');
 assertSource(count(tutorSourceList())===1,'invalid source payload is ignored');
+assertSource(tutorRejectedSourceIds()===[$badId],
+    'malformed JSON must be reported to the administrator');
 unlink($badPath);
 // A-08: identical titles are legal (e.g. different editions), but they
 // must never collapse into one source in the administrator's coverage report.
 require __DIR__ . '/../php/api/tutor-search.php';
+$rejectedTestId=bin2hex(random_bytes(16));
+$rejectedTestFile=tutorSourceFile($rejectedTestId);
+file_put_contents($rejectedTestFile,'{"title":{},"text":[]}');
+$rejectedCoverage=tutorDetailedCoverage(tutorExtraKnowledge());
+assertSource($rejectedCoverage['rejectedSourceIds']===[$rejectedTestId],
+    'admin coverage includes rejected source identifiers');
+assertSource(in_array('Sérült, veszélyes vagy nem olvasható tanári forrásfájl: '.$rejectedTestId,
+    $rejectedCoverage['missing'],true),
+    'corrupt private source appears as explicit warning, not a silent omission');
+unlink($rejectedTestFile);
 $duplicateId=bin2hex(random_bytes(16));
 $secondText="Második feltöltött példatár.\n\nRitmus: tá–ti.";
 file_put_contents(tutorSourceFile($duplicateId),json_encode([
