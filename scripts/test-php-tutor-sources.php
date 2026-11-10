@@ -16,6 +16,55 @@ file_put_contents(tutorSourceFile($id),json_encode([
 $list=tutorSourceList();
 assertSource(count($list)===1,'stored source is listed');
 assertSource($list[0]['title']==='Tanár által ellenőrzött anyag','source title intact');
+// A-24: real upload writes are staged with 0600 permissions and only the
+// complete payload is published atomically. Never replace an existing ID.
+$atomicId=bin2hex(random_bytes(16));
+$atomicText="Ritmusképletek: tá, ti-ti.\n\n𝄞 Helyes szolmizáció és felosztás.";
+$atomicPayload=json_encode([
+    'title'=>'Atomikus tanári forrás',
+    'text'=>$atomicText,
+    'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+tutorStoreSourceRecord($atomicId,$atomicPayload);
+$atomicFile=tutorSourceFile($atomicId);
+assertSource(file_get_contents($atomicFile)===$atomicPayload,
+    'complete JSON bytes published without partial output');
+assertSource((fileperms($atomicFile) & 0777)===0600,
+    'private source file has owner-only permissions');
+assertSource((tutorReadSourceRecord($atomicId)['text']??null)===$atomicText,
+    'published file is readable as a verified teacher source');
+assertSource(glob($dir.'/.'.'*.tmp')===[],
+    'successful upload leaves no staging files');
+$duplicateFailed=false;
+try {tutorStoreSourceRecord($atomicId,'{"title":"Hamis csere","text":"NEM"}');}
+catch (RuntimeException $e) {$duplicateFailed=true;}
+assertSource($duplicateFailed && file_get_contents($atomicFile)===$atomicPayload,
+    'duplicate ID cannot overwrite an already approved source');
+assertSource(glob($dir.'/.'.'*.tmp')===[],
+    'rejected duplicate upload removes its staging file');
+$oldDigest=hash('sha256',$atomicText);
+assertSource(tutorReadSourceRecord($atomicId,$oldDigest)!==null,
+    'original inventory hash accepts original uploaded source');
+file_put_contents($atomicFile,str_replace('Ritmusképletek','RitmusképletAk',$atomicPayload));
+assertSource(tutorReadSourceRecord($atomicId,$oldDigest)===null,
+    'changed source cannot be trusted under its old inventory checksum');
+file_put_contents($atomicFile,$atomicPayload);
+assertSource(tutorReadSourceRecord($atomicId,$oldDigest)!==null,
+    'restored content passes its original checksum');
+unlink($atomicFile);
+
+// A source directory itself may not be a symlink into a public location.
+$fakeDir=sys_get_temp_dir().'/zm-source-directory-link-'.bin2hex(random_bytes(8));
+assertSource(symlink($dir,$fakeDir),'test directory symlink created');
+putenv('ZM_TEST_SOURCE_DIR='.$fakeDir);
+assertSource(tutorSourceList()===[],'symlinked private source directory is ignored');
+$rejectedDirectory=false;
+try {tutorStoreSourceRecord(bin2hex(random_bytes(16)),$atomicPayload);}
+catch (RuntimeException $e) {$rejectedDirectory=true;}
+assertSource($rejectedDirectory,'upload refuses a symlinked private directory');
+putenv('ZM_TEST_SOURCE_DIR='.$dir);
+unlink($fakeDir);
+
 $chunks=tutorExtraKnowledge();
 assertSource(count($chunks)===2,'private text is split into relevant excerpts');
 assertSource(str_contains($chunks[0]['text'],'C-dúr'),'retrieved text accurate');
