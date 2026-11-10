@@ -156,7 +156,11 @@ export function readProgress(): UserProgress {
 /** Import guest achievements without deleting achievements already stored in the account. */
 export function mergeProgress(account: UserProgress, guest: UserProgress): UserProgress {
   const union = (a: string[], b: string[]) => [...new Set([...a, ...b])];
-  const quizScores: Record<string, number> = { ...account.quizScores };
+  // Quiz category keys arrive from persisted JSON. A plain object's inherited
+  // `constructor`/`toString` values can turn a valid merged score into NaN;
+  // `__proto__` assignments are also unsafe. A null-prototype dictionary
+  // preserves legitimate string IDs without inherited properties.
+  const quizScores: Record<string, number> = Object.assign(Object.create(null), account.quizScores);
   for (const [chapter, score] of Object.entries(guest.quizScores)) {
     quizScores[chapter] = Math.max(score, quizScores[chapter] ?? 0);
   }
