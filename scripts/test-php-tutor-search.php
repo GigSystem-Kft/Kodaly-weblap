@@ -22,6 +22,18 @@ ensureTutorSearch(str_contains($hits[0]['label'],'Hexachord'),'specific glossary
 $reply=lessonReply($hits,'mit jelent az hogy hexachord?',true);
 ensureTutorSearch(str_contains($reply,'hat hangú'),'concrete definition survives fallback reply');
 ensureTutorSearch(str_contains($reply,'Forrás'),'source attribution present');
+// A teacher upload can have the same title as a built-in bank. The student
+// must still see that it is an uploaded, not an official curriculum source.
+$teacherReply=lessonReply([[
+    'source'=>'Zeneelméleti Műhely – Szókártyák',
+    'sourceId'=>str_repeat('a',32),
+    'label'=>'1. szövegrész',
+    'text'=>'A kvintkör az előjegyzések kapcsolatát szemlélteti.'
+]],'Mi a kvintkör?',true);
+ensureTutorSearch(str_contains($teacherReply,'Tanár által feltöltött forrás: Zeneelméleti Műhely – Szókártyák'),
+    'Uploaded source is clearly labeled even when its title copies an official bank');
+ensureTutorSearch(!str_contains($reply,'Tanár által feltöltött forrás:'),
+    'Built-in reference retains ordinary source attribution');
 ensureTutorSearch(rankLessons('Hogyan készül a tritónusz?', $entries)===[],'no unrelated fake answer');
 // Natural inflected Hungarian queries must find the same teaching facts as
 // dictionary forms without introducing broad unrelated substring matches.
