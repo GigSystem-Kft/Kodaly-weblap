@@ -788,8 +788,20 @@ try {
             $sources=[];
             $lessons=0;
             foreach ($entries as $entry) {
-                if (($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag') $lessons++;
-                else $sources[$entry['source'] ?? ''] = true;
+                $privateId = is_string($entry['sourceId'] ?? null)
+                    ? $entry['sourceId'] : null;
+                if ($privateId === null &&
+                    ($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag' &&
+                    ($entry['contextApproved'] ?? false) === true) {
+                    $lessons++;
+                } else {
+                    // Two teacher uploads may have identical titles. Count
+                    // distinct source IDs without disclosing them publicly.
+                    $key = $privateId !== null
+                        ? 'private:' . $privateId
+                        : 'built-in:' . (string)($entry['source'] ?? '');
+                    $sources[$key] = true;
+                }
             }
             answer(200,['mode'=>tutorTextEnabled($config) ? 'gemini' : 'fallback',
                 'requiresLogin'=>tutorTextEnabled($config),
