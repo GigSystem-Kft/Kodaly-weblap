@@ -23,7 +23,7 @@ function tutorTextEnabled(array $config): bool {
 function tutorTextSafePrefix(string $value, int $maxBytes): string {
     if ($maxBytes <= 0 || preg_match('//u',$value)!==1) return '';
     if (strlen($value) <= $maxBytes) return $value;
-    if (preg_match_all('/\\\\X/u',$value,$clusters) === false) return '';
+    if (preg_match_all('/\X/u',$value,$clusters) === false) return '';
     $prefix='';
     $size=0;
     foreach ($clusters[0] as $cluster) {
