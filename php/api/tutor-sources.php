@@ -41,7 +41,9 @@ function tutorSourceList(): array {
  * corrupt accented Hungarian characters. No mbstring extension is required.
  */
 function tutorSourceUtf8Pieces(string $line, int $byteLimit = 900): array {
-    $remaining = trim($line);
+    // Keep the exact teacher-approved text: trimming stripped paragraph
+    // indentation and trailing newlines from the searchable index.
+    $remaining = $line;
     $pieces = [];
     while (strlen($remaining) > $byteLimit) {
         $cut = $byteLimit;
@@ -65,31 +67,24 @@ function tutorExtraKnowledge(): array {
         if (!is_string($raw)) continue;
         $payload=json_decode($raw,true);
         $text=$payload['text'] ?? null;
-        if (!is_string($text)) continue;
-        // A short paragraph chunk keeps retrieval focused and avoids dumping entire books.
-        $paras=preg_split('/\n\s*\n/u',$text) ?: [];
+        if (!is_string($text) || preg_match('//u',$text)!==1) continue;
+        // Preserve every character from the teacher-reviewed upload, not only
+        // paragraphs longer than 40 bytes. The previous short-tail/heading
+        // threshold silently removed short musical terms such as "Dó–ré".
+        // Retain the exact paragraph delimiter with the preceding paragraph
+        // so joining every indexed piece reconstructs the source byte-for-byte.
+        $segments=preg_split('/(\r?\n[ \t]*\r?\n)/u', $text,-1,PREG_SPLIT_DELIM_CAPTURE);
+        if (!is_array($segments)) continue;
         $part=0;
-        foreach ($paras as $paragraph) {
-            $lines=preg_split('/(?<=\.)\s+/u',trim($paragraph)) ?: [];
-            $current='';
-            $emittedInParagraph=false;
-            foreach ($lines as $line) {
-                $firstPieceOfSentence=true;
-                foreach (tutorSourceUtf8Pieces($line) as $piece) {
-                    $separator=$firstPieceOfSentence && $current!=='' ? ' ' : '';
-                    $firstPieceOfSentence=false;
-                    if (strlen($current)+strlen($separator)+strlen($piece)>1000 && $current!=='') {
-                        $entries[]=['source'=>$source['title'],'label'=>(++$part).'. szövegrész','text'=>$current];
-                        $emittedInParagraph=true;
-                        $current='';
-                        $separator='';
-                    }
-                    $current.=$separator.$piece;
-                }
-            }
-            // Retain short tails of a split paragraph, but ignore isolated headings.
-            if ($current!=='' && (strlen($current)>40 || $emittedInParagraph)) {
-                $entries[]=['source'=>$source['title'],'label'=>(++$part).'. szövegrész','text'=>$current];
+        for ($i=0;$i<count($segments);$i+=2) {
+            $paragraph=$segments[$i] . ($segments[$i+1] ?? '');
+            foreach (tutorSourceUtf8Pieces($paragraph) as $piece) {
+                if ($piece==='') continue;
+                $entries[]=[
+                    'source'=>$source['title'],
+                    'label'=>(++$part).'. szövegrész',
+                    'text'=>$piece
+                ];
             }
         }
     }
