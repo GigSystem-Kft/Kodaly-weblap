@@ -3,10 +3,11 @@ import { apiFetch } from '../api';
 
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
-type TutorSource = { id: string; title: string; createdAt: string; size: number };
+type TutorSource = { id: string; title: string; createdAt: string; size: number; sha256?: string };
 type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;buildConsistent?:boolean;releaseRevision?:string|null;mailConfigured:boolean;scope:string};
 type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
- sources:{source:string;chunks:number;characters:number;kind:string}[];
+ sources:{source:string;sourceId?:string|null;chunks:number;characters:number;kind:string}[];
+ privateSourceIntegrity?:{id:string;title:string;sourceBytes:number;indexedBytes:number;indexedChunks:number;sha256:string;complete:boolean}[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
 
 const REQUIRED_PHP_TUTOR_BANKS = [
@@ -305,6 +306,54 @@ export const AdminDashboard: React.FC = () => {
               </p>
             </div>
           )}
+          {coverageOrigin === 'live' && (
+            <section className="mb-4 rounded-lg border border-slate-200 p-3 text-sm" aria-label="Tanári források szöveghűsége">
+              <h4 className="font-semibold mb-2">Külön feltöltött források – szöveghűségi ellenőrzés</h4>
+              {!Array.isArray(coverage.privateSourceIntegrity) ? (
+                <p role="alert" className="text-red-800">
+                  Az élő PHP-kiszolgáló nem ad forrásonkénti SHA-256 ellenőrzést.
+                  A feltöltött források teljes indexelése nem igazolt.
+                </p>
+              ) : coverage.privateSourceIntegrity.length === 0 ? (
+                <p className="text-slate-600">Nincs külön feltöltött tanári forrás.</p>
+              ) : (
+                <>
+                  <p role={coverage.privateSourceIntegrity.every(item => item.complete) ? 'status' : 'alert'}
+                    className={coverage.privateSourceIntegrity.every(item => item.complete) ? 'text-emerald-800 mb-2' : 'font-semibold text-red-800 mb-2'}>
+                    {coverage.privateSourceIntegrity.filter(item => item.complete).length} / {coverage.privateSourceIntegrity.length}
+                    {' '}forrás teljes UTF-8 szövege egyezik az indexelt tartalommal.
+                    {coverage.privateSourceIntegrity.some(item => !item.complete) ?
+                      ' Eltérés esetén a forrás nem tekinthető teljesen indexeltnek.' : ''}
+                  </p>
+                  <div className="overflow-x-auto"><table className="w-full text-xs">
+                    <thead><tr className="border-b text-left">
+                      <th className="p-2">Forrás (azonosító)</th>
+                      <th className="p-2">Feltöltött / indexelt bájt</th>
+                      <th className="p-2">Állapot</th>
+                    </tr></thead>
+                    <tbody>{coverage.privateSourceIntegrity.map(item => (
+                      <tr key={item.id} className="border-b">
+                        <td className="p-2 break-words">
+                          <strong>{item.title}</strong>
+                          <span className="block text-slate-500">ID: {item.id.slice(0, 12)} · {item.indexedChunks} részlet</span>
+                          <span className="block text-slate-500 break-all" title="Az eredeti feltöltött szöveg SHA-256 ellenőrzőösszege">
+                            SHA-256: {item.sha256}
+                          </span>
+                        </td>
+                        <td className="p-2">{item.sourceBytes.toLocaleString('hu-HU')} / {item.indexedBytes.toLocaleString('hu-HU')}</td>
+                        <td className={'p-2 font-semibold '+(item.complete ? 'text-emerald-800' : 'text-red-800')}>
+                          {item.complete ? 'Egyezik' : 'HIÁNYOS / ELTÉR'}
+                        </td>
+                      </tr>
+                    ))}</tbody>
+                  </table></div>
+                </>
+              )}
+              <p className="text-xs text-slate-600 mt-2">
+                Az ellenőrzés az indexelt UTF-8 szöveg teljességére vonatkozik, nem a szerzői jogokra vagy a zenei állítások helyességére.
+              </p>
+            </section>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.sources.length}</strong>Indexelt forráscsoport</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.indexChunks}</strong>Indexelt szövegrész</div>
@@ -315,7 +364,7 @@ export const AdminDashboard: React.FC = () => {
           <details className="mb-3"><summary className="cursor-pointer font-semibold">Indexelt dokumentumok – részletes bontás</summary>
             <div className="overflow-x-auto mt-2"><table className="w-full text-xs">
               <thead><tr className="border-b text-left"><th className="p-2">Forrás</th><th className="p-2">Részlet</th><th className="p-2">Karakter</th></tr></thead>
-              <tbody>{coverage.sources.map((item,i)=><tr key={i} className="border-b"><td className="p-2 break-all">{item.source}</td><td className="p-2">{item.chunks}</td><td className="p-2">{item.characters.toLocaleString('hu-HU')}</td></tr>)}</tbody>
+              <tbody>{coverage.sources.map((item,i)=><tr key={i} className="border-b"><td className="p-2 break-all">{item.source}{item.sourceId ? <span className="block text-slate-500">Azonosító: {item.sourceId.slice(0,12)}</span> : null}</td><td className="p-2">{item.chunks}</td><td className="p-2">{item.characters.toLocaleString('hu-HU')}</td></tr>)}</tbody>
             </table></div></details>
           {coverage.missing.length>0 && <div className="text-red-800 text-sm mb-3"><strong>Hiányzó kötelező fájlok:</strong> {coverage.missing.join(', ')}</div>}
           <details className="mb-3" open={coverage.omitted.length>0}><summary className="cursor-pointer font-semibold">Nem indexelt fájlok ({coverage.omitted.length})</summary>
