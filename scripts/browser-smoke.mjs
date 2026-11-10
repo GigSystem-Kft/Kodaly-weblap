@@ -548,6 +548,107 @@ try {
     await accountRaceContext.close();
   }
 
+  // A-06: two independent browser storage contexts start with the same
+  // server revision and different offline achievements. Delaying the first PUT
+  // makes the conflict deterministic, proving the real React 409 retry path
+  // preserves BOTH sets of results after a reload.
+  const deviceContexts = [await browser.newContext(), await browser.newContext()];
+  const devicePages = await Promise.all(deviceContexts.map(ctx => ctx.newPage()));
+  let sharedProgress = null;
+  let sharedRevision = '0'.repeat(64);
+  let successfulSaves = 0;
+  let conflicts = 0;
+  let pendingFirstSave = null;
+  let finishReconciliation;
+  const reconciliationDone = new Promise(resolve => { finishReconciliation = resolve; });
+  const sendJson = (route, status, data) => route.fulfill({
+    status, contentType:'application/json', body:JSON.stringify(data)
+  });
+  const acceptDeviceSave = async (route, payload) => {
+    if (payload.revision !== sharedRevision) {
+      conflicts++;
+      return sendJson(route, 409, {progress:sharedProgress,revision:sharedRevision});
+    }
+    sharedProgress = payload.progress;
+    successfulSaves++;
+    sharedRevision = String(successfulSaves).repeat(64);
+    const response = await sendJson(route, 200, {revision:sharedRevision});
+    const values = sharedProgress?.favoriteExpressions ?? [];
+    if (successfulSaves>=2 && conflicts>=1 &&
+        values.includes('device-one-offline') &&
+        values.includes('device-two-offline')) finishReconciliation();
+    return response;
+  };
+  const deviceRoute = async route => {
+    const endpoint=new URL(route.request().url()).searchParams.get('route');
+    if (endpoint==='auth/me')
+      return sendJson(route,200,{user:{
+        id:'two-browser-fixture',email:'two@example.invalid',
+        displayName:'Két eszköz próba',role:'student'
+      }});
+    if (endpoint==='auth/status')
+      return sendJson(route,200,{available:true,registrationEnabled:false});
+    if (endpoint==='chat/status')
+      return sendJson(route,200,{mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}});
+    if (endpoint==='progress') {
+      if (route.request().method()==='GET')
+        return sendJson(route,200,{progress:sharedProgress,revision:sharedRevision});
+      const payload=JSON.parse(route.request().postData() || '{}');
+      // Do not apply first PUT until both clients have already loaded their
+      // old revision and attempted to save their own offline result.
+      if (!pendingFirstSave) {
+        return new Promise(resolve => {
+          pendingFirstSave={route,payload,resolve};
+        });
+      }
+      if (pendingFirstSave !== true) {
+        const first=pendingFirstSave;
+        pendingFirstSave=true;
+        await acceptDeviceSave(first.route,first.payload);
+        first.resolve();
+      }
+      return acceptDeviceSave(route,payload);
+    }
+    return sendJson(route,404,{error:'Fixture endpoint unavailable'});
+  };
+  try {
+    for (let i=0; i<2; i++) {
+      const favorite = i===0?'device-one-offline':'device-two-offline';
+      await devicePages[i].addInitScript(value => {
+        localStorage.setItem('kodaly_pending_progress_two-browser-fixture',
+          JSON.stringify({
+            version:1, ownerId:'two-browser-fixture', base:{},
+            local:{favoriteExpressions:[value]}
+          }));
+      },favorite);
+      await devicePages[i].route('**/api/index.php?*',deviceRoute);
+    }
+    await Promise.all(devicePages.map(page=>page.goto(root,{waitUntil:'domcontentloaded'})));
+    await Promise.all(devicePages.map(async page => {
+      await page.getByRole('button',{name:/06\. Profil/}).click();
+      await page.getByText('Két eszköz próba',{exact:true}).first().waitFor();
+    }));
+    await Promise.race([
+      reconciliationDone,
+      new Promise((_,reject)=>setTimeout(() =>
+        reject(new Error('Two-browser offline reconciliation timed out: '+
+          JSON.stringify({successfulSaves,conflicts,sharedProgress}))),15000))
+    ]);
+    if (successfulSaves!==2 || conflicts!==1)
+      throw new Error('Expected one stale-write 409 and two successful saves: '+
+        JSON.stringify({successfulSaves,conflicts}));
+    // Re-reading the server from device one must recover the new contribution
+    // made from device two as well, not only the locally cached favorite.
+    await devicePages[0].reload({waitUntil:'domcontentloaded'});
+    await devicePages[0].getByRole('button',{name:/06\. Profil/}).click();
+    await devicePages[0].getByText('Két eszköz próba',{exact:true}).first().waitFor();
+    await devicePages[0].locator('div.bg-slate-50')
+      .filter({hasText:'Kedvenc fogalmak'}).first().getByText('2',{exact:true}).waitFor();
+    console.log('A-06: two isolated browser contexts reconciled offline favorites after 409');
+  } finally {
+    await Promise.all(deviceContexts.map(ctx=>ctx.close()));
+  }
+
   // The admin coverage panel must not silently present build-time statistics
   // as live PHP results, especially after a partial server restore.
   const reportFixture = (sources, chunks) => ({
