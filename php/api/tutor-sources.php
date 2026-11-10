@@ -43,6 +43,7 @@ function tutorSourceList(): array {
 function tutorSourceUtf8Pieces(string $line, int $byteLimit = 900): array {
     // Keep the exact teacher-approved text: trimming stripped paragraph
     // indentation and trailing newlines from the searchable index.
+    if ($byteLimit < 4) throw new InvalidArgumentException('UTF-8 chunk limit must be at least 4 bytes');
     $remaining = $line;
     $pieces = [];
     while (strlen($remaining) > $byteLimit) {
@@ -52,6 +53,19 @@ function tutorSourceUtf8Pieces(string $line, int $byteLimit = 900): array {
         $prefix = substr($remaining, 0, $cut);
         $space = strrpos($prefix, ' ');
         if ($space !== false && $space >= intdiv($byteLimit, 2)) $cut = $space + 1;
+        // The final code point might only be the base of a combining-accent
+        // grapheme or one emoji in a ZWJ sequence. Inspect the entire
+        // grapheme in the original string, not just the truncated prefix.
+        // This costs at most one small regex scan per 900-byte chunk.
+        $prefix = substr($remaining, 0, $cut);
+        if (preg_match_all('/\\X/u', $prefix, $graphemes, PREG_OFFSET_CAPTURE) > 0) {
+            $last = $graphemes[0][count($graphemes[0])-1];
+            $lastStart = $last[1];
+            if ($lastStart > 0 && preg_match('/\\X/u', $remaining, $full, 0, $lastStart) === 1 &&
+                $lastStart + strlen($full[0]) > $cut) {
+                $cut = $lastStart;
+            }
+        }
         $piece = substr($remaining, 0, $cut);
         if ($piece !== '') $pieces[] = $piece;
         $remaining = substr($remaining, $cut);
