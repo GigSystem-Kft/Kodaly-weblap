@@ -169,6 +169,29 @@ function mbSafeCut(string $text,int $max): string {
 }
 
 
+/** Count public knowledge groups without exposing private upload IDs or titles. */
+function tutorKnowledgeCounts(array $entries): array {
+    $sourceKeys=[];
+    $lessons=0;
+    foreach ($entries as $entry) {
+        if (!is_array($entry)) continue;
+        $privateId=is_string($entry['sourceId'] ?? null) ? $entry['sourceId'] : null;
+        if ($privateId===null && ($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag' &&
+            ($entry['contextApproved'] ?? null)===true) {
+            $lessons++;
+        } else {
+            $key=$privateId!==null
+                ? 'private:'.$privateId : 'built-in:'.(string)($entry['source'] ?? '');
+            $sourceKeys[$key]=true;
+        }
+    }
+    return [
+        'indexedSources'=>count($sourceKeys),
+        'lessonChunks'=>$lessons,
+        'indexedChunks'=>count($entries)
+    ];
+}
+
 /** Only aggregate status: do not reveal private uploaded source titles to anonymous visitors. */
 function tutorSourceAudit(array $entries): array {
     $coverage=[];
