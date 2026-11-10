@@ -5,7 +5,8 @@
  * Invoked after export-php-knowledge.ts writes release/api/knowledge.php.
  * No personal user data or external provider calls are involved.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import assert from 'node:assert/strict';
 import { FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from '../src/data/musicData';
 import { MAJOR_SCALES, MINOR_SCALES, TRIADS, C_MAJOR_INVERSIONS, FIFTHS_CIRCLE } from '../src/data/tonalExamples';
@@ -82,4 +83,47 @@ assertBank('Zenei kifejezések – mellékelt, nem minden címszóban lektorált
     text: item.term + ' – ' + item.definition
   }))
 );
+
+
+// A-08: source-derived text should be lossless, not merely present as a few
+// searchable snippets. The old UTF-16 slicing could corrupt 𝄞/emoji and
+// silently discarded short final pieces; the older lesson exporter also
+// truncated everything after its first 5,000 code units.
+const sourceRoot = resolve('server-data');
+const documents = [{file:'jegyzet.txt',label:'Bartáné Góhér Edit – egyetemi jegyzet'}];
+const sourceFolder = join(sourceRoot,'forrasok');
+if (existsSync(sourceFolder)) {
+  for (const fileName of readdirSync(sourceFolder)
+    .filter(x=>/\.(txt|md)$/i.test(x) && !x.startsWith('_') &&
+      !/kesztler[-_ ]zenei[-_ ]alapismeretek/i.test(x))) {
+    documents.push({file:'forrasok/'+fileName,label:fileName});
+  }
+}
+let verifiedSourcePages = 0;
+for (const document of documents) {
+  const path = join(sourceRoot,document.file);
+  if (!existsSync(path)) continue;
+  const rawText = readFileSync(path,'utf8');
+  const pageRegex = /(?:^===\s*\[OLDAL\s+(\d+)\][^\n]*===\s*$)|(?:^---\s*(\d+)\.\s*oldal\s*---\s*$)/gim;
+  const boundaries=[...rawText.matchAll(pageRegex)];
+  const pages = boundaries.length ? boundaries.map((match,index)=>({
+    label:(match[1] ?? match[2])+'. oldal',
+    text:rawText.slice(match.index!+match[0].length, boundaries[index+1]?.index ?? rawText.length)
+  })) : [{label:'forrásrészlet',text:rawText}];
+  const expected = new Map<string,string>();
+  for (const page of pages) {
+    if (!page.text) continue;
+    expected.set(page.label,(expected.get(page.label)??'')+page.text);
+  }
+  const actual = new Map<string,string>();
+  for (const passage of entries.filter(e=>e.source===document.label)) {
+    actual.set(passage.label,(actual.get(passage.label)??'')+passage.text);
+  }
+  assert.deepEqual([...actual.entries()].sort(),[...expected.entries()].sort(),
+    document.file+': the PHP index dropped or modified source text or its page attribution');
+  verifiedSourcePages += expected.size;
+}
+console.log('PHP tutor: '+verifiedSourcePages+
+  ' teacher-source page groups match original UTF-8 text byte-for-byte');
+
 console.log('PHP tutor: all seven packaged student-facing banks match their original data');
