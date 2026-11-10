@@ -22,14 +22,23 @@ function tutorSourceList(): array {
     foreach (glob($dir.'/*.json') ?: [] as $file) {
         $id=basename($file, '.json');
         if (!preg_match('/^[a-f0-9]{32}$/D', $id)) continue;
+        // Private source records must be regular, locally stored JSON files.
+        // Reject symlinks into unrelated filesystem locations and overlarge
+        // files *before* loading their contents into the PHP worker.
+        if (is_link($file) || !is_file($file)) continue;
+        $size=@filesize($file);
+        if ($size===false || $size>330000) continue;
         $raw=@file_get_contents($file);
         if (!is_string($raw) || strlen($raw)>330000) continue;
         $entry=json_decode($raw,true);
-        if (!is_array($entry) || !isset($entry['title'],$entry['text'])) continue;
+        if (!is_array($entry) ||
+            !is_string($entry['title'] ?? null) || !is_string($entry['text'] ?? null) ||
+            preg_match('//u',$entry['text'])!==1 ||
+            str_contains($entry['text'],"\0")) continue;
         $result[]=[
-            'id'=>$id,'title'=>(string)$entry['title'],
-            'createdAt'=>(string)($entry['createdAt'] ?? ''),
-            'size'=>strlen((string)$entry['text']),
+            'id'=>$id,'title'=>$entry['title'],
+            'createdAt'=>is_string($entry['createdAt'] ?? null) ? $entry['createdAt'] : '',
+            'size'=>strlen($entry['text']),
         ];
     }
     usort($result,static fn($a,$b)=>strcmp($b['createdAt'],$a['createdAt']));
