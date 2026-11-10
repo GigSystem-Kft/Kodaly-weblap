@@ -202,15 +202,26 @@ function tutorDetailedCoverage(array $entries): array {
     foreach ($entries as $entry) {
         if (!is_array($entry) || !is_string($entry['source'] ?? null)) continue;
         $name = $entry['source'];
-        if (str_starts_with((string)($entry['label'] ?? ''), '09. Zenei kifejezések / ')) {
+        $privateId = is_string($entry['sourceId'] ?? null) &&
+            preg_match('/^[a-f0-9]{32}$/D',$entry['sourceId'])===1
+            ? $entry['sourceId'] : null;
+        // Private uploads with identical titles must remain distinct; nor
+        // may a teacher-upload title impersonate a required built-in bank.
+        $key = $privateId !== null ? 'private:' . $privateId : $name;
+        if ($privateId===null &&
+            str_starts_with((string)($entry['label'] ?? ''), '09. Zenei kifejezések / ')) {
             ++$glossaryEntries;
         }
         $characters = mbSafeLength((string)($entry['text'] ?? ''));
-        if (!isset($groups[$name])) {
-            $groups[$name] = ['source'=>$name,'chunks'=>0,'characters'=>0,'kind'=>'indexed'];
+        if (!isset($groups[$key])) {
+            $groups[$key] = [
+                'source'=>$name,'sourceId'=>$privateId,
+                'chunks'=>0,'characters'=>0,
+                'kind'=>$privateId===null ? 'indexed' : 'teacher-upload'
+            ];
         }
-        $groups[$name]['chunks']++;
-        $groups[$name]['characters'] += $characters;
+        $groups[$key]['chunks']++;
+        $groups[$key]['characters'] += $characters;
         $totalCharacters += $characters;
     }
     ksort($groups);
@@ -235,6 +246,14 @@ function tutorDetailedCoverage(array $entries): array {
             $missing[] = 'Hiányzik a PHP Tanársegédből: ' . $bank;
         }
     }
+    require_once __DIR__ . '/tutor-sources.php';
+    $privateIntegrity=tutorPrivateSourceIntegrity($entries);
+    foreach ($privateIntegrity as $source) {
+        if ($source['complete'] !== true) {
+            $missing[]='Tanári forrás hiányosan indexelve: ' . $source['title'] .
+                ' (' . $source['id'] . ')';
+        }
+    }
     $omitted = [
         ['file'=>'Kesztler – ellenőrizetlen OCR-átirat',
          'reason'=>'A gépi szöveg szakmai ellenőrzéséig a PHP tudásbázisból kizárva']
@@ -245,6 +264,7 @@ function tutorDetailedCoverage(array $entries): array {
         'chapter09GlossaryEntries'=>$glossaryEntries,
         'indexedCharacters'=>$totalCharacters,
         'sources'=>array_values($groups),
+        'privateSourceIntegrity'=>$privateIntegrity,
         'missing'=>$missing,
         'omitted'=>$omitted,
         'limitations'=>[
