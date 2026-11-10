@@ -64,8 +64,12 @@ try {
     file_put_contents($jsPath, 'console.log("correct release")');
     $coreFiles = [
         'api/index.php', 'api/admin.php', 'api/deployment-audit.php',
+        'api/tutor-text-generation.php', 'api/tutor-image-generation.php',
+        'api/tutor-visuals.php', 'api/creative-answers.php',
+        'api/music-answers.php', 'api/vendor/autoload.php',
         'api/tutor-search.php', 'api/tutor-sources.php', 'api/knowledge.php'
     ];
+    mkdir($root . '/api/vendor', 0700, true);
     foreach ($coreFiles as $relative) {
         file_put_contents($root . '/' . $relative, "<?php // CI fixture {$relative}\n");
     }
@@ -99,6 +103,19 @@ try {
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
         'mixed PHP source must be caught even when three revision labels agree');
     file_put_contents($phpPath, "<?php // CI fixture api/tutor-search.php\n");
+
+    // A-24: one of the newly protected optional feature modules, and the
+    // Composer autoloader, must not silently come from an older build.
+    foreach (['api/tutor-image-generation.php', 'api/vendor/autoload.php'] as $relative) {
+        $path = $root . '/' . $relative;
+        $original = file_get_contents($path);
+        file_put_contents($path, '<?php // mixed-version feature');
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+            'old PHP feature module must block release readiness: ' . $relative);
+        file_put_contents($path, $original);
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+            'restored PHP feature module returns identical release: ' . $relative);
+    }
 
     $writeManifest($otherSha, $fileHashes);
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
