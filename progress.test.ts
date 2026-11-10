@@ -133,6 +133,21 @@ test('guest import merges achievements instead of overwriting another account', 
   assert.equal(merged.xp, 100);
 });
 
+test('guest progress merge preserves arbitrary valid quiz category IDs without inherited keys',()=>{
+  // Stored JSON objects may have keys that are also Object.prototype members.
+  // These must behave like normal IDs and never create NaN or mutate a prototype.
+  const server=createEmptyProgress();
+  server.quizScores=Object.fromEntries([['constructor',65],['__proto__',80]]);
+  const guest=createEmptyProgress();
+  guest.quizScores=Object.fromEntries([['constructor',95],['__proto__',75],['toString',60]]);
+  const merged=mergeProgress(server,guest);
+  assert.equal(Object.getPrototypeOf(merged.quizScores),Object.prototype);
+  assert.deepEqual(Object.entries(merged.quizScores).sort(),[
+    ['__proto__',80],['constructor',95],['toString',60]
+  ].sort());
+  assert.equal(JSON.parse(JSON.stringify(merged)).quizScores.constructor,95);
+});
+
 test('matching and subchapter completions survive a legacy-compatible progress merge',()=>{
  const server = createEmptyProgress();
  server.completedSubchapters=['ritmus-1'];
