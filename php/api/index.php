@@ -785,29 +785,10 @@ try {
             method('GET');
             require_once __DIR__ . '/tutor-text-generation.php';
             $entries=knowledgeEntries();
-            $sources=[];
-            $lessons=0;
-            foreach ($entries as $entry) {
-                $privateId = is_string($entry['sourceId'] ?? null)
-                    ? $entry['sourceId'] : null;
-                if ($privateId === null &&
-                    ($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag' &&
-                    ($entry['contextApproved'] ?? false) === true) {
-                    $lessons++;
-                } else {
-                    // Two teacher uploads may have identical titles. Count
-                    // distinct source IDs without disclosing them publicly.
-                    $key = $privateId !== null
-                        ? 'private:' . $privateId
-                        : 'built-in:' . (string)($entry['source'] ?? '');
-                    $sources[$key] = true;
-                }
-            }
+            $counts=tutorKnowledgeCounts($entries);
             answer(200,['mode'=>tutorTextEnabled($config) ? 'gemini' : 'fallback',
                 'requiresLogin'=>tutorTextEnabled($config),
-                'knowledge'=>['indexedSources'=>count($sources),
-                    'lessonChunks'=>$lessons,'indexedChunks'=>count($entries),
-                    'coverage'=>tutorSourceAudit($entries)]]);
+                'knowledge'=>array_merge($counts,['coverage'=>tutorSourceAudit($entries)])]);
         case 'chat':
             method('POST'); guardWrite($config); throttle('chat', 60);
             $data=getPayload();
