@@ -22,7 +22,7 @@ import { RhythmResearchBookView } from './components/RhythmResearchBookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
-import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync } from './progress';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, getQuizBestScore } from './progress';
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress, safeBrowserStorage } from './pendingProgress';
 
 export default function App() {
@@ -265,7 +265,7 @@ export default function App() {
       chapterId, score, correct, total, at: new Date().toISOString(), wrongQuestionIds, durationSeconds
     };
     setProgress(prev => {
-      const previousBest = prev.quizScores[chapterId] ?? 0;
+      const previousBest = getQuizBestScore(prev.quizScores, chapterId);
       const improved = score > previousBest;
       return recordActivity({
         ...prev,
