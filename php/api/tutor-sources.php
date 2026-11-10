@@ -20,6 +20,43 @@ function tutorSourceFile(string $id): string {
  * Never accept a second read whose content differs from the source inventory:
  * an upload replaced between listing and indexing must not be silently mixed.
  */
+/**
+ * Publish a complete source record with owner-only permissions. A direct
+ * file_put_contents(LOCK_EX) is not atomic for readers that do not acquire a
+ * shared lock: an indexing request may see a partial JSON file. Write the
+ * entire payload to a private temporary file and rename only on success.
+ */
+function tutorStoreSourceRecord(string $id, string $payload): void {
+    $dir=tutorSourceDirectory();
+    if (is_link($dir)) throw new RuntimeException('Private source directory cannot be a symlink');
+    if (!is_dir($dir) && !mkdir($dir,0700,true) && !is_dir($dir)) {
+        throw new RuntimeException('Cannot create private source directory');
+    }
+    $target=tutorSourceFile($id);
+    $temporary=$dir.'/.'.bin2hex(random_bytes(16)).'.tmp';
+    $handle=@fopen($temporary,'x+b');
+    if ($handle===false) throw new RuntimeException('Cannot create private source staging file');
+    try {
+        if (!chmod($temporary,0600)) throw new RuntimeException('Cannot secure private source staging file');
+        $size=strlen($payload);
+        $offset=0;
+        while ($offset<$size) {
+            $count=fwrite($handle,substr($payload,$offset));
+            if ($count===false || $count===0) throw new RuntimeException('Incomplete private source write');
+            $offset+=$count;
+        }
+        if (!fflush($handle)) throw new RuntimeException('Cannot flush private source');
+    } catch (Throwable $error) {
+        fclose($handle);
+        @unlink($temporary);
+        throw $error;
+    }
+    fclose($handle);
+    if (file_exists($target) || is_link($target) || !@rename($temporary,$target)) {
+        @unlink($temporary);
+        throw new RuntimeException('Cannot publish private source record');
+    }
+}
 function tutorReadSourceRecord(string $id, ?string $expectedSha256 = null): ?array {
     if (!preg_match('/^[a-f0-9]{32}$/D', $id)) return null;
     $file=tutorSourceFile($id);
@@ -51,7 +88,7 @@ function tutorReadSourceRecord(string $id, ?string $expectedSha256 = null): ?arr
 }
 function tutorSourceList(): array {
     $dir = tutorSourceDirectory();
-    if (!is_dir($dir)) return [];
+    if (is_link($dir) || !is_dir($dir)) return [];
     $result=[];
     foreach (glob($dir.'/*.json') ?: [] as $file) {
         $id=basename($file, '.json');
@@ -215,20 +252,13 @@ function tutorSourcesAdminRoute(array $config, string $route): never {
         if ($title==='' || strlen($title)>120 || preg_match('/[\x00-\x1F]/',$title)) {
             fail(400,'Adj meg egy legfeljebb 120 karakteres forráscímet.');
         }
-        $dir=tutorSourceDirectory();
-        if (!is_dir($dir) && !mkdir($dir,0700,true) && !is_dir($dir)) {
-            throw new RuntimeException('Cannot create private source directory');
-        }
         $id=bin2hex(random_bytes(16));
         $payload=json_encode([
             'title'=>$title,
             'text'=>$text,
             'createdAt'=>gmdate('c'),
         ],JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR);
-        if (file_put_contents(tutorSourceFile($id),$payload,LOCK_EX)===false) {
-            throw new RuntimeException('Private source write failed');
-        }
-        chmod(tutorSourceFile($id),0600);
+        tutorStoreSourceRecord($id,$payload);
         answer(201,['success'=>true,'source'=>['id'=>$id,'title'=>$title]]);
     }
     if ($route === 'admin/source-delete') {
