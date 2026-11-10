@@ -161,14 +161,19 @@ export function mergeProgress(account: UserProgress, guest: UserProgress): UserP
     quizScores[chapter] = Math.max(score, quizScores[chapter] ?? 0);
   }
   const days = union(account.activityDays ?? [], guest.activityDays ?? []).sort();
+  // An attempt ID is immutable once stored on the server. The same ID may be
+  // present in a stale offline snapshot with older/different fields; imported
+  // copies must never overwrite the account's authoritative assessment data.
+  const attemptsById = new Map<string, NonNullable<UserProgress['quizAttempts']>[number]>();
+  for (const attempt of [...(account.quizAttempts ?? []), ...(guest.quizAttempts ?? [])]) {
+    if (!attemptsById.has(attempt.id)) attemptsById.set(attempt.id, attempt);
+  }
   return migrateProgress({
     ...account,
     completedChapters: union(account.completedChapters, guest.completedChapters),
     completedSubchapters: union(account.completedSubchapters, guest.completedSubchapters),
     quizScores,
-    quizAttempts: [...new Map(
-      [...(account.quizAttempts ?? []), ...(guest.quizAttempts ?? [])].map(item => [item.id, item])
-    ).values()].sort((a, b) => a.at.localeCompare(b.at)).slice(-100),
+    quizAttempts: [...attemptsById.values()].sort((a, b) => a.at.localeCompare(b.at)).slice(-100),
     flashcardsMastered: union(account.flashcardsMastered, guest.flashcardsMastered),
     matchingCompleted: union(account.matchingCompleted, guest.matchingCompleted),
     favoriteExpressions: union(account.favoriteExpressions ?? [], guest.favoriteExpressions ?? []).slice(0,1800),
