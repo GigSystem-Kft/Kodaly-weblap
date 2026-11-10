@@ -664,6 +664,7 @@ try {
     const reportPage = await reportContext.newPage();
     let extraSource = null;
     let corruptSourceReceipt = false;
+    let rejectedSourceFile = false;
     let invitationAttempts = 0;
     let sourceReportLoads = 0;
     await reportPage.route('**/source-inventory.json', route =>
@@ -675,6 +676,9 @@ try {
       if (endpoint === 'admin/source-delete') extraSource = null;
       if (endpoint === 'admin/source-coverage') sourceReportLoads++;
       const currentReport = {...liveFixture,
+        rejectedSourceIds:rejectedSourceFile ? ['f'.repeat(32)] : [],
+        missing:rejectedSourceFile
+          ? ['Sérült, veszélyes vagy nem olvasható tanári forrásfájl: '+'f'.repeat(32)] : [],
         indexChunks:2800+(extraSource ? 1 : 0),
         sources:extraSource
           ? [...liveFixture.sources, {source:extraSource.title,sourceId:extraSource.id,
@@ -769,10 +773,13 @@ try {
       // A same-sized or truncated private source must become visibly red in
       // the admin panel rather than looking like a healthy upload.
       corruptSourceReceipt = true;
+      rejectedSourceFile = true;
       await reportPage.reload({waitUntil:'domcontentloaded'});
       await reportPage.getByRole('button',{name:'Admin',exact:true}).click();
       await reportPage.getByText(/0 \/ 1 forrás teljes UTF-8 szövege/).waitFor();
       await reportPage.getByText('HIÁNYOS / ELTÉR',{exact:true}).waitFor();
+      await reportPage.getByText(/1 sérült vagy nem biztonságosan olvasható tanári forrásfájl/).waitFor();
+      await reportPage.getByText(/Hiányzó kötelező tartalom és forráshibák/).waitFor();
       await reportPage.getByRole('button',{name:'Eltávolítás'}).waitFor();
       reportPage.once('dialog', dialog => dialog.accept());
       await reportPage.getByRole('button',{name:'Eltávolítás'}).click();
