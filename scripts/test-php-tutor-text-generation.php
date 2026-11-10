@@ -27,5 +27,37 @@ $json=json_encode($payload,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
 checkTextTutor(!str_contains($json,'Titkos') && str_contains($json,'leszállított H'),'only public lesson context sent');
 checkTextTutor(($payload['store']??null)===false,'no optional storage');
 checkTextTutor(str_contains($json,'kérdése'),'question included');
+// UTF-8 source excerpts and student prompts must never be cut mid-character
+// before json_encode forwards an optional grounded request to a provider.
+$accent="e\u{0301}";
+$emoji="👩‍🎼";
+$graphemeExcerpt=str_repeat('a',899).$accent."𝄞";
+$lessonContext=tutorTextContext([[
+    'source'=>'Zeneelméleti Műhely – Tananyag',
+    'label'=>str_repeat('L',179).$accent,
+    'text'=>$graphemeExcerpt
+]]);
+checkTextTutor(count($lessonContext)===1,'long first-party lesson accepted');
+checkTextTutor($lessonContext[0]['excerpt']===str_repeat('a',899),
+    '900-byte excerpt does not split a combined Hungarian accent');
+checkTextTutor($lessonContext[0]['label']===str_repeat('L',179),
+    '180-byte label does not split a combined accent');
+$emojiExcerpt=str_repeat('a',898).$emoji;
+$emojiContext=tutorTextContext([[
+    'source'=>'Zeneelméleti Műhely – Tananyag',
+    'label'=>'Példa – zenei szimbólumok',
+    'text'=>$emojiExcerpt
+]]);
+checkTextTutor($emojiContext[0]['excerpt']===str_repeat('a',898),
+    '900-byte excerpt does not split a joined musical emoji');
+checkTextTutor(tutorTextSafePrefix('𝄞Á',4)==='𝄞',
+    'the four-byte musical symbol is retained intact');
+checkTextTutor(tutorTextSafePrefix('Ő',1)==='',
+    'a one-byte limit never creates a malformed two-byte accented letter');
+$longQuestion=str_repeat('q',999).$accent;
+$payloadSafe=tutorTextPayload($longQuestion,$lessonContext);
+$jsonSafe=json_encode($payloadSafe,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+checkTextTutor(preg_match('//u',$jsonSafe)===1 && !str_contains($jsonSafe,$accent),
+    'student question Unicode remains valid at the 1000-byte cap');
 checkTextTutor(tutorTextReply($disabled,'Mi a B?',$hits)===null,'no network when off');
 echo "Optional grounded tutor configuration and privacy checks passed\n";
