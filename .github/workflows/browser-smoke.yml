@@ -1,14 +1,9 @@
 name: Zeneelméleti Műhely – Chromium böngészős füstteszt
 on:
+  # The release gate must run for every PR update, including docs-only changes.
+  # Restricting paths can leave checks absent for the eventual merge commit.
   pull_request:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'scripts/browser-smoke.mjs'
-      - 'package.json'
-      - 'vite.config.ts'
-      - '.github/workflows/browser-smoke.yml'
   workflow_dispatch:
 
 permissions:
