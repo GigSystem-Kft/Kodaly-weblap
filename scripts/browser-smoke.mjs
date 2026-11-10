@@ -188,6 +188,9 @@ try {
   // retain all 15 question IDs, not silently clip the last three.
   await category.selectOption('all');
   await page.getByText('Kérdés 1 / 15').waitFor();
+  const mixedBefore = await page.evaluate(() =>
+    (JSON.parse(localStorage.getItem('kodaly_progress')||'null')?.quizAttempts??[])
+      .filter(a => a.chapterId === 'vegyes-gyakorlas').length);
   for (let n=0; n<15; n++) {
     const question = await page.locator('h3.text-xl.font-bold.text-white').innerText();
     const answers = page.locator('div.space-y-3.mb-6 button');
@@ -205,15 +208,36 @@ try {
       throw new Error('Conflicting answer keys for identical quiz question and options: '+question);
     const correctIndex = [...indexes][0];
     const wrongOption = (correctIndex + 1) % visibleOptions.length;
-    await answers.nth(wrongOption).click();
+    if(n===0){
+      // Two synchronous click events must count as a single mistaken answer.
+      await answers.nth(wrongOption).evaluate(el => { el.click(); el.click(); });
+      await page.waitForFunction(index =>
+        document.querySelectorAll('div.space-y-3.mb-6 button')[index]
+          ?.classList.contains('border-rose-500'), wrongOption);
+    } else {
+      await answers.nth(wrongOption).click();
+    }
     // The selected wrong answer must actually be marked as incorrect before
     // advancing, otherwise the final progress assertion has no meaning.
     const feedbackClass = await answers.nth(wrongOption).getAttribute('class') || '';
     if (!feedbackClass.includes('border-rose-500'))
       throw new Error('Expected wrong-answer feedback was not shown for: '+question);
-    await page.getByRole('button',{name:n===14 ? 'Kvíz befejezése' : 'Következő kérdés'}).click();
+    const next = page.getByRole('button',{name:n===14 ? 'Kvíz befejezése' : 'Következő kérdés'});
+    if (n===1 || n===14) {
+      // Rapid clicks must neither skip a question nor create duplicate history.
+      await next.evaluate(el => { el.click(); el.click(); });
+    } else {
+      await next.click();
+    }
+    if(n<14) await page.getByText(`Kérdés ${n+2} / 15`).waitFor();
   }
   await page.getByRole('heading',{name:'Kvíz Teljesítve!'}).waitFor();
+  const mixedAfter = await page.evaluate(() =>
+    (JSON.parse(localStorage.getItem('kodaly_progress')||'null')?.quizAttempts??[])
+      .filter(a => a.chapterId === 'vegyes-gyakorlas').length);
+  if(mixedAfter !== mixedBefore+1)
+    throw new Error('Double clicking Finish recorded duplicate quiz attempts: '+
+      mixedBefore+' → '+mixedAfter);
   try {
     await page.waitForFunction(() => {
       const value=JSON.parse(localStorage.getItem('kodaly_progress')||'null');
