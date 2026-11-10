@@ -1,7 +1,7 @@
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './src/pendingProgress';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, validStudyDay } from './src/progress';
+import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, validStudyDay, getQuizBestScore } from './src/progress';
 
 test('a new learner starts with zero experience and no fabricated days', () => {
   const progress = createEmptyProgress();
@@ -131,6 +131,19 @@ test('guest import merges achievements instead of overwriting another account', 
   assert.equal(merged.quizScores.ritmus, 88);
   assert.equal(merged.quizScores['hangok-kulcsok'], 95);
   assert.equal(merged.xp, 100);
+});
+
+test('best quiz score never reads JavaScript inherited names or accepts corrupt grades', () => {
+  const scores = Object.fromEntries([['ritmus',75], ['constructor',80], ['__proto__',65]]);
+  assert.equal(getQuizBestScore(scores,'ritmus'),75);
+  assert.equal(getQuizBestScore(scores,'constructor'),80);
+  assert.equal(getQuizBestScore(scores,'__proto__'),65);
+  assert.equal(getQuizBestScore(scores,'toString'),0);
+  assert.equal(getQuizBestScore({},'constructor'),0);
+  assert.equal(getQuizBestScore({},'__proto__'),0);
+  assert.equal(getQuizBestScore(Object.assign(Object.create(null), {score:95}), 'score'),95);
+  assert.equal(getQuizBestScore({bad:Infinity},'bad'),0);
+  assert.equal(getQuizBestScore({bad:NaN},'bad'),0);
 });
 
 test('guest progress merge preserves arbitrary valid quiz category IDs without inherited keys',()=>{
