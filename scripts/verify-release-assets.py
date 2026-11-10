@@ -93,11 +93,22 @@ try:
             "api/music-answers.php", "api/vendor/autoload.php",
             "api/tutor-search.php", "api/tutor-sources.php", "api/knowledge.php",
         }
-        expected_files = core | entrypoints
+        asset_directory = root / "assets"
+        if not asset_directory.is_dir() or asset_directory.is_symlink():
+            errors.append("Missing or unsafe frontend assets directory")
+        shipped_assets = {
+            item.relative_to(root).as_posix()
+            for item in asset_directory.rglob("*")
+            if item.suffix.lower() in {".js", ".css"} and
+               (item.is_file() or item.is_symlink())
+        }
+        expected_files = core | shipped_assets
         if not any(item.endswith(".js") for item in entrypoints):
             errors.append("Missing JavaScript file for release integrity check")
+        if not entrypoints.issubset(shipped_assets):
+            errors.append("HTML references an absent JavaScript/CSS entrypoint")
         if set(digests) != expected_files:
-            errors.append("Release manifest does not enumerate exact required PHP and JS/CSS files")
+            errors.append("Release manifest does not enumerate every shipped PHP and JS/CSS file")
         else:
             for name in sorted(expected_files):
                 item = root / name
