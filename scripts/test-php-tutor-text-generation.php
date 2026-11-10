@@ -15,11 +15,41 @@ $enabled=$disabled;
 $enabled['tutor_text_generation']['enabled']=true;
 checkTextTutor(tutorTextEnabled($enabled),'only explicit opt in activates');
 $hits=[
- ['source'=>'Zeneelméleti Műhely – Tananyag','label'=>'02. Hangnevek',
+ ['source'=>'Zeneelméleti Műhely – Tananyag','contextApproved'=>true,'label'=>'02. Hangnevek',
   'text'=>'A magyar H a természetes hang, a B pedig a leszállított H.'],
  ['source'=>'Külön pedagógiai licencelt könyv','label'=>'Bizalmas',
   'text'=>'Titkos, nem továbbítható szerzői jogi forrás.'],
 ];
+// The source title is NOT a trust boundary: teachers can legally choose the
+// same title as the first-party curriculum for separately uploaded material.
+$injected=$hits;
+$injected[]=[
+ 'source'=>'Zeneelméleti Műhely – Tananyag',
+ 'sourceId'=>str_repeat('c',32),
+ 'label'=>'02. Hangnevek / külön feltöltött könyv',
+ 'text'=>'KÜLSŐ MODELLNEK NEM KÜLDHETŐ SZÖVEG'
+];
+$injected[]=[
+ 'source'=>'Zeneelméleti Műhely – Tananyag',
+ 'label'=>'02. Hangnevek / címhamisított magánforrás',
+ 'text'=>'LICENCELT FORRÁS NEM HIVATALOS TANANYAG'
+];
+$injected[]=[
+ 'source'=>'Zeneelméleti Műhely – Tananyag',
+ 'sourceId'=>str_repeat('d',32),
+ 'contextApproved'=>true,
+ 'label'=>'02. Hangnevek / hibás megbízhatósági jelölés',
+ 'text'=>'SZERKESZTETT FORRÁS NEM KÜLDHETŐ KI'
+];
+$filtered=tutorTextContext($injected);
+checkTextTutor(count($filtered)===1,
+ 'only explicitly tagged first-party lesson, never matching private title, is eligible');
+$filteredJson=json_encode(tutorTextPayload('Mi a B?', $filtered),JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+checkTextTutor(!str_contains($filteredJson,'KÜLSŐ MODELLNEK') &&
+ !str_contains($filteredJson,'LICENCELT FORRÁS') &&
+ !str_contains($filteredJson,'SZERKESZTETT FORRÁS'),
+ 'private, licensed and spoofed sources are absent from optional external payload');
+
 $context=tutorTextContext($hits);
 checkTextTutor(count($context)===1,'licensed source excluded');
 $payload=tutorTextPayload('Mi a különbség a H és B között?', $context);
