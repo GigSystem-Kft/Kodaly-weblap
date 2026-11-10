@@ -176,6 +176,10 @@ function tutorSourceAudit(array $entries): array {
     $visual=0; $glossary=0;
     foreach($entries as $entry) {
         if(!is_array($entry)) continue;
+        // Private uploads use labels like "1. szövegrész", which are NOT
+        // chapter 1. Counting them as numbered curriculum sections falsely
+        // inflated the public source coverage for chapters 1–9.
+        if (is_string($entry['sourceId'] ?? null)) continue;
         $label=(string)($entry['label']??'');
         $source=(string)($entry['source']??'');
         foreach($coverage as $n=>$count) {
