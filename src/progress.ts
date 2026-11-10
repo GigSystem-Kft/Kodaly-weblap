@@ -10,6 +10,19 @@ function validProgressId(input: unknown): input is string {
 }
 export const PROGRESS_KEY = 'kodaly_progress';
 
+/**
+ * A chapter ID can be a persisted JSON property name. Only its own numeric
+ * score is a learner result; prototype members such as "constructor" or
+ * "toString" must never turn a new quiz attempt into NaN.
+ */
+export function getQuizBestScore(scores: Record<string, number>, chapterId: string): number {
+  const ownScore = Object.prototype.hasOwnProperty.call(scores, chapterId)
+    ? scores[chapterId] : undefined;
+  return typeof ownScore === 'number' && Number.isFinite(ownScore)
+    ? Math.min(100, Math.max(0, ownScore)) : 0;
+}
+
+
 /** Recheck pending saves when a stale in-flight request releases the writer lock. */
 export function shouldRescheduleProgressSync(
   completedSaveNeedsFollowup: boolean,
