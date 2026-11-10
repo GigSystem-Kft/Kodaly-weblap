@@ -7,7 +7,7 @@ test('PHP tutor chunks retain supplementary music notation at the former UTF-16 
   const chunks = splitKnowledgeText(original);
   assert.ok(chunks.length >= 2, 'the long source must actually be split');
   assert.equal(chunks.join(''), original, 'no character can disappear or be substituted');
-  assert.equal(chunks[1].startsWith('𝄞'), true, 'musical G clef remains one Unicode symbol');
+  assert.equal(chunks[0].endsWith('𝄞'), true, 'the former UTF-16 cutpoint preserves the whole music symbol');
   assert.ok(chunks.every(part => !part.includes('\uFFFD')),
     'the exporter must never introduce Unicode replacement glyphs');
   assert.equal(Buffer.from(JSON.stringify(chunks), 'utf8').toString('utf8').includes('𝄞'),
