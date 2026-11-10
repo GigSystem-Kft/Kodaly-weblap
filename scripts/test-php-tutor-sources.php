@@ -66,6 +66,26 @@ foreach($privateChunks as $chunk) {
     assertSource(preg_match('//u',$chunk['text'])===1,'private source chunk valid UTF-8');
     assertSource(strlen($chunk['text'])<=1000,'private source chunk within search limit');
 }
+// Chunk boundaries must never separate an 'e' from its combining acute
+// accent, or the components of a joined musical emoji. This matters for
+// source relevance and text-to-speech even when byte-level reconstruction
+// happens to work.
+$combining=str_repeat('a',898)."e\u{0301}z";
+$pieces=tutorSourceUtf8Pieces($combining,900);
+assertSource(implode('',$pieces)===$combining,'combining-accent source text intact');
+assertSource($pieces[0]===str_repeat('a',898),
+    'split must occur before complete combining-accent grapheme');
+assertSource(str_starts_with($pieces[1],"e\u{0301}"),
+    'accent stays adjacent to its base after chunking');
+$emoji=str_repeat('a',896).'👩‍🎼z';
+$emojiPieces=tutorSourceUtf8Pieces($emoji,900);
+assertSource(implode('',$emojiPieces)===$emoji,'joined musical emoji source intact');
+assertSource($emojiPieces[0]===str_repeat('a',896),
+    'split must occur before complete emoji grapheme');
+assertSource(str_starts_with($emojiPieces[1],'👩‍🎼'),
+    'complete musical emoji stays in one indexed chunk');
+assertSource(count(tutorSourceUtf8Pieces("Dó–ré",900))===1,
+    'short musical example must be indexed');
 unlink(tutorSourceFile($id));rmdir($dir);
 assertSource(tutorSourceList()===[],'deleted sources excluded');
 fwrite(STDOUT,"Private tutor source tests passed\n");
