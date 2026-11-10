@@ -162,6 +162,60 @@ test('quiz attempt history survives migration and device merge without duplicati
   assert.equal(merged.quizScores.ritmus,90);
   assert.deepEqual(migrateProgress(JSON.parse(JSON.stringify(merged))).quizAttempts,merged.quizAttempts);
 });
+test('offline conflict cannot overwrite an existing server quiz attempt with the same ID', () => {
+  const server=createEmptyProgress();
+  const original={
+    id:'same-immutable-id',chapterId:'ritmus',score:90,correct:9,total:10,
+    at:'2026-11-08T18:00:00Z',wrongQuestionIds:['q-10']
+  };
+  server.quizAttempts=[original];
+  server.quizScores.ritmus=90;
+  const local=createEmptyProgress();
+  const staleCopy={
+    id:'same-immutable-id',chapterId:'ritmus',score:40,correct:4,total:10,
+    at:'2026-11-07T12:00:00Z',wrongQuestionIds:['q-5']
+  };
+  const newAttempt={
+    id:'new-offline-id',chapterId:'hangok-kulcsok',score:80,correct:4,total:5,
+    at:'2026-11-09T11:00:00Z',wrongQuestionIds:['q-2']
+  };
+  local.quizAttempts=[staleCopy,newAttempt];
+  const imported=mergeProgress(server,local);
+  assert.deepEqual(imported.quizAttempts?.find(a=>a.id===original.id),original);
+  assert.deepEqual(imported.quizAttempts?.find(a=>a.id===newAttempt.id),newAttempt);
+  assert.equal(imported.quizAttempts?.length,2);
+  const concurrent=mergeConcurrentProgress(server,local,createEmptyProgress());
+  assert.deepEqual(concurrent.quizAttempts?.find(a=>a.id===original.id),original);
+  assert.deepEqual(concurrent.quizAttempts?.find(a=>a.id===newAttempt.id),newAttempt);
+});
+
+test('pending offline recovery preserves server quiz attempt under a duplicate identifier',()=>{
+  const base=createEmptyProgress();
+  const server=createEmptyProgress();
+  const authoritative={
+    id:'already-saved',chapterId:'ritmus',score:100,correct:2,total:2,
+    at:'2026-11-09T16:00:00Z',wrongQuestionIds:[]
+  };
+  server.quizAttempts=[authoritative];
+  const offline=createEmptyProgress();
+  offline.quizAttempts=[
+    {id:'already-saved',chapterId:'ritmus',score:0,correct:0,total:2,
+      at:'2026-11-08T16:00:00Z',wrongQuestionIds:['old-1','old-2']},
+    {id:'only-local',chapterId:'ritmus',score:50,correct:1,total:2,
+      at:'2026-11-09T17:00:00Z',wrongQuestionIds:['new-2']}
+  ];
+  const store=new Map<string,string>();
+  const storage={
+    getItem:(key:string)=>store.get(key)??null,
+    setItem:(key:string,value:string)=>{store.set(key,value);}
+  };
+  savePendingProgress(storage,'user-unique',base,offline);
+  const recovered=recoverPendingProgress(server,loadPendingProgress(storage,'user-unique'));
+  assert.deepEqual(recovered.quizAttempts?.find(a=>a.id==='already-saved'),authoritative);
+  assert.equal(recovered.quizAttempts?.filter(a=>a.id==='already-saved').length,1);
+  assert.ok(recovered.quizAttempts?.some(a=>a.id==='only-local'));
+});
+
 test('invalid and overlong quiz history cannot break legacy progress',()=>{
   const progress=createEmptyProgress();
   const raw={...progress, quizAttempts:[
