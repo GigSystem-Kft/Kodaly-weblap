@@ -6,6 +6,12 @@ function searchTerms(string $value): array {
         'ú'=>'u','ü'=>'u','ű'=>'u','Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o',
         'Ö'=>'o','Ő'=>'o','Ú'=>'u','Ü'=>'u','Ű'=>'u'];
     $text = strtolower(strtr($value, $chars));
+    // Hungarian text may arrive in decomposed Unicode form (for example
+    // 'o' + U+0308 instead of 'ö'). The precomposed letters above are folded
+    // already; strip combining marks too, without requiring intl/mbstring.
+    // Otherwise the same musical term silently becomes different tokens.
+    $text = preg_replace('/\\p{Mn}+/u', '', $text);
+    if (!is_string($text)) return [];
     // Keep concepts, not the grammar surrounding a question.
     $stop = ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy',
         'van','nem','kerlek','roviden','tomoren','lenyegretoro','mondanal',
@@ -139,19 +145,21 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
     return $pieces ? implode("\n\n",$pieces) :
         'Nem találtam eléggé releváns, rövid választ a helyi forrásokban.';
 }
-/** Character-safe fallback on PHP hosts without the optional mbstring extension. */
+/** Unicode grapheme-aware answer previews; no intl/mbstring extension required. */
 function mbSafeLength(string $text): int {
-    if (function_exists('mb_strlen')) return mb_strlen($text, 'UTF-8');
-    // Count code points without allocating an array of every character.
-    $count=preg_match_all('/./us', $text);
+    // A base letter plus its combining acute accent is one visible glyph,
+    // as is an emoji/ZWJ musical sequence. Match the UI's visible units.
+    $count=preg_match_all('/\\X/u', $text);
     return $count===false ? strlen($text) : $count;
 }
 function mbSafeCut(string $text,int $max): string {
     if ($max<=0) return '';
-    if (function_exists('mb_substr')) return mb_substr($text, 0, $max, 'UTF-8');
-    $characters=preg_split('//u', $text, -1, PREG_SPLIT_NO_EMPTY);
-    if ($characters===false) return '';
-    return implode('',array_slice($characters,0,$max));
+    // mb_substr uses Unicode code points, so even on hosts with mbstring it
+    // may separate a Hungarian combining accent or joined music emoji.
+    $count=preg_match_all('/\\X/u', $text, $clusters);
+    if ($count===false) return '';
+    if ($count<=$max) return $text;
+    return implode('',array_slice($clusters[0],0,$max));
 }
 
 
