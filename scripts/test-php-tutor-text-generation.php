@@ -64,6 +64,7 @@ $emoji="👩‍🎼";
 $graphemeExcerpt=str_repeat('a',899).$accent."𝄞";
 $lessonContext=tutorTextContext([[
     'source'=>'Zeneelméleti Műhely – Tananyag',
+    'contextApproved'=>true,
     'label'=>str_repeat('L',179).$accent,
     'text'=>$graphemeExcerpt
 ]]);
@@ -75,6 +76,7 @@ checkTextTutor($lessonContext[0]['label']===str_repeat('L',179),
 $emojiExcerpt=str_repeat('a',898).$emoji;
 $emojiContext=tutorTextContext([[
     'source'=>'Zeneelméleti Műhely – Tananyag',
+    'contextApproved'=>true,
     'label'=>'Példa – zenei szimbólumok',
     'text'=>$emojiExcerpt
 ]]);
