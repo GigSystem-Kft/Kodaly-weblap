@@ -111,6 +111,69 @@ $badPath=tutorSourceFile($badId);
 file_put_contents($badPath,'{"title":[],"text":[],"createdAt":3}');
 assertSource(count(tutorSourceList())===1,'invalid source payload is ignored');
 unlink($badPath);
+// A-08: identical titles are legal (e.g. different editions), but they
+// must never collapse into one source in the administrator's coverage report.
+require __DIR__ . '/../php/api/tutor-search.php';
+$duplicateId=bin2hex(random_bytes(16));
+$secondText="Második feltöltött példatár.\n\nRitmus: tá–ti.";
+file_put_contents(tutorSourceFile($duplicateId),json_encode([
+    'title'=>'Unicode pedagógiai jegyzet',
+    'text'=>$secondText,
+    'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+$allChunks=tutorExtraKnowledge();
+$receipts=tutorPrivateSourceIntegrity($allChunks);
+assertSource(count($receipts)===2,'two same-title sources have two integrity receipts');
+$byId=array_column($receipts,null,'id');
+assertSource(($byId[$id]['complete']??false)===true,
+    'original UTF-8 source reconstructed independently');
+assertSource(($byId[$duplicateId]['complete']??false)===true,
+    'same-title second source independently reconstructed');
+assertSource($byId[$id]['sourceBytes']===strlen($privateSource) &&
+    $byId[$id]['indexedBytes']===strlen($privateSource) &&
+    $byId[$id]['sha256']===hash('sha256',$privateSource),
+    'original source length and SHA-256 match the indexed text');
+$coverage=tutorDetailedCoverage($allChunks);
+assertSource(count(array_filter($coverage['sources'],static fn($g)=>
+    ($g['kind']??'')==='teacher-upload'))===2,
+    'coverage keeps two distinct same-title sources');
+assertSource(count($coverage['privateSourceIntegrity'])===2 &&
+    count(array_filter($coverage['privateSourceIntegrity'],static fn($v)=>$v['complete']))===2,
+    'admin coverage confirms both complete private uploads');
+
+// Corrupt a same-length indexed character: a byte-count-only check would
+// remain green; a real content hash must turn the receipt red.
+$mutated=$allChunks;
+foreach ($mutated as &$chunk) {
+    if (($chunk['sourceId']??null)===$id) {
+        $chunk['text']='X'.substr($chunk['text'],1);
+        break;
+    }
+}
+unset($chunk);
+$badReceipts=array_column(tutorPrivateSourceIntegrity($mutated),null,'id');
+assertSource(($badReceipts[$id]['complete']??true)===false &&
+    ($badReceipts[$duplicateId]['complete']??false)===true,
+    'same-length text corruption detected without affecting the other upload');
+$brokenCoverage=tutorDetailedCoverage($mutated);
+assertSource(count(array_filter($brokenCoverage['missing'],static fn($v)=>
+    str_contains($v,'Tanári forrás hiányosan indexelve: ')))===1,
+    'admin coverage explicitly reports private text mismatch');
+
+// A source's admin-supplied title must not impersonate a genuine built-in
+// required practice bank in the public AI source inventory.
+$fakeId=bin2hex(random_bytes(16));
+file_put_contents(tutorSourceFile($fakeId),json_encode([
+    'title'=>'Zeneelméleti Műhely – Szókártyák',
+    'text'=>'Kitalált forrás, nem az eredeti szókártyabank.',
+    'createdAt'=>gmdate('c')
+],JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
+$spoofCoverage=tutorDetailedCoverage(tutorExtraKnowledge());
+assertSource(in_array('Hiányzik a PHP Tanársegédből: Zeneelméleti Műhely – Szókártyák',
+    $spoofCoverage['missing'],true),
+    'an uploaded title cannot falsify the required flashcard-bank status');
+unlink(tutorSourceFile($fakeId));
+unlink(tutorSourceFile($duplicateId));
 unlink(tutorSourceFile($id));rmdir($dir);
 assertSource(tutorSourceList()===[],'deleted sources excluded');
 fwrite(STDOUT,"Private tutor source tests passed\n");
