@@ -13,7 +13,7 @@ import { MAJOR_SCALES, MINOR_SCALES, TRIADS, C_MAJOR_INVERSIONS, FIFTHS_CIRCLE }
 import { COLLECTION_EXAMPLES } from '../src/data/collectionLessonExamples';
 import MUSIC_EXPRESSIONS from '../src/data/musicExpressions.json';
 
-type Entry = { source: string; label: string; text: string };
+type Entry = { source: string; label: string; text: string; contextApproved?: boolean };
 const file = process.argv[2] || 'release/api/knowledge.php';
 const raw = readFileSync(file, 'utf8');
 const encoded = raw.match(/base64_decode\('([A-Za-z0-9+/=]+)'\)/)?.[1];
@@ -105,6 +105,8 @@ for (const chapter of MUSIC_CHAPTERS) {
       entry.source==='Zeneelméleti Műhely – Tananyag' &&
       (entry.label===label || entry.label.startsWith(label+' / ')));
     assert.ok(pieces.length>0, label+': lesson missing from PHP tutor');
+    assert.ok(pieces.every(entry => entry.contextApproved === true),
+      label+': first-party evidence marking was lost during PHP export');
     assert.equal(pieces[0].label,label, label+': opening lesson passage changed');
     pieces.slice(1).forEach((entry,index)=>
       assert.equal(entry.label,label+' / '+(index+2)+'. részlet',
@@ -115,6 +117,9 @@ for (const chapter of MUSIC_CHAPTERS) {
   }
 }
 assert.ok(verifiedLessons>0,'No curriculum lesson was verified');
+assert.ok(entries.filter(entry => entry.contextApproved === true).every(entry =>
+  entry.source === 'Zeneelméleti Műhely – Tananyag'),
+  'Optional external text generation must never trust a licensed or separate source');
 console.log('PHP tutor: '+verifiedLessons+' complete student-facing lessons and examples verified');
 
 // A-08: source-derived text should be lossless, not merely present as a few
