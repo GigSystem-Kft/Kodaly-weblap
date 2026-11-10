@@ -38,7 +38,9 @@ function tutorTextSafePrefix(string $value, int $maxBytes): string {
 function tutorTextContext(array $hits): array {
     $references = [];
     foreach ($hits as $entry) {
-        if (($entry['source'] ?? '') !== 'Zeneelméleti Műhely – Tananyag') continue;
+        if (($entry['source'] ?? '') !== 'Zeneelméleti Műhely – Tananyag' ||
+            ($entry['contextApproved'] ?? null) !== true ||
+            isset($entry['sourceId'])) continue;
         $label = trim((string)($entry['label'] ?? ''));
         $text = trim((string)($entry['text'] ?? ''));
         if (!$label || !$text) continue;
