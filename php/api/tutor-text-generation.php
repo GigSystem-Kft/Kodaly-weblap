@@ -15,6 +15,26 @@ function tutorTextEnabled(array $config): bool {
         && in_array($settings['model'] ?? '', ['gemini-2.5-flash', 'gemini-2.5-flash-lite'], true);
 }
 
+/**
+ * Keep external AI prompts valid UTF-8 while respecting strict byte caps.
+ * PHP substr can bisect a multibyte Hungarian accent, a musical symbol or a
+ * ZWJ emoji sequence. PCRE's \\X works without intl or mbstring.
+ */
+function tutorTextSafePrefix(string $value, int $maxBytes): string {
+    if ($maxBytes <= 0 || preg_match('//u',$value)!==1) return '';
+    if (strlen($value) <= $maxBytes) return $value;
+    if (preg_match_all('/\\\\X/u',$value,$clusters) === false) return '';
+    $prefix='';
+    $size=0;
+    foreach ($clusters[0] as $cluster) {
+        $bytes=strlen($cluster);
+        if ($size + $bytes > $maxBytes) break;
+        $prefix.=$cluster;
+        $size+=$bytes;
+    }
+    return $prefix;
+}
+
 function tutorTextContext(array $hits): array {
     $references = [];
     foreach ($hits as $entry) {
@@ -23,8 +43,8 @@ function tutorTextContext(array $hits): array {
         $text = trim((string)($entry['text'] ?? ''));
         if (!$label || !$text) continue;
         $references[] = [
-            'label' => substr($label, 0, 180),
-            'excerpt' => substr($text, 0, 900)
+            'label' => tutorTextSafePrefix($label, 180),
+            'excerpt' => tutorTextSafePrefix($text, 900)
         ];
         if (count($references) >= 3) break;
     }
@@ -51,7 +71,7 @@ function tutorTextPayload(string $question, array $references): array {
             'role' => 'user',
             'parts' => [[
                 'text' => "Ellenőrzött, idézhető tananyagrészletek:\n" . $context .
-                    "\nA tanuló kérdése:\n" . substr($question, 0, 1000)
+                    "\nA tanuló kérdése:\n" . tutorTextSafePrefix($question, 1000)
             ]]
         ]],
         'generationConfig' => [
