@@ -75,7 +75,8 @@ function tutorStoreSourceRecord(string $id, string $payload): void {
     }
 }
 function tutorReadSourceRecord(string $id, ?string $expectedSha256 = null): ?array {
-    if (!preg_match('/^[a-f0-9]{32}$/D', $id)) return null;
+    if (!preg_match('/^[a-f0-9]{32}$/D', $id) ||
+        is_link(tutorSourceDirectory())) return null;
     $file=tutorSourceFile($id);
     if (is_link($file) || !is_file($file)) return null;
     $size=@filesize($file);
