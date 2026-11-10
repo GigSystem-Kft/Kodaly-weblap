@@ -8,7 +8,7 @@
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import assert from 'node:assert/strict';
-import { FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from '../src/data/musicData';
+import { MUSIC_CHAPTERS, FLASHCARDS_DATA, QUIZ_QUESTIONS, MATCHING_PAIRS } from '../src/data/musicData';
 import { MAJOR_SCALES, MINOR_SCALES, TRIADS, C_MAJOR_INVERSIONS, FIFTHS_CIRCLE } from '../src/data/tonalExamples';
 import { COLLECTION_EXAMPLES } from '../src/data/collectionLessonExamples';
 import MUSIC_EXPRESSIONS from '../src/data/musicExpressions.json';
@@ -84,6 +84,38 @@ assertBank('Zenei kifejezések – mellékelt, nem minden címszóban lektorált
   }))
 );
 
+
+// A-08: prove that the PHP tutor includes the full visible student lesson
+// (not just the first 5,000 UTF-16 code units, and not omitting notation
+// examples, audio demonstrations or cited quotations).
+let verifiedLessons=0;
+for (const chapter of MUSIC_CHAPTERS) {
+  for (const sub of chapter.subchapters) {
+    const body=[
+      sub.summary, ...sub.content,
+      ...(sub.examples??[]).flatMap(example=>[
+        example.title, example.description, ...(example.notes??[]),
+        ...(example.audioNotes??[])
+      ]),
+      ...(sub.quotes??[]).map(q=>q.text+' – '+q.source)
+    ].filter(Boolean).join('\n\n');
+    if (body.length<=12) continue;
+    const label=chapter.title+' / '+sub.title;
+    const pieces=entries.filter(entry=>
+      entry.source==='Zeneelméleti Műhely – Tananyag' &&
+      (entry.label===label || entry.label.startsWith(label+' / ')));
+    assert.ok(pieces.length>0, label+': lesson missing from PHP tutor');
+    assert.equal(pieces[0].label,label, label+': opening lesson passage changed');
+    pieces.slice(1).forEach((entry,index)=>
+      assert.equal(entry.label,label+' / '+(index+2)+'. részlet',
+        label+': source part labels are not sequential'));
+    assert.equal(pieces.map(entry=>entry.text).join(''),body,
+      label+': full student-facing lesson, examples or quotations were truncated');
+    verifiedLessons++;
+  }
+}
+assert.ok(verifiedLessons>=25,'Unexpectedly few curriculum lessons were verified');
+console.log('PHP tutor: '+verifiedLessons+' complete student-facing lessons and examples verified');
 
 // A-08: source-derived text should be lossless, not merely present as a few
 // searchable snippets. The old UTF-16 slicing could corrupt 𝄞/emoji and
