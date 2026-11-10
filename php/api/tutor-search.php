@@ -139,7 +139,13 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
         if (mbSafeLength($answer)>($short ? 200 : 320)) {
             $answer=trim(mbSafeCut($answer,$short ? 200 : 320)) . '…';
         }
-        $pieces[]=$answer . "\n" . '_Forrás: ' . $hit['source'] . ' – ' . $hit['label'] . '_';
+        // Distinguish teacher-uploaded documents from the built-in reviewed
+        // curriculum even if a teacher gives the upload an identical title.
+        // IDs remain private, but the student sees honest provenance.
+        $attribution=is_string($hit['sourceId'] ?? null)
+            ? 'Tanár által feltöltött forrás: ' : 'Forrás: ';
+        $pieces[]=$answer . "\n" . '_' . $attribution .
+            $hit['source'] . ' – ' . $hit['label'] . '_';
         if ($short) break;
     }
     return $pieces ? implode("\n\n",$pieces) :
