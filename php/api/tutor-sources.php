@@ -39,6 +39,9 @@ function tutorSourceList(): array {
             'id'=>$id,'title'=>$entry['title'],
             'createdAt'=>is_string($entry['createdAt'] ?? null) ? $entry['createdAt'] : '',
             'size'=>strlen($entry['text']),
+            // The original teacher-approved text is the checksum baseline.
+            // Expose it only to authenticated administrators via admin/sources.
+            'sha256'=>hash('sha256',$entry['text']),
         ];
     }
     usort($result,static fn($a,$b)=>strcmp($b['createdAt'],$a['createdAt']));
@@ -105,6 +108,9 @@ function tutorExtraKnowledge(): array {
                 if ($piece==='') continue;
                 $entries[]=[
                     'source'=>$source['title'],
+                    // Two uploads may share the same title; a stable ID is
+                    // necessary for independent audit and reconciliation.
+                    'sourceId'=>$source['id'],
                     'label'=>(++$part).'. szövegrész',
                     'text'=>$piece
                 ];
@@ -113,6 +119,45 @@ function tutorExtraKnowledge(): array {
     }
     return $entries;
 }
+/**
+ * Check every private teacher upload byte-for-byte against what the tutor
+ * actually indexes. Called only by the authenticated source-coverage route.
+ * Identical titles remain separate because sourceId, not source title, is key.
+ *
+ * This checks text completeness, NOT legal permission or factual correctness.
+ * The original text is never returned to the admin inventory response.
+ */
+function tutorPrivateSourceIntegrity(array $entries): array {
+    $indexed=[];
+    foreach ($entries as $entry) {
+        if (!is_array($entry) || !is_string($entry['sourceId'] ?? null) ||
+            !is_string($entry['text'] ?? null)) continue;
+        $id=$entry['sourceId'];
+        if (!isset($indexed[$id])) $indexed[$id]=['bytes'=>0,'parts'=>0,'text'=>''];
+        $indexed[$id]['text'].=$entry['text'];
+        $indexed[$id]['bytes']+=strlen($entry['text']);
+        $indexed[$id]['parts']++;
+    }
+    $results=[];
+    foreach (tutorSourceList() as $source) {
+        $id=$source['id'];
+        $entry=$indexed[$id] ?? ['bytes'=>0,'parts'=>0,'text'=>''];
+        $complete=$entry['parts']>0 &&
+            $entry['bytes']===$source['size'] &&
+            hash_equals($source['sha256'],hash('sha256',$entry['text']));
+        $results[]=[
+            'id'=>$id,
+            'title'=>$source['title'],
+            'sourceBytes'=>$source['size'],
+            'indexedBytes'=>$entry['bytes'],
+            'indexedChunks'=>$entry['parts'],
+            'sha256'=>$source['sha256'],
+            'complete'=>$complete,
+        ];
+    }
+    return $results;
+}
+
 function tutorSourcesAdminRoute(array $config, string $route): never {
     if ($route === 'admin/sources') {
         method('GET');
