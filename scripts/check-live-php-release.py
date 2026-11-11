@@ -70,6 +70,29 @@ def main():
             failures.append("Release manifest: invalid or missing Git SHA")
         elif sha != args.expected_sha:
             failures.append("Release manifest: deployed SHA does not match expected SHA")
+        # A valid stamp alone does not prove the presence of a complete
+        # manifest. Only the authenticated admin scan verifies live file bytes.
+        if manifest.get("schema") != 2:
+            failures.append("Release manifest: schema 2 required")
+        files = manifest.get("files")
+        if not isinstance(files, dict) or not files:
+            failures.append("Release manifest: missing file fingerprints")
+        else:
+            required = ("api/index.php", "api/deployment-audit.php",
+                        "api/admin.php", "api/vendor/autoload.php")
+            for item in required:
+                if item not in files:
+                    failures.append(f"Release manifest: missing fingerprint for {item}")
+            if not any(name.startswith("assets/") and name.endswith(".js")
+                       for name in files if isinstance(name, str)):
+                failures.append("Release manifest: missing JavaScript asset fingerprint")
+            if not all(isinstance(name, str) and
+                       re.fullmatch(r"(?:api/[A-Za-z0-9._/-]+\\.php|assets/[A-Za-z0-9._/-]+\\.(?:js|css))", name)
+                       and ".." not in name.split("/")
+                       and isinstance(digest, str)
+                       and re.fullmatch(r"[0-9a-f]{64}", digest)
+                       for name, digest in files.items()):
+                failures.append("Release manifest: invalid file fingerprint entry")
     result = {"public_preflight_passed": not failures, "origin": origin, "deployed_sha": sha,
               "errors": failures, "not_checked": [
                   "authenticated admin deployment-check", "backup restore", "SMTP",
