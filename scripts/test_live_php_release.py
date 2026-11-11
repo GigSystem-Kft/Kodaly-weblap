@@ -29,7 +29,12 @@ class Response:
     status = 200
 
     def __init__(self, data, content_type="application/json"):
-        self.data = data if isinstance(data, bytes) else json.dumps(data).encode()
+        if isinstance(data, bytes):
+            self.data = data
+        elif content_type == "text/html" and isinstance(data, str):
+            self.data = data.encode("utf-8")
+        else:
+            self.data = json.dumps(data).encode("utf-8")
         self.headers = {"Content-Type": content_type}
 
     def read(self, limit):
