@@ -1,0 +1,56 @@
+name: Zeneelméleti Műhely – 1.0 emberi elfogadási kapu
+
+# This check is intentionally separate from technical builds: developers can
+# verify candidate ZIPs without mistaking green packaging for release approval.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft, edited]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  release-acceptance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check 1.0 manual sign-off evidence (PR #2 only)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (context.issue.number !== 2) {
+              core.info('This is not the Zeneelméleti Műhely 1.0 release PR.');
+              return;
+            }
+
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner, repo: context.repo.repo, issue_number: 3
+            });
+            const body = issue.body || '';
+            const items = body.split(/\r?\n/).filter(x => /^- \[[ xX]\] /.test(x));
+            // The final SHA/main publication must be checked AFTER the merge.
+            // Its checkbox is not a prerequisite for a pre-merge review.
+            const premerge = items.filter(x => !x.includes('**Végső forrás SHA:**'));
+            const required = [
+              '**A-15 / jogok:**', '**A-20 / szakmai:**',
+              '**A-21 / SMTP és szerepkörök:**',
+              '**A-06/A-21 / két eszköz:**',
+              '**A-23 / akadálymentesség:**', '**A-24 / CloudPanel:**',
+              '**Minden további A-01–A-24 kézi / termékdöntési pont:**'
+            ];
+            const missing = required.filter(label => !premerge.some(x => x.includes(label)));
+            const unchecked = premerge.filter(x => /^- \[ \] /.test(x));
+            const draft = context.payload.pull_request?.draft === true;
+
+            if (missing.length || unchecked.length || draft) {
+              core.error('1.0 is not approved for main merge or final download.');
+              if (draft) core.error('PR #2 is still Draft.');
+              if (missing.length) core.error('Missing expected acceptance sections: ' + missing.join(', '));
+              if (unchecked.length) core.error('Unchecked human acceptance items: ' + unchecked.length);
+              core.setFailed('Release approval blocked; see issue #3. Technical build success is not approval.');
+              return;
+            }
+            core.notice('All seven pre-merge manual acceptance groups are checked. Verify their evidence independently; this is not an automated rights or live deployment audit.');
