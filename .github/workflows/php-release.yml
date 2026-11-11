@@ -183,11 +183,16 @@ jobs:
           print("Archive SHA matches the tested GitHub checkout")
           PY
           test "$(find "$unpacked" -type f | wc -l)" -gt 100
-          sha256sum zeneelmeleti-muhely-php.zip
-      - name: Upload deploy ZIP
+          # Ship a verifiable checksum next to the ZIP; validate it here too.
+          sha256sum zeneelmeleti-muhely-php.zip > zeneelmeleti-muhely-php.zip.sha256
+          sha256sum --check --status zeneelmeleti-muhely-php.zip.sha256
+          cat zeneelmeleti-muhely-php.zip.sha256
+      - name: Upload deploy ZIP and independent checksum
         uses: actions/upload-artifact@v4
         with:
           name: zeneelmeleti-muhely-php
-          path: zeneelmeleti-muhely-php.zip
+          path: |
+            zeneelmeleti-muhely-php.zip
+            zeneelmeleti-muhely-php.zip.sha256
           retention-days: 14
           if-no-files-found: error
