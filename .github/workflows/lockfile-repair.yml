@@ -36,7 +36,13 @@ jobs:
           node-version: '24'
           cache: npm
       - name: Resolve lockfile without running dependency scripts
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          # This repo historically tracks node_modules/.package-lock.json.
+          # It is environment-specific, never part of the deploy lock update.
+          git restore -- node_modules/.package-lock.json
       - name: Validate clean install in an isolated directory
         shell: bash
         run: |
