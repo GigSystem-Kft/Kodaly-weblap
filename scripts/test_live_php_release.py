@@ -15,6 +15,14 @@ check = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(check)
 SHA = "a" * 40
 ORIGIN = "https://zeneelmelet.digitaliskottatar.hu"
+FINGERPRINTS = {
+    "api/index.php": "0" * 64,
+    "api/admin.php": "1" * 64,
+    "api/deployment-audit.php": "2" * 64,
+    "api/vendor/autoload.php": "3" * 64,
+    "assets/index-abcd.js": "4" * 64,
+}
+
 
 
 class Response:
@@ -44,14 +52,16 @@ class FakeOpener:
         return self.replies[req.full_url]
 
 
-def fixture(auth=None, sha=SHA):
+def fixture(auth=None, sha=SHA, manifest=None):
+    if manifest is None:
+        manifest = {"schema": 2, "sha": sha, "files": FINGERPRINTS}
     return FakeOpener({
         ORIGIN + "/api/index.php?route=health":
             Response({"status": "ok", "service": "zeneelmeleti-muhely-php"}),
         ORIGIN + "/api/index.php?route=auth/status":
             Response(auth if auth is not None else {
                 "available": True, "invitationRequired": True, "registrationEnabled": False}),
-        ORIGIN + "/release-build.json": Response({"sha": sha}),
+        ORIGIN + "/release-build.json": Response(manifest),
     })
 
 
@@ -104,6 +114,30 @@ class LivePreflightTests(unittest.TestCase):
         code, result = invoke(opener)
         self.assertEqual(code, 1)
         self.assertTrue(any("exceeds 1 MiB" in e for e in result["errors"]))
+
+    def test_manifest_schema_mismatch_fails_closed(self):
+        bad = {"schema": 1, "sha": SHA, "files": FINGERPRINTS}
+        code, result = invoke(fixture(manifest=bad))
+        self.assertEqual(code, 1)
+        self.assertTrue(any("schema 2 required" in e for e in result["errors"]))
+
+    def test_manifest_missing_php_fingerprint_fails_closed(self):
+        missing = {k: v for k, v in FINGERPRINTS.items() if k != "api/admin.php"}
+        code, result = invoke(fixture(manifest={"schema": 2, "sha": SHA, "files": missing}))
+        self.assertEqual(code, 1)
+        self.assertTrue(any("api/admin.php" in e for e in result["errors"]))
+
+    def test_manifest_invalid_digest_fails_closed(self):
+        invalid = dict(FINGERPRINTS, **{"assets/index-abcd.js": "invalid"})
+        code, result = invoke(fixture(manifest={"schema": 2, "sha": SHA, "files": invalid}))
+        self.assertEqual(code, 1)
+        self.assertTrue(any("invalid file fingerprint" in e for e in result["errors"]))
+
+    def test_manifest_path_traversal_fails_closed(self):
+        unsafe = dict(FINGERPRINTS, **{"assets/../bad.js": "a" * 64})
+        code, result = invoke(fixture(manifest={"schema": 2, "sha": SHA, "files": unsafe}))
+        self.assertEqual(code, 1)
+        self.assertTrue(any("invalid file fingerprint" in e for e in result["errors"]))
 
     def test_redirect_is_not_followed(self):
         handler = check.NoRedirect()
