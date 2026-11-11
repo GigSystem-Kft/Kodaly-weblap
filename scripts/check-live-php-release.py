@@ -51,6 +51,31 @@ def read_json(opener, url, label, failures):
         return None
 
 
+
+def read_frontend_sha(opener, origin, failures):
+    """Inspect the HTML actually served at the origin, not a local ZIP."""
+    request = Request(origin + "/", headers={"Accept": "text/html", "Cache-Control": "no-cache"})
+    try:
+        with opener.open(request, timeout=12) as response:
+            if response.status != 200 or "text/html" not in response.headers.get("Content-Type", "").lower():
+                failures.append("Frontend HTML: expected HTTP 200 text/html")
+                return None
+            raw = response.read(1024 * 1024 + 1)
+            if len(raw) > 1024 * 1024:
+                failures.append("Frontend HTML: response exceeds 1 MiB")
+                return None
+            html = raw.decode("utf-8")
+    except (HTTPError, URLError, TimeoutError, ValueError, UnicodeError, OSError) as error:
+        failures.append(f"Frontend HTML: request failed ({type(error).__name__})")
+        return None
+    stamps = re.findall(
+        r'<meta\s+name="zeneelmelet-build-sha"\s+content="([0-9a-f]{40})"\s*/?>', html)
+    if len(stamps) != 1:
+        failures.append("Frontend HTML: exactly one valid build SHA meta tag required")
+        return None
+    return stamps[0]
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--origin", default="https://zeneelmelet.digitaliskottatar.hu")
@@ -108,6 +133,12 @@ def main():
                        and re.fullmatch(r"[0-9a-f]{64}", digest)
                        for name, digest in files.items()):
                 failures.append("Release manifest: invalid file fingerprint entry")
+    frontend_sha = read_frontend_sha(opener, origin, failures)
+    if frontend_sha is not None:
+        if frontend_sha != args.expected_sha:
+            failures.append("Frontend HTML: build SHA differs from expected SHA")
+        if isinstance(sha, str) and frontend_sha != sha:
+            failures.append("Frontend HTML: build SHA differs from release manifest")
     result = {"public_preflight_passed": not failures, "origin": origin, "deployed_sha": sha,
               "errors": failures, "not_checked": [
                   "authenticated admin deployment-check", "backup restore", "SMTP",
