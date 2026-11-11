@@ -23,10 +23,10 @@ Ez a lista a helyes üzemeltetési útvonalhoz terel, de **önmagában egyetlen 
 
 ## Nem hitelesített, kizárólag olvasó élő előellenőrzés
 
-Az éles szerverhez kapcsolódni képes, megbízható munkaállomáson:
+Az éles szerverhez kapcsolódni képes, megbízható munkaállomáson, miután az `EXPECTED_SHA` változót a jóváhagyásra vizsgált **40 karakteres** Git commit-azonosítóra állítottad:
 
 ```bash
-python3 scripts/check-live-php-release.py --origin https://zeneelmelet.digitaliskottatar.hu --expected-sha <40-karakteres-kiadási-commit>
+python3 scripts/check-live-php-release.py --origin https://zeneelmelet.digitaliskottatar.hu --expected-sha "$EXPECTED_SHA"
 ```
 
 A parancs TLS-t ellenőriz, nem követ átirányítást, nem kér jelszót és nem ír adatot. A PHP health, a MySQL/auth státusz és a nyilvános `release-build.json` ellenőrzését végzi. Hiba esetén nem nulla kilépési kóddal leáll. Az eredményből **nem következik**, hogy az admin `auth/deployment-check`, a tényleges telepített PHP/JS/CSS hash-ek, az SMTP, a mentés-visszaállítás, a licencállomány, a zenei szakmai ellenőrzés vagy a 24 pontos teljes elfogadás rendben lenne. Ezt a kiegészítő előellenőrzést tilos önmagában a kiadás jóváhagyására használni.
