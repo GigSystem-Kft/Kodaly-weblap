@@ -62,6 +62,9 @@ def fixture(auth=None, sha=SHA, manifest=None):
             Response(auth if auth is not None else {
                 "available": True, "invitationRequired": True, "registrationEnabled": False}),
         ORIGIN + "/release-build.json": Response(manifest),
+        ORIGIN + "/": Response(
+            '<!doctype html><html><head><meta name="zeneelmelet-build-sha" content="' +
+            sha + '"></head><body></body></html>', "text/html"),
     })
 
 
@@ -81,7 +84,7 @@ class LivePreflightTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(result["public_preflight_passed"])
         self.assertEqual(result["deployed_sha"], SHA)
-        self.assertEqual(len(opener.paths), 3)
+        self.assertEqual(len(opener.paths), 4)
         self.assertIn("24-point sign-off", result["not_checked"])
 
     def test_mysql_unavailable_fails_closed(self):
@@ -165,6 +168,37 @@ class LivePreflightTests(unittest.TestCase):
         code, result = invoke(opener)
         self.assertEqual(code, 1)
         self.assertTrue(any("request failed" in e for e in result["errors"]))
+
+    def test_frontend_html_wrong_sha_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/"] = Response(
+            '<meta name="zeneelmelet-build-sha" content="' + "b" * 40 + '">',
+            "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("Frontend HTML: build SHA differs" in e for e in result["errors"]))
+
+    def test_frontend_html_missing_stamp_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/"] = Response("<html>Old version</html>", "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("exactly one valid" in e for e in result["errors"]))
+
+    def test_frontend_html_repeated_stamp_fails_closed(self):
+        opener = fixture()
+        tag = '<meta name="zeneelmelet-build-sha" content="' + SHA + '">'
+        opener.replies[ORIGIN + "/"] = Response(tag + tag, "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("exactly one valid" in e for e in result["errors"]))
+
+    def test_frontend_html_must_be_html(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/"] = Response({"sha": SHA}, "application/json")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("expected HTTP 200 text/html" in e for e in result["errors"]))
 
     def test_redirect_is_not_followed(self):
         handler = check.NoRedirect()
