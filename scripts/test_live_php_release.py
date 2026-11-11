@@ -110,6 +110,21 @@ class LivePreflightTests(unittest.TestCase):
         req = check.Request(ORIGIN)
         self.assertIsNone(handler.redirect_request(req, None, 302, "Moved", {}, "https://other.example/"))
 
+    def test_missing_expected_commit_rejected_before_network(self):
+        with patch.object(sys, "argv", [str(SCRIPT), "--json"]):
+            with contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as error:
+                    check.main()
+        self.assertEqual(error.exception.code, 2)
+
+    def test_incorrect_php_health_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/api/index.php?route=health"] = Response({
+            "status": "ok", "service": "different-service"})
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("application identifier" in e for e in result["errors"]))
+
     def test_password_bearing_origin_rejected_before_network(self):
         with patch.object(sys, "argv", [str(SCRIPT), "--origin", "https://user:pass@example.org"]):
             with contextlib.redirect_stderr(io.StringIO()):
