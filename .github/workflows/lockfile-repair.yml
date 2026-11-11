@@ -37,8 +37,15 @@ jobs:
           cache: npm
       - name: Resolve lockfile without running dependency scripts
         run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Validate clean install from newly resolved lockfile
-        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Validate clean install in an isolated directory
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_dir="$(mktemp -d)"
+          trap 'rm -rf "$verify_dir"' EXIT
+          cp package.json package-lock.json "$verify_dir/"
+          cd "$verify_dir"
+          npm ci --ignore-scripts --no-audit --no-fund
       - name: Ensure only package-lock.json was changed
         shell: bash
         run: |
