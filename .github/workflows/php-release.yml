@@ -40,7 +40,7 @@ jobs:
       - name: Clean Linux dependencies
         run: |
           rm -rf node_modules
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
       - name: TypeScript and unit tests
         run: |
           npm test
