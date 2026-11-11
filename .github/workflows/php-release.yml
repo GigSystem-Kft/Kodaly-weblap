@@ -41,6 +41,8 @@ jobs:
         run: |
           rm -rf node_modules
           npm ci --no-audit --no-fund
+      - name: Syntax check for read-only production preflight
+        run: python3 -m py_compile scripts/check-live-php-release.py
       - name: TypeScript and unit tests
         run: |
           npm test
