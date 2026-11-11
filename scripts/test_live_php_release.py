@@ -139,6 +139,33 @@ class LivePreflightTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertTrue(any("invalid file fingerprint" in e for e in result["errors"]))
 
+    def test_duplicate_manifest_sha_rejected(self):
+        opener = fixture()
+        raw = ('{"schema":2,"sha":"' + SHA + '","sha":"' + SHA +
+               '","files":{}}').encode()
+        opener.replies[ORIGIN + "/release-build.json"] = Response(raw)
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("request failed" in e for e in result["errors"]))
+
+    def test_duplicate_nested_fingerprint_rejected(self):
+        opener = fixture()
+        raw = ('{"schema":2,"sha":"' + SHA +
+               '","files":{"api/index.php":"' + "0" * 64 +
+               '","api/index.php":"' + "1" * 64 + '"}}').encode()
+        opener.replies[ORIGIN + "/release-build.json"] = Response(raw)
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("request failed" in e for e in result["errors"]))
+
+    def test_nan_in_status_rejected(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/api/index.php?route=auth/status"] = Response(
+            b'{"available":true,"invitationRequired":true,"registrationEnabled":false,"test":NaN}')
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("request failed" in e for e in result["errors"]))
+
     def test_redirect_is_not_followed(self):
         handler = check.NoRedirect()
         req = check.Request(ORIGIN)
