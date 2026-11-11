@@ -137,6 +137,34 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Reject unsafe paths, duplicate archive members and Unix symlinks
+          # before extracting the published archive.
+          python3 - zeneelmeleti-muhely-php.zip <<'PY'
+          import stat
+          import sys
+          import zipfile
+          from pathlib import PurePosixPath
+
+          with zipfile.ZipFile(sys.argv[1]) as bundle:
+              names = set()
+              for member in bundle.infolist():
+                  name = member.filename
+                  path = PurePosixPath(name)
+                  if (not name or "\\x00" in name or "\\\\" in name or
+                      path.is_absolute() or ".." in path.parts or
+                      not path.parts or path.parts[0] in {".", ".."}):
+                      raise SystemExit(f"Unsafe archive path: {name!r}")
+                  key = name.rstrip("/")
+                  if key in names:
+                      raise SystemExit(f"Duplicate archive member: {name!r}")
+                  names.add(key)
+                  kind = (member.external_attr >> 16) & 0o170000
+                  if kind not in {0, stat.S_IFREG, stat.S_IFDIR}:
+                      raise SystemExit(f"Unsafe archive entry type: {name!r}")
+              if not names:
+                  raise SystemExit("Empty release archive")
+          print("Archive paths and member types passed")
+          PY
           unzip -tq zeneelmeleti-muhely-php.zip
           unpacked="$(mktemp -d)"
           trap 'rm -rf "$unpacked"' EXIT
