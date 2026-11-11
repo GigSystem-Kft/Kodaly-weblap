@@ -87,7 +87,7 @@ def main():
                        for name in files if isinstance(name, str)):
                 failures.append("Release manifest: missing JavaScript asset fingerprint")
             if not all(isinstance(name, str) and
-                       re.fullmatch(r"(?:api/[A-Za-z0-9._/-]+\\.php|assets/[A-Za-z0-9._/-]+\\.(?:js|css))", name)
+                       re.fullmatch(r"(?:api/[A-Za-z0-9._/-]+\.php|assets/[A-Za-z0-9._/-]+\.(?:js|css))", name)
                        and ".." not in name.split("/")
                        and isinstance(digest, str)
                        and re.fullmatch(r"[0-9a-f]{64}", digest)
