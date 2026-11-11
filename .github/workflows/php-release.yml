@@ -143,6 +143,17 @@ jobs:
           unzip -q zeneelmeleti-muhely-php.zip -d "$unpacked"
           # Validate exactly what will be downloaded, not only the staging folder.
           python3 scripts/verify-release-assets.py "$unpacked"
+          # The extracted archive must match the exact workflow checkout SHA,
+          # not merely have internally consistent, possibly stale stamps.
+          python3 - "$unpacked/release-build.json" "$GITHUB_SHA" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          manifest = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          if manifest.get("sha") != sys.argv[2]:
+              raise SystemExit("Release archive SHA differs from the tested checkout")
+          print("Archive SHA matches the tested GitHub checkout")
+          PY
           test "$(find "$unpacked" -type f | wc -l)" -gt 100
           sha256sum zeneelmeleti-muhely-php.zip
       - name: Upload deploy ZIP
