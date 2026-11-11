@@ -20,3 +20,13 @@
 10. A szakmai, szerzői jogi, adatkezelési és manuális elfogadás nélkül a PR #2 marad **Draft**; **nincs `main` merge és nincs végleges letöltés**. Jóváhagyott kiadás után is szükséges az új `main` commit önálló CI-ellenőrzése és éles visszaállítási terv.
 
 Ez a lista a helyes üzemeltetési útvonalhoz terel, de **önmagában egyetlen nyitott ellenőrzést sem zár le**.
+
+## Nem hitelesített, kizárólag olvasó élő előellenőrzés
+
+Az éles szerverhez kapcsolódni képes, megbízható munkaállomáson:
+
+```bash
+python3 scripts/check-live-php-release.py --origin https://zeneelmelet.digitaliskottatar.hu --expected-sha <40-karakteres-kiadási-commit>
+```
+
+A parancs TLS-t ellenőriz, nem követ átirányítást, nem kér jelszót és nem ír adatot. A PHP health, a MySQL/auth státusz és a nyilvános `release-build.json` ellenőrzését végzi. Hiba esetén nem nulla kilépési kóddal leáll. Az eredményből **nem következik**, hogy az admin `auth/deployment-check`, a tényleges telepített PHP/JS/CSS hash-ek, az SMTP, a mentés-visszaállítás, a licencállomány, a zenei szakmai ellenőrzés vagy a 24 pontos teljes elfogadás rendben lenne. Ezt a kiegészítő előellenőrzést tilos önmagában a kiadás jóváhagyására használni.
