@@ -39,7 +39,7 @@ def read_json(opener, url, label, failures):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--origin", default="https://zeneelmelet.digitaliskottatar.hu")
-    parser.add_argument("--expected-sha", help="Exact Git commit SHA expected on the deployed site")
+    parser.add_argument("--expected-sha", required=True, help="Required exact Git commit SHA expected on the deployed site")
     parser.add_argument("--json", action="store_true", help="Output non-sensitive JSON result")
     args = parser.parse_args()
     origin = args.origin.rstrip("/")
@@ -47,7 +47,7 @@ def main():
     if (parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password
             or parsed.path or parsed.query or parsed.fragment or parsed.port not in (None, 443)):
         parser.error("--origin must be a bare HTTPS origin without credentials or a custom port")
-    if args.expected_sha and not re.fullmatch(r"[0-9a-f]{40}", args.expected_sha):
+    if not re.fullmatch(r"[0-9a-f]{40}", args.expected_sha):
         parser.error("--expected-sha must be a lowercase 40-character Git SHA")
     opener = build_opener(HTTPSHandler(context=ssl.create_default_context()), NoRedirect())
     failures = []
@@ -68,7 +68,7 @@ def main():
     if manifest is not None:
         if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
             failures.append("Release manifest: invalid or missing Git SHA")
-        elif args.expected_sha and sha != args.expected_sha:
+        elif sha != args.expected_sha:
             failures.append("Release manifest: deployed SHA does not match expected SHA")
     result = {"public_preflight_passed": not failures, "origin": origin, "deployed_sha": sha,
               "errors": failures, "not_checked": [
