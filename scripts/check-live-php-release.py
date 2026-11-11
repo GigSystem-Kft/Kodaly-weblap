@@ -15,6 +15,20 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def reject_duplicate_keys(pairs):
+    """Reject ambiguous response objects instead of silently trusting the last value."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON object key")
+        result[key] = value
+    return result
+
+
+def reject_nonfinite_json(value):
+    raise ValueError("non-finite JSON number")
+
+
 def read_json(opener, url, label, failures):
     request = Request(url, headers={"Accept": "application/json", "Cache-Control": "no-cache"})
     try:
@@ -26,7 +40,8 @@ def read_json(opener, url, label, failures):
             if len(raw) > 1024 * 1024:
                 failures.append(f"{label}: response exceeds 1 MiB")
                 return None
-            obj = json.loads(raw)
+            obj = json.loads(raw, object_pairs_hook=reject_duplicate_keys,
+                             parse_constant=reject_nonfinite_json)
             if not isinstance(obj, dict):
                 failures.append(f"{label}: expected JSON object")
                 return None
