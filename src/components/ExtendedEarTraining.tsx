@@ -44,7 +44,7 @@ const shuffle=<T,>(source:readonly T[]):T[]=>{
 };
 export function earDrillSchedule(challenge:Challenge,bpm=60):Segment[]{
  const quarter=60/bpm;const notes:Segment[]=[];let time=0;
- if(challenge.pitches)return challenge.pitches.map((pitch,i)=>({pitch,time:i*.76*quarter,duration:.68*quarter,accent:i===0?1:.55}));
+ if(challenge.pitches)return challenge.pitches.map((pitch,i)=>({pitch,time:i*quarter,duration:.9*quarter,accent:i===0?1:.55}));
  if(challenge.meter)return challenge.meter.map((accent,i)=>({
   pitch:accent===1?67:accent>.5?64:60,time:i*(challenge.id==='6/8'?quarter/2:quarter),
   duration:(challenge.id==='6/8'?quarter/2:quarter)*.65,accent:accent===1?1:accent>.5?.72:.44
