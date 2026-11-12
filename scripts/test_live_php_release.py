@@ -282,6 +282,24 @@ class LivePreflightTests(unittest.TestCase):
         self.assertEqual(code, 0, result["errors"])
         self.assertEqual(opener.paths.count(ORIGIN + "/assets/index-abcd.css"), 1)
 
+    def test_correct_js_bytes_wrong_mime_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/assets/index-abcd.js"] = Response(
+            b"console.log('release');", "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("incorrect MIME type for assets/index-abcd.js" in e
+                            for e in result["errors"]))
+
+    def test_correct_css_bytes_wrong_mime_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/assets/index-abcd.css"] = Response(
+            b"body{color:#123456}", "application/octet-stream")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("incorrect MIME type for assets/index-abcd.css" in e
+                            for e in result["errors"]))
+
     def test_redirect_is_not_followed(self):
         handler = check.NoRedirect()
         req = check.Request(ORIGIN)
