@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
+from urllib.error import URLError
 from unittest.mock import patch
 
 SCRIPT = Path(__file__).with_name("check-live-php-release.py")
@@ -55,6 +56,8 @@ class FakeOpener:
 
     def open(self, req, timeout):
         self.paths.append(req.full_url)
+        if req.full_url not in self.replies:
+            raise URLError("fixture not found")
         return self.replies[req.full_url]
 
 
