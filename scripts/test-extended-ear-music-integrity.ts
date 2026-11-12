@@ -53,3 +53,19 @@ test('meter hearing examples contain exactly two complete metrical bars',()=>{
     assert.equal(item.meter?.[units[item.id]/2],1);
   }
 });
+
+test('ear-training scales use true quarter-note timing at the displayed BPM',()=>{
+ for(const bpm of [50,60,72,90]){
+  const quarter=60/bpm;
+  for(const drill of EXTENDED_EAR_DRILLS.hangsor){
+   const notes=earDrillSchedule(drill,bpm);
+   assert.equal(notes.length,drill.pitches?.length);
+   for(let i=0;i<notes.length;i++){
+    assert.ok(Math.abs(notes[i].time-i*quarter)<1e-9,
+      drill.id+' at '+bpm+' BPM, note '+i+' starts off beat');
+    assert.ok(notes[i].duration>0 && notes[i].duration<=quarter,
+      drill.id+' at '+bpm+' BPM has invalid note length');
+   }
+  }
+ }
+});
