@@ -83,3 +83,20 @@ test('supplementary quizzes distribute correct answers without changing stable I
  }
  assert.deepEqual([...observed].sort(),[0,1,2,3]);
 });
+
+test('all supplementary quiz answers include a specific pedagogical explanation',()=>{
+ assert.equal(ADDITIONAL_QUESTIONS.length,30);
+ for(const q of ADDITIONAL_QUESTIONS){
+  assert.ok(q.explanation.includes(q.options[q.correctIndex]),q.id);
+  assert.ok(q.explanation.length>105,'Explanation too short: '+q.id);
+  assert.doesNotMatch(q.explanation,/részletes magyarázatot a kapcsolódó fejezet/i,
+   'Generic explanation must not substitute instruction: '+q.id);
+ }
+ const interval=ADDITIONAL_QUESTIONS.find(q=>q.question==='Mi a nagy terc fordítása?');
+ assert.ok(interval);
+ assert.match(interval.explanation,/kilencet/);
+ assert.match(interval.explanation,/tizenkettőt/);
+ const dotted=ADDITIONAL_QUESTIONS.find(q=>q.question.startsWith('Mennyi egy pontozott negyed'));
+ assert.ok(dotted);
+ assert.match(dotted.explanation,/négy nyolcad/);
+});
