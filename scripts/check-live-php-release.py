@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Read-only public PHP/MySQL/manifest preflight; NOT an A-01–A-24 release approval."""
 import argparse
+import hashlib
 import json
 import re
 import ssl
@@ -52,7 +53,7 @@ def read_json(opener, url, label, failures):
 
 
 
-def read_frontend_sha(opener, origin, failures):
+def read_frontend_sha(opener, origin, fingerprints, failures):
     """Inspect the HTML actually served at the origin, not a local ZIP."""
     request = Request(origin + "/", headers={"Accept": "text/html", "Cache-Control": "no-cache"})
     try:
@@ -73,7 +74,45 @@ def read_frontend_sha(opener, origin, failures):
     if len(stamps) != 1:
         failures.append("Frontend HTML: exactly one valid build SHA meta tag required")
         return None
+    verify_html_assets(opener, origin, html, fingerprints, failures)
     return stamps[0]
+
+
+
+def verify_html_assets(opener, origin, html, fingerprints, failures):
+    """Hash the JS/CSS entrypoints served to browsers (never arbitrary URLs)."""
+    entries = set(re.findall(
+        r"""(?:src|href)=["']/(assets/[A-Za-z0-9._/-]+\\.(?:js|css))["']""", html))
+    if not entries or not any(path.endswith(".js") for path in entries):
+        failures.append("Frontend assets: missing JS entrypoint in HTML")
+        return
+    if len(entries) > 32:
+        failures.append("Frontend assets: too many entrypoints")
+        return
+    if not isinstance(fingerprints, dict):
+        failures.append("Frontend assets: missing fingerprint dictionary")
+        return
+    for path in sorted(entries):
+        if ".." in path.split("/") or path not in fingerprints:
+            failures.append("Frontend assets: unsafe or unlisted entrypoint " + path)
+            continue
+        request = Request(origin + "/" + path, headers={
+            "Accept": "*/*", "Cache-Control": "no-cache"})
+        try:
+            with opener.open(request, timeout=12) as response:
+                if response.status != 200:
+                    failures.append("Frontend assets: HTTP status mismatch for " + path)
+                    continue
+                # A cap avoids unbounded downloads even for a compromised origin.
+                content = response.read(12 * 1024 * 1024 + 1)
+                if len(content) > 12 * 1024 * 1024:
+                    failures.append("Frontend assets: oversized entrypoint " + path)
+                    continue
+                actual = hashlib.sha256(content).hexdigest()
+                if actual != fingerprints[path]:
+                    failures.append("Frontend assets: SHA-256 mismatch for " + path)
+        except (HTTPError, URLError, TimeoutError, ValueError, OSError) as error:
+            failures.append(f"Frontend assets: request failed for {path} ({type(error).__name__})")
 
 
 def main():
@@ -133,7 +172,9 @@ def main():
                        and re.fullmatch(r"[0-9a-f]{64}", digest)
                        for name, digest in files.items()):
                 failures.append("Release manifest: invalid file fingerprint entry")
-    frontend_sha = read_frontend_sha(opener, origin, failures)
+    frontend_sha = read_frontend_sha(opener, origin,
+                                     manifest.get("files") if isinstance(manifest, dict) else None,
+                                     failures)
     if frontend_sha is not None:
         if frontend_sha != args.expected_sha:
             failures.append("Frontend HTML: build SHA differs from expected SHA")
