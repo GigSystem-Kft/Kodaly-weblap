@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { TREBLE_STAFF_LINES,FIRST_LEDGER_LINE_Y,trebleStaffY,DIATONIC_STAFF_ORDER,hasLowerLedgerLine } from '../src/utils/trebleStaff';
 import { INTERVAL_EXAMPLES } from '../src/components/IntervalExamplesVisual';
+import { noteFrequencyHz } from '../src/utils/audio';
 import { ADDITIONAL_QUESTIONS } from '../src/data/extendedMusicData';
 
 test('treble staff puts C prime on first ledger line, and E prime on bottom staff line',()=>{
@@ -49,4 +50,22 @@ test('staff-reading quiz uses Hungarian octave labels rather than MIDI-style lab
  assert.equal(questions[0].options[0],'E′');
  assert.equal(questions[1].options[0],'G′');
  assert.match(questions[2].question,/C′/);
+});
+
+test('all displayed interval labels agree with actual audio semitone distances',()=>{
+ const base=noteFrequencyHz('C4');
+ assert.ok(base);
+ for(const item of INTERVAL_EXAMPLES){
+  const upper=noteFrequencyHz(item.note);
+  assert.ok(upper,'Missing playable frequency for '+item.name);
+  const actual=Math.round(12*Math.log2(upper/base));
+  assert.equal(actual,item.semitones,item.name+' has an incorrect sound pitch');
+  assert.match(item.upperName,/′|″/,'Hungarian octave marking missing: '+item.name);
+ }
+ assert.equal(INTERVAL_EXAMPLES[0].note,'C4','Perfect unison must repeat its base note');
+});
+test('perfect unison can display two identical note names without duplicate React keys',()=>{
+ const source=readFileSync('src/components/IntervalExamplesVisual.tsx','utf8');
+ assert.match(source,/map\(\(label,i\)=><div key=\{i\}/);
+ assert.doesNotMatch(source,/map\(\(label,i\)=><div key=\{label\}/);
 });
