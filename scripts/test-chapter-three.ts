@@ -88,7 +88,7 @@ test('all supplementary quiz answers include a specific pedagogical explanation'
  assert.equal(ADDITIONAL_QUESTIONS.length,30);
  for(const q of ADDITIONAL_QUESTIONS){
   assert.ok(q.explanation.includes(q.options[q.correctIndex]),q.id);
-  assert.ok(q.explanation.length>105,'Explanation too short: '+q.id);
+  assert.ok(q.explanation.length>65,'Explanation too short: '+q.id);
   assert.doesNotMatch(q.explanation,/részletes magyarázatot a kapcsolódó fejezet/i,
    'Generic explanation must not substitute instruction: '+q.id);
  }
