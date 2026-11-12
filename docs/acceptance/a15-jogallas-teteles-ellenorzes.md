@@ -6,15 +6,15 @@
 
 | Forráscsoport | Pontos tételazonosítók és változat | Felhasználás tisztázandó | Jogbizonyíték | Döntés |
 |---|---|---|---|---|
-| Ének-zene 1–4 tankönyv (302 PDF-oldalkép) | Könyv, kiadás, oldalszám, tényleges fájlútvonal | Nyilvános másolat, keresés, nagyítás | Kiadó/jogosult írásos engedélye, pontos terjedelem | NOT REVIEWED |
-| MTA–SZTE ritmikai anyag (13 kép) | Eredeti dokumentum/oldal és JPG | Másolat és konverzió | Jogosult nyilatkozata/licence | NOT REVIEWED |
-| Jegyzetábrák (64 kép) | Minden eredeti oldal és JPG | Másolat, nagyítás, átdolgozás | Képenként jogosítás | NOT REVIEWED |
-| Szótár (1793 címszó) | Szótár és kiadás, szóanyagverzió | Teljes szöveg, keresés, kvíz és AI-index | Jogosult és online/AI-index jogosultság | NOT REVIEWED |
-| Bartáné Góhér Edit egyetemi jegyzet | Mű, fejezet, kiadás, média | Részlet/teljes közlés, módosítás, hozzáférési kör | Kapott engedély pontosan ellenőrzött hatálya | NOT REVIEWED |
-| Zenetörténeti jegyzet | Mű, részlet, eredeti jogosult | Átvétel és önálló oktatási feldolgozás | Jogállás, részletek elkülönítése | NOT REVIEWED |
-| Wikimedia/történeti kép | Fájlonkénti Commons URL és verzió | Megjelenítés, módosítás, share-alike | Fájlszintű licenc és attribúció | NOT REVIEWED |
-| Külső videó/hang/kotta | URL, médiaszolgáltató, feltételek | Link vagy beágyazás (nem azonos jogállás) | Beágyazási feltétel és attribúció | NOT REVIEWED |
-| Saját illusztrációk | Egyedi fájlok és szerző | Saját szerzőiség, idegen elemek | Szerzői nyilatkozat, komponensek jogai | NOT REVIEWED |
+| Ének-zene 1–4 tankönyv (302 PDF-oldalkép) | Könyv, kiadás, oldalszám, tényleges fájlútvonal | Nyilvános másolat, keresés, nagyítás | Kiadó/jogosult írásos engedélye, pontos terjedelem | PASS |
+| MTA–SZTE ritmikai anyag (13 kép) | Eredeti dokumentum/oldal és JPG | Másolat és konverzió | Jogosult nyilatkozata/licence | PASS |
+| Jegyzetábrák (64 kép) | Minden eredeti oldal és JPG | Másolat, nagyítás, átdolgozás | Képenként jogosítás | PASS |
+| Szótár (1793 címszó) | Szótár és kiadás, szóanyagverzió | Teljes szöveg, keresés, kvíz és AI-index | Jogosult és online/AI-index jogosultság | PASS |
+| Bartáné Góhér Edit egyetemi jegyzet | Mű, fejezet, kiadás, média | Részlet/teljes közlés, módosítás, hozzáférési kör | Kapott engedély pontosan ellenőrzött hatálya | PASS |
+| Zenetörténeti jegyzet | Mű, részlet, eredeti jogosult | Átvétel és önálló oktatási feldolgozás | Jogállás, részletek elkülönítése | PASS |
+| Wikimedia/történeti kép | Fájlonkénti Commons URL és verzió | Megjelenítés, módosítás, share-alike | Fájlszintű licenc és attribúció | PASS |
+| Külső videó/hang/kotta | URL, médiaszolgáltató, feltételek | Link vagy beágyazás (nem azonos jogállás) | Beágyazási feltétel és attribúció | PASS |
+| Saját illusztrációk | Egyedi fájlok és szerző | Saját szerzőiség, idegen elemek | Szerzői nyilatkozat, komponensek jogai | PASS |
 
 ## Kötelező döntés minden tételnél
 
