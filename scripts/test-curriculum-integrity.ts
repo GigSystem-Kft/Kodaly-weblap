@@ -38,7 +38,7 @@ test('quiz items with the same visible question and choices cannot disagree on t
   // If identical displayed questions have conflicting keys, the assessment
   // cannot be answered unambiguously and automated grading becomes flaky.
   const visibleItems = new Map<string, {id:string;correctIndex:number}>();
-  const normalize = (text:string) => text.trim().normalize('NFC').replace(/\\s+/g, ' ').toLocaleLowerCase('hu-HU');
+  const normalize = (text:string) => text.trim().normalize('NFC').replace(/\s+/g, ' ').toLocaleLowerCase('hu-HU');
   for (const question of QUIZ_QUESTIONS) {
     const visible = JSON.stringify([
       normalize(question.question),
