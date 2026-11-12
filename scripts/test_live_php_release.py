@@ -20,7 +20,7 @@ FINGERPRINTS = {
     "api/admin.php": "1" * 64,
     "api/deployment-audit.php": "2" * 64,
     "api/vendor/autoload.php": "3" * 64,
-    "assets/index-abcd.js": "4" * 64,
+    "assets/index-abcd.js": "dc1c5eca6b249db6d52558df3e91d29c7f131b7cd793bb108b850bd8f24daf50",
 }
 
 
@@ -69,7 +69,8 @@ def fixture(auth=None, sha=SHA, manifest=None):
         ORIGIN + "/release-build.json": Response(manifest),
         ORIGIN + "/": Response(
             '<!doctype html><html><head><meta name="zeneelmelet-build-sha" content="' +
-            sha + '"></head><body></body></html>', "text/html"),
+            sha + '"><script type="module" src="/assets/index-abcd.js"></script></head><body></body></html>', "text/html"),
+        ORIGIN + "/assets/index-abcd.js": Response(b"console.log('release');", "text/javascript"),
     })
 
 
@@ -89,7 +90,7 @@ class LivePreflightTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(result["public_preflight_passed"])
         self.assertEqual(result["deployed_sha"], SHA)
-        self.assertEqual(len(opener.paths), 4)
+        self.assertEqual(len(opener.paths), 5)
         self.assertIn("24-point sign-off", result["not_checked"])
 
     def test_mysql_unavailable_fails_closed(self):
@@ -204,6 +205,42 @@ class LivePreflightTests(unittest.TestCase):
         code, result = invoke(opener)
         self.assertEqual(code, 1)
         self.assertTrue(any("expected HTTP 200 text/html" in e for e in result["errors"]))
+
+    def test_live_js_hash_mismatch_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/assets/index-abcd.js"] = Response(
+            b"console.log('stale-release');", "text/javascript")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("SHA-256 mismatch" in e for e in result["errors"]))
+
+    def test_live_js_unlisted_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/"] = Response(
+            '<meta name="zeneelmelet-build-sha" content="' + SHA +
+            '"><script src="/assets/other.js"></script>', "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("unlisted entrypoint" in e for e in result["errors"]))
+        self.assertNotIn(ORIGIN + "/assets/other.js", opener.paths)
+
+    def test_live_js_missing_entrypoint_fails_closed(self):
+        opener = fixture()
+        code, result = invoke(opener)
+        self.assertEqual(code, 0)
+        opener.replies[ORIGIN + "/"] = Response(
+            '<meta name="zeneelmelet-build-sha" content="' + SHA + '">', "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("missing JS entrypoint" in e for e in result["errors"]))
+
+    def test_live_js_over_limit_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/assets/index-abcd.js"] = Response(
+            b"x" * (12 * 1024 * 1024 + 1), "text/javascript")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("oversized entrypoint" in e for e in result["errors"]))
 
     def test_redirect_is_not_followed(self):
         handler = check.NoRedirect()
