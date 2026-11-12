@@ -82,11 +82,18 @@ const rawQuestions: Array<[string,string,string,string,string,string]> = [
   ['solfege','Mi a G-dúr hangsor harmadik szolmizációs foka?','Mi (H)','Fá (C)','Ré (A)','Szó (D)'],
   ['abc-hangok','Melyik a magyar név a nemzetközi B♭ hangra?','B','H','Aisz','Cesz']
 ];
-export const ADDITIONAL_QUESTIONS: QuizQuestion[] = rawQuestions.map(([chapterId, question, correct, wrong1, wrong2, wrong3], index) => ({
-  id: `extra-q-${index + 1}`, chapterId, question,
-  options: [correct, wrong1, wrong2, wrong3], correctIndex: 0,
-  explanation: `Helyes válasz: ${correct}. A részletes magyarázatot a kapcsolódó fejezet tananyagában találod.`
-}));
+export const ADDITIONAL_QUESTIONS: QuizQuestion[] = rawQuestions.map(([chapterId, question, correct, wrong1, wrong2, wrong3], index) => {
+  // Keep question IDs stable for saved achievements, but do not reveal the
+  // correct answer by always placing it in the first slot.
+  const correctIndex = index % 4;
+  const options = [wrong1, wrong2, wrong3];
+  options.splice(correctIndex, 0, correct);
+  return {
+    id: `extra-q-${index + 1}`, chapterId, question,
+    options, correctIndex,
+    explanation: `Helyes válasz: ${correct}. A részletes magyarázatot a kapcsolódó fejezet tananyagában találod.`
+  };
+});
 const definitions: Array<[string,string,string]> = [
   ['Pontozott negyed','Másfél negyednyi hangérték: három nyolcad.','Ritmus'],
   ['Pontozott fél','Három negyednyi hangérték.','Ritmus'],
