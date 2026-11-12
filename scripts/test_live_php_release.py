@@ -21,6 +21,7 @@ FINGERPRINTS = {
     "api/deployment-audit.php": "2" * 64,
     "api/vendor/autoload.php": "3" * 64,
     "assets/index-abcd.js": "dc1c5eca6b249db6d52558df3e91d29c7f131b7cd793bb108b850bd8f24daf50",
+    "assets/index-abcd.css": "884546c4a2f1fb49dae8ce7f64c71fe0db10bdc37b5a51ee72a8b80342cdec83",
 }
 
 
@@ -69,8 +70,10 @@ def fixture(auth=None, sha=SHA, manifest=None):
         ORIGIN + "/release-build.json": Response(manifest),
         ORIGIN + "/": Response(
             '<!doctype html><html><head><meta name="zeneelmelet-build-sha" content="' +
-            sha + '"><script type="module" src="/assets/index-abcd.js"></script></head><body></body></html>', "text/html"),
+            sha + '"><script type="module" src="/assets/index-abcd.js"></script>'
+            '<link rel="stylesheet" href="/assets/index-abcd.css"></head><body></body></html>', "text/html"),
         ORIGIN + "/assets/index-abcd.js": Response(b"console.log('release');", "text/javascript"),
+        ORIGIN + "/assets/index-abcd.css": Response(b"body{color:#123456}", "text/css"),
     })
 
 
@@ -90,7 +93,7 @@ class LivePreflightTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(result["public_preflight_passed"])
         self.assertEqual(result["deployed_sha"], SHA)
-        self.assertEqual(len(opener.paths), 5)
+        self.assertEqual(len(opener.paths), 6)
         self.assertIn("24-point sign-off", result["not_checked"])
 
     def test_mysql_unavailable_fails_closed(self):
@@ -241,6 +244,43 @@ class LivePreflightTests(unittest.TestCase):
         code, result = invoke(opener)
         self.assertEqual(code, 1)
         self.assertTrue(any("oversized entrypoint" in e for e in result["errors"]))
+
+    def test_live_css_hash_mismatch_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/assets/index-abcd.css"] = Response(
+            b"body{color:#654321}", "text/css")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("SHA-256 mismatch for assets/index-abcd.css" in e
+                            for e in result["errors"]))
+
+    def test_live_css_not_in_manifest_fails_without_fetch(self):
+        opener = fixture(manifest={"schema": 2, "sha": SHA,
+                                   "files": {k: v for k, v in FINGERPRINTS.items()
+                                             if not k.endswith(".css")}})
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("unlisted entrypoint assets/index-abcd.css" in e
+                            for e in result["errors"]))
+        self.assertNotIn(ORIGIN + "/assets/index-abcd.css", opener.paths)
+
+    def test_live_css_missing_file_fails_closed(self):
+        opener = fixture()
+        del opener.replies[ORIGIN + "/assets/index-abcd.css"]
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("request failed for assets/index-abcd.css" in e
+                            for e in result["errors"]))
+
+    def test_live_css_duplicate_reference_fetched_only_once(self):
+        opener = fixture()
+        original = opener.replies[ORIGIN + "/"].data.decode("utf-8")
+        html = original.replace("</head>",
+                                '<link href="/assets/index-abcd.css" rel="stylesheet"></head>')
+        opener.replies[ORIGIN + "/"] = Response(html, "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 0, result["errors"])
+        self.assertEqual(opener.paths.count(ORIGIN + "/assets/index-abcd.css"), 1)
 
     def test_redirect_is_not_followed(self):
         handler = check.NoRedirect()
