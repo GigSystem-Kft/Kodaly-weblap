@@ -17,6 +17,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
+      - name: Checkout acceptance ledger
+        if: github.event.pull_request.number == 2
+        uses: actions/checkout@v4
+      - name: Validate A-01–A-24 evidence ledger
+        if: github.event.pull_request.number == 2
+        run: python3 scripts/check-acceptance-ledger.py
       - name: Check 1.0 manual sign-off evidence (PR #2 only)
         uses: actions/github-script@v7
         with:
