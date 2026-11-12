@@ -82,7 +82,7 @@ def read_frontend_sha(opener, origin, fingerprints, failures):
 def verify_html_assets(opener, origin, html, fingerprints, failures):
     """Hash the JS/CSS entrypoints served to browsers (never arbitrary URLs)."""
     entries = set(re.findall(
-        r"""(?:src|href)=["']/(assets/[A-Za-z0-9._/-]+\\.(?:js|css))["']""", html))
+        r"""(?:src|href)=["']/(assets/[A-Za-z0-9._/-]+\.(?:js|css))["']""", html))
     if not entries or not any(path.endswith(".js") for path in entries):
         failures.append("Frontend assets: missing JS entrypoint in HTML")
         return
