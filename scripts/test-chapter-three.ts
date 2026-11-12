@@ -69,3 +69,17 @@ test('perfect unison can display two identical note names without duplicate Reac
  assert.match(source,/map\(\(label,i\)=><div key=\{i\}/);
  assert.doesNotMatch(source,/map\(\(label,i\)=><div key=\{label\}/);
 });
+
+test('supplementary quizzes distribute correct answers without changing stable IDs',()=>{
+ const observed = new Set<number>();
+ for(let i=0;i<ADDITIONAL_QUESTIONS.length;i++){
+  const q=ADDITIONAL_QUESTIONS[i];
+  assert.equal(q.id,`extra-q-${i+1}`);
+  assert.equal(q.options.length,4,q.id);
+  assert.equal(q.correctIndex,i%4,q.id);
+  assert.ok(q.explanation.includes(q.options[q.correctIndex]),q.id);
+  assert.equal(new Set(q.options.map(o=>o.trim().toLocaleLowerCase('hu-HU'))).size,4,q.id);
+  observed.add(q.correctIndex);
+ }
+ assert.deepEqual([...observed].sort(),[0,1,2,3]);
+});
