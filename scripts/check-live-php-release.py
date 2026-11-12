@@ -103,6 +103,14 @@ def verify_html_assets(opener, origin, html, fingerprints, failures):
                 if response.status != 200:
                     failures.append("Frontend assets: HTTP status mismatch for " + path)
                     continue
+                # Correct hashes with an incorrect MIME type can still fail to
+                # execute in modern browsers (especially with nosniff headers).
+                media_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+                allowed = ({"text/javascript", "application/javascript"}
+                           if path.endswith(".js") else {"text/css"})
+                if media_type not in allowed:
+                    failures.append("Frontend assets: incorrect MIME type for " + path)
+                    continue
                 # A cap avoids unbounded downloads even for a compromised origin.
                 content = response.read(12 * 1024 * 1024 + 1)
                 if len(content) > 12 * 1024 * 1024:
