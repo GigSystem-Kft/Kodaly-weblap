@@ -47,8 +47,8 @@ test('staff-reading quiz uses Hungarian octave labels rather than MIDI-style lab
    const copy=[question.question,...question.options].join(' ');
    assert.doesNotMatch(copy,/\b[A-H][345]\b/,'International octave label shown to students');
  }
- assert.equal(questions[0].options[0],'E′');
- assert.equal(questions[1].options[0],'G′');
+ assert.equal(questions[0].options[questions[0].correctIndex],'E′');
+ assert.equal(questions[1].options[questions[1].correctIndex],'G′');
  assert.match(questions[2].question,/C′/);
 });
 
