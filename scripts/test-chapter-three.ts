@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
 import { TREBLE_STAFF_LINES,FIRST_LEDGER_LINE_Y,trebleStaffY,DIATONIC_STAFF_ORDER,hasLowerLedgerLine } from '../src/utils/trebleStaff';
 import { INTERVAL_EXAMPLES } from '../src/components/IntervalExamplesVisual';
+import { ADDITIONAL_QUESTIONS } from '../src/data/extendedMusicData';
 
 test('treble staff puts C prime on first ledger line, and E prime on bottom staff line',()=>{
  assert.equal(FIRST_LEDGER_LINE_Y,TREBLE_STAFF_LINES.at(-1)!+16);
@@ -36,4 +37,16 @@ test('3.2 provides precise selectable pitch examples up to octave',()=>{
  assert.equal(INTERVAL_EXAMPLES[5].name,'Tiszta kvart (t4)');
  assert.equal(INTERVAL_EXAMPLES[6].semitones,6);
  assert.equal(INTERVAL_EXAMPLES[12].note,'C5');
+});
+
+test('staff-reading quiz uses Hungarian octave labels rather than MIDI-style labels',()=>{
+ const questions=ADDITIONAL_QUESTIONS.filter(q=>q.chapterId==='hangok-kulcsok'&&/G-kulcs/.test(q.question));
+ assert.ok(questions.length>=3,'Staff reading quiz questions missing');
+ for(const question of questions){
+   const copy=[question.question,...question.options].join(' ');
+   assert.doesNotMatch(copy,/\b[A-H][345]\b/,'International octave label shown to students');
+ }
+ assert.equal(questions[0].options[0],'E′');
+ assert.equal(questions[1].options[0],'G′');
+ assert.match(questions[2].question,/C′/);
 });
