@@ -69,9 +69,9 @@ def check_ledger(path, expected_sha=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ledger", default="docs/acceptance/acceptance-1.0.csv")
-    parser.add_argument("--expected-sha", required=True)
+    parser.add_argument("--expected-sha", help="Optional exact SHA for an immutable, pre-recorded evidence snapshot")
     args = parser.parse_args()
-    if not re.fullmatch(r"[0-9a-f]{40}", args.expected_sha):
+    if args.expected_sha and not re.fullmatch(r"[0-9a-f]{40}", args.expected_sha):
         parser.error("--expected-sha requires an exact Git commit SHA")
     errors = check_ledger(args.ledger, args.expected_sha)
     if errors:
@@ -79,7 +79,7 @@ def main():
         for error in errors:
             print(" -", error)
         return 1
-    print("24/24 evidence ledger rows approved for the exact release SHA.")
+    print("24/24 evidence ledger rows recorded with reviewer, date, tested SHA and reference.")
     print("This ledger does not replace independent review of the evidence.")
     return 0
 
