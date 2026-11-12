@@ -20,6 +20,9 @@ jobs:
       - name: Checkout acceptance ledger
         if: github.event.pull_request.number == 2
         uses: actions/checkout@v4
+      - name: Test acceptance ledger verifier
+        if: github.event.pull_request.number == 2
+        run: python3 -m unittest discover -s scripts -p 'test_acceptance_ledger.py' -v
       - name: Validate A-01–A-24 evidence ledger
         if: github.event.pull_request.number == 2
         run: python3 scripts/check-acceptance-ledger.py
