@@ -23,6 +23,11 @@ function musicBriefRequested(string $question): bool {
 function musicKnownAnswer(string $question): ?string {
     $q = musicNormalize($question);
     $short = musicBriefRequested($question);
+    // A teaching comparison is not a single dictionary term: answer it directly
+    // from reviewed meter definitions before scanning the full source index.
+    if (preg_match('/\\b3\\s*\\/\\s*4\\b/', $q) && preg_match('/\\b6\\s*\\/\\s*8\\b/', $q)) {
+        return 'A **3/4-es ütem** három negyedből áll, rendszerint **súlyos–súlytalan–súlytalan** lüktetéssel. A **6/8-os ütem** hat nyolcadnyi értékből áll, általában **3+3 nyolcadra**, vagyis **két pontozott negyednyi lüktetési egységre** tagolódik. Az első és negyedik nyolcad csoportkezdő, az első a főhangsúlyos. A 6/8 tehát nem egyszerűen gyorsabb 3/4: a hangsúlyrendjük és a lüktetési egységeik eltérnek.';
+    }
     $answers = [
         '/\\b(hexachord|hexakord|hexachordum)[a-z]*\\b/' => [
             'A **hexachord (hexakord)** hat hangból álló hangsorszakasz. A középkori Guido-féle szolmizációban az ut–re–mi–fa–sol–la hangsort jelenti (egész–egész–fél–egész–egész lépésrend). _Magyar forrás: Kelemen Judit, Zempléni Múzsa: https://zemplenimuzsa.hu/latoter/kelemen-judit-matyas-korabeli-zenei-neveles-sarospatakon-a-szalkai-kodex-tukreben/_',
