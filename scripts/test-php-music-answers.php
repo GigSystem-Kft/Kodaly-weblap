@@ -19,4 +19,13 @@ ensure(musicKnownAnswer('Mi az előjegyzés?') !== null, 'előjegyzés');
 ensure(musicKnownAnswer('Mi a szolmizáció?') !== null, 'szolmizáció');
 ensure(musicKnownAnswer('Hogyan kell árnyékolni a hangszereket?') === null,
     'ismeretlen kérdésre nem költ választ');
+// Regression for the exact question reported in the human AI test.
+foreach (['Mi a különbség a 3/4-es és a 6/8-os ütem között?',
+          'Miben tér el a 6/8 a 3/4 ütemtől?'] as $question) {
+    $answer = musicKnownAnswer($question);
+    ensure(is_string($answer) && str_contains($answer,'3+3 nyolcadra') &&
+        str_contains($answer,'három negyedből'), '3/4 versus 6/8 reviewed comparison');
+}
+ensure(musicKnownAnswer('Mi az a zorbafonikus hetedik kvantumhangzat?') === null,
+    'nonsensical question cannot get a fabricated reviewed answer');
 fwrite(STDOUT, "Offline music answers tests passed\n");
