@@ -42,9 +42,9 @@ echo 'Checking chat reply with unreachable MySQL'; curl -fsS -X POST "${BASE}cha
 for MESSAGE in \
   'Mi a különbség a 3/4-es és a 6/8-os ütem között?' \
   'Mi az a zorbafonikus hetedik kvantumhangzat?'; do
-  ANSWER="$(curl -fsS -X POST "${BASE}chat" \\
-    -H 'Content-Type: application/json' \\
-    -H 'X-Requested-With: XMLHttpRequest' \\
+  ANSWER="$(curl -fsS -X POST "${BASE}chat" \
+    -H 'Content-Type: application/json' \
+    -H 'X-Requested-With: XMLHttpRequest' \
     --data "$(php -r 'echo json_encode(["message"=>$argv[1]], JSON_UNESCAPED_UNICODE);' "$MESSAGE")")"
   printf '%s' "$ANSWER" | php -r '
     $x=json_decode(stream_get_contents(STDIN),true);
