@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { QUIZ_QUESTIONS } from '../data/musicData';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { QUIZ_QUESTIONS, MUSIC_CHAPTERS } from '../data/musicData';
+import { EXTRA_LEARNING_MODULES } from '../data/learningProgressSummary';
 import { QuizQuestion } from '../types';
 import { HelpCircle, CheckCircle, XCircle, Award, ArrowRight, RotateCcw } from 'lucide-react';
 import { playNote } from '../utils/audio';
 
 interface QuizViewProps {
-  onSaveQuizScore: (chapterId: string, score: number) => void;
+  onSaveQuizScore: (chapterId: string, score: number, correct: number, total: number, wrongQuestionIds: string[], durationSeconds: number) => void;
   initialChapterId?: string;
 }
 
@@ -16,15 +17,38 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
   const [isAnswered, setIsAnswered] = useState<boolean>(false);
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [wrongQuestionIds, setWrongQuestionIds] = useState<string[]>([]);
+  const [round, setRound] = useState(0);
+  const [startedAt, setStartedAt] = useState(() => Date.now());
+  // Guard discrete controls against two clicks in the same React render.
+  // Without a synchronous latch, double-clicking Next can skip a question;
+  // double-clicking Finish can record the same quiz twice.
+  const answeringRef = useRef(false);
+  const advancingRef = useRef(false);
+  useEffect(() => {
+    answeringRef.current = false;
+    advancingRef.current = false;
+  }, [currentIndex, selectedChapter, round]);
 
-  const questions = selectedChapter === 'all'
-    ? QUIZ_QUESTIONS
-    : QUIZ_QUESTIONS.filter((q) => q.chapterId === selectedChapter);
+  // A practice round is deliberately short; the full bank remains available over
+  // repeated rounds, while a single all-topics session no longer needs hundreds of clicks.
+  const questions = useMemo(() => {
+    const bank = selectedChapter === 'all'
+      ? QUIZ_QUESTIONS
+      : QUIZ_QUESTIONS.filter(question => question.chapterId === selectedChapter);
+    const shuffled = [...bank];
+    for (let index = shuffled.length - 1; index > 0; index--) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+    return shuffled.slice(0, 15);
+  }, [selectedChapter, round]);
 
   const currentQ = questions[currentIndex] || questions[0];
 
   const handleSelectOption = (index: number) => {
-    if (isAnswered) return;
+    if (isAnswered || answeringRef.current || advancingRef.current) return;
+    answeringRef.current = true;
     setSelectedOption(index);
     setIsAnswered(true);
 
@@ -33,11 +57,14 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
       playNote('C5', 300);
       setCorrectCount((prev) => prev + 1);
     } else {
+      setWrongQuestionIds(previous => [...previous, currentQ.id].slice(0, 15));
       playNote('C3', 300);
     }
   };
 
   const handleNext = () => {
+    if (!isAnswered || advancingRef.current || isFinished) return;
+    advancingRef.current = true;
     setSelectedOption(null);
     setIsAnswered(false);
     if (currentIndex + 1 < questions.length) {
@@ -45,17 +72,35 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
     } else {
       setIsFinished(true);
       const finalScore = Math.round((correctCount / questions.length) * 100);
-      onSaveQuizScore(selectedChapter, finalScore);
+      onSaveQuizScore(selectedChapter === 'all' ? 'vegyes-gyakorlas' : selectedChapter,
+        finalScore, correctCount, questions.length, wrongQuestionIds,
+        Math.min(36_000, Math.max(0, Math.round((Date.now() - startedAt) / 1000))));
     }
   };
 
   const restartQuiz = () => {
+    answeringRef.current = false;
+    advancingRef.current = false;
     setCurrentIndex(0);
     setSelectedOption(null);
     setIsAnswered(false);
     setCorrectCount(0);
     setIsFinished(false);
+    setWrongQuestionIds([]);
+    setRound(value => value + 1);
+    setStartedAt(Date.now());
   };
+
+  if (questions.length === 0) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900">
+        <h2 className="text-2xl font-bold mb-3">Ehhez a témakörhöz még nincs kérdés</h2>
+        <p className="mb-4">Válassz egy másik témakört, vagy próbáld ki az összes kérdést.</p>
+        <button type="button" onClick={() => { setSelectedChapter('all'); restartQuiz(); }}
+          className="rounded-lg bg-violet-700 text-white px-4 py-2">Vegyes gyakorlás</button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -77,17 +122,19 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
           onChange={(event) => { setSelectedChapter(event.target.value); restartQuiz(); }}
           className="w-full rounded-xl border border-violet-400/50 bg-slate-900 text-white px-4 py-3 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-violet-500">
           {[
-            {id:'all', label:'Összes kérdés'},
-            {id:'ritmus', label:'01. Ritmus és tempó'},
-            {id:'hangok-kulcsok', label:'02. Hangok és kulcsok'},
-            {id:'szolmizacio-hangkozok', label:'03. Szolmizáció és hangközök'},
-            {id:'kreativ', label:'06. Kreatív zenei nevelés'},
-            {id:'zenetortenet', label:'07. Zenetörténet'},
-            {id:'pedagogia', label:'08. Tantárgy-pedagógia'},
-            {id:'zenei-kifejezesek', label:'09. Zenei kifejezések'},
+            {id:'all', label:'Vegyes gyakorlás (15 kérdés)'},
+            ...MUSIC_CHAPTERS.map(chapter => ({
+              id: chapter.id,
+              label: `${String(chapter.number).padStart(2, '0')}. ${chapter.title}`
+            })),
+            ...EXTRA_LEARNING_MODULES.map(module => ({
+              id: module.quizId,
+              label: `${String(module.number).padStart(2, '0')}. ${module.title}`
+            })),
             {id:'solfege', label:'Szolmizációs hangok'},
             {id:'abc-hangok', label:'ABC-s hangok'},
-          ].map(item=><option value={item.id} key={item.id}>{item.label}</option>)}
+          ].filter(item => item.id === 'all' || QUIZ_QUESTIONS.some(q => q.chapterId === item.id))
+            .map(item=><option value={item.id} key={item.id}>{item.label}</option>)}
         </select>
         <p className="text-xs text-slate-600 mt-2">{questions.length} kérdés a kiválasztott témakörben</p>
       </div>
@@ -133,7 +180,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
                 } else if (idx === selectedOption) {
                   btnStyle = 'bg-rose-950/50 border-rose-500 text-rose-200';
                 } else {
-                  btnStyle = 'bg-slate-900 border-slate-800 text-slate-500 opacity-50';
+                  btnStyle = 'bg-slate-800/60 border-slate-700 text-slate-300';
                 }
               }
 

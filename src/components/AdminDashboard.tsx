@@ -3,17 +3,34 @@ import { apiFetch } from '../api';
 
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
-type TutorSource = { id: string; title: string; createdAt: string; size: number };
-type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number;
- sources:{source:string;chunks:number;characters:number;kind:string}[];
+type TutorSource = { id: string; title: string; createdAt: string; size: number; sha256?: string };
+type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;buildConsistent?:boolean;releaseRevision?:string|null;mailConfigured:boolean;scope:string};
+type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
+ sources:{source:string;sourceId?:string|null;chunks:number;characters:number;kind:string}[];
+ privateSourceIntegrity?:{id:string;title:string;sourceBytes:number;indexedBytes:number;indexedChunks:number;sha256:string;complete:boolean}[];
+ rejectedSourceIds?:string[];
  omitted:{file:string;reason:string}[];missing:string[];limitations:string[]};
+
+const REQUIRED_PHP_TUTOR_BANKS = [
+  'Zeneelméleti Műhely – Szókártyák',
+  'Zeneelméleti Műhely – Teszt',
+  'Zeneelméleti Műhely – Párosító',
+  'Zeneelméleti Műhely – Hangzó hangsor és akkord',
+  'Zeneelméleti Műhely – Hangkészletek és pentaton példák',
+  'Zeneelméleti Műhely – Kvintkör'
+] as const;
 
 export const AdminDashboard: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [invites, setInvites] = useState<Invite[]>([]);
   const [sources, setSources] = useState<TutorSource[]>([]);
   const [coverage, setCoverage] = useState<Coverage | null>(null);
+  const [coverageOrigin, setCoverageOrigin] = useState<'live' | 'static' | null>(null);
+  const [staticCoverage, setStaticCoverage] = useState<Coverage | null>(null);
   const [coverageError, setCoverageError] = useState('');
+  const [deploymentCheck, setDeploymentCheck] = useState<DeploymentCheck | null>(null);
+  const [deploymentError, setDeploymentError] = useState('');
+  const deploymentReady = deploymentCheck?.ready === true && deploymentCheck?.scanComplete === true && deploymentCheck?.buildConsistent === true;
   const [sourceFile, setSourceFile] = useState<File | null>(null);
   const [sourceTitle, setSourceTitle] = useState('');
   const [search, setSearch] = useState('');
@@ -36,20 +53,59 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
-    apiFetch('/api/admin/source-coverage').then(async response => {
-      if(!response.ok) throw new Error('A PHP forrásjelentés nem érhető el.');
-      setCoverage(await response.json() as Coverage);
-    }).catch(async () => {
-      try {
-        const response=await fetch('/source-inventory.json',{cache:'no-store'});
-        if(!response.ok) throw new Error('Nincs helyi forrásjelentés.');
-        setCoverage(await response.json() as Coverage);
-      } catch(error) {
-        setCoverageError(error instanceof Error ? error.message : 'Forrásjelentési hiba.');
-      }
+    let cancelled = false;
+    apiFetch('/api/auth/deployment-check').then(async response => {
+      if (!response.ok) throw new Error('A telepítési önellenőrzés nem érhető el.');
+      const data = await response.json() as DeploymentCheck;
+      if (!cancelled) setDeploymentCheck(data);
+    }).catch(cause => {
+      if (!cancelled) setDeploymentError(cause instanceof Error ? cause.message : 'Telepítési ellenőrzési hiba.');
     });
+    return () => { cancelled = true; };
+  }, []);
+
+  const [coverageRefreshToken, setCoverageRefreshToken] = useState(0);
+  useEffect(() => {
+    void load().catch(e => setError(e instanceof Error ? e.message : 'Betöltési hiba.'));
   }, [load]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const readCoverage = async () => {
+      // Compare independent datasets, never silently label a static
+      // build-time report as the live PHP index.
+      const [live, stat] = await Promise.allSettled([
+        apiFetch('/api/admin/source-coverage').then(async response => {
+          if (!response.ok) throw new Error('A PHP-forrásjelentés nem érhető el.');
+          return await response.json() as Coverage;
+        }),
+        fetch('/source-inventory.json', {cache:'no-store'}).then(async response => {
+          if (!response.ok) throw new Error('A statikus forrásleltár nem érhető el.');
+          return await response.json() as Coverage;
+        })
+      ]);
+      if (cancelled) return;
+      const liveReport = live.status === 'fulfilled' ? live.value : null;
+      const staticReport = stat.status === 'fulfilled' ? stat.value : null;
+      setStaticCoverage(staticReport);
+      setCoverage(liveReport ?? staticReport);
+      setCoverageOrigin(liveReport ? 'live' : staticReport ? 'static' : null);
+      setCoverageError(!liveReport && !staticReport
+        ? 'Sem az élő PHP-jelentés, sem a statikus forrásleltár nem érhető el.'
+        : '');
+    };
+    void readCoverage();
+    return () => { cancelled = true; };
+  }, [coverageRefreshToken]);
+
+  const liveSourceNames = new Set(coverageOrigin === 'live' ? coverage?.sources.map(item => item.source) : []);
+  const staticSourceNames = new Set(staticCoverage?.sources.map(item => item.source) ?? []);
+  const staticOnly = coverageOrigin === 'live'
+    ? (staticCoverage?.sources ?? []).filter(item => !liveSourceNames.has(item.source))
+    : [];
+  const liveOnly = coverageOrigin === 'live'
+    ? (coverage?.sources ?? []).filter(item => !staticSourceNames.has(item.source))
+    : [];
 
   const uploadSource = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -69,7 +125,14 @@ export const AdminDashboard: React.FC = () => {
       const chooser = document.getElementById('tutor-source-file') as HTMLInputElement | null;
       if (chooser) chooser.value = '';
       setMessage('Forrás feltöltve. A Tanársegéd azonnal kereshet benne.');
-      await load(search);
+      // The list and live coverage are separate endpoints; a successful
+      // upload must refresh both without resetting the search filter.
+      setCoverageRefreshToken(token => token + 1);
+      try {
+        await load(search);
+      } catch {
+        setError('A forrás feltöltése sikerült, de a lista frissítése nem. Frissítsd az oldalt.');
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Feltöltési hiba.');
     } finally { setBusy(false); }
@@ -85,7 +148,13 @@ export const AdminDashboard: React.FC = () => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'A művelet sikertelen.');
       setMessage(result.message || success);
-      await load(search);
+      if (route === 'invite') setEmail('');
+      if (route === 'source-delete') setCoverageRefreshToken(token => token + 1);
+      try {
+        await load(search);
+      } catch {
+        setError('A művelet sikerült, de a lista frissítése nem. Frissítsd az oldalt.');
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Váratlan hiba.');
     } finally {
@@ -99,8 +168,58 @@ export const AdminDashboard: React.FC = () => {
       <p className="text-sm text-slate-600 mb-5">Az adminisztráció kizárólag jogosult fiókkal érhető el. A meghívókat a rendszer automatikusan e-mailben küldi.</p>
       {message && <p role="status" className="mb-3 text-sm text-emerald-700">{message}</p>}
       {error && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
+      <section className="rounded-xl border border-slate-200 bg-white p-5 mb-6" aria-label="Telepítés állapota">
+        <h3 className="font-bold mb-2">Telepítés és fájlok ellenőrzése</h3>
+        <p className="text-sm text-slate-600 mb-2">
+          Csak olvasási célú szerverellenőrzés. A fájlkészlet megfelelő állapota nem bizonyítja az SMTP, a tananyagok vagy a teljes hallgatói életút helyességét.
+        </p>
+        {deploymentError && <p role="alert" className="text-sm text-amber-800">{deploymentError}</p>}
+        {!deploymentError && !deploymentCheck && <p className="text-sm">A telepítés állapotának lekérdezése...</p>}
+        {deploymentCheck && <>
+          <p role={deploymentReady ? 'status' : 'alert'} className={'text-sm font-semibold mb-2 ' + (deploymentReady ? 'text-emerald-800' : 'text-red-800')}>
+            {deploymentReady ? 'A kötelező fájlok és belépési állományok jelen vannak; a nyilvános fájlfák ellenőrzése teljes.' : 'A telepítés fájlkészlete ellenőrzést igényel.'}
+          </p>
+          {deploymentCheck.scanComplete !== true && (
+            <p role="alert" className="text-sm text-red-800 mb-2">
+              A nyilvános mappák teljes biztonsági átvizsgálása nem igazolt vagy megszakadt.
+              Ilyenkor a telepítés NEM tekinthető ellenőrzöttnek.
+            </p>
+          )}
+          {deploymentCheck.buildConsistent !== true && (
+            <p role="alert" className="text-sm text-red-800 mb-2">
+              Nem igazolt az egységes telepítőverzió: a frontend, a PHP API és a kiadási jegyzék nem feltétlenül azonos Git-commitból származik.
+              Ilyen állapotban ne indíts adatokat módosító éles próbát.
+            </p>
+          )}
+          {deploymentCheck.buildConsistent === true && deploymentCheck.releaseRevision && (
+            <p className="text-xs text-slate-600 mb-2">
+              Ellenőrzött közös Git-verzió: <code>{deploymentCheck.releaseRevision.slice(0, 12)}</code>
+            </p>
+          )}
+          {deploymentCheck.missing.length > 0 && (
+            <div className="text-sm text-red-800 mb-2">
+              <strong>Hiányzó vagy üres fájlok ({deploymentCheck.missing.length}):</strong>
+              <ul className="list-disc pl-6">{deploymentCheck.missing.map(item=><li key={item}>{item}</li>)}</ul>
+            </div>
+          )}
+          {deploymentCheck.publicArchives.length > 0 && (
+            <div role="alert" className="text-sm text-red-800 mb-2">
+              <strong>Nyilvános kockázatos állományok vagy hivatkozások ({deploymentCheck.publicArchives.length}):</strong>
+              <ul className="list-disc pl-6">{deploymentCheck.publicArchives.map(item=><li key={item}>{item}</li>)}</ul>
+              Az ellenőrzött archívumokat a webgyökéren kívül kell megőrizni; ez a felület semmit nem töröl.
+            </div>
+          )}
+          {typeof deploymentCheck.scannedItems === 'number' && (
+            <p className="text-xs text-slate-600 mb-2">
+              Átvizsgált fájl- és mappabejegyzések: {deploymentCheck.scannedItems.toLocaleString('hu-HU')}.
+              Ez kizárólag az adminisztrátornak látható, olvasási célú ellenőrzés.
+            </p>
+          )}
+          <p className="text-xs text-slate-600">SMTP-konfiguráció: {deploymentCheck.mailConfigured ? 'beállítva (kézbesítés nincs itt tesztelve)' : 'nincs igazolva'} · Ellenőrizve: {deploymentCheck.checkedAt}</p>
+        </>}
+      </section>
       <form className="rounded-xl border bg-white p-5 mb-6 flex flex-wrap gap-3 items-end"
-        onSubmit={e => { e.preventDefault(); if (email.trim()) void action('invite', { email: email.trim() }, 'Meghívó elküldve.').then(() => setEmail('')); }}>
+        onSubmit={e => { e.preventDefault(); if (email.trim() && !busy) void action('invite', { email: email.trim() }, 'Meghívó elküldve.'); }}>
         <label className="text-sm flex-1 min-w-56">Új hallgató meghívása
           <input required type="email" value={email} onChange={e => setEmail(e.target.value)}
             placeholder="hallgato@pelda.hu" maxLength={254}
@@ -138,19 +257,124 @@ export const AdminDashboard: React.FC = () => {
         {coverageError && <p role="alert" className="text-red-700 text-sm">{coverageError}</p>}
         {!coverage && !coverageError && <p className="text-sm">A forrásjegyzék betöltése...</p>}
         {coverage && <>
+          {coverageOrigin === 'live' ? (
+            <p role="status" className="mb-3 text-sm font-semibold text-emerald-800">Élő PHP keresőindex – a kiszolgáló ténylegesen használt szövegrészletei.</p>
+          ) : (
+            <p role="alert" className="mb-3 text-sm font-semibold text-amber-800">
+              Az élő PHP keresőindex nem érhető el. Az alábbi számok kizárólag a buildkor létrehozott statikus forrásleltárból származnak, és nem bizonyítják a szerver aktuális tartalmát.
+            </p>
+          )}
+          {coverageOrigin === 'live' && typeof coverage.chapter09GlossaryEntries === 'number' && (
+            <p role={coverage.chapter09GlossaryEntries === 1793 ? 'status' : 'alert'}
+              className={'mb-3 text-sm ' + (coverage.chapter09GlossaryEntries === 1793 ? 'text-emerald-800' : 'font-semibold text-red-800')}>
+              09. fejezet – Zenei kifejezések: {coverage.chapter09GlossaryEntries} / 1793 tétel az élő PHP keresőindexben.
+              {coverage.chapter09GlossaryEntries !== 1793 ? ' A teljes fogalomtár nem található az éles indexben.' : ''}
+            </p>
+          )}
+          {coverageOrigin === 'live' && staticCoverage && (
+            <div className="mb-4 rounded-lg border border-slate-200 p-3 text-sm">
+              <p className="font-semibold mb-1">Élő PHP és statikus csomagjelentés összehasonlítása</p>
+              <p>PHP: {coverage.sources.length} forráscsoport, {coverage.indexChunks} szövegrész · Csomag: {staticCoverage.sources.length} forráscsoport, {staticCoverage.indexChunks} szövegrész.</p>
+              {((coverage.indexChunks !== staticCoverage.indexChunks || liveOnly.length > 0 || staticOnly.length > 0)) && (
+                <p className="mt-1 text-amber-800">A két jelentés eltér. Más adatforrások és indexelési szabályok is okozhatják az eltérést; ez önmagában nem bizonyít adatvesztést.</p>
+              )}
+              {(staticOnly.length > 0 || liveOnly.length > 0) && (
+                <details className="mt-2">
+                  <summary className="cursor-pointer font-semibold">Forráscsoport-eltérések (csak név alapján)</summary>
+                  <p className="mt-2">Csak a csomagleltárban ({staticOnly.length}): {staticOnly.map(item => item.source).join('; ') || 'nincs'}</p>
+                  <p className="mt-2">Csak az élő PHP-indexben ({liveOnly.length}): {liveOnly.map(item => item.source).join('; ') || 'nincs'}</p>
+                </details>
+              )}
+            </div>
+          )}
+          {coverageOrigin === 'live' && (
+            <div className="mb-4 rounded-lg border border-slate-200 p-3 text-sm" aria-label="Kötelező AI-gyakorlóbankok">
+              <h4 className="font-semibold mb-2">Hat kötelező gyakorlóbank az élő PHP-indexben</h4>
+              <ul className="space-y-1">
+                {REQUIRED_PHP_TUTOR_BANKS.map(bank => {
+                  const count = coverage.sources.find(item => item.source === bank)?.chunks ?? 0;
+                  return <li key={bank} className="flex flex-wrap justify-between gap-2 border-b border-slate-100 pb-1">
+                    <span>{bank.replace('Zeneelméleti Műhely – ', '')}</span>
+                    <strong className={count > 0 ? 'text-emerald-800' : 'text-red-800'}>
+                      {count > 0 ? count + ' indexelt tétel' : 'HIÁNYZIK'}
+                    </strong>
+                  </li>;
+                })}
+              </ul>
+              <p className="mt-2 text-xs text-slate-600">
+                A jelenlét és darabszám nem bizonyítja minden kérdés vagy meghatározás helyességét.
+                A teljes gyakorlóbank-egyezést külön kiadási teszt ellenőrzi.
+              </p>
+            </div>
+          )}
+          {coverageOrigin === 'live' && (
+            <section className="mb-4 rounded-lg border border-slate-200 p-3 text-sm" aria-label="Tanári források szöveghűsége">
+              <h4 className="font-semibold mb-2">Külön feltöltött források – szöveghűségi ellenőrzés</h4>
+              {!Array.isArray(coverage.privateSourceIntegrity) ? (
+                <p role="alert" className="text-red-800">
+                  Az élő PHP-kiszolgáló nem ad forrásonkénti SHA-256 ellenőrzést.
+                  A feltöltött források teljes indexelése nem igazolt.
+                </p>
+              ) : coverage.privateSourceIntegrity.length === 0 ? (
+                <p className="text-slate-600">Nincs külön feltöltött tanári forrás.</p>
+              ) : (
+                <>
+                  <p role={coverage.privateSourceIntegrity.every(item => item.complete) ? 'status' : 'alert'}
+                    className={coverage.privateSourceIntegrity.every(item => item.complete) ? 'text-emerald-800 mb-2' : 'font-semibold text-red-800 mb-2'}>
+                    {coverage.privateSourceIntegrity.filter(item => item.complete).length} / {coverage.privateSourceIntegrity.length}
+                    {' '}forrás teljes UTF-8 szövege egyezik az indexelt tartalommal.
+                    {coverage.privateSourceIntegrity.some(item => !item.complete) ?
+                      ' Eltérés esetén a forrás nem tekinthető teljesen indexeltnek.' : ''}
+                  </p>
+                  <div className="overflow-x-auto"><table className="w-full text-xs">
+                    <thead><tr className="border-b text-left">
+                      <th className="p-2">Forrás (azonosító)</th>
+                      <th className="p-2">Feltöltött / indexelt bájt</th>
+                      <th className="p-2">Állapot</th>
+                    </tr></thead>
+                    <tbody>{coverage.privateSourceIntegrity.map(item => (
+                      <tr key={item.id} className="border-b">
+                        <td className="p-2 break-words">
+                          <strong>{item.title}</strong>
+                          <span className="block text-slate-500">ID: {item.id.slice(0, 12)} · {item.indexedChunks} részlet</span>
+                          <span className="block text-slate-500 break-all" title="Az eredeti feltöltött szöveg SHA-256 ellenőrzőösszege">
+                            SHA-256: {item.sha256}
+                          </span>
+                        </td>
+                        <td className="p-2">{item.sourceBytes.toLocaleString('hu-HU')} / {item.indexedBytes.toLocaleString('hu-HU')}</td>
+                        <td className={'p-2 font-semibold '+(item.complete ? 'text-emerald-800' : 'text-red-800')}>
+                          {item.complete ? 'Egyezik' : 'HIÁNYOS / ELTÉR'}
+                        </td>
+                      </tr>
+                    ))}</tbody>
+                  </table></div>
+                </>
+              )}
+              <p className="text-xs text-slate-600 mt-2">
+                Az ellenőrzés az indexelt UTF-8 szöveg teljességére vonatkozik, nem a szerzői jogokra vagy a zenei állítások helyességére.
+              </p>
+            </section>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.sources.length}</strong>Indexelt forráscsoport</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{coverage.indexChunks}</strong>Indexelt szövegrész</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{Math.round(coverage.indexedCharacters/1000)} ezer</strong>Karakter</div>
             <div className="rounded-lg bg-indigo-50 p-3"><strong className="block text-xl">{sources.length}</strong>Külön feltöltött forrás (PHP)</div>
           </div>
-          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. A külön feltöltött források is bekerülnek az élő PHP-jelentésbe; fejlesztői módban eltérhet a statikus csomagindex.</p>
+          <p className="text-xs text-slate-500 mb-3">Jelentés készült: {coverage.generatedAt}. Mérés: {coverageOrigin === 'live' ? 'élő PHP' : 'statikus csomag'}. A külön feltöltött források csak az élő PHP-jelentésbe kerülnek be.</p>
           <details className="mb-3"><summary className="cursor-pointer font-semibold">Indexelt dokumentumok – részletes bontás</summary>
             <div className="overflow-x-auto mt-2"><table className="w-full text-xs">
               <thead><tr className="border-b text-left"><th className="p-2">Forrás</th><th className="p-2">Részlet</th><th className="p-2">Karakter</th></tr></thead>
-              <tbody>{coverage.sources.map((item,i)=><tr key={i} className="border-b"><td className="p-2 break-all">{item.source}</td><td className="p-2">{item.chunks}</td><td className="p-2">{item.characters.toLocaleString('hu-HU')}</td></tr>)}</tbody>
+              <tbody>{coverage.sources.map((item,i)=><tr key={i} className="border-b"><td className="p-2 break-all">{item.source}{item.sourceId ? <span className="block text-slate-500">Azonosító: {item.sourceId.slice(0,12)}</span> : null}</td><td className="p-2">{item.chunks}</td><td className="p-2">{item.characters.toLocaleString('hu-HU')}</td></tr>)}</tbody>
             </table></div></details>
-          {coverage.missing.length>0 && <div className="text-red-800 text-sm mb-3"><strong>Hiányzó kötelező fájlok:</strong> {coverage.missing.join(', ')}</div>}
+          {coverageOrigin === 'live' && (coverage.rejectedSourceIds?.length ?? 0) > 0 && (
+            <p role="alert" className="mb-3 text-sm font-semibold text-red-800">
+              {coverage.rejectedSourceIds?.length} sérült vagy nem biztonságosan olvasható tanári forrásfájl
+              kimaradt az indexből. Azonosítók: {coverage.rejectedSourceIds?.map(id => id.slice(0,12)).join(', ')}.
+              Ellenőrizd a külön források szerveroldali mentését és jogosultságait.
+            </p>
+          )}
+          {coverage.missing.length>0 && <div className="text-red-800 text-sm mb-3"><strong>Hiányzó kötelező tartalom és forráshibák:</strong> {coverage.missing.join(', ')}</div>}
           <details className="mb-3" open={coverage.omitted.length>0}><summary className="cursor-pointer font-semibold">Nem indexelt fájlok ({coverage.omitted.length})</summary>
             {coverage.omitted.map(item=><p key={item.file} className="text-sm mt-2"><strong>{item.file}</strong> – {item.reason}</p>)}
           </details>

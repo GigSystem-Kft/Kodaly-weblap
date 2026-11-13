@@ -48,12 +48,26 @@ export interface MatchingPair {
   category: string;
 }
 
+export interface QuizAttempt {
+  id: string;
+  chapterId: string;
+  score: number;
+  correct: number;
+  total: number;
+  at: string;
+  wrongQuestionIds?: string[]; // at most 15 wrong-question IDs from a 15-question practice round
+  durationSeconds?: number; // practice duration, not an exam-time limit
+}
+
 export interface UserProgress {
   completedChapters: string[];
   completedSubchapters: string[];
-  quizScores: Record<string, number>; // chapterId -> percentage
+  quizScores: Record<string, number>; // chapterId -> best percentage (legacy compatible)
+  quizAttempts?: QuizAttempt[]; // recent individual attempts, not a verified exam record
   flashcardsMastered: string[];
   matchingCompleted: string[];
+  favoriteExpressions?: string[]; // saved glossary favorites, backward-compatible
+  earTrainingDailyXp?: Record<string, number>; // client-side practice cap; not a certified grade
   xp: number;
   streak: number;
   lastActiveDate: string;

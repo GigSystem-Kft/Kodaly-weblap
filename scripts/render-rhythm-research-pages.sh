@@ -7,6 +7,19 @@ if [[ $# -ne 1 || ! -f "$1" ]]; then
   echo "Használat: bash $0 /útvonal/ritmikai-fejleszto.pdf" >&2
   exit 2
 fi
+EXPECTED_SHA256='eddb1e3a0e8ec9e6135d5e7b3f1807e9728df2399a5258a870b1d9d4d55dc3aa'
+if command -v sha256sum >/dev/null; then
+  ACTUAL_SHA256="$(sha256sum "$1" | awk '{print $1}')"
+elif command -v shasum >/dev/null; then
+  ACTUAL_SHA256="$(shasum -a 256 "$1" | awk '{print $1}')"
+else
+  echo "Hiányzik a SHA-256 ellenőrző program." >&2
+  exit 2
+fi
+if [[ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]]; then
+  echo "A dokumentum nem egyezik a jóváhagyott, 13 oldalas eredeti PDF-fel. Nem készülhetnek belőle kiadási képek." >&2
+  exit 1
+fi
 command -v pdfinfo >/dev/null || { echo "Hiányzik: pdfinfo (poppler-utils)" >&2; exit 2; }
 command -v pdftoppm >/dev/null || { echo "Hiányzik: pdftoppm (poppler-utils)" >&2; exit 2; }
 COUNT="$(pdfinfo "$1" | awk '/^Pages:/{print $2}')"

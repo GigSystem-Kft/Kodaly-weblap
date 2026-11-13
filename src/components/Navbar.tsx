@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TEXTBOOKS } from './TextbookView';
 import { BookOpen, Award, Layers, Volume2, Flame, Sparkles, HelpCircle, Image as ImageIcon, Table } from 'lucide-react';
 
@@ -11,6 +11,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, streak, isAdmin = false }) => {
+  const [textbooksOpen, setTextbooksOpen] = useState(false);
   const navItems = [
     { id: 'chapters', label: '01. Tananyag' },
     { id: 'flashcards', label: '02. Szókártyák' },
@@ -23,14 +24,14 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
 
   return (
     <header className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
-      <div className="brand cursor-pointer mb-4 md:mb-0" onClick={() => setActiveTab('chapters')}>
+      <button type="button" className="brand cursor-pointer mb-4 md:mb-0 text-left" onClick={() => setActiveTab('chapters')} title="Vissza a tananyag főoldalára">
         <h1 className="font-serif-cormorant text-3xl md:text-4xl italic font-semibold leading-none mb-1 text-[#1c1c1c]">
           Zeneelméleti Műhely
         </h1>
-        <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/60 font-medium">
+        <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/75 font-medium">
           Zenei Ismeretek & Oktatási Portál
         </p>
-      </div>
+      </button>
 
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
         <nav className="flex flex-wrap gap-x-6 gap-y-2">
@@ -43,29 +44,44 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
                 className={`all-unset text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer transition-colors ${
                   isActive
                     ? 'text-[#4a54e1] font-semibold underline underline-offset-4'
-                    : 'text-[#1c1c1c]/60 hover:text-[#1c1c1c]'
+                    : 'text-[#1c1c1c]/75 hover:text-[#1c1c1c]'
                 }`}
               >
                 {item.label}
               </button>
             );
           })}
-          <div className="relative group">
+          <div className="relative"
+            onMouseEnter={() => setTextbooksOpen(true)}
+            onMouseLeave={() => setTextbooksOpen(false)}
+            onBlur={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setTextbooksOpen(false);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                setTextbooksOpen(false);
+                event.stopPropagation();
+              }
+            }}>
             <button
+              type="button"
+              aria-expanded={textbooksOpen}
+              aria-controls="textbook-navigation"
+              onClick={() => setTextbooksOpen(true)}
               className={`all-unset text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer transition-colors ${
                 activeTab.startsWith('textbook-')
                   ? 'text-[#4a54e1] font-semibold underline underline-offset-4'
-                  : 'text-[#1c1c1c]/60 hover:text-[#1c1c1c]'
+                  : 'text-[#1c1c1c]/75 hover:text-[#1c1c1c]'
               }`}
             >
               07. Tankönyvek ▾
             </button>
-            <div className="absolute left-0 top-full pt-2 hidden group-hover:block group-focus-within:block z-40">
+            <div id="textbook-navigation" className={`absolute left-0 top-full pt-2 z-40 ${textbooksOpen ? 'block' : 'hidden'}`}>
               <div className="bg-white border border-[#1c1c1c]/15 shadow-md min-w-44 flex flex-col">
                 {TEXTBOOKS.map((t) => (
                   <button
                     key={t.id}
-                    onClick={() => setActiveTab(`textbook-${t.id}`)}
+                    onClick={() => { setActiveTab(`textbook-${t.id}`); setTextbooksOpen(false); }}
                     className="all-unset text-left px-3 py-2 text-[0.75rem] font-medium tracking-wide uppercase cursor-pointer hover:bg-[#4a54e1]/10"
                   >
                     {t.title}
@@ -77,9 +93,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
         </nav>
 
         {/* Stats */}
-        <div className="flex items-center gap-3 text-[0.7rem] font-medium tracking-wide text-[#1c1c1c]/70">
+        <div className="flex items-center gap-3 text-[0.7rem] font-medium tracking-wide text-[#1c1c1c]/80">
           <div className="bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded">
-            STREAK: <b className="text-amber-600">{streak} NAP</b>
+            STREAK: <b className="text-amber-800">{streak} NAP</b>
           </div>
           <div className="bg-[#4a54e1]/10 border border-[#4a54e1]/30 px-2.5 py-1 rounded">
             XP: <b className="text-[#4a54e1]">{xp} XP</b>

@@ -6,6 +6,12 @@ function searchTerms(string $value): array {
         'ú'=>'u','ü'=>'u','ű'=>'u','Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o',
         'Ö'=>'o','Ő'=>'o','Ú'=>'u','Ü'=>'u','Ű'=>'u'];
     $text = strtolower(strtr($value, $chars));
+    // Hungarian text may arrive in decomposed Unicode form (for example
+    // 'o' + U+0308 instead of 'ö'). The precomposed letters above are folded
+    // already; strip combining marks too, without requiring intl/mbstring.
+    // Otherwise the same musical term silently becomes different tokens.
+    $text = preg_replace('/\\p{Mn}+/u', '', $text);
+    if (!is_string($text)) return [];
     // Keep concepts, not the grammar surrounding a question.
     $stop = ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy',
         'van','nem','kerlek','roviden','tomoren','lenyegretoro','mondanal',
@@ -13,6 +19,7 @@ function searchTerms(string $value): array {
         'jelent','jelentese','azt','az','hogy','es','ha','mi','ki','miert',
         'hogyan','mikor','van-e','tudsz','mondani','meselj','szolj','arra',
         'nevezunk','nevezik','fogalma','definicio','fogalmat','nekem',
+        'tanulunk','tanulhatunk','tanulhatok','tanulni','tanits','szeretnem',
         'legyszi','magyarazd','magyarazat','kicsit','lehet','keresek'];
     $words = preg_split('/[^a-z0-9]+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
     $terms=[];
@@ -20,11 +27,29 @@ function searchTerms(string $value): array {
         if (strlen($word)<=2 || in_array($word,$stop,true)) continue;
         // Equivalent historical and Hungarian spellings.
         if (in_array($word,['hexachord','hexachordum','hexachordok','hexachordot',
-            'hexakord','hexakordok','hexakordot'],true)) $word='hexachord';
+            'hexachordokrol','hexachordrol','hexakord','hexakordok','hexakordot',
+            'hexakordokrol','hexakordrol'],true)) $word='hexachord';
         if (in_array($word,['guidoni','guidofele'],true)) $word='guido';
         $terms[$word]=true;
     }
     return array_keys($terms);
+}
+/**
+ * A short Hungarian case suffix may follow a complete indexed concept.
+ * Avoid unrestricted fuzzy substring matches: "kvintkör" should match
+ * "kvintkörről", but unrelated words sharing a few letters must not.
+ */
+function tutorTermMatch(string $query, string $indexed): bool {
+    if ($query === $indexed) return true;
+    if (strlen($query) >= 5 && str_starts_with($indexed, $query)) return true;
+    if (strlen($indexed) < 5 || !str_starts_with($query, $indexed)) return false;
+    $suffix = substr($query, strlen($indexed));
+    return in_array($suffix, [
+        't','at','et','ot','ok','ek','ak','okrol','ekrol','akrol',
+        'rol','tol','hoz','hez','hon','on','en','an',
+        'ban','ben','bol','nal','nel','nak','nek','ra','re',
+        'ig','kent','val','vel','ert','roluk','okon','eken','akat','eket'
+    ], true);
 }
 function knowledgeEntries(): array {
     $file=__DIR__ . '/knowledge.php';
@@ -65,12 +90,12 @@ function rankLessons(string $question, array $entries, int $limit=4): array {
         foreach($tokens as $token) {
             $isMatch=false;
             foreach ($labelWords as $word) {
-                if ($token===$word || (strlen($token)>=5 && str_starts_with($word,$token))) {
+                if (tutorTermMatch($token,$word)) {
                     $labelMatched++; $isMatch=true; break;
                 }
             }
             if (!$isMatch) foreach($bodyWords as $word) {
-                if ($token===$word || (strlen($token)>=5 && str_starts_with($word,$token))) {
+                if (tutorTermMatch($token,$word)) {
                     $isMatch=true; break;
                 }
             }
@@ -101,7 +126,7 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
             $matches=0;
             foreach ($tokens as $token) {
                 foreach ($terms as $term) {
-                    if (str_starts_with($term,$token) || str_starts_with($token,$term)) {
+                    if (tutorTermMatch($token,$term)) {
                         $matches++; break;
                     }
                 }
@@ -114,26 +139,70 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
         if (mbSafeLength($answer)>($short ? 200 : 320)) {
             $answer=trim(mbSafeCut($answer,$short ? 200 : 320)) . '…';
         }
-        $pieces[]=$answer . "\n" . '_Forrás: ' . $hit['source'] . ' – ' . $hit['label'] . '_';
+        // Distinguish teacher-uploaded documents from the built-in reviewed
+        // curriculum even if a teacher gives the upload an identical title.
+        // IDs remain private, but the student sees honest provenance.
+        $attribution=is_string($hit['sourceId'] ?? null)
+            ? 'Tanár által feltöltött forrás: ' : 'Forrás: ';
+        $pieces[]=$answer . "\n" . '_' . $attribution .
+            $hit['source'] . ' – ' . $hit['label'] . '_';
         if ($short) break;
     }
     return $pieces ? implode("\n\n",$pieces) :
         'Nem találtam eléggé releváns, rövid választ a helyi forrásokban.';
 }
-function mbSafeLength(string $text): int { return strlen($text); }
+/** Unicode grapheme-aware answer previews; no intl/mbstring extension required. */
+function mbSafeLength(string $text): int {
+    // A base letter plus its combining acute accent is one visible glyph,
+    // as is an emoji/ZWJ musical sequence. Match the UI's visible units.
+    $count=preg_match_all('/\\X/u', $text);
+    return $count===false ? strlen($text) : $count;
+}
 function mbSafeCut(string $text,int $max): string {
-    $s=substr($text,0,$max);
-    return preg_replace('/[^\\x00-\\x7F][\\x80-\\xBF]*$/','',$s) ?? $s;
+    if ($max<=0) return '';
+    // mb_substr uses Unicode code points, so even on hosts with mbstring it
+    // may separate a Hungarian combining accent or joined music emoji.
+    $count=preg_match_all('/\\X/u', $text, $clusters);
+    if ($count===false) return '';
+    if ($count<=$max) return $text;
+    return implode('',array_slice($clusters[0],0,$max));
 }
 
+
+/** Count public knowledge groups without exposing private upload IDs or titles. */
+function tutorKnowledgeCounts(array $entries): array {
+    $sourceKeys=[];
+    $lessons=0;
+    foreach ($entries as $entry) {
+        if (!is_array($entry)) continue;
+        $privateId=is_string($entry['sourceId'] ?? null) ? $entry['sourceId'] : null;
+        if ($privateId===null && ($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag' &&
+            ($entry['contextApproved'] ?? null)===true) {
+            $lessons++;
+        } else {
+            $key=$privateId!==null
+                ? 'private:'.$privateId : 'built-in:'.(string)($entry['source'] ?? '');
+            $sourceKeys[$key]=true;
+        }
+    }
+    return [
+        'indexedSources'=>count($sourceKeys),
+        'lessonChunks'=>$lessons,
+        'indexedChunks'=>count($entries)
+    ];
+}
 
 /** Only aggregate status: do not reveal private uploaded source titles to anonymous visitors. */
 function tutorSourceAudit(array $entries): array {
     $coverage=[];
-    for($n=1;$n<=8;$n++) $coverage[(string)$n]=0;
+    for($n=1;$n<=9;$n++) $coverage[(string)$n]=0;
     $visual=0; $glossary=0;
     foreach($entries as $entry) {
         if(!is_array($entry)) continue;
+        // Private uploads use labels like "1. szövegrész", which are NOT
+        // chapter 1. Counting them as numbered curriculum sections falsely
+        // inflated the public source coverage for chapters 1–9.
+        if (is_string($entry['sourceId'] ?? null)) continue;
         $label=(string)($entry['label']??'');
         $source=(string)($entry['source']??'');
         foreach($coverage as $n=>$count) {
@@ -162,21 +231,66 @@ function tutorSourceAudit(array $entries): array {
 
 /** Detailed inventory for authenticated admins; never expose titles of private sources publicly. */
 function tutorDetailedCoverage(array $entries): array {
-    $groups = []; $totalCharacters = 0;
+    $groups = []; $totalCharacters = 0; $glossaryEntries = 0;
     foreach ($entries as $entry) {
         if (!is_array($entry) || !is_string($entry['source'] ?? null)) continue;
         $name = $entry['source'];
-        $characters = strlen((string)($entry['text'] ?? ''));
-        if (!isset($groups[$name])) {
-            $groups[$name] = ['source'=>$name,'chunks'=>0,'characters'=>0,'kind'=>'indexed'];
+        $privateId = is_string($entry['sourceId'] ?? null) &&
+            preg_match('/^[a-f0-9]{32}$/D',$entry['sourceId'])===1
+            ? $entry['sourceId'] : null;
+        // Private uploads with identical titles must remain distinct; nor
+        // may a teacher-upload title impersonate a required built-in bank.
+        $key = $privateId !== null ? 'private:' . $privateId : $name;
+        if ($privateId===null &&
+            str_starts_with((string)($entry['label'] ?? ''), '09. Zenei kifejezések / ')) {
+            ++$glossaryEntries;
         }
-        $groups[$name]['chunks']++;
-        $groups[$name]['characters'] += $characters;
+        $characters = mbSafeLength((string)($entry['text'] ?? ''));
+        if (!isset($groups[$key])) {
+            $groups[$key] = [
+                'source'=>$name,'sourceId'=>$privateId,
+                'chunks'=>0,'characters'=>0,
+                'kind'=>$privateId===null ? 'indexed' : 'teacher-upload'
+            ];
+        }
+        $groups[$key]['chunks']++;
+        $groups[$key]['characters'] += $characters;
         $totalCharacters += $characters;
     }
     ksort($groups);
     $missing = [];
     if (!is_file(__DIR__.'/knowledge.php')) $missing[]='knowledge.php (beépített tudásbázis)';
+    // Each PHP release should index the complete 09. glossary; a partial
+    // manual upload must be visible to the administrator.
+    if ($glossaryEntries !== 1793) $missing[]='09. Zenei kifejezések – PHP keresőindex: ' . $glossaryEntries . '/1793 tétel';
+    // A-08: a on-server report must flag missing teaching banks even when
+    // knowledge.php exists (e.g. an incomplete or mixed-version upload).
+    // Full item-by-item equality is still enforced by release-time parity CI.
+    $requiredTeachingBanks = [
+        'Zeneelméleti Műhely – Szókártyák',
+        'Zeneelméleti Műhely – Teszt',
+        'Zeneelméleti Műhely – Párosító',
+        'Zeneelméleti Műhely – Hangzó hangsor és akkord',
+        'Zeneelméleti Műhely – Hangkészletek és pentaton példák',
+        'Zeneelméleti Műhely – Kvintkör',
+    ];
+    foreach ($requiredTeachingBanks as $bank) {
+        if (!isset($groups[$bank]) || $groups[$bank]['chunks'] < 1) {
+            $missing[] = 'Hiányzik a PHP Tanársegédből: ' . $bank;
+        }
+    }
+    require_once __DIR__ . '/tutor-sources.php';
+    $privateIntegrity=tutorPrivateSourceIntegrity($entries);
+    $rejectedSourceIds=tutorRejectedSourceIds();
+    foreach ($rejectedSourceIds as $rejectedId) {
+        $missing[]='Sérült, veszélyes vagy nem olvasható tanári forrásfájl: '.$rejectedId;
+    }
+    foreach ($privateIntegrity as $source) {
+        if ($source['complete'] !== true) {
+            $missing[]='Tanári forrás hiányosan indexelve: ' . $source['title'] .
+                ' (' . $source['id'] . ')';
+        }
+    }
     $omitted = [
         ['file'=>'Kesztler – ellenőrizetlen OCR-átirat',
          'reason'=>'A gépi szöveg szakmai ellenőrzéséig a PHP tudásbázisból kizárva']
@@ -184,12 +298,17 @@ function tutorDetailedCoverage(array $entries): array {
     return [
         'generatedAt'=>gmdate('c'),
         'indexChunks'=>count($entries),
+        'chapter09GlossaryEntries'=>$glossaryEntries,
         'indexedCharacters'=>$totalCharacters,
         'sources'=>array_values($groups),
+        'privateSourceIntegrity'=>$privateIntegrity,
+        'rejectedSourceIds'=>$rejectedSourceIds,
         'missing'=>$missing,
         'omitted'=>$omitted,
         'limitations'=>[
             'Az index valóban felhasznált PHP-szövegrészleteit mutatja; a források teljes fájlmérete eltérhet.',
+            'A karakterek Unicode-jelek száma, nem UTF-8 bájtok; a statikus és élő index eltérő darabolása nem jelent automatikus hiányt.',
+            'A kötelező gyakorlóbankok jelenlétének ellenőrzése nem bizonyítja a teljes kérdésszámot; ezt a kiadási paritásteszt vizsgálja.',
             'A PDF-ek ábrái és a külső videók hangja nem automatikusan részei a keresőindexnek.',
             'A knowledge-pedagogy.php csak jogszerű, külön engedélyezett telepítés esetén kerül a szerverre.',
             'A forrás elérhetősége önmagában nem igazolja a generált AI-válasz tartalmi helyességét.'

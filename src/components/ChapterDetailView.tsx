@@ -20,6 +20,8 @@ interface ChapterDetailViewProps {
   onBack: () => void;
   onOpenQuiz: (chapterId: string) => void;
   onCompleteChapter: (chapterId: string) => void;
+  onCompleteSubchapter: (subchapterId: string) => void;
+  completedSubchapters: string[];
   isCompleted: boolean;
 }
 
@@ -28,6 +30,8 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   onBack,
   onOpenQuiz,
   onCompleteChapter,
+  onCompleteSubchapter,
+  completedSubchapters,
   isCompleted
 }) => {
   const [activeSubId, setActiveSubId] = useState<string>(chapter.subchapters[0]?.id || '');
@@ -35,6 +39,11 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
 
   const currentSub = chapter.subchapters.find((s) => s.id === activeSubId) || chapter.subchapters[0];
+  useEffect(() => {
+    setActiveSubId(chapter.subchapters[0]?.id || '');
+    setRevealedAnswers([]);
+    setZoom(null);
+  }, [chapter.id]);
   useEffect(() => () => stopEarTrainingInterval(), [activeSubId]);
   const illustrations = LESSON_ILLUSTRATIONS[currentSub.id] ?? [];
   const guide = getFoundationsSubchapterGuide(chapter.id, currentSub.id);
@@ -62,7 +71,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
           {!isCompleted ? (
             <button
               onClick={() => onCompleteChapter(chapter.id)}
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30"
             >
               <CheckCircle className="w-4 h-4" />
               <span>Fejezet Teljesítése</span>
@@ -96,7 +105,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <button
                 key={sub.id}
                 onClick={() => setActiveSubId(sub.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-start space-x-3 ${
+                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-start space-x-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800 ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                     : 'bg-white hover:bg-indigo-50 text-slate-700 border border-slate-200'
@@ -108,6 +117,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   {idx + 1}
                 </span>
                 <span className="flex-1 leading-snug">{sub.title}</span>
+                {completedSubchapters.includes(sub.id) && <CheckCircle className="w-4 h-4 shrink-0" aria-label="Tanulmányozott alfejezet" />}
               </button>
             );
           })}
@@ -116,7 +126,17 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
         {/* Content area */}
         <div className="lg:col-span-3 space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{currentSub.title}</h3>
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
+              <h3 className="text-xl font-bold text-slate-900">{currentSub.title}</h3>
+              {completedSubchapters.includes(currentSub.id) ? (
+                <span className="text-sm text-emerald-700 inline-flex gap-1 items-center"><CheckCircle className="w-4 h-4"/> Tanulmányozottnak jelölve</span>
+              ) : (
+                <button type="button" onClick={() => onCompleteSubchapter(currentSub.id)}
+                  className="rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2 text-sm font-medium">
+                  Alfejezet tanulmányozva
+                </button>
+              )}
+            </div>
             <p className="text-[#4a54e1] font-medium text-sm mb-6 pb-4 border-b border-slate-200">
               {currentSub.summary}
             </p>
@@ -162,7 +182,8 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <div className="rounded-xl border border-indigo-200 p-5 mb-5">
                 <h4 className="font-semibold mb-3">Önellenőrzés</h4>
                 {guide.selfCheck.map((item,index) => {
-                  const key = chapter.id + ':' + index;
+                  // Distinct answers belong to distinct subchapters, even at the same question index.
+                  const key = chapter.id + ':' + currentSub.id + ':' + index;
                   const visible = revealedAnswers.includes(key);
                   return <div key={item.question} className="py-3 border-b border-slate-100 last:border-0">
                     <p className="text-sm font-medium mb-2">{index + 1}. {item.question}</p>
@@ -248,7 +269,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <div key={qIdx} className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 my-6 flex items-start space-x-4">
                 <Quote className="w-8 h-8 text-[#4a54e1] shrink-0 opacity-70" />
                 <div>
-                  <p className="text-slate-200 italic font-medium mb-2">„{q.text}”</p>
+                  <p className="text-slate-800 italic font-medium mb-2">„{q.text}”</p>
                   <span className="text-xs font-bold text-[#4a54e1]">— {q.source}</span>
                 </div>
               </div>

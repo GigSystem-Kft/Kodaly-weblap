@@ -50,12 +50,14 @@ function database(array $config): PDO {
         ]
     );
 }
-function getPayload(): array {
+function getPayload(int $maxBytes=65536): array {
     if (!str_starts_with(strtolower($_SERVER['CONTENT_TYPE'] ?? ''), 'application/json')) {
         fail(415, 'JSON adatokat vár a szerver.');
     }
-    $raw = file_get_contents('php://input', false, null, 0, 65537);
-    if (!is_string($raw) || strlen($raw) > 65536) fail(413, 'Túl nagy kérés.');
+    // Login, invitations and other privileged routes retain their 64 KiB
+    // request cap. Only the revision-protected progress PUT uses 1 MB.
+    $raw = file_get_contents('php://input', false, null, 0, $maxBytes + 1);
+    if (!is_string($raw) || strlen($raw) > $maxBytes) fail(413, 'Túl nagy kérés.');
     try { $data = json_decode($raw, true, 24, JSON_THROW_ON_ERROR); }
     catch (JsonException) { fail(400, 'Érvénytelen JSON.'); }
     if (!is_array($data) || array_is_list($data)) fail(400, 'Érvénytelen adatok.');
@@ -79,9 +81,20 @@ function guardWrite(array $config): void {
 function throttle(string $action, int $max = 16): void {
     // Single-server pilot throttle; deploy a shared store or edge limits if horizontally scaling.
     $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    $file = sys_get_temp_dir() . '/zm_limit_' . hash('sha256', $action . '|' . $ip);
+    // A shared /tmp file can be owned by a previous PHP-FPM site user after
+    // a CloudPanel site restore. Keep the throttle store privately under
+    // this site's home, outside the public htdocs directory.
+    $directory = dirname(__DIR__, 3) . '/.zeneelmelet-rate-limits';
+    if (!is_dir($directory) && !@mkdir($directory, 0700) && !is_dir($directory)) {
+        error_log('Zeneelmelet: cannot create private login rate-limit directory');
+        fail(503, 'Nem érhető el a bejelentkezési védelem.');
+    }
+    $file = $directory . '/zm_limit_' . hash('sha256', $action . '|' . $ip);
     $f = @fopen($file, 'c+');
-    if (!$f || !flock($f, LOCK_EX)) fail(503, 'Nem érhető el a bejelentkezési védelem.');
+    if (!$f || !flock($f, LOCK_EX)) {
+        error_log('Zeneelmelet: cannot lock private login rate-limit file');
+        fail(503, 'Nem érhető el a bejelentkezési védelem.');
+    }
     $raw = stream_get_contents($f);
     $state = json_decode($raw ?: '{}', true);
     $now = time();
@@ -118,33 +131,93 @@ function currentUser(PDO $pdo): ?array {
 function requireUser(PDO $pdo): array {
     return currentUser($pdo) ?? fail(401, 'Bejelentkezés szükséges.');
 }
-function newSession(PDO $pdo, array $user): never {
+/** Only call while holding the user's FOR UPDATE lock in a transaction. */
+function insertSession(PDO $pdo, array $user): string {
     $token = bin2hex(random_bytes(32));
     $s = $pdo->prepare(
         'INSERT INTO zm_sessions(token_hash,user_id,expires_at)
          VALUES(?,?,DATE_ADD(UTC_TIMESTAMP(),INTERVAL 7 DAY))'
     );
     $s->execute([hash('sha256', $token), $user['id']]);
-    tokenCookie($token, time() + 7 * 86400);
-    answer(200, ['user' => $user]);
+    return $token;
 }
 function tokenToUuid(string $hex): string {
     return substr($hex,0,8) . '-' . substr($hex,8,4) . '-' .
            substr($hex,12,4) . '-' . substr($hex,16,4) . '-' . substr($hex,20,12);
+}
+/** Require real calendar dates rather than matching only the text pattern. */
+function validStudyDay(string $day): bool {
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/D', $day)) return false;
+    [$year, $month, $date] = array_map('intval', explode('-', $day));
+    return checkdate($month, $date, $year);
+}
+/** Achievement identifiers are persisted across devices and must be meaningful. */
+function progressIdOk(mixed $value): bool {
+    return is_string($value) && strlen($value) <= 120 && preg_match('/\S/u', $value) === 1;
 }
 function progressOk(mixed $p): bool {
     if (!is_array($p) || array_is_list($p)) return false;
     foreach (['completedChapters','completedSubchapters','flashcardsMastered','matchingCompleted','activityDays'] as $key) {
         if (!isset($p[$key]) || !is_array($p[$key]) || !array_is_list($p[$key]) ||
             count($p[$key]) > 10000) return false;
-        foreach ($p[$key] as $v) if (!is_string($v) || strlen($v) > 120) return false;
+        foreach ($p[$key] as $v) {
+            if (!progressIdOk($v)) return false;
+            if ($key === 'activityDays' && !validStudyDay($v)) return false;
+        }
+    }
+    if (array_key_exists('earTrainingDailyXp', $p)) {
+        if (!is_array($p['earTrainingDailyXp']) ||
+            count($p['earTrainingDailyXp']) > 366) return false;
+        foreach ($p['earTrainingDailyXp'] as $day => $points) {
+            if (!is_string($day) || !validStudyDay($day) ||
+                !is_int($points) || $points < 0 || $points > 100) return false;
+        }
+    }
+    if (array_key_exists('favoriteExpressions', $p)) {
+        if (!is_array($p['favoriteExpressions']) || !array_is_list($p['favoriteExpressions']) ||
+            count($p['favoriteExpressions']) > 1800) return false;
+        foreach ($p['favoriteExpressions'] as $id)
+            if (!progressIdOk($id)) return false;
     }
     if (!isset($p['quizScores']) || !is_array($p['quizScores']) ||
         count($p['quizScores']) > 500) return false;
     foreach ($p['quizScores'] as $key => $score) {
-        if (strlen((string)$key) > 120 || !is_numeric($score) || $score < 0 || $score > 100) return false;
+        if (!progressIdOk((string)$key) || (!is_int($score) && !is_float($score)) ||
+            !is_finite((float)$score) || $score < 0 || $score > 100) return false;
     }
-    return isset($p['xp']) && is_numeric($p['xp']) &&
+    if (array_key_exists('quizAttempts',$p)) {
+        if (!is_array($p['quizAttempts']) || !array_is_list($p['quizAttempts']) ||
+            count($p['quizAttempts']) > 100) return false;
+        foreach ($p['quizAttempts'] as $a) {
+            if (!is_array($a) || array_is_list($a) ||
+                !isset($a['id'],$a['chapterId'],$a['score'],$a['correct'],$a['total'],$a['at']) ||
+                !progressIdOk($a['id']) ||
+                !progressIdOk($a['chapterId']) ||
+                (!is_int($a['score']) && !is_float($a['score'])) ||
+                !is_finite((float)$a['score']) || $a['score'] < 0 || $a['score'] > 100 ||
+                !is_int($a['correct']) || !is_int($a['total']) ||
+                $a['total'] < 1 || $a['total'] > 1000 ||
+                $a['correct'] < 0 || $a['correct'] > $a['total'] ||
+                !is_string($a['at']) || strlen($a['at']) > 40 ||
+                strtotime($a['at']) === false ||
+                abs((float)$a['score'] - round($a['correct'] / $a['total'] * 100)) > 1) return false;
+            if (array_key_exists('durationSeconds', $a) &&
+                (!is_int($a['durationSeconds']) || $a['durationSeconds'] < 0 || $a['durationSeconds'] > 36000)) {
+                return false;
+            }
+            if (array_key_exists('wrongQuestionIds', $a)) {
+                if (!is_array($a['wrongQuestionIds']) || !array_is_list($a['wrongQuestionIds']) ||
+                    count($a['wrongQuestionIds']) > 15 ||
+                    count($a['wrongQuestionIds']) > $a['total'] - $a['correct'] ||
+                    count(array_unique($a['wrongQuestionIds'])) !== count($a['wrongQuestionIds'])) return false;
+                foreach ($a['wrongQuestionIds'] as $id) {
+                    if (!progressIdOk($id)) return false;
+                }
+            }
+        }
+    }
+    // XP is a practice indicator, not a verified exam grade; reject malformed types.
+    return isset($p['xp']) && is_int($p['xp']) &&
         $p['xp'] >= 0 && $p['xp'] <= 100000000;
 }
 
@@ -261,7 +334,7 @@ try {
             'invitationRequired'=>true
         ]);
     }
-    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/resend-verification','auth/reset-request','auth/reset','auth/change-password'], true)) {
+    if (in_array($route, ['auth/login','auth/register','auth/logout','auth/verify','auth/resend-verification','auth/reset-request','auth/reset','auth/change-password','auth/delete-account'], true)) {
         method('POST');
         guardWrite($config);
     } elseif ($route === 'progress' && ($_SERVER['REQUEST_METHOD'] ?? '') === 'PUT') {
@@ -272,6 +345,70 @@ try {
     // separate student database must not take down the read-only learning assistant.
     $pdo = in_array($route, ['chat', 'chat/status'], true) ? null : database($config);
 
+    // Read-only admin diagnostic is usable even when admin.php is absent.
+    // The response never contains a server path, token, or user details.
+    if ($route === 'auth/deployment-check') {
+        method('GET');
+        $operator=requireUser($pdo);
+        if (($operator['role'] ?? '') !== 'admin') fail(403,'Nincs adminisztrátori jogosultságod.');
+        $root=dirname(__DIR__);
+        $required=['index.html','source-inventory.json','release-build.json','api/release-build.php',
+            'api/index.php','api/admin.php','api/tutor-search.php',
+            'api/deployment-audit.php',
+            'api/tutor-sources.php','api/tutor-text-generation.php',
+            'api/tutor-image-generation.php','api/tutor-visuals.php',
+            'api/knowledge.php','api/music-answers.php','api/creative-answers.php',
+            'api/vendor/autoload.php'];
+        $missing=[];
+        foreach ($required as $relative) {
+            $file=$root.'/'.$relative;
+            if (!is_file($file) || !is_readable($file) || filesize($file)===0) {
+                $missing[]=$relative;
+            }
+        }
+        $html=$root.'/index.html';
+        if (is_file($html) && is_readable($html)) {
+            $markup=@file_get_contents($html);
+            $assets=[];
+            if (is_string($markup)) {
+                preg_match_all('~/(assets/[A-Za-z0-9._-]+\.(?:js|css))~', $markup, $matches);
+                $assets=array_values(array_unique($matches[1] ?? []));
+            }
+            if (!array_filter($assets, static fn($name)=>str_ends_with($name,'.js'))) {
+                $missing[]='index.html /assets/*.js';
+            }
+            foreach ($assets as $asset) {
+                if (!is_file($root.'/'.$asset) ||
+                    !is_readable($root.'/'.$asset) || filesize($root.'/'.$asset)===0) {
+                    $missing[]=$asset;
+                }
+            }
+        }
+        require_once __DIR__ . '/deployment-audit.php';
+        // A-24: catch confidential files in *every* public subdirectory,
+        // not just the webroot and api/. Never return a green status when
+        // traversal failed or was capped for safety.
+        $scan=deploymentPublicRiskScan($root);
+        $build=deploymentBuildFingerprint($root);
+        if ($build['buildConsistent'] !== true) {
+            $missing[]='Verzióütközés: index.html / release-build.json / api/release-build.php';
+        }
+        $archives=$scan['publicArchives'];
+        answer(200,[
+            'checkedAt'=>gmdate('c'),
+            'ready'=>count($missing)===0 && count($archives)===0 && $scan['scanComplete']===true && $build['buildConsistent']===true,
+            'missing'=>array_values(array_unique($missing)),
+            'publicArchives'=>$archives,
+            'scanComplete'=>$scan['scanComplete'],
+            'scannedItems'=>$scan['scannedItems'],
+            'buildConsistent'=>$build['buildConsistent'],
+            'releaseRevision'=>$build['releaseRevision'],
+            'mailConfigured'=>($config['mail_enabled'] ?? false)===true &&
+                ($config['mail_transport'] ?? '')==='smtp',
+            'scope'=>'Fájlkészlet-ellenőrzés, nem helyettesíti az éles funkcionális próbát'
+        ]);
+    }
+
     if (str_starts_with($route, 'admin/')) {
         require_once __DIR__ . '/admin.php';
         adminApi($pdo, $config, $route);
@@ -281,6 +418,26 @@ try {
         case 'auth/me':
             method('GET');
             answer(200, ['user'=>currentUser($pdo)]);
+        case 'auth/export-data':
+            method('GET');
+            $user=requireUser($pdo);
+            $stmt=$pdo->prepare('SELECT id,email,display_name,role,created_at,email_verified_at FROM zm_users WHERE id=?');
+            $stmt->execute([$user['id']]);
+            $profile=$stmt->fetch();
+            if (!$profile) fail(401,'A fiók nem található.');
+            $stmt=$pdo->prepare('SELECT progress_json,updated_at FROM zm_progress WHERE user_id=?');
+            $stmt->execute([$user['id']]);
+            $saved=$stmt->fetch();
+            // Export only this account's profile and learning records.
+            // Never expose password hashes, cookies, invitation tokens, or
+            // another user's private records in the download.
+            answer(200,[
+                'format'=>'zeneelmeleti-muhely-personal-data-v1',
+                'exportedAt'=>gmdate('c'),
+                'profile'=>$profile,
+                'progress'=>$saved?json_decode((string)$saved['progress_json'],true):null,
+                'progressUpdatedAt'=>$saved?$saved['updated_at']:null
+            ]);
         case 'auth/register':
             if (($config['invite_registration'] ?? false) !== true) {
                 fail(403, 'A meghívásos regisztráció még nincs engedélyezve.');
@@ -354,22 +511,41 @@ try {
         case 'auth/login':
             throttle('login', 20);
             $data = getPayload();
-            $email = strtolower(trim($data['email'] ?? ''));
+            // Never pass arbitrary JSON values to string functions: malformed
+            // requests must return 400, not an uncaught TypeError/HTTP 500.
+            $rawEmail = $data['email'] ?? null;
+            $email = is_string($rawEmail) ? strtolower(trim($rawEmail)) : null;
             $pass = $data['password'] ?? null;
-            if (!is_string($email) || strlen($email)>254 || !is_string($pass) || strlen($pass)>128) {
+            if ($email === null || $email === '' || strlen($email)>254 ||
+                !is_string($pass) || $pass === '' || strlen($pass)>128) {
                 fail(400, 'Érvénytelen adatok.');
             }
-            $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash,email_verified_at FROM zm_users WHERE email=? LIMIT 1');
-            $stmt->execute([$email]);
-            $row=$stmt->fetch();
-            if (!$row || !password_verify($pass, $row['password_hash'])) {
-                fail(401,'Hibás e-mail-cím vagy jelszó.');
+            // Password verification and session issuance are one atomic
+            // operation. A concurrent password reset/change cannot slip a
+            // session authenticated with the old password past revocation.
+            $pdo->beginTransaction();
+            try {
+                $stmt=$pdo->prepare('SELECT id,email,display_name,role,password_hash,email_verified_at FROM zm_users WHERE email=? LIMIT 1 FOR UPDATE');
+                $stmt->execute([$email]);
+                $row=$stmt->fetch();
+                if (!$row || !password_verify($pass, $row['password_hash'])) {
+                    $pdo->rollBack();
+                    fail(401,'Hibás e-mail-cím vagy jelszó.');
+                }
+                if ($row['email_verified_at'] === null) {
+                    $pdo->rollBack();
+                    fail(403, 'A belépés előtt erősítsd meg az e-mail-címedet.');
+                }
+                $sessionUser=['id'=>$row['id'],'email'=>$row['email'],
+                    'displayName'=>$row['display_name'],'role'=>$row['role']];
+                $token=insertSession($pdo, $sessionUser);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
             }
-            if ($row['email_verified_at'] === null) {
-                fail(403, 'A belépés előtt erősítsd meg az e-mail-címedet.');
-            }
-            newSession($pdo, ['id'=>$row['id'],'email'=>$row['email'],
-                'displayName'=>$row['display_name'],'role'=>$row['role']]);
+            tokenCookie($token, time() + 7 * 86400);
+            answer(200, ['user'=>$sessionUser]);
 
         case 'auth/verify':
             throttle('verify', 30);
@@ -445,6 +621,10 @@ try {
                 $stmt->execute([password_hash($body['password'], PASSWORD_ARGON2ID), $row['user_id']]);
                 $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
                 $stmt->execute([$row['user_id']]);
+                // Previously issued reset links cannot supersede this newly
+                // established password, including links not yet redeemed.
+                $stmt=$pdo->prepare("DELETE FROM zm_account_tokens WHERE user_id=? AND purpose='reset'");
+                $stmt->execute([$row['user_id']]);
                 $pdo->commit();
             } catch (Throwable $e) {
                 if ($pdo->inTransaction()) $pdo->rollBack();
@@ -459,16 +639,27 @@ try {
             $body=getPayload();
             $previous=$body['currentPassword'] ?? null;
             validateNewPassword($body['newPassword'] ?? null);
-            if (!is_string($previous)) fail(400,'A jelenlegi jelszó megadása kötelező.');
-            $stmt=$pdo->prepare('SELECT password_hash FROM zm_users WHERE id=?');
-            $stmt->execute([$user['id']]);
-            $stored=$stmt->fetchColumn();
-            if (!$stored || !password_verify($previous, (string)$stored)) fail(403, 'A jelenlegi jelszó helytelen.');
+            if (!is_string($previous) || $previous==='' || strlen($previous)>128)
+                fail(400,'A jelenlegi jelszó megadása kötelező.');
+            // Serialize password changes (and account erasure) on this user row.
+            // A concurrent request cannot validate the previously correct
+            // password and overwrite a newly changed password afterward.
             $pdo->beginTransaction();
             try {
+                $stmt=$pdo->prepare('SELECT password_hash FROM zm_users WHERE id=? FOR UPDATE');
+                $stmt->execute([$user['id']]);
+                $stored=$stmt->fetchColumn();
+                if (!$stored || !password_verify($previous, (string)$stored)) {
+                    $pdo->rollBack();
+                    fail(403, 'A jelenlegi jelszó helytelen.');
+                }
                 $stmt=$pdo->prepare('UPDATE zm_users SET password_hash=? WHERE id=?');
                 $stmt->execute([password_hash($body['newPassword'], PASSWORD_ARGON2ID),$user['id']]);
                 $stmt=$pdo->prepare('DELETE FROM zm_sessions WHERE user_id=?');
+                $stmt->execute([$user['id']]);
+                // Invalidate pending password-reset links as well as all
+                // active sessions after a successful password rotation.
+                $stmt=$pdo->prepare("DELETE FROM zm_account_tokens WHERE user_id=? AND purpose='reset'");
                 $stmt->execute([$user['id']]);
                 $pdo->commit();
             } catch (Throwable $e) {
@@ -477,6 +668,49 @@ try {
             }
             tokenCookie('', time()-3600);
             answer(200,['success'=>true]);
+
+        case 'auth/delete-account':
+            // User-initiated erasure of a student/teacher account. Production
+            // administrator accounts require a separate supervised process.
+            // Do not allow the browser to select which account to delete.
+            throttle('account-delete', 5);
+            $user=requireUser($pdo);
+            $body=getPayload();
+            $previous=$body['currentPassword'] ?? null;
+            $confirmation=$body['confirmation'] ?? null;
+            if (!is_string($previous) || strlen($previous)>128 ||
+                $previous==='' || $confirmation !== 'FIÓKOM TÖRLÉSE') {
+                fail(400,'A törléshez a jelenlegi jelszó és a pontos megerősítő szöveg szükséges.');
+            }
+            $pdo->beginTransaction();
+            try {
+                $stmt=$pdo->prepare('SELECT email,role,password_hash FROM zm_users WHERE id=? FOR UPDATE');
+                $stmt->execute([$user['id']]);
+                $stored=$stmt->fetch();
+                if (!$stored) { $pdo->rollBack(); fail(401,'A fiók nem található.'); }
+                if ($stored['role']==='admin') {
+                    $pdo->rollBack();
+                    fail(403,'Adminisztrátori fiók önkiszolgáló módon nem törölhető.');
+                }
+                if (!password_verify($previous,(string)$stored['password_hash'])) {
+                    $pdo->rollBack();
+                    fail(403,'A jelenlegi jelszó helytelen.');
+                }
+                // Invitations contain the user's email even after consumption.
+                $stmt=$pdo->prepare('DELETE FROM zm_invitations WHERE email=? OR used_by=?');
+                $stmt->execute([$stored['email'],$user['id']]);
+                // Foreign keys cascade to progress, all sessions and account
+                // tokens; no other user's rows are affected.
+                $stmt=$pdo->prepare('DELETE FROM zm_users WHERE id=? AND role IN (\'student\',\'teacher\')');
+                $stmt->execute([$user['id']]);
+                if ($stmt->rowCount()!==1) throw new RuntimeException('Account deletion did not affect exactly one user');
+                $pdo->commit();
+            } catch (Throwable $error) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $error;
+            }
+            tokenCookie('', time()-3600);
+            answer(200,['success'=>true,'message'=>'A fiókot és a hozzá tartozó szerveroldali tanulási adatokat töröltük.']);
 
         case 'auth/logout':
             $token=$_COOKIE[COOKIE_NAME] ?? '';
@@ -494,34 +728,67 @@ try {
                 $stmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=?');
                 $stmt->execute([$user['id']]);
                 $value=$stmt->fetchColumn();
-                answer(200,['progress'=>$value===false?null:json_decode((string)$value,true)]);
+                answer(200,[
+                    'progress'=>$value===false?null:json_decode((string)$value,true),
+                    'revision'=>hash('sha256',$value===false?'':(string)$value)
+                ]);
             }
             if ($httpMethod !== 'PUT') { header('Allow: GET, PUT'); fail(405,'Nem támogatott kérés.'); }
-            $body=getPayload();
+            // Large but valid activity histories used to be rejected by
+            // the global 64 KiB JSON cap despite passing list validation.
+            $body=getPayload(1000256);
             $progress=$body['progress'] ?? null;
             if (!progressOk($progress)) fail(400,'Érvénytelen tanulási adatok.');
+            $expected=$body['revision'] ?? null;
+            if (!is_string($expected) || !preg_match('/^[a-f0-9]{64}$/D',$expected)) {
+                fail(428,'Az eredménymentéshez előzetes szerververzió szükséges.');
+            }
             $text=json_encode($progress,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
-            if (strlen($text)>64000) fail(413,'Túl nagy tanulási napló.');
-            $stmt=$pdo->prepare(
-                'INSERT INTO zm_progress(user_id,progress_json) VALUES(?,?)
-                 ON DUPLICATE KEY UPDATE progress_json=VALUES(progress_json)'
-            );
-            $stmt->execute([$user['id'],$text]);
-            answer(200,['success'=>true]);
+            if (strlen($text)>1000000) fail(413,'Túl nagy tanulási napló.');
+            $pdo->beginTransaction();
+            try {
+                // Serialize first-time writes too, when no progress row exists yet.
+                $lock=$pdo->prepare('SELECT id FROM zm_users WHERE id=? FOR UPDATE');
+                $lock->execute([$user['id']]);
+                $stmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=? FOR UPDATE');
+                $stmt->execute([$user['id']]);
+                $current=$stmt->fetchColumn();
+                $currentRevision=hash('sha256',$current===false?'':(string)$current);
+                if (!hash_equals($currentRevision,$expected)) {
+                    $pdo->rollBack();
+                    answer(409,[
+                        'error'=>'Másik eszközön frissebb tanulási eredmény található.',
+                        'progress'=>$current===false?null:json_decode((string)$current,true),
+                        'revision'=>$currentRevision
+                    ]);
+                }
+                if ($current===false) {
+                    $stmt=$pdo->prepare('INSERT INTO zm_progress(user_id,progress_json) VALUES(?,?)');
+                } else {
+                    $stmt=$pdo->prepare('UPDATE zm_progress SET progress_json=? WHERE user_id=?');
+                }
+                $stmt->execute($current===false?[$user['id'],$text]:[$text,$user['id']]);
+                // MySQL JSON columns may canonicalize key order and whitespace. Always
+                // hash the stored representation, not the incoming request string.
+                $storedStmt=$pdo->prepare('SELECT progress_json FROM zm_progress WHERE user_id=?');
+                $storedStmt->execute([$user['id']]);
+                $stored=(string)$storedStmt->fetchColumn();
+                $storedRevision=hash('sha256',$stored);
+                $pdo->commit();
+            } catch (Throwable $e) {
+                if ($pdo->inTransaction()) $pdo->rollBack();
+                throw $e;
+            }
+            answer(200,['success'=>true,'revision'=>$storedRevision]);
 
         case 'chat/status':
             method('GET');
+            require_once __DIR__ . '/tutor-text-generation.php';
             $entries=knowledgeEntries();
-            $sources=[];
-            $lessons=0;
-            foreach ($entries as $entry) {
-                if (($entry['source'] ?? '')==='Zeneelméleti Műhely – Tananyag') $lessons++;
-                else $sources[$entry['source'] ?? ''] = true;
-            }
-            answer(200,['mode'=>'fallback',
-                'knowledge'=>['indexedSources'=>count($sources),
-                    'lessonChunks'=>$lessons,'indexedChunks'=>count($entries),
-                    'coverage'=>tutorSourceAudit($entries)]]);
+            $counts=tutorKnowledgeCounts($entries);
+            answer(200,['mode'=>tutorTextEnabled($config) ? 'gemini' : 'fallback',
+                'requiresLogin'=>tutorTextEnabled($config),
+                'knowledge'=>array_merge($counts,['coverage'=>tutorSourceAudit($entries)])]);
         case 'chat':
             method('POST'); guardWrite($config); throttle('chat', 60);
             $data=getPayload();
@@ -554,7 +821,18 @@ try {
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
             if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
-            $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 2);
+            $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 3);
+            require_once __DIR__ . '/tutor-text-generation.php';
+            if ($hits && tutorTextEnabled($config)) {
+                // Paid text generation is available only to authenticated users.
+                // Anonymous visitors retain the local source search without external calls.
+                $tutorUser = currentUser(database($config));
+                if ($tutorUser !== null) {
+                    throttle('tutor-text-' . $tutorUser['id'], 15);
+                    $generated = tutorTextReply($config, $question, $hits);
+                    if ($generated !== null) answer(200, $generated);
+                }
+            }
             if (!$hits) answer(200, ['mode'=>'fallback',
                 'reply'=>'Erre a kérdésre most nem találtam elég pontos magyarázatot a helyi tananyagban. Próbálj megadni egy konkrét zeneelméleti fogalmat.']);
             answer(200,['mode'=>'fallback','reply'=>lessonReply($hits, $question, musicBriefRequested($question))]);

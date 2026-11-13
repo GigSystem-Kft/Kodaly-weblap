@@ -1,5 +1,6 @@
 import React from 'react';
 import { MUSIC_CHAPTERS } from '../data/musicData';
+import { EXTRA_LEARNING_MODULES } from '../data/learningProgressSummary';
 import { Chapter, UserProgress } from '../types';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
 
@@ -13,8 +14,9 @@ interface ChapterListViewProps {
 }
 
 export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapter, progress, onOpenCreative, onOpenHistory, onOpenPedagogy, onOpenExpressions }) => {
-  const totalChapters = MUSIC_CHAPTERS.length + 4;
-  const completedCount = MUSIC_CHAPTERS.filter(chapter => progress.completedChapters.includes(chapter.id)).length;
+  const totalChapters = MUSIC_CHAPTERS.length + EXTRA_LEARNING_MODULES.length;
+  const completedCount = MUSIC_CHAPTERS.filter(chapter => progress.completedChapters.includes(chapter.id)).length
+    + EXTRA_LEARNING_MODULES.filter(module => progress.completedChapters.includes(module.id)).length;
 
   return (
     <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1px_1.2fr] px-6 md:px-12 py-12 gap-8 lg:gap-0 overflow-hidden">
@@ -48,9 +50,9 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
 
       {/* Right Section */}
       <div className="flex flex-col pl-0 lg:pl-12 overflow-y-auto">
-        <div className="flex justify-between items-center mb-6 font-mono-jetbrains text-[0.7rem] text-[#1c1c1c]/60">
+        <div className="flex justify-between items-center mb-6 font-mono-jetbrains text-[0.7rem] text-[#1c1c1c]/75">
           <span>TANANYAG ({totalChapters} FEJEZET)</span>
-          <span>TELJESÍTVE: {completedCount}/{MUSIC_CHAPTERS.length} ELMÉLETI FEJEZET</span>
+          <span>TELJESÍTVE: {completedCount}/{totalChapters} TANANYAGEGYSÉG</span>
         </div>
 
         <div className="flex flex-col gap-[2px] bg-[#1c1c1c]/10 rounded-2xl overflow-hidden border border-[#1c1c1c]/10">
@@ -61,17 +63,25 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             return (
               <div
                 key={chapter.id}
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectChapter(chapter)}
-                className="bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group"
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelectChapter(chapter);
+                  }
+                }}
+                className="bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                <div className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">
+                <div className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">
                   {numStr}
                 </div>
                 <div>
                   <h4 className="font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">
                     {chapter.title}
                   </h4>
-                  <p className="text-xs text-[#1c1c1c]/60 line-clamp-1 leading-normal">
+                  <p className="text-xs text-[#1c1c1c]/75 line-clamp-1 leading-normal">
                     {chapter.description}
                   </p>
                 </div>
@@ -89,45 +99,61 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
           })}
           <button type="button" onClick={onOpenCreative}
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
-            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">06</span>
+            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">06</span>
             <span>
               <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">
                 Kreatív zenei nevelés
               </span>
-              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">
+              <span className="block text-xs text-[#1c1c1c]/75 leading-normal">
                 Énekes-játékok, ritmikus mozgás és kipróbálható, forrásmegjelölt zenepedagógiai jógyakorlatok.
               </span>
             </span>
-            <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+            {progress.completedChapters.includes('creative') ? (
+              <span className="w-6 h-6 rounded-full border border-[#4a54e1] flex items-center justify-center text-[#4a54e1] text-xs font-bold" aria-label="Tanulmányozva">✓</span>
+            ) : (
+              <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+            )}
           </button>
           <button type="button" onClick={onOpenHistory}
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
-            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">07</span>
+            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">07</span>
             <span>
               <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Zenetörténet</span>
-              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">
+              <span className="block text-xs text-[#1c1c1c]/75 leading-normal">
                 Korszakok az ókortól a 20. századig, jellegzetes műfajok, zeneszerzők és több Wikipédia-forrás.
               </span>
             </span>
-            <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+            {progress.completedChapters.includes('musicHistory') ? (
+              <span className="w-6 h-6 rounded-full border border-[#4a54e1] flex items-center justify-center text-[#4a54e1] text-xs font-bold" aria-label="Tanulmányozva">✓</span>
+            ) : (
+              <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+            )}
           </button>
           <button type="button" onClick={onOpenPedagogy}
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
-            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">08</span>
+            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">08</span>
             <span>
               <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Ének-zene tantárgy-pedagógia</span>
-              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">Kelemen Judit szakirodalma nyomán: 17 részletes egyetemi témakör, módszertani feladatok és önellenőrzés.</span>
+              <span className="block text-xs text-[#1c1c1c]/75 leading-normal">Kelemen Judit szakirodalma nyomán: 17 részletes egyetemi témakör, módszertani feladatok és önellenőrzés.</span>
             </span>
-            <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+            {progress.completedChapters.includes('musicPedagogy') ? (
+              <span className="w-6 h-6 rounded-full border border-[#4a54e1] flex items-center justify-center text-[#4a54e1] text-xs font-bold" aria-label="Tanulmányozva">✓</span>
+            ) : (
+              <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]" />
+            )}
           </button>
           <button type="button" onClick={onOpenExpressions}
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
-            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/50 font-medium">09</span>
+            <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">09</span>
             <span>
               <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Zenei kifejezések</span>
-              <span className="block text-xs text-[#1c1c1c]/60 leading-normal">1793 kereshető zenei fogalom, betűrend és tematikus kategóriák, szókártyák, párosító és kvíz.</span>
+              <span className="block text-xs text-[#1c1c1c]/75 leading-normal">1793 kereshető zenei fogalom, betűrend és tematikus kategóriák, szókártyák, párosító és kvíz.</span>
             </span>
-            <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]"/>
+            {progress.completedChapters.includes('musicExpressions') ? (
+              <span className="w-6 h-6 rounded-full border border-[#4a54e1] flex items-center justify-center text-[#4a54e1] text-xs font-bold" aria-label="Tanulmányozva">✓</span>
+            ) : (
+              <ChevronRight className="w-5 h-5 text-[#1c1c1c]/30 group-hover:text-[#4a54e1]"/>
+            )}
           </button>
         </div>
       </div>

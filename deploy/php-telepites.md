@@ -1,5 +1,18 @@
 # Zeneelméleti Műhely – PHP telepítés CloudPanelben
 
+> **AKTUÁLIS KIADÁSI FIGYELMEZTETÉS · 2026-11-09**
+>
+> A dokumentum alsóbb, dátumozott fejezetei a fejlesztés **történeti lépéseit** is tartalmazzák. A régi Node.js-telepítésre, `mail()`-re, részleges `api/index.php`-feltöltésre vagy külön képfájlcsomagra vonatkozó részletek **nem tekinthetők a jelenlegi, teljes kiadás utasításának**.
+>
+> **Jelenleg nincs jóváhagyott végleges kiadás.** A fejlesztési PR #2 Draft, a `main` összevezetése és a végleges letöltési link a [24 pontos elfogadási jegyzőkönyv](../docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md) szerint blokkolt.
+>
+> Ha a kiadási kapuk teljesülnek, kizárólag az **azonos Git commitból** származó `php-release.yml` csomag teljes `index.html` + `assets/` + `api/` + médiaállomány-készletével szabad dolgozni. Előtte ellenőrzött, webgyökéren kívüli és szerveren kívüli mentés kell az SQL-adatbázisról, a webhelyről, a privát konfigurációról és a privát AI-forrásokról. A migrációkat csak a tényleges adatbázisállapot felmérése után alkalmazzuk; tanulói eredményeket nem törlünk.
+>
+> Az éles backend **PHP 8.4/8.5 + MySQL/Percona**, a levélküldés **PHPMailer + Rackhost hitelesített SMTP**; a privát `zeneelmelet-private.php` kizárólag a `htdocs` könyvtáron kívül lehet. A nyilvános regisztráció és a generatív AI alapból tiltott maradjon. A régi dokumentáció alapján az éles rendszeren **ne módosíts beállítást**.
+>
+> Rövid, naprakész üzemeltetési lista: [CloudPanel ellenőrzőlista](../docs/cloudpanel-telepites.md). A szakmai és jogi jóváhagyások, az éles SMTP, a két fizikai eszközös adatmegőrzés és a manuális akadálymentességi elfogadás nem helyettesíthetők zöld CI-futással.
+
+
 ## Elkészült kiszolgáló
 
 - React + Vite frontend, kizárólag statikus fájlként publikálva
@@ -72,8 +85,8 @@ előtt migráció vagy biztonságos jelszó-visszaállítás szükséges.
 
 - A PHP API támogatja a regisztrációt, bejelentkezést, kijelentkezést és a profil eredménymentését.
 - A Tanársegéd PHP-kiadása a telepítőcsomagban található, lecke- és forrásrészletekből álló **helyi keresőmóddal** működik. Nem használ külső Gemini API-t és nem fogalmaz önálló AI-magyarázatot.
-- E-mail-megerősítés, jelszó-visszaállítás és jelszócsere megvalósult, de valós e-mail-kézbesítéssel és éles használattal még ellenőrizni kell. Fióktörlés és végleges adatvédelmi tájékoztató még hiányzik.
-- Az IP-alapú belépésvédelem a PHP szerver ideiglenes könyvtárát használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
+- E-mail-megerősítés, jelszó-visszaállítás és jelszócsere megvalósult, de valós e-mail-kézbesítéssel és éles használattal még ellenőrizni kell. A hallgatói/oktatói önkiszolgáló fióktörlés és a sajátadat-export elkészült a fejlesztési ágon; éles elfogadási próba és végleges adatvédelmi tájékoztató még hiányzik.
+- Az IP-alapú belépésvédelem a webhely saját, nem nyilvános `~/.zeneelmelet-rate-limits/` mappáját használja, nagy forgalomnál nem helyettesíti a központi rate limitet.
 - **Nyilvános regisztráció ne induljon az üzemeltetési és adatvédelmi ellenőrzésekig.**
 
 ## Meghívásos regisztráció (új kiadás)
@@ -260,3 +273,40 @@ A `Kreatív` módszertani oldalon külön létező 3 eredeti illusztrációhoz
 a felhasználási jogot külön kell tisztázni. Engedély hiányában az
 `images/kreativ/` alatt tárolt eredeti képrészleteket se terjeszd nyilvánosan.
 A szöveges, önálló összefoglalók nem igénylik az eredeti PDF közzétételét.
+
+## 2026-11-08 – helyreállítási tanulságok, teljes PHP-csomag és forráslefedettség
+
+**Éles incidens:** fájlok visszaállítása után a régebbi frontend nem küldött `revision` értéket a tanulási eredmények mentésekor, ezért `PUT /api/index.php?route=progress` **428** választ adott. A frontend és API azonos buildből telepített állományai megszüntették a hibát. A szerver `api/admin.php` hiánya miatt az összes `admin/*` végpont **503** válasszal állt le; a hiányzó fájl helyreállítása után mind a négy admin GET kérés **200** lett. A felhasználó phpMyAdminból igazolta a kedvencazonosító szerveroldali mentését; ez **nem** váltja ki a fizikai két eszközös vagy több felhasználós végtesztet.
+
+**Új telepítési szabályok:**
+
+1. Teljes SQL-export, publikus webhelyfájlok, privát `zeneelmelet-private.php` és `zeneelmelet-ai-sources` (ha létezik) mentése **a webgyökéren kívül**; legalább egy példányt a szerveren kívül tároljunk. Az adatbázis és privát konfiguráció a frontend frissítésekor **nem** írható felül.
+2. A teljes GitHub Actions által összeállított `index.html` + `assets/` + `api/` fájlkészletet kell összhangban tartani. Soha ne tekintsünk teljes telepítésnek egy külön feltöltött `api/index.php` vagy `index.html` fájlt. Az új `assets/` állományok kerüljenek fel az új `index.html` előtt. A média-, tankönyv- és `.well-known` könyvtárak maradjanak meg.
+3. A csomagellenőrző most kötelezően ellenőrzi `api/admin.php`, `api/tutor-sources.php`, `api/tutor-text-generation.php`, `api/knowledge.php`, `api/vendor/autoload.php` és a többi API-modul meglétét, valamint az `index.html` által hivatkozott `/assets/*.js` és `/assets/*.css` fájlokat. Ez a **csomag teljességét** ellenőrzi; az éles könyvtár kézi feltöltésének helyességét külön kell ellenőrizni.
+4. Biztonság: a `htdocs/` vagy `htdocs/.../api/` könyvtárban hagyott `archive.zip` vagy más biztonságimentés-archívum **nyilvánosan letölthető lehet**. Miután ellenőrzött, privát másolat készült, helyezzük át a webgyökéren kívülre; ne tároljuk szerverkonfigurációval együtt publikus helyen. A ZIP-re történő közvetlen HTTP-hozzáférést is tesztelni kell.
+5. Próba: `auth/status` a DB kapcsolatot ellenőrzi; bejelentkezett adminnál `admin/users`, `admin/invitations`, `admin/sources`, `admin/source-coverage` mind `200`; eredménymentés `GET` → `PUT` **64 hexadecimális revisionnel** → `200` → oldalfrissítés utáni visszatöltés; minden lépésben őrizzük meg a meglévő tanulói naplót.
+6. Az adminforrásleltár két külön indexrendszerből származhat: `server-knowledge.ts` statikus `source-inventory.json` és a PHP `knowledge.php` tényleges élő betöltése (plusz külön telepített, engedélyezett források). A 104/3806 és 75/2840 számkülönbség **nem bizonyít automatikusan elveszett dokumentumot**. Az új admin nézet forráscsoportonként különbözteti meg őket és jelzi, ha az élő jelentés helyett csak statikus van.
+7. Kiértékeléskor ne oszd meg a cookie-, session-, jelszó- vagy tokenadatokat. Éles jogosultsági, meghívó/e-mail, két fizikai eszközös szinkron, szakmai és szerzői jogi jóváhagyás továbbra is szükséges a végleges terjesztés előtt.
+
+## 2026-11-08 – Személyes adatok exportálása és fiók végleges törlése
+
+A fejlesztési ág új fiókfunkciói (az éles CloudPanelre csak a teljes kiadási próba után telepítsük):
+
+- **Saját adatok exportálása:** Profil → **Saját adataim exportálása (JSON)**. Bejelentkezett felhasználó `GET /api/index.php?route=auth/export-data` útvonalon kizárólag a **saját** alap-profiladatait, tanulási naplóját, időbélyegeit kapja. E-mail/jelszó, jelszólenyomat, munkamenet-cookie és meghívótoken **nincs az exportban**. Ez személyes adatokat tartalmazó fájl: a felhasználó biztonságosan tárolja.
+- **Hallgató/oktató fiók törlése:** Profil → **Fiók törlése**. A gomb nem jelenik meg adminnak. A művelethez a jelenlegi jelszó, az `FIÓKOM TÖRLÉSE` szöveg pontos begépelése, a mentetlen adatokra figyelmeztetés és külön, visszavonható megerősítő párbeszéd kell. A végleges `POST /api/index.php?route=auth/delete-account` tranzakció törli a saját `zm_users` rekordot, a hozzá kapcsolódó `zm_progress`, `zm_sessions` és `zm_account_tokens` sorok a külső kulcsok `ON DELETE CASCADE` szabályával eltűnnek. A személyes e-mailt őrző `zm_invitations` rekordok külön törlődnek. Másik felhasználó adata nem változhat.
+- **Adminvédelem:** a meglévő adminfiók önkiszolgáló törlése szerveroldali `403`; adminfiók megszüntetése csak külön, felügyelt intézményi adatkezelési eljárással történhet, nehogy a webhely admin nélkül maradjon.
+- **Böngésző:** sikeres törlés után az adott fiók `kodaly_pending_progress_<azonosító>` offline mentését is eltávolítja. A többi felhasználó és a korábbi **vendég** böngészőadatait nem töröljük automatikusan. Más böngészőben tárolt offline pillanatképek fizikailag külön vannak, azokat a felhasználó ott tudja törölni.
+- **A törlés határai:** a CloudPanel, a MySQL/SQL és az üzemeltető által korábban készített biztonsági mentéseket, szerver-/e-mail-naplókat a fióktörlő API **nem** tudja utólag módosítani. A GDPR szerinti megőrzési és törlési szabályokat, megőrzési időt, helyreállítási helyzeteket és érintetti kérelmek kezelését az adatkezelőnek külön, jóváhagyott szabályzatban kell rögzítenie. Az alkalmazás fióktörlése önmagában **nem** igazolja a teljes GDPR-megfelelést.
+- **Tesztelés:** minden új adatkezelési útvonal valós PHP/MySQL-integrációs teszten fut külön admin és hallgató munkamenettel, így a saját fiók szerveroldali adatai és a másik felhasználó sértetlensége ellenőrizhető. A böngészős teszt a tényleges JSON-letöltést, a törlés elutasított jóváhagyását, a sikeres törlési kérést és a helyi, fiókhoz kötött ideiglenes állomány eltávolítását is vizsgálja. A teljes CloudPanel-érintetti próbát **először egy külön, csak tesztre regisztrált fiókkal** kell elvégezni; az éles adminfiókot és a már mentett felhasználói naplókat soha ne használjuk törléses próbára.
+
+## 2026-11-09 – Telepítési önellenőrzés és PHP Tanársegéd forrásbankok
+
+**Adminisztrátori, olvasási célú önellenőrzés:** a `GET /api/index.php?route=auth/deployment-check` végpontot kizárólag bejelentkezett **admin** hívhatja (`403` hallgatónak és oktatónak, `401` vendégnek). Szándékosan az `admin.php` modul betöltése előtt fut, így annak hiányát is ki tudja mutatni. A válasz csak a hiányzó relatív fájlneveket, a webgyökérben talált `*.zip`/`*.sql`/`*.bak`/`*.tar.gz`/`.env` állományok neveit, az SMTP alapkonfigurációjának logikai állapotát és egy ellenőrzési időbélyeget tartalmaz; **nem ad vissza abszolút szerverútvonalat, jelszót vagy felhasználói adatot**. Az ADMIN felületen külön állapotjelentés mutatja a problémákat.
+
+**Korlát:** az önellenőrzés csak az ismert PHP-modulok, `index.html`, `source-inventory.json` és az abban hivatkozott JavaScript/CSS-belépési állományok helyi jelenlétét vizsgálja. Nem helyettesíti a valós felhasználói regisztrációt, SMTP-kézbesítést, adatbázis-visszaállítást, képállományok ellenőrzését vagy a 24 pontos elfogadási folyamatot. Ha a `tutor-search.php` még az API betöltése előtt hiányzik, maga az API is hibát adhat; ilyen esetben a szerver hibalogját kell ellenőrizni.
+
+**Biztonsági mentések:** a jelentésben szereplő publikus archívumokat csak az ellenőrzött, **webgyökéren kívüli** biztonsági másolat után mozgassuk ki; a felület nem töröl. A GitHub kiadási ellenőrzője most a ZIP mellett SQL-mentést, TAR.GZ-t, BAK-t és `.env` állományt sem enged a publikus telepítőbe.
+
+**A-07/A-08 tananyaglefedettség:** a PHP tudásindex-exporter a 09. fejezet 1793 címszava, módszertani és történeti fejezetei mellett most a weboldal saját **Szókártyák, Teszt, Párosító, Hangzó hangsor és akkord, Hangkészletek és pentaton példák, Kvintkör** bankjait is felveszi. Az új telepítőmunka külön megszámolja e hat kategória élő exportbejegyzéseit, és bármelyik hiánya esetén leáll. Az élő PHP és a statikus index szövegrészszáma ettől még jogosan eltérhet a források darabolása és egyéb dokumentumok miatt; a konkrét eltérések a telepítés utáni adminjelentésben vizsgálandók.
+
+A funkciók kizárólag a fejlesztési ágon szerepelnek; az éles CloudPanelre még **nem** telepítettük őket.

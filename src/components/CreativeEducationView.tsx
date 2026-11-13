@@ -1,3 +1,4 @@
+import { ModuleCompletionButton } from './ModuleCompletionButton';
 import React, { useEffect, useState } from 'react';
 import { CREATIVE_SOURCE, CREATIVE_THEMES, CREATIVE_PRACTICES } from '../data/creativeEducation';
 import { CuratedMediaPanel } from './CuratedMediaPanel';
@@ -7,9 +8,11 @@ import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, Users, Clock, Target, X, Z
 
 interface CreativeEducationViewProps {
   onBack?: () => void;
+  completed?: boolean;
+  onComplete?: () => void;
 }
 
-export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ onBack }) => {
+export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ onBack, completed = false, onComplete }) => {
   const [theme, setTheme] = useState('Összes téma');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [missingImages, setMissingImages] = useState<string[]>([]);
@@ -57,6 +60,7 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
           <ArrowLeft size={16} /> Vissza a tananyaghoz
         </button>
       )}
+      {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
       <div className="max-w-3xl mb-10">
         <p className="uppercase tracking-[0.2em] text-[0.7rem] font-semibold text-[#4a54e1] mb-3">Kreatív · módszertani gyűjtemény</p>
         <h2 className="font-serif-cormorant text-4xl md:text-6xl font-bold leading-tight mb-4">Kreatív zenei nevelés</h2>

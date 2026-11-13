@@ -1,3 +1,5 @@
+import { MUSIC_CHAPTERS } from '../src/data/musicData';
+import { EXTRA_LEARNING_MODULES } from '../src/data/learningProgressSummary';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -22,7 +24,37 @@ test('quiz chapter uses one dropdown and resets the score and question when chan
  const code=readFileSync('src/components/QuizView.tsx','utf8');
  assert.match(code,/htmlFor="quiz-chapter"/);
  assert.match(code,/setSelectedChapter\(event.target.value\); restartQuiz\(\)/);
- assert.match(code,/id:'zenei-kifejezesek'/);
- assert.match(code,/id:'zenetortenet'/);
+
+
+
+
+ assert.match(code,/QUIZ_QUESTIONS.some\(q => q.chapterId === item.id\)/);
+ assert.match(code,/MUSIC_CHAPTERS.map\(chapter/);
+ assert.match(code,/EXTRA_LEARNING_MODULES.map\(module/);
+ for(const id of ['hangkeszletek','hetfoku-hangsorok']){
+   assert.ok(MUSIC_CHAPTERS.some(ch => ch.id === id), 'Missing canonical chapter '+id);
+ }
+ for(const id of ['zenei-kifejezesek','zenetortenet']){
+   assert.ok(EXTRA_LEARNING_MODULES.some(mod => mod.quizId === id), 'Missing extended quiz '+id);
+ }
  assert.ok(!code.includes('Chapter Filter'));
+});
+
+test('subchapter and matching completions are wired into persistent user progress',()=>{
+ const app=readFileSync('src/App.tsx','utf8');
+ const lesson=readFileSync('src/components/ChapterDetailView.tsx','utf8');
+ const game=readFileSync('src/components/MatchingGame.tsx','utf8');
+ assert.match(app,/onCompleteSubchapter=\{completeSubchapter\}/);
+ assert.match(app,/onCompleted=\{completeMatching\}/);
+ assert.match(lesson,/completedSubchapters.includes\(currentSub.id\)/);
+ assert.match(game,/onCompleted\(newMatched\)/);
+});
+
+test('quiz uses fair 15-question practice rounds rather than an unbounded all-topic session',()=>{
+ const code=readFileSync('src/components/QuizView.tsx','utf8');
+ assert.match(code,/return shuffled\.slice\(0, 15\)/);
+ assert.match(code,/\[selectedChapter, round\]/);
+ assert.match(code,/setRound\(value => value \+ 1\)/);
+ assert.match(code,/Vegyes gyakorlás \(15 kérdés\)/);
+ assert.match(code,/selectedChapter === 'all' \? 'vegyes-gyakorlas' : selectedChapter/);
 });

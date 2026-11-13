@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BookOpen, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Page { oldal: number; szoveg: string; }
@@ -16,6 +16,9 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
   const [error, setError] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const [query, setQuery] = useState('');
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const originatingButtonRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setPages([]); setError(false); setOpen(null); setQuery('');
@@ -27,8 +30,8 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
   }, [book]);
 
   const normalize = (text: string) => text.toLocaleLowerCase('hu-HU')
-    .normalize('NFD').replace(/[\\u0300-\\u036f]/g, '');
-  const terms = normalize(query.trim()).split(/\\s+/).filter(Boolean);
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const terms = normalize(query.trim()).split(/\s+/).filter(Boolean);
   const visible = terms.length
     ? pages.filter(p => terms.every(term => normalize(p.szoveg).includes(term)))
     : pages;
@@ -46,6 +49,31 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
     return () => window.removeEventListener('keydown', onKey);
   }, [open, visible.length]);
 
+
+  useEffect(() => {
+    if (open === null) return;
+    closeButtonRef.current?.focus();
+    return () => {
+      const origin = originatingButtonRef.current;
+      if (origin?.isConnected) origin.focus();
+    };
+  }, [open !== null]);
+
+  const trapDialogTab = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key !== 'Tab') return;
+    const focusables = Array.from(dialogRef.current?.querySelectorAll<HTMLButtonElement>('button:not([disabled])') ?? []);
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   const title = TEXTBOOKS.find((t) => t.id === book)?.title;
 
   return (
@@ -60,7 +88,9 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
         </p>
       </div>
 
+      <label htmlFor="textbook-search" className="sr-only">Keresés a tankönyv szövegében</label>
       <input
+        id="textbook-search"
         value={query}
         onChange={(e) => { setQuery(e.target.value); setOpen(null); }}
         placeholder="Keresés a tankönyv szövegében…"
@@ -73,11 +103,14 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
       <div className="grid sm:grid-cols-2 gap-6">
         {visible.map((p, idx) => (
           <article key={p.oldal} className="border border-[#1c1c1c]/15 bg-white">
-            <button onClick={() => setOpen(idx)} className="all-unset block w-full cursor-pointer">
+            <button type="button" onClick={(event) => {
+              originatingButtonRef.current = event.currentTarget;
+              setOpen(idx);
+            }} className="all-unset block w-full cursor-pointer">
               <img src={img(p.oldal)} alt={`${title}, ${p.oldal}. oldal`} loading="lazy" className="w-full h-auto block" />
             </button>
             <details className="px-3 py-2 border-t border-[#1c1c1c]/10">
-              <summary className="cursor-pointer font-mono-jetbrains text-[0.65rem] uppercase text-[#1c1c1c]/60">
+              <summary className="cursor-pointer font-mono-jetbrains text-[0.65rem] uppercase text-[#1c1c1c]/75">
                 {p.oldal}. oldal – szöveg
               </summary>
               <pre className="whitespace-pre-wrap text-sm mt-2 font-sans">{p.szoveg || '(nincs szöveg)'}</pre>
@@ -87,7 +120,9 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
       </div>
 
       {current && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setOpen(null)}>
+        <div ref={dialogRef} role="dialog" aria-modal="true" aria-label={`${title} – ${current.oldal}. oldal nagyítása`}
+          onKeyDown={trapDialogTab}
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4" onClick={() => setOpen(null)}>
           <button aria-label="Előző" className="absolute left-3 text-white p-2 disabled:opacity-30" disabled={open === 0}
             onClick={(e) => { e.stopPropagation(); setOpen((i) => Math.max(0, (i ?? 0) - 1)); }}>
             <ChevronLeft className="w-8 h-8" />
@@ -100,7 +135,7 @@ export const TextbookView: React.FC<{ book: number }> = ({ book }) => {
             onClick={(e) => { e.stopPropagation(); setOpen((i) => Math.min(visible.length - 1, (i ?? 0) + 1)); }}>
             <ChevronRight className="w-8 h-8" />
           </button>
-          <button aria-label="Bezár" className="absolute top-3 right-3 text-white p-2" onClick={() => setOpen(null)}>
+          <button type="button" ref={closeButtonRef} aria-label="Bezár" className="absolute top-3 right-3 text-white p-2" onClick={() => setOpen(null)}>
             <X className="w-7 h-7" />
           </button>
         </div>

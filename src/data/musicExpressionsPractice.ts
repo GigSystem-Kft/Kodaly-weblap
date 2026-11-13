@@ -5,7 +5,7 @@ const categories=[
  'Tempó és időkezelés','Dinamika és karakter','Ritmus és hangértékek',
  'Hangsorok és harmóniák','Hangszer és játéktechnika','Éneklés és kórus',
  'Zenei műfajok és formák','Kottaírás és jelölések','Zenetörténet és stílus',
- 'Egyéb szakkifejezések'
+ 'Általános zenei nyelv és utasítások','Díszítések és ornamentika','Előadásmód és artikuláció'
 ];
 const preferred=new Set([
  'a cappella','a tempo','accelerando','adagio','ad libitum','agitato','allegro','allegretto','allargando',
@@ -19,8 +19,8 @@ const preferred=new Set([
 ]);
 type Expression=typeof MUSIC_EXPRESSIONS[number];
 const clean=(item:Expression)=>!item.term.includes(',') && !item.term.includes('…') &&
- item.term.length<=42 && item.definition.length>=9&&item.definition.length<=120 &&
- !/^d+./.test(item.definition)&&!/(mHz|nemzetközileg megállapított|őse)/i.test(item.definition);
+ item.term.length<=42 && (item.category==='Általános zenei nyelv és utasítások' ? item.definition.length>=3 : item.definition.length>=9) && item.definition.length<=120 &&
+ !/^\d+\./.test(item.definition)&&!/\b(mHz|nemzetközileg megállapított|őse)\b/i.test(item.definition);
 const unique=(list:Expression[])=>{
  const seen=new Set<string>();return list.filter(item=>{
   const key=item.definition.toLocaleLowerCase('hu-HU').trim();
@@ -32,26 +32,41 @@ const chosen=unique([
  ...MUSIC_EXPRESSIONS.filter(item=>preferred.has(item.term.toLocaleLowerCase('hu-HU'))&&clean(item)),
  ...categories.flatMap(category=>MUSIC_EXPRESSIONS.filter(item=>item.category===category&&clean(item)).slice(0,20))
 ]);
-const quizTerms=chosen.slice(0,160);
-const maxCards=chosen.slice(0,220);
+const quizTerms=chosen.slice(0,260);
+const maxCards=chosen.slice(0,320);
 const labels=(s:string)=>s.replace(/\s+/g,' ').trim();
 const cardCategory=(category:string)=>'Zenei kifejezések – '+category;
 export const EXPRESSION_FLASHCARDS:Flashcard[]=maxCards.map(item=>({
  id:'expr-fl-'+item.id,term:item.term,definition:labels(item.definition),
  category:cardCategory(item.category),hint:'Forrás: Zenei kifejezések, '+item.letter+' betű'
 }));
-export const EXPRESSION_MATCHING:MatchingPair[]=chosen.slice(0,150).map(item=>({
+export const EXPRESSION_MATCHING:MatchingPair[]=chosen.slice(0,320).map(item=>({
  id:'expr-m-'+item.id,term:item.term,match:labels(item.definition),
  category:cardCategory(item.category)
 }));
 export const EXPRESSION_QUIZZES:QuizQuestion[]=quizTerms.map((item,i)=>{
- const alternatives=chosen.filter(x=>x.id!==item.id &&
-  x.definition.toLocaleLowerCase('hu-HU')!==item.definition.toLocaleLowerCase('hu-HU') &&
-  x.category===item.category && x.definition.length<125).slice(0,3);
- const pool=alternatives.length===3?alternatives:chosen.filter(x=>x.id!==item.id&&
-  x.definition!==item.definition).slice(i%12,i%12+3);
+ // Wrong answers must be distinct even after whitespace/case normalization.
+ // Prefer examples from the same teaching domain, then other domains only if
+ // the selected domain has fewer than three usable meanings.
+ const correct=labels(item.definition);
+ const used=new Set([correct.toLocaleLowerCase('hu-HU')]);
+ const alternatives:Expression[]=[];
+ const candidates=[
+  ...chosen.filter(x=>x.category===item.category),
+  ...chosen.filter(x=>x.category!==item.category)
+ ];
+ for(const candidate of candidates){
+  if(candidate.id===item.id)continue;
+  const meaning=labels(candidate.definition);
+  const normalized=meaning.toLocaleLowerCase('hu-HU');
+  if(!meaning||meaning.length>124||used.has(normalized))continue;
+  used.add(normalized);
+  alternatives.push(candidate);
+  if(alternatives.length===3)break;
+ }
  const answerIndex=i%4;
- const options=pool.map(item=>labels(item.definition));options.splice(answerIndex,0,labels(item.definition));
+ const options=alternatives.map(candidate=>labels(candidate.definition));
+ options.splice(answerIndex,0,correct);
  return {
   id:'expr-q-'+item.id,chapterId:'zenei-kifejezesek',
   question:'Mit jelent a kottában vagy a zenében: „'+item.term+'”?',
