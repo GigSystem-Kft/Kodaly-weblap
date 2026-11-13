@@ -37,4 +37,19 @@ echo 'Checking chat reply with unreachable MySQL'; curl -fsS -X POST "${BASE}cha
   -H 'X-Requested-With: XMLHttpRequest' \
   --data '{"message":"Mit jelent a príma vista?"}' \
   | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="fallback" || stripos($x["reply"]??"","príma vista")===false) {fwrite(STDERR, json_encode($x));exit(1);}'
+# Human-acceptance regressions: both the meter comparison and an unknown
+# music term must return HTTP 200 even when the account database is offline.
+for MESSAGE in \
+  'Mi a különbség a 3/4-es és a 6/8-os ütem között?' \
+  'Mi az a zorbafonikus hetedik kvantumhangzat?'; do
+  ANSWER="$(curl -fsS -X POST "${BASE}chat" \\
+    -H 'Content-Type: application/json' \\
+    -H 'X-Requested-With: XMLHttpRequest' \\
+    --data "$(php -r 'echo json_encode(["message"=>$argv[1]], JSON_UNESCAPED_UNICODE);' "$MESSAGE")")"
+  printf '%s' "$ANSWER" | php -r '
+    $x=json_decode(stream_get_contents(STDIN),true);
+    if(!is_array($x) || !is_string($x["reply"]??null) || trim($x["reply"])==="") exit(1);
+    if (($x["mode"]??null)==="reviewed" && strpos($x["reply"],"3+3")===false) exit(1);
+  '
+done
 printf 'Offline database: tutor status and prima vista answers are operational.\n'
