@@ -815,13 +815,24 @@ try {
                 }
                 answer(200, generateTutorImage($config, $question, $previousTopic));
             }
-            require_once __DIR__ . '/creative-answers.php';
-            $creativeAnswer=creativePracticeAnswer($question,knowledgeEntries());
-            if ($creativeAnswer!==null) answer(200,['mode'=>'reviewed','reply'=>$creativeAnswer]);
+            // Reviewed facts must remain available even if optional source
+            // indexing fails. Do not turn an unknown question into HTTP 503.
             require_once __DIR__ . '/music-answers.php';
             $direct=musicKnownAnswer($question);
             if ($direct!==null) answer(200, ['mode'=>'reviewed','reply'=>$direct]);
-            $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 3);
+            require_once __DIR__ . '/creative-answers.php';
+            try {
+                $creativeAnswer=creativePracticeAnswer($question,knowledgeEntries());
+                if ($creativeAnswer!==null) answer(200,['mode'=>'reviewed','reply'=>$creativeAnswer]);
+            } catch (Throwable $sourceError) {
+                error_log('Zeneelméleti Műhely tutor creative source failure: ' . $sourceError->getMessage());
+            }
+            try {
+                $hits=searchLessons($question, musicBriefRequested($question) ? 1 : 3);
+            } catch (Throwable $searchError) {
+                error_log('Zeneelméleti Műhely tutor search failure: ' . $searchError->getMessage());
+                $hits=[];
+            }
             require_once __DIR__ . '/tutor-text-generation.php';
             if ($hits && tutorTextEnabled($config)) {
                 // Paid text generation is available only to authenticated users.
