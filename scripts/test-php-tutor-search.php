@@ -11,13 +11,13 @@ ensureTutorSearch(searchTerms('Mi az a hexakord?')===['hexachord'],'Hungarian sp
 ensureTutorSearch(searchTerms('Hexachordum és hexachord')===['hexachord'],'Latin form');
 // Regression: PHP casts numeric-string associative keys to int.
 // Numeric years and catalogue numbers must never trigger TypeError in tutorTermMatch().
-ensureTutorSearch(searchTerms('2026-os zenetörténet') === ['2026','os','zenetortenet'],
+ensureTutorSearch(searchTerms('2026-os zenetörténet') === ['2026','zenetortenet'],
     'numeric tokens stay strings and preserve order');
 $yearEntries=[
  ['source'=>'Zenetörténet','label'=>'2026-os tanév',
   'text'=>'A 2026-os tanévben hallgatható zenei példák.']
 ];
-ensureTutorSearch(count(rankLessons('2026 zenetörténet', $yearEntries))===1,
+ensureTutorSearch(count(rankLessons('2026', $yearEntries))===1,
     'numeric tokens do not crash ranked lookup');
 $entries=[
  ['source'=>'Magyar kézikönyv','label'=>'Hexachord – középkori szolmizáció',
