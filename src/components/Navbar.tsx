@@ -25,24 +25,25 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
 
   return (
     <header className="px-6 md:px-12 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
-      <button
-        type="button"
-        className="brand shrink-0 cursor-pointer mb-4 md:mb-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4a54e1]"
-        onClick={() => setActiveTab('chapters')}
-        aria-label="Zeneelméleti Műhely – vissza a tananyag főoldalára"
-        title="Vissza a tananyag főoldalára"
-      >
-        <h1 className="sr-only">Zeneelméleti Műhely</h1>
-        <img
-          src={headerBrandImage}
-          alt="Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál"
-          className="h-24 md:h-28 w-auto object-contain"
-          width="225"
-          height="204"
-          decoding="async"
-          draggable={false}
-        />
-      </button>
+      <h1 className="brand shrink-0 mb-4 md:mb-0" aria-label="Zeneelméleti Műhely">
+        <button
+          type="button"
+          className="cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4a54e1]"
+          onClick={() => setActiveTab('chapters')}
+          aria-label="Zeneelméleti Műhely – vissza a tananyag főoldalára"
+          title="Vissza a tananyag főoldalára"
+        >
+          <img
+            src={headerBrandImage}
+            alt="Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál"
+            className="h-24 md:h-28 w-auto object-contain"
+            width="225"
+            height="204"
+            decoding="async"
+            draggable={false}
+          />
+        </button>
+      </h1>
 
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
         <nav className="flex flex-wrap gap-x-6 gap-y-2">
