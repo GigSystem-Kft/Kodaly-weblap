@@ -13,18 +13,20 @@ declare(strict_types=1);
 function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $maxFindings = 100): array {
     $root = realpath($webroot);
     if ($root === false || !is_dir($root)) {
-        return ['publicArchives'=>[], 'scanComplete'=>false, 'scannedItems'=>0];
+        return ['publicArchives'=>[], 'scanComplete'=>false, 'scannedItems'=>0, 'scanIssue'=>'A webgyökér nem olvasható.'];
     }
     $folders = [$root];
     $findings = [];
     $examined = 0;
     $complete = true;
+    $scanIssue = null;
     while ($folders !== [] && $complete) {
         $folder = array_pop($folders);
         try {
             $files = new FilesystemIterator($folder, FilesystemIterator::SKIP_DOTS);
             foreach ($files as $file) {
                 if (++$examined > $maxItems) {
+                    $scanIssue = 'Az átvizsgálás elérte a bejegyzéskorlátot.';
                     $complete = false;
                     break;
                 }
@@ -53,13 +55,19 @@ function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $m
                     }
                 }
                 if (count($findings) >= $maxFindings) {
+                    $scanIssue = 'Az átvizsgálás elérte a biztonsági találatok korlátját.';
                     $complete = false;
                     break;
                 }
             }
-        } catch (Throwable) {
-            // Permission errors or unreadable directories fail closed: an
-            // incomplete scan must never generate a green "ready" badge.
+        } catch (Throwable $error) {
+            // A sanitized, root-relative directory label (never an absolute
+            // path or an exception message) helps the admin locate permissions
+            // problems without exposing private infrastructure details.
+            $relativeFolder = substr($folder, strlen($root));
+            $relativeFolder = ltrim(str_replace(DIRECTORY_SEPARATOR, '/', $relativeFolder), '/');
+            $scanIssue = 'A mappa nem vizsgálható: ' . ($relativeFolder === '' ? '(webgyökér)' : $relativeFolder);
+            error_log('Zeneelméleti Műhely deployment scan incomplete: ' . get_class($error));
             $complete = false;
         }
     }
@@ -68,6 +76,7 @@ function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $m
         'publicArchives'=>array_values(array_unique($findings)),
         'scanComplete'=>$complete,
         'scannedItems'=>min($examined, $maxItems),
+        'scanIssue'=>$scanIssue,
     ];
 }
 
