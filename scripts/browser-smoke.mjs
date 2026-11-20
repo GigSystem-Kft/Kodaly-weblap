@@ -23,6 +23,13 @@ async function checkAccessibility(page, label) {
 try {
   await page.goto(root,{waitUntil:'domcontentloaded'});
   await page.getByRole('heading',{name:'Zeneelméleti Műhely'}).waitFor();
+  const siteBrand = page.getByRole('button', {name:'Zeneelméleti Műhely – vissza a tananyag főoldalára'});
+  const siteLogo = siteBrand.getByRole('img',{name:'Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál'});
+  await siteLogo.waitFor();
+  if (!await siteLogo.evaluate(img => img.complete && img.naturalWidth > 0 && img.naturalHeight > 0)) {
+    throw new Error('Header brand image did not decode correctly');
+  }
+  console.log('Guest: branded header image loaded');
   console.log('Guest: landing page loaded');
   await checkAccessibility(page, 'főoldal');
 
