@@ -401,6 +401,7 @@ try {
             'publicArchives'=>$archives,
             'scanComplete'=>$scan['scanComplete'],
             'scannedItems'=>$scan['scannedItems'],
+            'scanIssue'=>$scan['scanIssue'] ?? null,
             'buildConsistent'=>$build['buildConsistent'],
             'releaseRevision'=>$build['releaseRevision'],
             'mailConfigured'=>($config['mail_enabled'] ?? false)===true &&
