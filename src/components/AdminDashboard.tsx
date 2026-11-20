@@ -4,7 +4,7 @@ import { apiFetch } from '../api';
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
 type TutorSource = { id: string; title: string; createdAt: string; size: number; sha256?: string };
-type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;buildConsistent?:boolean;releaseRevision?:string|null;mailConfigured:boolean;scope:string};
+type DeploymentCheck = {ready:boolean;checkedAt:string;missing:string[];publicArchives:string[];scanComplete?:boolean;scannedItems?:number;scanIssue?:string|null;buildConsistent?:boolean;releaseRevision?:string|null;mailConfigured:boolean;scope:string};
 type Coverage = {generatedAt:string; indexChunks:number; indexedCharacters:number; chapter09GlossaryEntries?:number;
  sources:{source:string;sourceId?:string|null;chunks:number;characters:number;kind:string}[];
  privateSourceIntegrity?:{id:string;title:string;sourceBytes:number;indexedBytes:number;indexedChunks:number;sha256:string;complete:boolean}[];
@@ -183,6 +183,7 @@ export const AdminDashboard: React.FC = () => {
             <p role="alert" className="text-sm text-red-800 mb-2">
               A nyilvános mappák teljes biztonsági átvizsgálása nem igazolt vagy megszakadt.
               Ilyenkor a telepítés NEM tekinthető ellenőrzöttnek.
+              {deploymentCheck.scanIssue && <span className="block mt-1">Ok: {deploymentCheck.scanIssue}</span>}
             </p>
           )}
           {deploymentCheck.buildConsistent !== true && (
