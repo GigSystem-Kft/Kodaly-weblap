@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { headerBrandImage } from '../assets/headerBrandImage';
 import { TEXTBOOKS } from './TextbookView';
 import { BookOpen, Award, Layers, Volume2, Flame, Sparkles, HelpCircle, Image as ImageIcon, Table } from 'lucide-react';
 
@@ -23,14 +24,23 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
   ];
 
   return (
-    <header className="px-6 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-end border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
-      <button type="button" className="brand cursor-pointer mb-4 md:mb-0 text-left" onClick={() => setActiveTab('chapters')} title="Vissza a tananyag főoldalára">
-        <h1 className="font-serif-cormorant text-3xl md:text-4xl italic font-semibold leading-none mb-1 text-[#1c1c1c]">
-          Zeneelméleti Műhely
-        </h1>
-        <p className="text-[0.7rem] tracking-widest uppercase text-[#1c1c1c]/75 font-medium">
-          Zenei Ismeretek & Oktatási Portál
-        </p>
+    <header className="px-6 md:px-12 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1c1c1c]/15 bg-[#fdfcf8]">
+      <button
+        type="button"
+        className="brand shrink-0 cursor-pointer mb-4 md:mb-0 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#4a54e1]"
+        onClick={() => setActiveTab('chapters')}
+        aria-label="Zeneelméleti Műhely – vissza a tananyag főoldalára"
+        title="Vissza a tananyag főoldalára"
+      >
+        <img
+          src={headerBrandImage}
+          alt="Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál"
+          className="h-24 md:h-28 w-auto object-contain"
+          width="225"
+          height="204"
+          decoding="async"
+          draggable={false}
+        />
       </button>
 
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
