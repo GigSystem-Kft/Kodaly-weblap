@@ -42,8 +42,12 @@ try {
 
     $limited = deploymentPublicRiskScan($root, 2);
     checkDeployment(!$limited['scanComplete'], 'bounded traversal cannot pass without visiting every file');
+    checkDeployment(($limited['scanIssue'] ?? '') === 'Az átvizsgálás elérte a bejegyzéskorlátot.',
+        'entry limit must explain incomplete scan to admins');
     $capped = deploymentPublicRiskScan($root, 50000, 2);
     checkDeployment(!$capped['scanComplete'], 'truncated findings cannot pass as a complete scan');
+    checkDeployment(($capped['scanIssue'] ?? '') === 'Az átvizsgálás elérte a biztonsági találatok korlátját.',
+        'finding limit must explain incomplete scan to admins');
 
     if (function_exists('symlink')) {
         file_put_contents($base . '/private-config.txt', 'Do not expose');
