@@ -20,6 +20,23 @@ try {
     checkDeployment($clean['scanComplete'] && $clean['publicArchives'] === [], 'ordinary web content should pass');
     checkDeployment($clean['scannedItems'] >= 4, 'nested assets must actually be visited');
 
+    // A CloudPanel-managed cache at the document root may be owned by a
+    // different user with 0700 permissions. Do not traverse it, but disclose
+    // the precise exclusion: hidden application folders are NOT all ignored.
+    mkdir($root . '/.cache', 0700);
+    file_put_contents($root . '/.cache/motd.legal-displayed', '');
+    $managedCache = deploymentPublicRiskScan($root);
+    checkDeployment($managedCache['scanComplete'], 'managed root cache must not block public scan');
+    checkDeployment(($managedCache['excludedDirs'] ?? []) === ['.cache'],
+        'managed cache exclusion must be reported');
+    mkdir($root . '/assets/.hidden', 0700);
+    file_put_contents($root . '/assets/.hidden/secrets.env', 'secret content');
+    file_put_contents($root . '/assets/.hidden/.env.production', 'private password');
+    $hiddenNested = deploymentPublicRiskScan($root);
+    checkDeployment(in_array('assets/.hidden/.env.production',
+        $hiddenNested['publicArchives'], true),
+        'non-cache hidden folders must still be traversed');
+
     file_put_contents($root . '/assets/archives/old/MEGMENTES.SQL.GZ', 'private SQL backup');
     file_put_contents($root . '/api/.env.production', 'secret SMTP password');
     file_put_contents($root . '/assets/backup.zip', 'private application archive');
