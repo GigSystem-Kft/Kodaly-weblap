@@ -32,7 +32,9 @@ function searchTerms(string $value): array {
         if (in_array($word,['guidoni','guidofele'],true)) $word='guido';
         $terms[$word]=true;
     }
-    return array_keys($terms);
+    // PHP converts numeric-string array keys (e.g. '2026') to integers.
+    // Ranking and prefix matching require string tokens on every path.
+    return array_map('strval', array_keys($terms));
 }
 /**
  * A short Hungarian case suffix may follow a complete indexed concept.
