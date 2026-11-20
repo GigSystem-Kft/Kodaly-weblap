@@ -17,6 +17,7 @@ function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $m
     }
     $folders = [$root];
     $findings = [];
+    $excludedDirs = [];
     $examined = 0;
     $complete = true;
     $scanIssue = null;
@@ -42,7 +43,13 @@ function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $m
                     }
                     // Never follow symlinked directories while scanning.
                 } elseif ($file->isDir()) {
-                    if (in_array(strtolower($name), ['.git', '.svn', '.hg'], true)) {
+                    // Only the root-level, externally managed .cache is
+                    // excluded from traversal. Do not skip arbitrary hidden
+                    // directories: .git, .env and nested caches can expose data.
+                    // Report the exclusion explicitly to the administrator.
+                    if ($relative === '.cache') {
+                        $excludedDirs[] = $relative;
+                    } elseif (in_array(strtolower($name), ['.git', '.svn', '.hg'], true)) {
                         $findings[] = $relative . '/ (verziókezelési adatok)';
                     } else {
                         $folders[] = $path;
@@ -77,6 +84,7 @@ function deploymentPublicRiskScan(string $webroot, int $maxItems = 50000, int $m
         'scanComplete'=>$complete,
         'scannedItems'=>min($examined, $maxItems),
         'scanIssue'=>$scanIssue,
+        'excludedDirs'=>$excludedDirs,
     ];
 }
 
