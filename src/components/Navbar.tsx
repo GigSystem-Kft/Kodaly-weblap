@@ -32,6 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
         aria-label="Zeneelméleti Műhely – vissza a tananyag főoldalára"
         title="Vissza a tananyag főoldalára"
       >
+        <h1 className="sr-only">Zeneelméleti Műhely</h1>
         <img
           src={headerBrandImage}
           alt="Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál"
