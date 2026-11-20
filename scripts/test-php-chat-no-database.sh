@@ -52,4 +52,23 @@ for MESSAGE in \
     if (($x["mode"]??null)==="reviewed" && strpos($x["reply"],"3+3")===false) exit(1);
   '
 done
-printf 'Offline database: tutor status and prima vista answers are operational.\n'
+# A broken optional knowledge source must not turn either a reviewed
+# musical explanation or an unknown question into a generic HTTP 503.
+# The error must be logged, while the student receives a safe fallback.
+cat > "$SITE/api/knowledge.php" <<'PHP'
+<?php
+throw new RuntimeException('Synthetic source-index read failure');
+PHP
+echo 'Checking reviewed meter answer with unavailable knowledge index'
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data '{"message":"Mi a különbség a 3/4-es és a 6/8-os ütemmutató között?"}' \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="reviewed" || !str_contains($x["reply"]??"","3+3 nyolcadra"))exit(1);'
+echo 'Checking unknown term with unavailable knowledge index'
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data '{"message":"Mi az a zorbafonikus hetedik kvantumhangzat?"}' \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); $reply=$x["reply"]??""; if(($x["mode"]??null)!=="fallback" || !str_contains($reply,"nem találtam") || str_contains($reply,"szerveroldali szolgáltatás"))exit(1);'
+printf 'Offline database and failing knowledge index: safe tutor replies passed.\n'
