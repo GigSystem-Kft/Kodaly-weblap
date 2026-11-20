@@ -3,8 +3,8 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
-# A függőségi lockfile-t a korábban hozzáadott mysql2 csomag miatt frissítjük.
-RUN npm install --no-audit --no-fund
+# The tested release lockfile includes mysql2 and its complete dependency graph.
+RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm test && npm run lint && npm run build
 RUN ./node_modules/.bin/esbuild server.ts --bundle --platform=node --target=node24 --format=esm --packages=external --outfile=server.mjs

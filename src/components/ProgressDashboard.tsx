@@ -1,8 +1,9 @@
 import React from 'react';
 import { UserProgress } from '../types';
-import { MUSIC_CHAPTERS } from '../data/musicData';
+import { MUSIC_CHAPTERS, QUIZ_QUESTIONS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES, learningProgressSummary } from '../data/learningProgressSummary';
-import { consecutiveDays } from '../progress';
+import { consecutiveDays, localDay } from '../progress';
+import { quizPracticeTrends } from '../quizAnalytics';
 import { Award, Sparkles, CheckCircle2, BookOpen, Trophy, ArrowRight, Layers, CalendarDays, ListChecks } from 'lucide-react';
 
 interface ProgressDashboardProps {
@@ -14,12 +15,14 @@ interface ProgressDashboardProps {
 export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, signedIn = false, onOpenModule }) => {
   const stats = learningProgressSummary(progress);
   const trueStreak = consecutiveDays(progress.activityDays ?? []);
+  const earXpToday = progress.earTrainingDailyXp?.[localDay()] ?? 0;
+  const trends = quizPracticeTrends(progress);
 
   const metrics = [
-    { title:'Elérhető tananyagegységek', value:String(stats.curriculumModules), foot:'5 alapfejezet + 4 bővített témakör', Icon:BookOpen,  },
+    { title:'Tanulmányozottnak jelölt egységek', value:`${stats.completedModules} / ${stats.curriculumModules}`, foot:'5 alapfejezet + 4 bővített témakör · saját jelölés', Icon:BookOpen,  },
     { title:'Teljesített alapfejezetek', value:`${stats.completedCoreChapters} / ${stats.coreChapters}`, foot:`${stats.corePercentage}% · csak a követett alapfejezetek`, Icon:CheckCircle2,  },
     { title:'Kvízek átlagos legjobb eredménye', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy,  },
-    { title:'Összesített XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos tanulási sorozat`, Icon:Sparkles,  },
+    { title:'Gyakorlási XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos sorozat · mai hallásfejlesztés: ${earXpToday}/100 XP · nem vizsgaértékelés`, Icon:Sparkles,  },
   ];
 
   return (
@@ -60,11 +63,74 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
             : 'Vendégként az eredményeidet ez a böngésző tárolja. Bejelentkezve a fiókod eredményei jelennek meg; a helyi adatok átvitele külön művelet.'}
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-5">
+          <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Kedvenc fogalmak</span><strong className="block mt-1">{progress.favoriteExpressions?.length ?? 0}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Tanulási napok</span><strong className="block mt-1">{stats.studyDays}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Megtanult szókártyák</span><strong className="block mt-1">{stats.masteredCards} / {stats.totalCards}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Alfejezetek</span><strong className="block mt-1">{stats.completedSubchapters} / {stats.totalSubchapters}</strong></div>
           <div className="bg-slate-50 rounded-xl p-3"><span className="block text-xs text-slate-600">Utolsó rögzített tanulás</span><strong className="block mt-1 text-sm">{stats.lastStudy || 'Még nincs adat'}</strong></div>
         </div>
+      </section>
+
+      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-7">
+        <h3 className="text-lg font-bold text-slate-900">Kvízgyakorlás alakulása témakörönként</h3>
+        <p className="text-sm text-slate-600 mt-2 mb-3">
+          Az azonos témakörben megoldott utolsó három gyakorlókör átlagát hasonlítjuk
+          a megelőző háromhoz. Hat próbálkozás alatt nem jelzünk irányt.
+          A változás gyakorlási visszajelzés, nem hitelesített tudásszintmérés.
+        </p>
+        {trends.length === 0
+          ? <p className="text-sm text-slate-600">Még nincs elegendő gyakorlási adat.</p>
+          : <ul className="space-y-2">
+              {trends.slice(0, 8).map(item => (
+                <li key={item.chapterId} className="rounded-xl border border-slate-200 p-3 flex flex-wrap gap-2 items-center justify-between">
+                  <span className="font-semibold text-slate-800 text-sm">
+                    {item.chapterId === 'vegyes-gyakorlas' ? 'Vegyes gyakorlás' : item.chapterId}
+                    <span className="font-normal text-slate-600"> · {item.attempts} kör</span>
+                  </span>
+                  <span className="text-sm text-slate-800">
+                    Utolsó 3 átlaga: <strong>{item.recentAverage}%</strong>
+                    {item.change !== null ? ` · előző 3-hoz képest ${item.change > 0 ? '+' : ''}${item.change} százalékpont` : ' · még nincs összehasonlítás'}
+                  </span>
+                </li>
+              ))}
+            </ul>}
+      </section>
+
+      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-7">
+        <h3 className="text-lg font-bold text-slate-900">Legutóbbi kvízpróbálkozások</h3>
+        <p className="text-sm text-slate-600 mt-2 mb-4">
+          A mentett próbálkozásokból az utolsó öt látható. A rendszer legfeljebb 100 próbálkozást őriz;
+          a korábbi legjobb eredmények külön megmaradnak. Ez gyakorlási napló, nem hitelesített vizsgajegy.
+        </p>
+        {(progress.quizAttempts?.length ?? 0) === 0 ? (
+          <p className="text-sm text-slate-600">Még nincs részletesen naplózott próbálkozás. A régebbi legjobb pontszámok továbbra is megmaradnak.</p>
+        ) : (
+          <ul className="divide-y divide-slate-200">
+            {[...(progress.quizAttempts ?? [])].reverse().slice(0, 5).map(attempt => (
+              <li key={attempt.id} className="py-3 text-sm">
+                <div className="flex flex-wrap justify-between gap-2">
+                  <span className="font-medium text-slate-800">{attempt.chapterId === 'vegyes-gyakorlas' ? 'Vegyes gyakorlás' : attempt.chapterId} · {attempt.correct}/{attempt.total} helyes</span>
+                  <span className="text-slate-600">{attempt.score}% · {new Date(attempt.at).toLocaleString('hu-HU')}{attempt.durationSeconds !== undefined ? ` · ${Math.floor(attempt.durationSeconds / 60)} perc ${attempt.durationSeconds % 60} mp` : ''}</span>
+                </div>
+                {(attempt.wrongQuestionIds?.length ?? 0)>0 && <details className="mt-2">
+                  <summary className="text-indigo-700 cursor-pointer">Átismétlendő kérdések ({attempt.wrongQuestionIds?.length})</summary>
+                  <ul className="list-disc pl-5 mt-2 text-slate-700 space-y-1">
+                    {attempt.wrongQuestionIds?.map(id => {
+                      const question = QUIZ_QUESTIONS.find(item => item.id === id);
+                      return <li key={id} className="pl-1 mb-2">
+                        {question ? <>
+                          <strong className="block font-medium text-slate-800">{question.question}</strong>
+                          <span className="block text-emerald-800">Helyes válasz: {question.options[question.correctIndex]}</span>
+                          <span className="block text-slate-600 mt-1">{question.explanation}</span>
+                        </> : 'Korábbi kérdés (már nem szerepel a feladatbankban)'}
+                      </li>;
+                    })}
+                  </ul>
+                </details>}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-lg mb-7">
@@ -99,14 +165,18 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
 
       <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 mb-6">
         <h3 className="text-lg font-bold flex gap-2 items-center"><Layers size={20} className="text-indigo-700"/> Bővített tananyagegységek · 06–09.</h3>
-        <p className="text-sm text-slate-600 mt-2 mb-4">Ezek a modulok már szerepelnek a tananyagban, de jelenleg még nincs hozzájuk külön fejezetszintű teljesítési jelölő. Az itt elért kvízeredmények és XP-k ettől függetlenül mentődnek.</p>
+        <p className="text-sm text-slate-600 mt-2 mb-4">A négy bővített modult külön is tanulmányozottnak jelölheted. Ez saját tanulási jelölés, nem vizsgajegy; az itt elért kvízeredmények külön jelennek meg.</p>
         <div className="grid md:grid-cols-2 gap-3">
           {EXTRA_LEARNING_MODULES.map(module=>{
             const score=progress.quizScores[module.quizId];
+            const completed=progress.completedChapters.includes(module.id);
             return <div key={module.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50">
               <div className="flex flex-wrap gap-2 items-start justify-between">
                 <div className="flex-1"><span className="block text-xs font-bold text-indigo-700 mb-1">0{module.number}. TANANYAG</span><h4 className="font-semibold text-slate-900">{module.title}</h4></div>
+                <div className="flex flex-col gap-1 items-end">
+                {completed&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Tanulmányozottnak jelölve</span>}
                 {score!==undefined&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Kvíz: {score}%</span>}
+                </div>
               </div>
               <p className="text-xs text-slate-600 mt-2 mb-3">{module.description}</p>
               {onOpenModule&&<button type="button" onClick={()=>onOpenModule(module.tab)} className="text-sm font-semibold text-indigo-700 inline-flex gap-1 items-center hover:underline">Tananyag megnyitása <ArrowRight size={15}/></button>}

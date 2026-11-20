@@ -6,7 +6,7 @@ export type RhythmFigure = { id: RhythmFigureId; title: string; mnemonic: string
 export const RHYTHM_FIGURES: readonly RhythmFigure[] = [
   { id:'nyujtott', title:'Nyújtott ritmus', mnemonic:'TÁM–TI', explanation:'Pontozott negyed (1½ ütés) + nyolcad (½ ütés). Két negyednyi ritmusképlet, egyszer megszólaltatva.',
     lengthBeats:2, base:[{startBeats:0,durationBeats:1.5,label:'TÁM'},{startBeats:1.5,durationBeats:0.5,label:'TI'}] },
-  { id:'eles', title:'Éles ritmus', mnemonic:'TI–TÁM', explanation:'Nyolcad (½ ütés) + pontozott negyed (1½ ütés). Két negyednyi képlet, az ütemben kétszer megszólaltatva.',
+  { id:'eles', title:'Éles ritmus', mnemonic:'TI–TÁM', explanation:'Nyolcad (½ ütés) + pontozott negyed (1½ ütés). Két negyednyi ritmusképlet, egyszer megszólaltatva.',
     lengthBeats:2, base:[{startBeats:0,durationBeats:0.5,label:'TI'},{startBeats:0.5,durationBeats:1.5,label:'TÁM'}] },
   { id:'szinkopa', title:'Szinkópa', mnemonic:'TI–TÁ–TI', explanation:'Nyolcad (½ ütés) + negyed (1 ütés) + nyolcad (½ ütés). A középső hang átnyúlik a mérőütésen.',
     lengthBeats:2, base:[{startBeats:0,durationBeats:0.5,label:'TI'},{startBeats:0.5,durationBeats:1,label:'TÁ'},{startBeats:1.5,durationBeats:0.5,label:'TI'}] },

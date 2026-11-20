@@ -1,5 +1,5 @@
 import { apiFetch } from './api';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Navbar } from './components/Navbar';
 import { ChapterListView } from './components/ChapterListView';
@@ -22,7 +22,8 @@ import { RhythmResearchBookView } from './components/RhythmResearchBookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
-import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress } from './progress';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, getQuizBestScore } from './progress';
+import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress, safeBrowserStorage } from './pendingProgress';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('chapters');
@@ -35,27 +36,50 @@ export default function App() {
   const [account, setAccount] = useState<AccountUser | null>(null);
   const [accountReady, setAccountReady] = useState(false);
   const [syncError, setSyncError] = useState('');
+  const revisionRef = useRef<string | null>(null);
+  const savedSnapshotRef = useRef<string | null>(null);
+  const savingRef = useRef(false);
+  const accountGenerationRef = useRef(0);
+  const [saveTick, setSaveTick] = useState(0);
 
   useEffect(() => {
     let active = true;
+    const startingGeneration = accountGenerationRef.current;
+    const isCurrentLoad = () => active && startingGeneration === accountGenerationRef.current;
     const initialize = async () => {
       try {
         const response = await apiFetch('/api/auth/me');
         if (!response.ok) throw new Error('Nem elérhető a fiókszolgáltatás.');
         const data = await response.json();
+        // A sign-in/sign-out can complete while an old bootstrap request is
+        // pending. Never allow the old cookie identity to win afterward.
+        if (!isCurrentLoad()) return;
         if (data.user) {
           const progressResponse = await apiFetch('/api/progress');
           if (!progressResponse.ok) throw new Error('Nem sikerült betölteni a mentett eredményeket.');
           const saved = await progressResponse.json();
-          if (active) {
-            setProgress(migrateProgress(saved.progress));
-            setAccount(data.user as AccountUser);
+          if (isCurrentLoad()) {
+            const restored = migrateProgress(saved.progress);
+            const user = data.user as AccountUser;
+            const pending = (safeBrowserStorage() ? loadPendingProgress(safeBrowserStorage()!, user.id) : null);
+            const recovered = recoverPendingProgress(restored, pending);
+            savedSnapshotRef.current = JSON.stringify(restored);
+            revisionRef.current = saved.revision;
+            if (pending && JSON.stringify(restored) === JSON.stringify(recovered)) {
+              const storage = safeBrowserStorage();
+              if (storage) clearSavedPendingProgress(storage, user.id, restored);
+            }
+            setProgress(recovered);
+            setAccount(user);
+            if (pending && JSON.stringify(restored) !== JSON.stringify(recovered)) {
+              setSyncError('A korábban offline maradt tanulási eredményeidet helyreállítottuk; mentés folyamatban.');
+            }
           }
         }
       } catch (error) {
-        if (active) setSyncError(error instanceof Error ? error.message : 'Fiókbetöltési hiba.');
+        if (isCurrentLoad()) setSyncError(error instanceof Error ? error.message : 'Fiókbetöltési hiba.');
       } finally {
-        if (active) setAccountReady(true);
+        if (isCurrentLoad()) setAccountReady(true);
       }
     };
     void initialize();
@@ -65,36 +89,135 @@ export default function App() {
   useEffect(() => {
     if (!accountReady) return;
     if (!account) {
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+      try {
+        const storage = safeBrowserStorage();
+        if (storage) storage.setItem(PROGRESS_KEY, JSON.stringify(progress));
+        else setSyncError('A böngésző helyi tárolója nem érhető el; vendégként a tanulási eredményeid nem maradnak meg újratöltés után.');
+      } catch {
+        setSyncError('A böngésző megtagadta a helyi mentést; vendégként az eredményeid nem maradnak meg újratöltés után.');
+      }
       return;
     }
+    const snapshot = JSON.stringify(progress);
+    if (savedSnapshotRef.current === snapshot || revisionRef.current === null) return;
+    try {
+      const storage = safeBrowserStorage();
+      if (!storage) throw new Error('A böngésző helyi tárolója nem érhető el.');
+      savePendingProgress(
+        storage, account.id,
+        migrateProgress(savedSnapshotRef.current ? JSON.parse(savedSnapshotRef.current) : null),
+        progress
+      );
+    } catch {
+      setSyncError('Nem sikerült helyi biztonsági másolatot menteni. A szervermentést továbbra is megpróbáljuk.');
+    }
     const handle = window.setTimeout(async () => {
+      if (savingRef.current) return;
+      savingRef.current = true;
+      const generation = accountGenerationRef.current;
+      let reschedule = false;
       try {
         const response = await apiFetch('/api/progress', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ progress })
+          body: JSON.stringify({ progress, revision: revisionRef.current })
         });
+        const result = await response.json();
+        if (generation !== accountGenerationRef.current) return;
+        if (response.status === 409) {
+          const baseline = migrateProgress(
+            savedSnapshotRef.current ? JSON.parse(savedSnapshotRef.current) : null
+          );
+          revisionRef.current = result.revision;
+          const serverProgress = migrateProgress(result.progress);
+          savedSnapshotRef.current = JSON.stringify(serverProgress);
+          setProgress(previous => mergeConcurrentProgress(serverProgress, previous, baseline));
+          setSyncError('Másik eszköz eredményeit összevezettük. Az új mentést újrapróbáljuk.');
+          reschedule = true;
+          return;
+        }
         if (!response.ok) throw new Error('A szerveroldali eredménymentés nem sikerült.');
+        revisionRef.current = result.revision;
+        savedSnapshotRef.current = snapshot;
+        const storage = safeBrowserStorage();
+        if (storage) clearSavedPendingProgress(storage, account.id, progress);
+        reschedule = true;
         setSyncError('');
       } catch (error) {
-        setSyncError(error instanceof Error ? error.message : 'Mentési hiba.');
+        if (generation === accountGenerationRef.current) {
+          setSyncError(error instanceof Error ? error.message : 'Mentési hiba.');
+        }
+      } finally {
+        savingRef.current = false;
+        // A previous account's in-flight save must never block the new
+        // account's pending progress. Stale responses cannot update its data,
+        // but releasing the save lock must wake the current account's writer.
+        if (shouldRescheduleProgressSync(reschedule, generation, accountGenerationRef.current)) {
+          setSaveTick(previous => previous + 1);
+        }
       }
     }, 600);
     return () => window.clearTimeout(handle);
-  }, [progress, account, accountReady]);
+  }, [progress, account, accountReady, saveTick]);
+
+  // A failed request must not silently strand a logged-in user's pending changes.
+  // Retries are bounded by the periodic check; only unsaved snapshots trigger a PUT.
+  useEffect(() => {
+    if (!accountReady || !account || !syncError) return;
+    const retry = () => setSaveTick(tick => tick + 1);
+    const interval = window.setInterval(retry, 15_000);
+    window.addEventListener('online', retry);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener('online', retry);
+    };
+  }, [accountReady, account, syncError]);
+
+  const retrySync = () => setSaveTick(tick => tick + 1);
+
+  // Prevent accidental closing while the latest signed-in result has not reached the server.
+  useEffect(() => {
+    if (!accountReady || !account) return;
+    const warnPendingSave = (event: BeforeUnloadEvent) => {
+      if (savedSnapshotRef.current === JSON.stringify(progress)) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', warnPendingSave);
+    return () => window.removeEventListener('beforeunload', warnPendingSave);
+  }, [accountReady, account, progress]);
 
   const signIn = async (user: AccountUser) => {
-    const response = await apiFetch('/api/progress');
-    if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
-    const saved = await response.json();
-    setProgress(migrateProgress(saved.progress));
-    setSyncError('');
-    setAccount(user);
-    setAccountReady(true);
+    // Invalidate an older auth/me bootstrap before awaiting the new account's
+    // progress. A delayed bootstrap must never replace a freshly signed-in user.
+    const generation = ++accountGenerationRef.current;
+    try {
+      const response = await apiFetch('/api/progress');
+      if (!response.ok) throw new Error('A fiók létrejött, de a tanulási adatok betöltése nem sikerült.');
+      const saved = await response.json();
+      if (generation !== accountGenerationRef.current) return;
+      const restored = migrateProgress(saved.progress);
+      const storage = safeBrowserStorage();
+      const pending = storage ? loadPendingProgress(storage, user.id) : null;
+      const recovered = recoverPendingProgress(restored, pending);
+      savedSnapshotRef.current = JSON.stringify(restored);
+      revisionRef.current = saved.revision;
+      setProgress(recovered);
+      setSyncError(pending && JSON.stringify(restored) !== JSON.stringify(recovered)
+        ? 'Korábban mentetlen eredményeket állítottunk helyre; szinkronizálás folyamatban.'
+        : '');
+      setAccount(user);
+      setAccountReady(true);
+    } catch (error) {
+      if (generation === accountGenerationRef.current) setAccountReady(true);
+      throw error;
+    }
   };
 
   const signOut = () => {
+    accountGenerationRef.current++;
+    revisionRef.current = null;
+    savedSnapshotRef.current = null;
     setAccount(null);
     setProgress(readProgress());
     setSyncError('');
@@ -105,7 +228,7 @@ export default function App() {
   };
 
   const addXp = (amount: number) => {
-    setProgress(prev => recordActivity(prev, amount));
+    setProgress(prev => recordEarTrainingActivity(prev, amount));
   };
 
   const completeChapter = (chapterId: string) => {
@@ -114,19 +237,40 @@ export default function App() {
       : recordActivity({ ...prev, completedChapters: [...prev.completedChapters, chapterId] }, 50));
   };
 
+  const completeSubchapter = (subchapterId: string) => {
+    setProgress(prev => prev.completedSubchapters.includes(subchapterId)
+      ? prev
+      : recordActivity({ ...prev, completedSubchapters: [...prev.completedSubchapters, subchapterId] }, 15));
+  };
+
+  const completeMatching = (pairIds: string[]) => {
+    setProgress(prev => {
+      const newIds = [...new Set(pairIds)].filter(id => !prev.matchingCompleted.includes(id));
+      if (!newIds.length) return prev;
+      // Five points for each genuinely new pair; replaying an old round grants none.
+      const earned = Math.min(50, newIds.length * 5);
+      return recordActivity({ ...prev, matchingCompleted: [...prev.matchingCompleted, ...newIds] }, earned);
+    });
+  };
+
   const markFlashcard = (id: string) => {
     setProgress(prev => prev.flashcardsMastered.includes(id)
       ? prev
       : recordActivity({ ...prev, flashcardsMastered: [...prev.flashcardsMastered, id] }, 15));
   };
 
-  const saveQuizScore = (chapterId: string, score: number) => {
+  const saveQuizScore = (chapterId: string, score: number, correct: number, total: number, wrongQuestionIds: string[], durationSeconds: number) => {
+    const attempt = {
+      id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
+      chapterId, score, correct, total, at: new Date().toISOString(), wrongQuestionIds, durationSeconds
+    };
     setProgress(prev => {
-      const previousBest = prev.quizScores[chapterId] ?? 0;
+      const previousBest = getQuizBestScore(prev.quizScores, chapterId);
       const improved = score > previousBest;
       return recordActivity({
         ...prev,
-        quizScores: { ...prev.quizScores, [chapterId]: Math.max(previousBest, score) }
+        quizScores: { ...prev.quizScores, [chapterId]: Math.max(previousBest, score) },
+        quizAttempts: [...(prev.quizAttempts ?? []), attempt].slice(-100)
       }, improved ? 30 : 0);
     });
   };
@@ -172,6 +316,13 @@ export default function App() {
         streak={consecutiveDays(progress.activityDays ?? [])}
       />
 
+      {syncError && activeTab !== 'dashboard' && (
+        <div role="alert" className="mx-auto mt-3 w-[calc(100%-2rem)] max-w-5xl rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <strong className="font-semibold">{account ? 'Eredményszinkronizálás: ' : 'Tanulási adatok mentése: '}</strong>
+          {syncError}
+        </div>
+      )}
+
       <main className="flex-1 pb-16">
         {activeTab === 'chapters' && (
           <ChapterListView
@@ -186,6 +337,10 @@ export default function App() {
 
         {activeTab === 'musicExpressions' && (
           <MusicExpressionsView
+            favoriteIds={progress.favoriteExpressions ?? []}
+            onFavoriteChange={(ids) => setProgress(prev => ({ ...prev, favoriteExpressions: ids }))}
+            completed={progress.completedChapters.includes('musicExpressions')}
+            onComplete={() => completeChapter('musicExpressions')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onQuiz={() => openQuiz('zenei-kifejezesek')}
             onFlashcards={openFlashcards}
@@ -195,6 +350,8 @@ export default function App() {
 
         {activeTab === 'musicPedagogy' && (
           <MusicPedagogyView
+            completed={progress.completedChapters.includes('musicPedagogy')}
+            onComplete={() => completeChapter('musicPedagogy')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onQuiz={() => openQuiz('pedagogia')}
             onFlashcards={() => openFlashcards('Ének-zene tantárgy-pedagógia')}
@@ -204,6 +361,8 @@ export default function App() {
 
         {activeTab === 'musicHistory' && (
           <MusicHistoryView
+            completed={progress.completedChapters.includes('musicHistory')}
+            onComplete={() => completeChapter('musicHistory')}
             onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }}
             onQuiz={() => openQuiz('zenetortenet')}
             onFlashcards={() => openFlashcards('Zenetörténet')}
@@ -212,7 +371,7 @@ export default function App() {
         )}
 
         {activeTab === 'creative' && (
-          <CreativeEducationView onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
+          <CreativeEducationView completed={progress.completedChapters.includes('creative')} onComplete={() => completeChapter('creative')} onBack={() => { setActiveTab('chapters'); window.scrollTo({top:0,behavior:'smooth'}); }} />
         )}
 
         {activeTab === 'chapterDetail' && selectedChapter && (
@@ -224,6 +383,8 @@ export default function App() {
             }}
             onOpenQuiz={openQuiz}
             onCompleteChapter={completeChapter}
+            onCompleteSubchapter={completeSubchapter}
+            completedSubchapters={progress.completedSubchapters}
             isCompleted={progress.completedChapters.includes(selectedChapter.id)}
           />
         )}
@@ -233,7 +394,7 @@ export default function App() {
         )}
 
         {activeTab === 'matching' && (
-          <MatchingGame onAddXp={addXp} initialCategory={matchingCategory} />
+          <MatchingGame onCompleted={completeMatching} initialCategory={matchingCategory} />
         )}
 
         {activeTab === 'quiz' && (
@@ -258,6 +419,8 @@ export default function App() {
                 onSignedOut={signOut}
                 onImportLocal={importLocal}
                 syncError={syncError}
+                hasUnsavedProgress={account !== null && savedSnapshotRef.current !== JSON.stringify(progress)}
+                onRetrySync={retrySync}
               />
             </div>
             <ProgressDashboard progress={progress} signedIn={!!account} onOpenModule={(tab) => {setActiveTab(tab); window.scrollTo({top:0,behavior:'smooth'});}} />
@@ -293,7 +456,7 @@ export default function App() {
 
       <ChatAssistant />
 
-      <footer className="px-6 md:px-12 py-6 flex flex-col sm:flex-row justify-between items-center text-[0.65rem] font-mono-jetbrains text-[#1c1c1c]/60 border-t border-[#1c1c1c]/15 bg-[#fdfcf8]">
+      <footer className="px-6 md:px-12 py-6 flex flex-col sm:flex-row justify-between items-center text-[0.65rem] font-mono-jetbrains text-[#1c1c1c]/75 border-t border-[#1c1c1c]/15 bg-[#fdfcf8]">
         <span>COPYRIGHT © 2026. ALL RIGHTS RESERVED.</span>
         <span>CREATED BY DR. SZABÓ NORBERT — MATE</span>
       </footer>

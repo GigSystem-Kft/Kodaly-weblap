@@ -101,6 +101,7 @@ export const HistorySupplementSection:React.FC<{periodId:string;search?:string}>
       <figcaption className="p-3">
         <strong className="block text-sm">{v.title}</strong><p className="text-xs mt-1 text-slate-700">{v.caption}</p>
         <p className="text-[11px] text-slate-600 mt-2">{v.licenseNote}</p>
+        {v.licenseUrl && <a href={v.licenseUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-indigo-700 underline inline-flex items-center gap-1 mt-2">Licenc részletei <ExternalLink size={12}/></a>}
         <a href={v.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-indigo-700 underline inline-flex items-center gap-1 mt-2">Eredeti kép és licenc <ExternalLink size={12}/></a>
       </figcaption>
      </figure>)}

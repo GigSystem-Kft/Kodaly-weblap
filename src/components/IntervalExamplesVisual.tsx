@@ -54,7 +54,7 @@ export const IntervalExamplesVisual:React.FC=()=>{
    {playing&&<button type="button" onClick={stop} className="border border-slate-400 rounded-lg px-5 py-3 text-sm">Leállítás</button>}
   </div>
   <div className="flex gap-2 mb-3" role="group" aria-label="Hangköz két hangjának sorrendje">
-   {['C′ (alaphang)',INTERVAL_EXAMPLES[selected].upperName].map((label,i)=><div key={label}
+   {['C′ (alaphang)',INTERVAL_EXAMPLES[selected].upperName].map((label,i)=><div key={i}
     className={`flex-1 text-center rounded-lg border px-3 py-3 text-sm font-semibold ${highlight===i?'bg-amber-200 border-amber-500 text-amber-950':'bg-slate-50 border-slate-200 text-slate-700'}`}>{label}</div>)}
   </div>
   <p className="text-sm text-indigo-800 font-semibold" role="status">{INTERVAL_EXAMPLES[selected].name}: {INTERVAL_EXAMPLES[selected].semitones} félhang.

@@ -2,21 +2,10 @@ name: Zeneelméleti Műhely – Linux telepítőcsomag
 
 on:
   workflow_dispatch:
+  # The release gate must run for every PR update, including docs-only changes.
+  # Restricting paths can leave checks absent for the eventual merge commit.
   pull_request:
     branches: [main]
-    paths:
-      - 'src/**'
-      - 'server*.ts'
-      - 'server-data/**'
-      - 'database/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'vite.config.ts'
-      - 'index.html'
-      - 'Dockerfile'
-      - '.dockerignore'
-      - 'compose.yaml'
-      - '.github/workflows/deploy-bundle.yml'
 
 permissions:
   contents: read
@@ -34,12 +23,11 @@ jobs:
           node-version: '24'
           cache: npm
 
-      # Az eredeti projekt lockfile-ját a mysql2 felvétele után frissíteni kell.
-      # Az npm install ezt a futás munkakönyvtárában teszi meg, így a csomag reprodukálható lockfile-t tartalmaz.
-      - name: Függőségek és lockfile szinkronizálása
+      # Use the committed dependency graph; dependency resolution must not drift in CI.
+      - name: Függőségek telepítése rögzített lockfile-ból
         run: |
           rm -rf node_modules
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
 
       - name: Unit tesztek
         run: npm test

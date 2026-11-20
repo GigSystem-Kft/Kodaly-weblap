@@ -113,14 +113,70 @@ resetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http
 test "$resetStatus" = 200
 resetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"token\":\"$resetToken\",\"password\":\"UjabbJelszo2026!\"}")"
 test "$resetStatus" = 400
+# Invalid JSON shapes should give a controlled 400, never an internal
+# PHP type error / 500. This also checks that malformed login data does not
+# interfere with the valid existing account and later login.
+for malformed in \
+ '{"email":[],"password":"ValidLookingPassword2026!"}' \
+ '{"email":{"nested":"pilot@example.org"},"password":"ValidLookingPassword2026!"}' \
+ '{"email":"pilot@example.org","password":[]}' \
+ '{"email":"","password":"ValidLookingPassword2026!"}'; do
+  malformed_status="$(curl -sS -o /tmp/zm-malformed-login.json -w '%{http_code}' \
+   -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' \
+   -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+   -H 'Content-Type: application/json' --data "$malformed")"
+  test "$malformed_status" = 400
+done
+
 # Login with reset password, change it while signed in and verify old session is gone.
 loginStatus="$(curl -sS -c /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
 test "$loginStatus" = 200
 statusMe="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=auth/me')"
 test "$statusMe" = 200
 php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(($j["user"]["email"]??null)!=="pilot@example.org") exit(1);'
+# A second signed-in device has its own independent cookie.
+secondDeviceLogin="$(curl -sS -c /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
+test "$secondDeviceLogin" = 200
+wrongPasswordChange="$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"currentPassword":"EgyHelytelenJelszo2026!","newPassword":"Tilthatatlan2026!?"}')"
+test "$wrongPasswordChange" = 403
+test "$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/me')" = 200
+# A reset email already sent before a manual password change must no
+# longer authorize a second password rotation.
+pendingResetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset-request' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"email":"pilot@example.org"}')"
+test "$pendingResetStatus" = 200
+pendingResetToken="$(grep -oE 'account=reset&token=[a-f0-9]{64}' /tmp/zm-test-mail.txt | tail -1 | cut -d= -f3)"
+test "${#pendingResetToken}" = 64
 changeStatus="$(curl -sS -b /tmp/zm-cookies.txt -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HarmadikTesztJelszo2026!"}')"
 test "$changeStatus" = 200
+staleResetStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/reset' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data "{\"token\":\"$pendingResetToken\",\"password\":\"IlletektelenVisszaallitas2026!\"}")"
+test "$staleResetStatus" = 400
+# Password rotation revokes the other device, not just the current browser.
+curl -fsS -b /tmp/zm-second-device-cookies \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-second-device-me.json
+php -r '$j=json_decode(file_get_contents("/tmp/zm-second-device-me.json"),true); if(!array_key_exists("user",$j)||$j["user"]!==null)exit(1);'
+staleChange="$(curl -sS -b /tmp/zm-second-device-cookies -o /tmp/zm-response.json -w '%{http_code}' \
+ -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/change-password' \
+ -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' \
+ -H 'Content-Type: application/json' \
+ --data '{"currentPassword":"ValamiTeljesenUjJelszo2026!","newPassword":"HelytelenNegyedik2026!"}')"
+test "$staleChange" = 401
 curl -fsS -b /tmp/zm-cookies.txt 'http://127.0.0.1:8000/api/index.php?route=auth/me' > /tmp/zm-response.json
 php -r '$j=json_decode(file_get_contents("/tmp/zm-response.json"),true); if(!array_key_exists("user",$j) || $j["user"]!==null) exit(1);'
 loginStatus="$(curl -sS -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=auth/login' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"pilot@example.org","password":"ValamiTeljesenUjJelszo2026!"}')"
@@ -141,6 +197,99 @@ adminLogin="$(curl -sS -c /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{h
 test "$adminLogin" = 200
 adminList="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' 'http://127.0.0.1:8000/api/index.php?route=admin/users')"
 test "$adminList" = 200
+
+# A-24: authenticate as an actual administrator, then prove that the live
+# read-only CloudPanel diagnostic catches a confidential file buried beneath
+# an innocuous public asset directory (the old shallow glob missed it).
+AUDIT_DIR="php/assets/zeneelmelet-ci-audit/nested"
+mkdir -p "$AUDIT_DIR"
+printf 'disposable test-only SQL dump' > "$AUDIT_DIR/backup.SQL.GZ"
+diagnosticStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$diagnosticStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"), true);
+if (($j["scanComplete"]??null)!==true || ($j["ready"]??null)!==false ||
+    ($j["scannedItems"]??0)<1 ||
+    !in_array("assets/zeneelmelet-ci-audit/nested/backup.SQL.GZ", $j["publicArchives"]??[], true)) {
+    fwrite(STDERR,"Admin diagnostic did not flag nested public archive\n");exit(1);
+}
+'
+rm -rf "php/assets/zeneelmelet-ci-audit"
+diagnosticStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$diagnosticStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"), true);
+if (($j["scanComplete"]??null)!==true ||
+    in_array("assets/zeneelmelet-ci-audit/nested/backup.SQL.GZ", $j["publicArchives"]??[], true)) {
+    fwrite(STDERR,"Deleted audit fixture remains in deployment report\n");exit(1);
+}
+'
+echo 'Live authenticated deployment diagnostic flags nested public archives'
+
+# A-24: the real authenticated endpoint also verifies a three-layer release
+# fingerprint. An incomplete upload of old frontend/new PHP must be rejected.
+REVISION="$(printf 'a%.0s' {1..40})"
+MIXED_REVISION="$(printf 'b%.0s' {1..40})"
+mkdir -p php/assets/lazy
+printf 'console.log("ci test")\n' > php/assets/index-ci.js
+printf 'export const moduleVersion = "current";\n' > php/assets/lazy/chunk.js
+printf '%s\n' '<?php return [];' > php/api/knowledge.php
+cat > php/index.html <<HTML
+<html><head><script src="/assets/index-ci.js"></script></head><body>Test</body></html>
+HTML
+python3 scripts/stamp-php-release.py php "$REVISION"
+printf "<?php\n// Public, non-secret checked-out release revision.\nreturn '%s';\n" "$REVISION" > php/api/release-build.php
+fingerprintStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$fingerprintStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==true ||
+    ($j["releaseRevision"]??null)!==str_repeat("a",40)) {
+    fwrite(STDERR,"Matching build stamps rejected by admin endpoint\n");exit(1);
+}
+'
+# A dynamically loaded module has no direct index.html reference, but
+# authenticated diagnostics must still catch a partially uploaded old chunk.
+printf 'export const moduleVersion = "stale";\n' > php/assets/lazy/chunk.js
+lazyStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$lazyStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false) {
+    fwrite(STDERR,"Stale lazy-loaded module passed authenticated deployment check\n");exit(1);
+}'
+printf 'export const moduleVersion = "current";\n' > php/assets/lazy/chunk.js
+
+# An old JavaScript file must not pass just because the version labels match.
+printf 'console.log("obsolete client")\n' > php/assets/index-ci.js
+tamperedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$tamperedStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false) {
+    fwrite(STDERR,"Outdated client asset passed deployment check\n");exit(1);
+}'
+printf 'console.log("ci test")\n' > php/assets/index-ci.js
+sed -i "s/$REVISION/$MIXED_REVISION/" php/release-build.json
+mixedStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
+ 'http://127.0.0.1:8000/api/index.php?route=auth/deployment-check')"
+test "$mixedStatus" = 200
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-deployment-diagnostic.json"),true);
+if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false ||
+    !in_array("Verzióütközés: index.html / release-build.json / api/release-build.php", $j["missing"]??[],true)) {
+    fwrite(STDERR,"Mixed build stamps did not block admin deployment readiness\n");exit(1);
+}
+'
+rm -f php/index.html php/release-build.json php/api/release-build.php php/api/knowledge.php php/assets/index-ci.js
+echo 'Live admin diagnostic blocks mixed frontend/PHP source revisions'
+
+
 # Invite is sent by mail; server stores only the hash.
 inviteStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=admin/invite' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data '{"email":"second@example.org"}')"
 test "$inviteStatus" = 201
@@ -153,3 +302,16 @@ selfRole="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{htt
 test "$selfRole" = 403
 echo 'PHP admin: guarded endpoints, invitation, listing and privilege restrictions passed'
 echo 'PHP account pilot: invitation, email verification, one-use reset and password change passed'
+
+# Exercise optimistic revision checks against the same disposable MySQL database.
+bash scripts/test-php-progress-revisions.sh
+
+# Independent login cookies emulate two concurrent devices on real PHP/MySQL.
+bash scripts/test-php-two-device-sync.sh
+
+# The account must not retain administrator permissions after a role downgrade.
+bash scripts/test-php-roles.sh
+
+# A real SQL row lock overlaps a PHP HTTP login: the retired password may
+# never create a session after the password has been replaced.
+bash scripts/test-php-login-revocation-race.sh

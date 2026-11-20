@@ -9,7 +9,7 @@ interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
 }
 
-const EAR_CHALLENGES = [
+export const EAR_CHALLENGES = [
   { id: 1, title: 'Tiszta Prím (t1)', notes: ['C4','C4'], description: '0 félhang: két azonos hang.' },
   { id: 2, title: 'Kis Szekund (k2)', notes: ['C4','C#4'], description: '1 félhang, például C–Desz.' },
   { id: 3, title: 'Nagy Szekund (n2)', notes: ['C4','D4'], description: '2 félhang: C–D.' },
@@ -20,7 +20,7 @@ const EAR_CHALLENGES = [
   { id: 8, title: 'Kis Szext (k6)', notes: ['C4','G#4'], description: '8 félhang: C–Asz.' },
   { id: 9, title: 'Nagy Szext (n6)', notes: ['C4','A4'], description: '9 félhang: C–A.' },
   { id: 10, title: 'Kis Szeptim (k7)', notes: ['C4','A#4'], description: '10 félhang: C–B.' },
-  { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','B4'], description: '11 félhang: C–H.' },
+  { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','H4'], description: '11 félhang: C–H.' },
   { id: 12, title: 'Tiszta Oktáv (t8)', notes: ['C4','C5'], description: '12 félhang: C–C.' }
 ];
 
@@ -77,6 +77,11 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
       <button type="button" aria-pressed={trainingTab==='extended'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('extended')}}
         className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='extended'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangsorok, ritmusok, hangértékek</button>
     </nav>
+    <p className="max-w-3xl mx-auto px-4 mt-3 text-sm text-slate-600">
+      Hallásfejlesztési gyakorlásért naponta összesen legfeljebb 100 XP gyűjthető.
+      A további ismétlések korlátozás nélkül gyakorolhatók, de már nem adnak új XP-t.
+      Az XP játékos gyakorlási pont, nem vizsgajegy.
+    </p>
     {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
     <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangközök felismerése">
       <div className="text-center mb-6">

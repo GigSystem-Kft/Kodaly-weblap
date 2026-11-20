@@ -22,6 +22,8 @@ export function learningProgressSummary(progress: UserProgress) {
     curriculumModules: MUSIC_CHAPTERS.length + EXTRA_LEARNING_MODULES.length,
     coreChapters: MUSIC_CHAPTERS.length,
     completedCoreChapters: knownChapters.length,
+    completedExtendedModules: EXTRA_LEARNING_MODULES.filter(module=>progress.completedChapters.includes(module.id)).length,
+    completedModules: knownChapters.length + EXTRA_LEARNING_MODULES.filter(module=>progress.completedChapters.includes(module.id)).length,
     completedSubchapters,
     totalSubchapters: knownSubchapters.length,
     corePercentage: MUSIC_CHAPTERS.length ? Math.round(100 * knownChapters.length / MUSIC_CHAPTERS.length) : 0,

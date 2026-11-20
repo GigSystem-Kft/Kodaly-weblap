@@ -1,3 +1,4 @@
+import { ModuleCompletionButton } from './ModuleCompletionButton';
 import React, { useMemo, useState } from 'react';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../data/musicPedagogy';
 import { CuratedMediaPanel } from './CuratedMediaPanel';
@@ -5,7 +6,7 @@ import { DEEP_PEDAGOGY_LESSONS } from '../data/musicPedagogyDeep';
 import { PEDAGOGY_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
 import { ArrowLeft, BookOpen, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
 
-export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlashcards:()=>void;onMatching:()=>void}> = ({onBack,onQuiz,onFlashcards,onMatching}) => {
+export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlashcards:()=>void;onMatching:()=>void;completed?:boolean;onComplete?:()=>void}> = ({onBack,onQuiz,onFlashcards,onMatching,completed=false,onComplete}) => {
  const [query,setQuery]=useState('');
  const [active,setActive]=useState<string|null>(PEDAGOGY_UNITS[0]?.id ?? null);
  const [openImage,setOpenImage]=useState<string|null>(null);
@@ -20,6 +21,7 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlash
  },[query]);
  return <section className="max-w-6xl mx-auto px-6 md:px-12 py-12 text-[#1c1c1c]">
   <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-[#4a54e1] mb-6 hover:underline"><ArrowLeft size={17}/> Vissza a tananyaghoz</button>
+  {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
   <p className="text-indigo-600 tracking-wider font-semibold uppercase text-xs mb-2">08. fejezet · Egyetemi szakirodalomra épülő tananyag</p>
   <h1 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-5">Ének-zene tantárgy-pedagógia</h1>
   <p className="text-base md:text-lg leading-relaxed max-w-3xl mb-6 text-slate-700">

@@ -57,9 +57,9 @@ const rawQuestions: Array<[string,string,string,string,string,string]> = [
   ['ritmus','Hogyan csoportosul általában a 6/8 lüktetése?','Két, egyenként három nyolcados egységre','Hat hangsúlyos negyedre','Három félre','Négy negyedre'],
   ['ritmus','Mennyi egy pontozott negyed és egy nyolcad összege?','Két negyed','Egy negyed','Három negyed','Négy nyolcadnál több'],
   ['ritmus','Hány tizenhatod ér egy fél hangértéket?','Nyolc','Négy','Kettő','Tizenhat'],
-  ['hangok-kulcsok','Melyik hang van a G-kulcs első vonalán?','E4','G4','F4','C4'],
-  ['hangok-kulcsok','Melyik hang van a G-kulcs második vonalán?','G4','H4','E4','A4'],
-  ['hangok-kulcsok','Hol található a C4 G-kulcsban?','Az alsó első segédvonalon','A harmadik vonalon','A felső vonalközben','A második vonalon'],
+  ['hangok-kulcsok','Melyik hang van a G-kulcs első vonalán?','E′','G′','F′','C′'],
+  ['hangok-kulcsok','Melyik hang van a G-kulcs második vonalán?','G′','H′','E′','A′'],
+  ['hangok-kulcsok','Hol található a C′ G-kulcsban?','Az alsó első segédvonalon','A harmadik vonalon','A felső vonalközben','A második vonalon'],
   ['hangok-kulcsok','Hány kereszt a D-dúr előjegyzése?','Kettő','Egy','Három','Nincs'],
   ['hangok-kulcsok','Melyik hangot módosítja az F-dúr előjegyzése?','H → B','F → Fisz','C → Cisz','E → Esz'],
   ['hangok-kulcsok','Mire szolgál a feloldójel?','A természetes hangmagasság visszaállítására','Egy oktáv emelésére','A tempó lassítására','Az ütem kihagyására'],
@@ -82,11 +82,56 @@ const rawQuestions: Array<[string,string,string,string,string,string]> = [
   ['solfege','Mi a G-dúr hangsor harmadik szolmizációs foka?','Mi (H)','Fá (C)','Ré (A)','Szó (D)'],
   ['abc-hangok','Melyik a magyar név a nemzetközi B♭ hangra?','B','H','Aisz','Cesz']
 ];
-export const ADDITIONAL_QUESTIONS: QuizQuestion[] = rawQuestions.map(([chapterId, question, correct, wrong1, wrong2, wrong3], index) => ({
-  id: `extra-q-${index + 1}`, chapterId, question,
-  options: [correct, wrong1, wrong2, wrong3], correctIndex: 0,
-  explanation: `Helyes válasz: ${correct}. A részletes magyarázatot a kapcsolódó fejezet tananyagában találod.`
-}));
+/** Az önellenőrzéshez minden kiegészítő kérdés konkrét, tanulható indoklást ad. */
+const additionalQuestionReasons: readonly string[] = [
+  "A negyed hangérték két egyenlő nyolcadra osztható, ezért két nyolcad időtartama pontosan egy negyed.",
+  "A pont feleakkora értékkel hosszabbítja meg a fél hangot: 2 + 1 = 3 negyed.",
+  "A fél érték két negyedet ér; egy negyeddel kiegészítve pontosan három negyedet ad.",
+  "A 6/8 általában összetett kettes metrum: két pontozott negyednyi egységre, azaz 3+3 nyolcadra tagolódik.",
+  "A pontozott negyed három nyolcadnak felel meg; egy további nyolcaddal együtt négy nyolcad, azaz két negyed.",
+  "A fél két negyed, minden negyed pedig négy tizenhatod; így a fél nyolc tizenhatodot ér.",
+  "A violinkulcs alsó vonala az egyvonalas E′ hang helye; a hangok vonalról vonalra tercenként következnek.",
+  "A violinkulcs második vonalán az egyvonalas G′ található, az alsó E′ vonal felett egy terccel.",
+  "Az egyvonalas C′ a violinkulcs öt vonala alatt, az első alsó segédvonalon helyezkedik el.",
+  "A D-dúr két keresztet használ: Fisz és Cisz; a kvintkörben a G-dúr után következik.",
+  "Az F-dúr egyetlen béje a magyar H hangot B-re, azaz nemzetközi B♭-re módosítja.",
+  "A feloldójel az adott hang korábban érvényes kromatikus módosítását oldja fel az ütemben az adott oktávban, az előjegyzéstől függő szabályok szerint.",
+  "A nagy terc négy félhang távolságú, például C–E.",
+  "A tiszta kvint hét félhang távolságú, például C–G.",
+  "A C–Esz három félhang, és a két betűnév tercet fog közre, ezért kis terc.",
+  "Hangközfordításkor a két hangköz száma kilencet, félhangjaik összege tizenkettőt adnak: a nagy terc fordítása kis szext.",
+  "A relatív szolmizációban a dúr hangsor alaphangja a dó; G-dúrban ezért G a dó.",
+  "A dúr hangsor két félhanglépése a harmadik–negyedik és a hetedik–nyolcadik fok között van: mi–fá és ti–dó.",
+  "A C–D–E–G–A öt különböző hangból áll, és a körkörösen ismétlődő pentaton hangsorban sincs félhanglépés.",
+  "A hangkészlet a dallamban ténylegesen előforduló különböző hangmagassági osztályokat sorolja fel, nem azok ritmusát.",
+  "A tetra- előtag négyet jelent: a tetraton dallam négy különböző hangot használ.",
+  "Az anhemiton szó félhang nélküli hangsort jelent; az öt fok között nem szerepel szomszédos félhanglépés.",
+  "A C-dúr és az a-moll előjegyzés nélküli párhuzamos hangnemek, de az alaphangjuk és a tonális központjuk különbözik.",
+  "A G-dúr egy keresztes, e-moll pedig ugyanilyen előjegyzésű; ezért párhuzamos hangnemek.",
+  "A B-dúr előjegyzésében két bé szerepel: B és Esz.",
+  "A C-dúr hármashangzat alaphelyzetének hangjai C–E–G: alul nagy terc, fölötte kis terc.",
+  "Az első fordításban az alaphang egy oktávval feljebb kerül, ezért az E a basszus, a sorrend E–G–C.",
+  "Az összhangzatos mollban a hetedik fok megemelése vezetőhangot hoz létre az alaphang előtt.",
+  "G-dúr hangjai G–A–H–C–D–E–Fisz–G; a harmadik fok H, relatív szolmizációval mi.",
+  "A magyar B a nemzetközi B♭-nek felel meg; a nemzetközi B természetes hangot magyarul H-nak nevezzük."
+];
+
+if(additionalQuestionReasons.length !== rawQuestions.length) {
+  throw new Error('Hiányzik egy kiegészítő kvízkérdés szakmai magyarázata.');
+}
+
+export const ADDITIONAL_QUESTIONS: QuizQuestion[] = rawQuestions.map(([chapterId, question, correct, wrong1, wrong2, wrong3], index) => {
+  // Keep question IDs stable for saved achievements, but do not reveal the
+  // correct answer by always placing it in the first slot.
+  const correctIndex = index % 4;
+  const options = [wrong1, wrong2, wrong3];
+  options.splice(correctIndex, 0, correct);
+  return {
+    id: `extra-q-${index + 1}`, chapterId, question,
+    options, correctIndex,
+    explanation: `Helyes válasz: ${correct}. ${additionalQuestionReasons[index]}`
+  };
+});
 const definitions: Array<[string,string,string]> = [
   ['Pontozott negyed','Másfél negyednyi hangérték: három nyolcad.','Ritmus'],
   ['Pontozott fél','Három negyednyi hangérték.','Ritmus'],
