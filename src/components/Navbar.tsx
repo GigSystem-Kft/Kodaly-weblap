@@ -36,9 +36,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
           <img
             src={headerBrandImage}
             alt="Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál"
-            className="h-24 md:h-28 w-auto object-contain"
-            width="225"
-            height="204"
+            className="h-[7.2rem] md:h-[8.4rem] w-auto object-contain"
+            width="270"
+            height="245"
             decoding="async"
             draggable={false}
           />
