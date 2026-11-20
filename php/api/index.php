@@ -402,6 +402,7 @@ try {
             'scanComplete'=>$scan['scanComplete'],
             'scannedItems'=>$scan['scannedItems'],
             'scanIssue'=>$scan['scanIssue'] ?? null,
+            'excludedDirs'=>$scan['excludedDirs'] ?? [],
             'buildConsistent'=>$build['buildConsistent'],
             'releaseRevision'=>$build['releaseRevision'],
             'mailConfigured'=>($config['mail_enabled'] ?? false)===true &&
