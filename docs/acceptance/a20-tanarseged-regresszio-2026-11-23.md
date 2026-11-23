@@ -48,3 +48,13 @@ A `scripts/test-a20-cross-module-harmony.ts` automatikus vizsgálatai immár kü
 **Határ:** ezek az automatikus vizsgálatok a hangadatot és időzítési algoritmust ellenőrzik, nem a valódi hangszórós lejátszást, a kotta emberi olvashatóságát, a teljes kérdésbank szakmai minőségét vagy a független lektor jóváhagyását. A két korábban sikeresen élőben tesztelt Tanársegéd-kérdést nem kell indokolatlanul megismételni.
 
 **A-20 formális státusz:** változatlanul `BLOCKED` a hiányzó, aktuális jelölthöz kötött hallási/kottás/kvízes, független szakmai lektori bizonyíték miatt.
+
+## 2026-11-23 – élő hangközlejátszás, tulajdonosi visszajelzés
+
+A projektgazda a célzott A-20 akusztikai részpróba után ezt erősítette meg:
+
+> A-20 hangközök meghallgatása: a kis szekund, tiszta kvart és tiszta kvint megfelelően szól. Folytasd a szakmai elfogadást.
+
+**Eredmény: PASS – a három külön megnevezett hangköz (kis szekund, tiszta kvart, tiszta kvint) tényleges meghallgatásának részpróbája.** A kapcsolódó elméleti elvárások 1, 5 és 7 félhang; a 12 hangköz külön elméleti és adatszintű automatizált tesztje a fenti SHA-n sikeres.
+
+**Bizonyíték:** a 2026-11-23-i projektbeszélgetés tulajdonosi közlése. A konkrét eszköz, böngésző és az élő lejátszás idején telepített teljes SHA nem szerepelt külön a visszajelzésben, ezért nem állítjuk, hogy az aktuális fejlesztési buildet tesztelte. A teljes A-20 továbbra is `BLOCKED`, amíg az aktuális build hangzó hangsor/ritmus/kotta/kvíz szakmai jóváhagyása és a verzióazonosító nincs megerősítve.
