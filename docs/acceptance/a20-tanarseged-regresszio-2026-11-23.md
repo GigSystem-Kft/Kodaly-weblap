@@ -101,3 +101,26 @@ A projektgazda az interaktív kottapélda ellenőrzése után ezt erősítette m
 **Hiányzó metaadat:** a konkrét kottapélda azonosítója, böngésző/eszköz, telepített 40 karakteres SHA és nem titkos további bizonyítékazonosító nincs a visszajelzésben. Emiatt a sikeres felhasználói részpróba önmagában nem zárja le a teljes A-20 elfogadási kaput.
 
 **Következő nyitott szakmai részpróba:** a kvízkérdések és válaszkulcsok legalább két kiválasztott kérdésének emberi ellenőrzése, valamint a teljes A-20 független szakmai és végső buildhez kötött igazolása. A korábbi hangköz-, hangsor- és ritmusteszteket nem kérjük újra.
+
+## 2026-11-23 – két kvízkérdés szakmai helyességének tulajdonosi ellenőrzése
+
+A projektgazda az A-20 célzott tesztfelhívására a következő visszajelzést adta:
+
+> A-20 kvíz szakmai próba: két zeneelméleti kérdést ellenőriztem, mindkét kérdés és helyes válaszkulcs megfelelő. Folytasd az elfogadást.
+
+**Eredmény: PASS – két ellenőrzött kérdés és azok válaszkulcsának szakmai részpróbája.** A két kérdés pontos szövege és azonosítója nem szerepelt a közlésben; a jóváhagyás ezért nem értelmezhető a teljes kérdésbank tételes felülvizsgálataként.
+
+### A célzott A-20 emberi részpróbák összesítése
+
+| Ellenőrzött részterület | Tulajdonosi eredmény |
+|---|---|
+| Tanársegéd: tiszta és szűkített kvint; háromféle a-moll | PASS |
+| Élő hangközlejátszás: kis szekund, tiszta kvart, tiszta kvint | PASS |
+| Élő hangsorlejátszás: természetes, harmonikus, felszálló dallamos a-moll | PASS |
+| Élő ritmuslejátszás 60 BPM: nyújtott, éles, szinkópa, nyolcadtriola | PASS |
+| Egy interaktív kottapélda hangmagasság- és ritmusegyezése | PASS |
+| Két zeneelméleti kvízkérdés és helyes válaszkulcs | PASS |
+
+**Szakmai részpróbák:** mindegyik felsorolt tulajdonosi ellenőrzés sikeresnek jelentve. **Formális A-20 státusz: továbbra is BLOCKED**, mert az önálló szakmai lektori jóváhagyás, a konkrét kottapélda és kvíztételek azonosítói, valamint a vizsgálat és a végső kiadási jelölt teljes 40 karakteres SHA-jának összerendelése nem igazolt.
+
+**Következő teendő:** nem újabb ismételt hallás- vagy kvízpróba, hanem a meglévő bizonyítékok verzióhoz és tételazonosítókhoz kötése, majd a szakmai jóváhagyás dokumentálása. A többi A-01–A-24 kiadási követelmény ettől önállóan érvényben marad.
