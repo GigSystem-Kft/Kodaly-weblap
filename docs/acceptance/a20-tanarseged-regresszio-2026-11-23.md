@@ -1,6 +1,6 @@
 # A-20 szakmai regresszió – Tanársegéd, 2026-11-23
 
-**Forrás:** projektgazda által az éles Tanársegédből bemásolt válaszok. **Státusz: FAIL / javítandó**, a teljes A-20 nem lezárt. A telepített Git SHA ezen válaszokból nem igazolható; a fejlesztői ág aktuális commitja nem tekinthető automatikusan az éles verziónak.
+**Forrás:** projektgazda által az éles Tanársegédből bemásolt válaszok. **Korábbi állapot: FAIL / javítandó. 2026-11-23-i éles újrateszt: a két korábban hibás összehasonlító kérdés PASS.** A teljes A-20 továbbra sem lezárt, mert a kotta, hangzó példák és további kvíz/AI-válaszok független lektorálása hátravan. A telepített verziót a projektgazda Admin-jelentése alapján azonosítottuk: `644914afdfae460765f3b82671bb10294426b73d`, melynek második szülője a tesztelt javító commit `ed9362bbe13e743d9d894eafff1e9c91f8d29d67`.
 
 | Tesztkérdés | Ténymegfigyelés | Értékelés | Elvárt tartalom |
 |---|---|---|---|
@@ -19,3 +19,15 @@
 ## Bizonyíték
 
 A projektgazda 2026-11-23-i bemásolt Tanársegéd-válaszai a projektbeszélgetésben. A nyilvános GitHub-naplóba személyes adatok vagy privát szerverbeállítások nem kerültek.
+
+## 2026-11-23 – éles újrateszt eredménye (projektgazda)
+
+**Éles telepítési azonosító:** `644914afdfae460765f3b82671bb10294426b73d`. Az Admin felületen 529 megvizsgált fájlbejegyzés, befejezett nyilvános állományvizsgálat és 1793/1793 fogalomtári tétel szerepelt. A `.cache` kizárás továbbra sem bizonyítja a mappa HTTP-védelmét.
+
+| Kérdés | Valós újrateszt | Ellenőrizhető tartalom |
+|---|---|---|
+| Tiszta vs. szűkített kvint | **PASS** | Tiszta kvint 7 félhang (C–G), szűkített 6 félhang (C–Gesz), egy félhang különbség. |
+| Természetes, harmonikus és dallamos a-moll | **PASS** | Természetes A–H–C–D–E–F–G–A; harmonikus Gisz; dallamos felszálló Fisz–Gisz és hagyományos leszálló természetes alak; F–Gisz bővített szekund értelmezése. |
+| Nyújtott és éles ritmus | **Korábbi részteszt: alapvetően megfelelő** | Az új kiadásban erre a kérdésre nem érkezett külön újrateszt, ezért új PASS nem állítható. |
+
+**Bizonyíték:** a projektgazda az éles Tanársegéd két teljes válaszát bemásolta a 2026-11-23-i projektbeszélgetésbe, és mindkettőt „Rendben” jelöléssel jóváhagyta. A GitHubon csak a nem érzékeny tartalmi összefoglaló szerepel; teljes személyes adatok és konfigurációk nem. **Kiadási döntés:** a két konkrét regresszió elfogadva, az A-20 összesített kapu továbbra is BLOCKED a szélesebb, független zenei lektorálásig.
