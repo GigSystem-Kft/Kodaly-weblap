@@ -120,7 +120,8 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
     $pieces=[];
     foreach ($hits as $hit) {
         $raw=(string)$hit['text'];
-        $sentences=preg_split('/(?<=[.!?])\\s+/u', preg_replace('/\\s+/u',' ',$raw) ?? $raw) ?: [$raw];
+        $sentences=// Roman-numeral scale degrees such as VI. és VII. are not sentence ends.
+        preg_split('/(?<=[.!?])\\s+(?=\\p{Lu})/u', preg_replace('/\\s+/u',' ',$raw) ?? $raw) ?: [$raw];
         // Extract only the relevant explanation, not the beginning of unrelated pages.
         $ranked=[];
         foreach ($sentences as $index=>$sentence) {
