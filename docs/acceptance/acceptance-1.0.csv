@@ -22,4 +22,4 @@ A-20,BLOCKED,projektgazda,2026-11-23,644914afdfae460765f3b82671bb10294426b73d,do
 A-21,NOT_RUN,,,,,
 A-22,NOT_RUN,,,,,
 A-23,NOT_RUN,,,,,
-A-24,BLOCKED,,,,,Owner reports backup restore and CloudPanel flow successful; test SHA and private evidence reference pending
+A-24,BLOCKED,projektgazda,2026-11-23,644914afdfae460765f3b82671bb10294426b73d,docs/acceptance/a24-cache-http-proba-2026-11-23.md,Owner confirms backup and restore rehearsal; .cache GET not tested but HEAD 403 for root and child and owner FTP inventory; full final build readiness and nonsecret evidence linkage still pending
