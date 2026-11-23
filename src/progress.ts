@@ -139,6 +139,14 @@ export function recordActivity(progress: UserProgress, amount: number, date = lo
     lastActiveDate: date
   };
 }
+/** Current remaining reward budget shared by all aural practice modes. */
+export function remainingEarTrainingXp(progress: UserProgress, date = localDay()): number {
+  if (!validStudyDay(date)) return 0;
+  const previous = progress.earTrainingDailyXp?.[date] ?? 0;
+  const earned = Number.isInteger(previous) && previous >= 0 && previous <= 100 ? previous : 0;
+  const currentXp = Number.isFinite(progress.xp) ? Math.max(0, Math.floor(progress.xp)) : 0;
+  return Math.max(0, Math.min(100 - earned, 100_000_000 - currentXp));
+}
 /** Prevent unlimited XP farming from replaying the same ear-training challenges. */
 export function recordEarTrainingActivity(
   progress: UserProgress,
@@ -149,7 +157,7 @@ export function recordEarTrainingActivity(
   const previous = progress.earTrainingDailyXp?.[date] ?? 0;
   const current = Number.isInteger(previous) && previous >= 0 && previous <= 100 ? previous : 0;
   const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.floor(amount)) : 0;
-  const earned = Math.min(100 - current, safeAmount);
+  const earned = Math.min(remainingEarTrainingXp(progress, date), safeAmount);
   const updated = Object.fromEntries(
     Object.entries({ ...(progress.earTrainingDailyXp ?? {}), [date]: current + earned })
       .sort(([a],[b])=>a.localeCompare(b)).slice(-366)
