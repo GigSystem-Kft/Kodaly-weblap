@@ -89,3 +89,15 @@ A projektgazda a Hallásfejlesztés célzott akusztikai részpróbájáról viss
 A 60 BPM-hez tartozó hanghosszakat és indítási időpontokat önálló számítógépes A-20 ellenőrzés is vizsgálta a `5d6c276cc56d30ad2df6e5090223a601acd0e4f3` commiton, amelynek három technikai kiadási workflow-ja sikeres volt.
 
 **Korlát:** a projektgazdai visszajelzés nem tartalmazta külön a vizsgált éles verzió pontos 40 karakteres SHA-ját; a kotta–hang összevetés és a kvízhelyesség emberi részpróbája nem szerepelt benne. Az A-20 teljes formális státusza ezért továbbra is `BLOCKED`; ezt a négy sikeres részpróbát nem kell megismételtetni.
+
+## 2026-11-23 – kotta–hang egyezés élő szakmai részpróbája
+
+A projektgazda az interaktív kottapélda ellenőrzése után ezt erősítette meg:
+
+> A-20 kotta–hang szakmai próba: a megvizsgált interaktív kottapélda hangmagasságai és ritmusértékei megfelelnek a megszólaló hangoknak. Folytasd az elfogadást.
+
+**Eredmény: PASS – egy megvizsgált interaktív kottapélda kotta–hang egyezésének részpróbája.** A projektgazda visszajelzése a hallott hangmagasságokra és ritmusértékekre is kiterjed. Nem állítható, hogy a teljes kottatár minden példáját megvizsgálta.
+
+**Hiányzó metaadat:** a konkrét kottapélda azonosítója, böngésző/eszköz, telepített 40 karakteres SHA és nem titkos további bizonyítékazonosító nincs a visszajelzésben. Emiatt a sikeres felhasználói részpróba önmagában nem zárja le a teljes A-20 elfogadási kaput.
+
+**Következő nyitott szakmai részpróba:** a kvízkérdések és válaszkulcsok legalább két kiválasztott kérdésének emberi ellenőrzése, valamint a teljes A-20 független szakmai és végső buildhez kötött igazolása. A korábbi hangköz-, hangsor- és ritmusteszteket nem kérjük újra.
