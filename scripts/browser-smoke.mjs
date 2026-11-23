@@ -955,6 +955,26 @@ try {
     },afterScale);
     if ((await guestXp()) - afterScale !== 25)
       throw new Error('Extended rhythm ear exercise awarded XP more than once');
+    // The fourth 25-XP exercise fills the daily 100-XP limit.
+    await earPage.getByRole('button',{name:'Hangértékek'}).click();
+    const beforeFourth = await guestXp();
+    await pressTwice('Fél hangérték');
+    await earPage.getByText('Helyes! +25 XP',{exact:true}).waitFor();
+    await earPage.waitForFunction(previous => {
+      try{return (JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0)>previous;}
+      catch{return false;}
+    },beforeFourth);
+    if ((await guestXp())-beforeFourth!==25)
+      throw new Error('Fourth aural challenge did not fill the daily cap');
+    // A correct answer remains educational, but must not claim +25 XP
+    // after the common cap has been reached by different exercise modes.
+    await earPage.getByRole('button',{name:'Ütemmutatók'}).click();
+    const beforeCap = await guestXp();
+    await pressTwice('3/4');
+    await earPage.getByText('Helyes! A napi 100 XP-s gyakorlási kereted betelt.').waitFor();
+    if ((await guestXp())!==beforeCap)
+      throw new Error('Capped ear exercise credited extra XP');
+    console.log('Ear training: shared 100 XP cap and capped-answer feedback are consistent');
     console.log('Ear training: interval, scale and rhythm award at most one XP event on rapid clicks');
   } finally {
     await earContext.close();
