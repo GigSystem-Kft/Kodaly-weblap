@@ -42,3 +42,15 @@ A kezdeti tesztfutás kizárólag a hibásan escape-elt tesztnavigációs regul�
 - Linux: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45192338141 – **success**
 
 **A-14 és A-20 formális státusz továbbra is nyitott:** a fenti teszt nem igazolja a tényleges hangkimeneti vagy kottakép-lektorálási követelményeket. A-15, A-24 és a többi emberi elfogadási pont változatlan.
+
+## 2026-11-23 – napi hallás-XP és helyes visszajelzés (A-11 / A-14 / A-16)
+
+**A javított kód verziója:** `0d3a023959945f693c3b7338c864e87b9255b456`. A hallásgyakorlatok napi jutalma a korábban érvényes **100 XP/nap** felső határt megtartja, de a felület immár a ténylegesen még jóváírható jutalmat mutatja; betelt keretnél nem állít valótlant a +25 XP megszerzéséről. A hangköz-, hangsor/ritmus/hangérték- és hangkészlet-felismerés egy közös maradékkeretből dolgozik. A hangkészlet-párosítás azonos helyes párra adott gyors ismételt kattintások miatti többszöri jóváírás ellen szinkron zárral védett. A napi összegkorlát mellett az összesített XP felső határát is figyelembe veszi a megjelenítés.
+
+**Automatizált bizonyíték:** `progress.test.ts` vizsgálja a részlegesen betelt 90/100-as keretet, a keret teljes betelését, a következő nap megújulását, a hibás dátumot és az összesített XP-limitet. A `scripts/browser-smoke.mjs` valós gombkezelői négyféle helyes hallásfeladatot oldanak meg, az 5. helyes válasznál pedig a „napi 100 XP-s gyakorlási kereted betelt” üzenetet és a további pontok elmaradását ellenőrzi. A gyors dupla válaszadás továbbra sem adhat dupla pontot.
+
+- PHP/MySQL/ZIP workflow: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45211339799 – **success**
+- Chromium E2E workflow: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45211339533 – **success**
+- Linux workflow: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45211339520 – **success**
+
+**Elfogadási korlát:** ezek műszaki és felhasználói felületet szimuláló tesztek; a valódi hangkimenet, pedagógiai lektorálás, tartalmak jogállása, éles szerveres telepítés és a formális 1.0 elfogadás továbbra is nyitott. Az XP gyakorlási pont, nem vizsgajegy.
