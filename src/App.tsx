@@ -22,7 +22,7 @@ import { RhythmResearchBookView } from './components/RhythmResearchBookView';
 import { PitchNamesView } from './components/PitchNamesView';
 import { MUSIC_CHAPTERS } from './data/musicData';
 import { Chapter, UserProgress } from './types';
-import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, getQuizBestScore } from './progress';
+import { readProgress, recordActivity, PROGRESS_KEY, consecutiveDays, migrateProgress, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, remainingEarTrainingXp, shouldRescheduleProgressSync, getQuizBestScore } from './progress';
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress, safeBrowserStorage } from './pendingProgress';
 
 export default function App() {
@@ -405,7 +405,7 @@ export default function App() {
         )}
 
         {activeTab === 'eartraining' && (
-          <EarTrainingView onAddXp={addXp} />
+          <EarTrainingView onAddXp={addXp} remainingXp={remainingEarTrainingXp(progress)} />
         )}
 
         {activeTab === 'admin' && account?.role === 'admin' && <AdminDashboard />}
