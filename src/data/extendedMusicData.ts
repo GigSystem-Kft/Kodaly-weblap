@@ -13,7 +13,7 @@ export const ADDITIONAL_LESSONS: Record<string, SubChapter[]> = {
         'A basszuskulcs (F-kulcs) negyedik vonala a kis f hang helyét jelöli. Vonalai alulról: nagy G, nagy H, kis d, kis f, kis a; vonalközei: nagy A, kis c, kis e, kis g.',
         'Az egyvonalas C′ az F-kulcs feletti első pótvonalon helyezkedik el.',
         'Gyakorlat: írd le a G-kulcs első öt vonalának hangjait magyar oktávjelöléssel; majd nevezd meg az F-kulcs harmadik vonalát (kis d).',
-        'Az egyvonalas C′ és a kétvonalas C″ között egy oktáv távolság van. Ne a nemzetközi MIDI-számjelölést (C4, C5) használd a tanulói felületen.'
+        'Az egyvonalas C′ és a kétvonalas C″ között egy oktáv távolság van. A tanulói felületen az egy- és kétvonalas jelölést (C′, C″) használd, nem az oktávszámokat.'
       ]
     },
   ],
