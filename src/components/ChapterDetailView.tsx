@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { formatHungarianPitchText } from '../utils/noteNotation';
 import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
 import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
@@ -137,7 +138,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               )}
             </div>
             <p className="text-[#4a54e1] font-medium text-sm mb-6 pb-4 border-b border-slate-200">
-              {currentSub.summary}
+              {formatHungarianPitchText(currentSub.summary)}
             </p>
 
             {/* Content paragraphs / bullets */}
@@ -145,7 +146,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               {currentSub.content.map((paragraph, i) => (
                 <div key={i} className="flex items-start space-x-3 text-slate-700 leading-relaxed">
                   <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2.5 shrink-0" />
-                  <p>{paragraph}</p>
+                  <p>{formatHungarianPitchText(paragraph)}</p>
                 </div>
               ))}
             </div>
@@ -163,7 +164,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 <h4 className="font-serif-cormorant text-2xl font-semibold">Részletes magyarázat – az alfejezethez</h4>
                 {guide.sections.map(section => <article key={section.title}>
                   <h5 className="text-lg font-semibold mb-2">{section.title}</h5>
-                  {section.paragraphs.map(paragraph=><p key={paragraph.slice(0,40)} className="text-slate-700 leading-relaxed mb-3 text-sm md:text-base">{paragraph}</p>)}
+                  {section.paragraphs.map(paragraph=><p key={paragraph.slice(0,40)} className="text-slate-700 leading-relaxed mb-3 text-sm md:text-base">{formatHungarianPitchText(paragraph)}</p>)}
                 </article>)}
               </div>
               <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-5 mb-5">
@@ -185,12 +186,12 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   const key = chapter.id + ':' + currentSub.id + ':' + index;
                   const visible = revealedAnswers.includes(key);
                   return <div key={item.question} className="py-3 border-b border-slate-100 last:border-0">
-                    <p className="text-sm font-medium mb-2">{index + 1}. {item.question}</p>
+                    <p className="text-sm font-medium mb-2">{index + 1}. {formatHungarianPitchText(item.question)}</p>
                     <button type="button" onClick={()=>setRevealedAnswers(prev => visible ? prev.filter(id=>id!==key) : [...prev,key])}
                       aria-expanded={visible} className="text-sm text-[#4a54e1] font-semibold hover:underline">
                       {visible ? 'Válasz elrejtése' : 'Mintaválasz megmutatása'}
                     </button>
-                    {visible && <p className="text-sm text-slate-700 mt-2">{item.answer}</p>}
+                    {visible && <p className="text-sm text-slate-700 mt-2">{formatHungarianPitchText(item.answer)}</p>}
                   </div>;
                 })}
               </div>
