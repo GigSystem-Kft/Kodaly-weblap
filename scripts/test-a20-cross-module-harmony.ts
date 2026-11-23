@@ -71,3 +71,25 @@ test('all twelve named interval aural examples have unambiguous, ascending pitch
       item.title+' explanation does not match sound');
   }
 });
+
+test('major and minor scales match independently specified theory, not just one another',()=> {
+  const expectedPatterns: { name: string; notes: readonly string[]; expected: number[] }[] = [
+    ...MAJOR_SCALES.filter(item=>['C-dúr','G-dúr','F-dúr'].includes(item.name)).map(item=>({
+      name:item.name, notes:item.notes.slice(0,8), expected:[2,2,1,2,2,2,1]
+    })),
+    ...([
+      ['Természetes a-moll',[2,1,2,2,1,2,2]],
+      ['Harmonikus a-moll',[2,1,2,2,1,3,1]],
+      ['Melodikus a-moll',[2,1,2,2,2,2,1]]
+    ] as const).map(([name,expected])=>{
+      const item=MINOR_SCALES.find(scale=>scale.name===name);
+      assert.ok(item,'Missing '+name);
+      return {name,notes:item.notes.slice(0,8),expected:[...expected]};
+    })
+  ];
+  assert.equal(expectedPatterns.length,6,'All three major and A-minor variants must be checked');
+  for(const {name,notes,expected} of expectedPatterns) {
+    assert.equal(notes.length,8,name+' must have eight ascending pitches');
+    assert.deepEqual(steps(notes),expected,name+' conflicts with its theoretical interval pattern');
+  }
+});
