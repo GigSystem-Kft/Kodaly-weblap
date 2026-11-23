@@ -21,5 +21,5 @@ A-19,NOT_RUN,,,,,
 A-20,BLOCKED,projektgazda,2026-11-23,644914afdfae460765f3b82671bb10294426b73d,docs/acceptance/a20-tanarseged-regresszio-2026-11-23.md,Két éles Tanársegéd regresszió PASS; teljes kotta-hang-kvíz és független lektori elfogadás hiányzik
 A-21,NOT_RUN,,,,,
 A-22,NOT_RUN,,,,,
-A-23,NOT_RUN,,,,,
+A-23,NOT_RUN,projektgazda,2026-11-23,,docs/acceptance/a23-zoom-200-tulajdonosi-proba-2026-11-23.md,200 percent zoom successful for menu lessons flashcards quiz Tutor AI; full build SHA not independently tied to test; contrast and theme checks pending
 A-24,BLOCKED,projektgazda,2026-11-23,644914afdfae460765f3b82671bb10294426b73d,docs/acceptance/a24-cache-http-proba-2026-11-23.md,Owner confirms backup and restore rehearsal; .cache GET not tested but HEAD 403 for root and child and owner FTP inventory; full final build readiness and nonsecret evidence linkage still pending
