@@ -138,6 +138,15 @@ function lessonReply(array $hits, string $question, bool $short=false): string {
         usort($ranked,static fn($a,$b)=>$b['matches']<=>$a['matches']);
         if (!$ranked) continue;
         $answer=trim($ranked[0]['sentence']);
+        // A-20: unreviewed historical glossary lines can contain adjacent
+        // dictionary headwords stitched together. They are evidence of the
+        // source's OCR/transcription limitations, NOT a coherent explanation.
+        // Prefer another hit; never present a chopped list of headwords as
+        // a finished teaching answer.
+        $isUnreviewedGlossary = str_contains((string)($hit['source'] ?? ''),
+            'nem minden címszóban lektorált');
+        if ($isUnreviewedGlossary && mbSafeLength($answer)>320 &&
+            substr_count($answer, ' – ')>=2) continue;
         if (mbSafeLength($answer)>($short ? 200 : 320)) {
             $answer=trim(mbSafeCut($answer,$short ? 200 : 320)) . '…';
         }
