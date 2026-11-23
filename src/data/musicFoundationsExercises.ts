@@ -41,7 +41,7 @@ const q:[string,string,string,string,string,string,string][]=[
  ['ritmus','Mi az átkötőív hatása?','Azonos hangok időtartamát összekapcsolja','Félhanggal emel','Elválasztja az ütemeket','Kottafejeket töröl','Az átkötőív hangértékeket ad össze, nem új hangot indít.'],
  ['ritmus','Mit jelent a szinkópa?','Hangsúlyeltolódást gyengébb metrikai helyre','Mindig gyorsuló tempót','Kizárólag triolát','Csak szünetből álló ütemet','A szinkópa a metrikai várakozást eltoló ritmikai jelenség.'],
  ['ritmus','Miért segít a mérőtartás a ritmusképletek felismerésében?','Állandó időbeli viszonyítási pontot ad','Helyettesíti a hangmagasságot','Megváltoztatja az előjegyzést','Eltünteti a szüneteket','A stabil mérőhöz lehet viszonyítani a ritmikai eltéréseket.'],
- ['hangok-kulcsok','Mi a G-kulcs második vonalának hangja?','G′','C′','F','A','A G-kulcs a második vonalat jelöli ki G hangnak.'],
+ ['hangok-kulcsok','Mi a G-kulcs második vonalának hangja?','G′','C′','F','A','A G-kulcs a második vonalon az egyvonalas G′ hang helyét jelöli.'],
  ['hangok-kulcsok','Melyik vonalon van F az F-kulcsban?','A negyediken','Az elsőn','A másodikon','A harmadikon','Az F-kulcs két pontja közötti negyedik vonal a kis F hang helyét jelöli.'],
  ['hangok-kulcsok','Hogyan jelöljük magyar hangnévvel a H leszállított alakját?','B','Hisz','Cesz','Fisz','Magyar rendszerben B = H-bé, angolul B-flat.'],
  ['hangok-kulcsok','Mi az enharmónia példája egyenletes temperálásban?','Fisz és Gesz','C és D','E és G','A és H','Fisz és Gesz ugyanazon billentyűnek felelhet meg, de írásmódjuk eltér.'],
