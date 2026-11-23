@@ -42,3 +42,7 @@ A projektgazda FTP-felhasználóval készült FileZilla képernyőképe alapján
 ## Mentés – tulajdonosi visszajelzés (2026-11-23)
 
 A projektgazda megerősítette: **„ez már kész van”** a weboldal- és adatbázis-mentéssel kapcsolatos feladatra. A mentést ezért **tulajdonosi közlés szerint elkészültnek** rögzítjük; nem kérjük fölöslegesen újrakészíteni. A visszaállítás próbájának ténye, időpontja, helye és eredménye ebben a visszajelzésben nem szerepel; ezért az elkészített mentés önmagában **nem jelenti a helyreállítás bizonyítását**. Az éles SHA: `644914afdfae` (projektgazda által megerősítve). Az A-24 teljes kapu továbbra sem módosul automatikusan.
+
+## Próbavisszaállítás – projektgazdai visszajelzés (2026-11-23)
+
+A projektgazda a mentés elkészültének megerősítése után külön jelezte: **„kipróbáltam”** a mentés visszaállítását. Ezt **tulajdonos által elvégzett próbavisszaállításként** rögzítjük. A teszt célkörnyezete, az adatbázis- és fájlvisszaállítás részletes ellenőrzése, valamint a napló vagy a nem bizalmas bizonyíték azonosítója nem került megadásra; ezért a teljes A-24 kiadási kapu még nem tekinthető automatikusan PASS-nak. Nem kérünk új, szükségtelen mentést vagy ismételt visszaállítást; a meglévő próba bizonyítékát összekapcsoljuk a telepítési ellenőrzéssel.
