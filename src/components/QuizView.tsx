@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { formatHungarianPitchText } from '../utils/noteNotation';
 import { QUIZ_QUESTIONS, MUSIC_CHAPTERS } from '../data/musicData';
 import { EXTRA_LEARNING_MODULES } from '../data/learningProgressSummary';
 import { QuizQuestion } from '../types';
@@ -168,7 +169,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
           </div>
 
           <h3 className="text-xl font-bold text-white mb-6 leading-snug">
-            {currentQ.question}
+            {formatHungarianPitchText(currentQ.question)}
           </h3>
 
           <div className="space-y-3 mb-6">
@@ -191,7 +192,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
                   onClick={() => handleSelectOption(idx)}
                   className={`w-full text-left p-4 rounded-2xl font-medium text-sm transition-all border flex items-center justify-between ${btnStyle}`}
                 >
-                  <span>{option}</span>
+                  <span>{formatHungarianPitchText(option)}</span>
                   {isAnswered && idx === currentQ.correctIndex && (
                     <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
                   )}
@@ -206,7 +207,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onSaveQuizScore, initialChap
           {isAnswered && (
             <div className="bg-indigo-950/40 border border-indigo-500/30 rounded-2xl p-5 mb-6">
               <h5 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-1">Magyarázat</h5>
-              <p className="text-slate-300 text-sm leading-relaxed">{currentQ.explanation}</p>
+              <p className="text-slate-300 text-sm leading-relaxed">{formatHungarianPitchText(currentQ.explanation)}</p>
             </div>
           )}
 
