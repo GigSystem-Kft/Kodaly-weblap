@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect,useRef,useState} from 'react';
 import {Play, RotateCcw, Volume2} from 'lucide-react';
 
 type Mode='hangsor'|'ritmus'|'hangérték'|'ütemmutató';
@@ -85,11 +85,12 @@ export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp
  const [guess,setGuess]=useState<string|null>(null);
  const [streak,setStreak]=useState(0);
  const [bpm,setBpm]=useState(60);
+ const answeredRef=useRef(false);
  const current=round[index];
   useEffect(()=>()=>stopExerciseAudio(),[]);
- const changeMode=(next:Mode)=>{stopExerciseAudio();setMode(next);setRound(shuffle(EXTENDED_EAR_DRILLS[next]));setIndex(0);setGuess(null);setStreak(0);};
- const choose=(id:string)=>{if(guess!==null)return;setGuess(id);if(id===current.id){onAddXp(25);setStreak(n=>n+1);}else setStreak(0);};
- const advance=()=>{stopExerciseAudio();setGuess(null);if(index+1>=round.length){setRound(shuffle(EXTENDED_EAR_DRILLS[mode]));setIndex(0);}else setIndex(i=>i+1);};
+ const changeMode=(next:Mode)=>{stopExerciseAudio();answeredRef.current=false;setMode(next);setRound(shuffle(EXTENDED_EAR_DRILLS[next]));setIndex(0);setGuess(null);setStreak(0);};
+ const choose=(id:string)=>{if(answeredRef.current)return;answeredRef.current=true;setGuess(id);if(id===current.id){onAddXp(25);setStreak(n=>n+1);}else setStreak(0);};
+ const advance=()=>{if(!answeredRef.current)return;stopExerciseAudio();answeredRef.current=false;setGuess(null);if(index+1>=round.length){setRound(shuffle(EXTENDED_EAR_DRILLS[mode]));setIndex(0);}else setIndex(i=>i+1);};
  return <section className="max-w-3xl mx-auto p-5 sm:p-7 mt-6 text-slate-900">
   <header className="text-center mb-6">
     <p className="font-semibold text-xs uppercase tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · új feladattípusok</p>
