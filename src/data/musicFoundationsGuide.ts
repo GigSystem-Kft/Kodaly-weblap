@@ -49,7 +49,7 @@ export const FOUNDATIONS_GUIDES:FoundationsGuide[]=[
   objectives:['A G- és F-kulcsban a hangok helyének pontos azonosítása.','A törzshang, módosított hang és enharmonikus hang megkülönböztetése.','A hangnem előjegyzésének és a helyi módosítójel érvényének értelmezése.'],
   sections:[
    {title:'A hangmagasság és az ötvonalas jelölés kapcsolata',paragraphs:[
-    'Az ötvonalas rendszer a hangok egymáshoz viszonyított magasságát jeleníti meg, de az önmagában látott vonal nem határozza meg a hang nevét: ehhez kulcsra van szükség. A G-kulcs a második vonal G4 hangját, az F-kulcs a negyedik vonal F3 hangját rögzíti.',
+    'Az ötvonalas rendszer a hangok egymáshoz viszonyított magasságát jeleníti meg, de az önmagában látott vonal nem határozza meg a hang nevét: ehhez kulcsra van szükség. A G-kulcs a második vonal G′ hangját, az F-kulcs a negyedik vonal kis F hangját rögzíti.',
     'A hangok olvasásánál a vonalak és vonalközök váltakozása diatonikus lépéseket jelent. A segédvonalak az öt vonalon kívül is ugyanilyen hangnév-sorrendet tesznek lehetővé; a középső C a G-kulcsban az alsó, F-kulcsban a felső segédvonalon áll.'
    ]},
    {title:'Hangnevek, oktáv és félhanglépések',paragraphs:[
