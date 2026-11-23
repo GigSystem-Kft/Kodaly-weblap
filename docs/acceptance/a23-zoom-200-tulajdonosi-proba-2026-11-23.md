@@ -16,8 +16,16 @@ Ez alapján **200%-os nagyítás mellett az öt felsorolt felület használható
 
 - **Igazolt részpróba:** 200%-os nagyítás, a menü, tananyag, szókártyák, teszt és Tanársegéd használata.
 - **Korábban projektgazdai sikeresnek jelentett részpróbák:** mobil, billentyűzet, képernyőolvasó (lásd `owner-reported-test-summary-2026-11-20.md`).
-- **Hátralévő, nem igazolt A-23 rész:** felirat-/gomb-/fókuszkontraszt és támogatott színtémák kézi próbája; az elfogadási naplóban a tesztelt build SHA-jának és nem titkos bizonyítékazonosítójának egyeztetése.
+- **Hátralévő, nem igazolt A-23 rész:** az elfogadási naplóban a tesztelt build SHA-jának és nem titkos bizonyítékazonosítójának egyeztetése; csak ténylegesen támogatott, különböző színtémák esetén azok ellenőrzése.
 
 **Döntés:** az új 200%-os zoom részpróba elfogadott; **a teljes A-23 még NEM PASS**, a 24 pontos kiadási kaput nem lehet ezen egyetlen eredménnyel teljesültnek jelölni.
 
 **Bizonyíték helye:** projektbeszélgetés, 2026-11-23; jelen nem titkos összesítő. Jelszó, tanulói adat, konfiguráció nem került a dokumentumba.
+
+## 2026-11-23 – kontraszt és billentyűzetes fókusz (projektgazdai részpróba)
+
+A projektgazda az éles Zeneelméleti Műhely megtekintése után külön visszaigazolta: **„A Zeneelméleti Műhely A-23 kontrasztpróbája rendben: a szókártyák, teszt, Tanársegéd feliratai, gombjai és billentyűzetes fókusza jól láthatók.”**
+
+**Eredmény: PASS a felsorolt felületek kontraszt- és fókuszlátványának kézi részpróbájára.** A vizsgálat nem számszerű WCAG-kontrasztarány-mérés, és a sötét/világos témák külön tesztjét nem igazolja. A konkrét telepített SHA a visszajelzésben nem szerepelt; ebből a teljes A-23 kapu automatikus PASS-ára következtetni nem lehet.
+
+**Nyitott:** a buildhez rendelt formális jóváhagyás, az esetleg támogatott témák külön vizsgálata, továbbá a teljes A-01–A-24 kiadási napló.
