@@ -2,19 +2,21 @@
 
 **Állapot: NEM ELFOGADOTT.** A korábbi általános felhasználási engedélyközlés nem bizonyítja automatikusan a teljes 1.0 csomag valamennyi tételét. Ez az összesítő **nem helyettesíti** a fájl- vagy műszintű engedély- és licencjegyzéket.
 
+A táblázat státuszai a GitHubon hozzáférhető, tételesen ellenőrzött bizonyítékok alapján értendők. A korábban jelzett engedélyek létét ez nem vonja kétségbe; amíg a felhasználási terjedelem és a tételazonosító nincs összerendelve, nem szerepelhet automatikus PASS.
+
 ## Munkalap
 
 | Forráscsoport | Pontos tételazonosítók és változat | Felhasználás tisztázandó | Jogbizonyíték | Döntés |
 |---|---|---|---|---|
-| Ének-zene 1–4 tankönyv (302 PDF-oldalkép) | Könyv, kiadás, oldalszám, tényleges fájlútvonal | Nyilvános másolat, keresés, nagyítás | Kiadó/jogosult írásos engedélye, pontos terjedelem | PASS |
-| MTA–SZTE ritmikai anyag (13 kép) | Eredeti dokumentum/oldal és JPG | Másolat és konverzió | Jogosult nyilatkozata/licence | PASS |
-| Jegyzetábrák (64 kép) | Minden eredeti oldal és JPG | Másolat, nagyítás, átdolgozás | Képenként jogosítás | PASS |
-| Szótár (1793 címszó) | Szótár és kiadás, szóanyagverzió | Teljes szöveg, keresés, kvíz és AI-index | Jogosult és online/AI-index jogosultság | PASS |
-| Bartáné Góhér Edit egyetemi jegyzet | Mű, fejezet, kiadás, média | Részlet/teljes közlés, módosítás, hozzáférési kör | Kapott engedély pontosan ellenőrzött hatálya | PASS |
-| Zenetörténeti jegyzet | Mű, részlet, eredeti jogosult | Átvétel és önálló oktatási feldolgozás | Jogállás, részletek elkülönítése | PASS |
-| Wikimedia/történeti kép | Fájlonkénti Commons URL és verzió | Megjelenítés, módosítás, share-alike | Fájlszintű licenc és attribúció | PASS |
-| Külső videó/hang/kotta | URL, médiaszolgáltató, feltételek | Link vagy beágyazás (nem azonos jogállás) | Beágyazási feltétel és attribúció | PASS |
-| Saját illusztrációk | Egyedi fájlok és szerző | Saját szerzőiség, idegen elemek | Szerzői nyilatkozat, komponensek jogai | PASS |
+| Ének-zene 1–4 tankönyv (302 PDF-oldalkép) | Könyv, kiadás, oldalszám, tényleges fájlútvonal | Nyilvános másolat, keresés, nagyítás | Kiadó/jogosult írásos engedélye, pontos terjedelem | BLOCKED – tételes bizonyíték hiányzik |
+| MTA–SZTE ritmikai anyag (13 kép) | Eredeti dokumentum/oldal és JPG | Másolat és konverzió | Jogosult nyilatkozata/licence | BLOCKED – tételes bizonyíték hiányzik |
+| Jegyzetábrák (64 kép) | Minden eredeti oldal és JPG | Másolat, nagyítás, átdolgozás | Képenként jogosítás | BLOCKED – tételes bizonyíték hiányzik |
+| Szótár (1793 címszó) | Szótár és kiadás, szóanyagverzió | Teljes szöveg, keresés, kvíz és AI-index | Jogosult és online/AI-index jogosultság | BLOCKED – tételes bizonyíték hiányzik |
+| Bartáné Góhér Edit egyetemi jegyzet | Mű, fejezet, kiadás, média | Részlet/teljes közlés, módosítás, hozzáférési kör | Kapott engedély pontosan ellenőrzött hatálya | BLOCKED – tételes bizonyíték hiányzik |
+| Zenetörténeti jegyzet | Mű, részlet, eredeti jogosult | Átvétel és önálló oktatási feldolgozás | Jogállás, részletek elkülönítése | BLOCKED – tételes bizonyíték hiányzik |
+| Wikimedia/történeti kép | Fájlonkénti Commons URL és verzió | Megjelenítés, módosítás, share-alike | Fájlszintű licenc és attribúció | BLOCKED – tételes bizonyíték hiányzik |
+| Külső videó/hang/kotta | URL, médiaszolgáltató, feltételek | Link vagy beágyazás (nem azonos jogállás) | Beágyazási feltétel és attribúció | BLOCKED – tételes bizonyíték hiányzik |
+| Saját illusztrációk | Egyedi fájlok és szerző | Saját szerzőiség, idegen elemek | Szerzői nyilatkozat, komponensek jogai | BLOCKED – tételes bizonyíték hiányzik |
 
 ## Kötelező döntés minden tételnél
 
