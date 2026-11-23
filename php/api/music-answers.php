@@ -23,6 +23,26 @@ function musicBriefRequested(string $question): bool {
 function musicKnownAnswer(string $question): ?string {
     $q = musicNormalize($question);
     $short = musicBriefRequested($question);
+    // A-20: answer these whole-concept comparisons with reviewed teaching facts
+    // rather than letting a generic "kvint" match swallow a comparison.
+    if (preg_match('/\\b(tiszta|tiszta\\s+kvint[a-z]*)\\b/u', $q)
+        && preg_match('/\\bszukitett\\s+kvint[a-z]*\\b/u', $q)) {
+        return 'A **tiszta kvint** öt hangnévnyi távolság és **7 félhangból** áll, például **C–G**. A **szűkített kvint** ugyancsak öt hangnévnyi távolság, de csak **6 félhangból** áll, például **C–Gesz**. A különbség tehát egy félhang: a szűkített kvint kisebb a tiszta kvintnél.';
+    }
+    // Hungarian tradition: melodic minor raises VI and VII ascending and
+    // usually uses natural minor descending. A minor has no key signature.
+    if (preg_match('/\\b(termeszetes|naturalis)[a-z]*\\b/u', $q)
+        && preg_match('/\\bharmonikus[a-z]*\\b/u', $q)
+        && preg_match('/\\b(dallamos|melodikus)[a-z]*\\b/u', $q)
+        && preg_match('/\\b(a\\s*[- ]?moll|moll\\s+hangsor)[a-z]*\\b/u', $q)) {
+        return 'Az **a-moll** három gyakori alakja: '
+            . '**természetes a-moll:** A–H–C–D–E–F–G–A (nincs módosított hang); '
+            . '**harmonikus a-moll:** A–H–C–D–E–F–Gisz–A (a VII. fok emelt); '
+            . '**dallamos a-moll:** felszállva A–H–C–D–E–Fisz–Gisz–A '
+            . '(a VI. és VII. fok emelt), hagyományosan leszállva A–G–F–E–D–C–H–A, '
+            . 'vagyis a természetes moll hangjaival. A harmonikus mollban az F–Gisz '
+            . 'közötti bővített szekundot a dallamos moll felszálló alakja elkerüli.';
+    }
     // A teaching comparison is not a single dictionary term: answer it directly
     // from reviewed meter definitions before scanning the full source index.
     if (preg_match('/\\b3\\s*\\/\\s*4\\b/', $q) && preg_match('/\\b6\\s*\\/\\s*8\\b/', $q)) {
