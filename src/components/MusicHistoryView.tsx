@@ -1,5 +1,4 @@
 import { ModuleCompletionButton } from './ModuleCompletionButton';
-import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { HistorySupplementSection } from './HistorySupplementSection';
 import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS } from '../data/musicHistorySupplement';
 import React, { useState } from 'react';
@@ -281,7 +280,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
           );
         })}
       </div>
-      <CuratedMediaPanel chapterNumber={7}/>
+
       <aside className="mt-10 border border-indigo-200 rounded-2xl p-5 md:p-7 bg-indigo-50/60">
         <h3 className="font-serif-cormorant font-semibold text-2xl mb-2">Gyakorold a zenetörténetet!</h3>
         <p className="text-sm text-slate-700 mb-4">A teljes fejezet után válassz feladattípust. Korábbi eredményeid megmaradnak.</p>
