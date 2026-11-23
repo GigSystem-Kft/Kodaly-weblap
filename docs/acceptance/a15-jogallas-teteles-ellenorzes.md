@@ -36,3 +36,9 @@ Nyilvános GitHubon **csak nem bizalmas döntésösszesítő és azonosító** j
 ## Zárási szabály
 
 A-15 akkor lehet PASS, ha az 1.0 tényleges kész csomagjának médiája és indexelt szöveganyaga teljesen lefedett a tételes nyilvántartással, és a közzétételhez szükséges jogok igazoltak. Hiány esetén a #3 ügy továbbra is blokkol; **nincs éles publikálás, main-merge vagy végleges letöltés**.
+
+## Projektgazdai lezárási nyilatkozat – 2026-11-23
+
+A projektgazda a beszélgetésben külön megerősítette: **„A szerzői jogok rendezve azt ugorhatjuk is”**. Ennek megfelelően a szerzői jogi rendezést **projektgazdai visszajelzés szerint befejezettnek** tekintjük, és nem kérünk újabb általános jogi felülvizsgálatot vagy a korábbi vizsgálatok indokolatlan ismétlését.
+
+Ez a visszajelzés ugyanakkor önmagában nem szolgáltatja a jelen munkalap által igényelt fájlonkénti, licencekre/engedélyekre mutató bizonyítékazonosítókat; az A-15 formális `PASS`-ra váltásához azokat a meglévő, privát jognyilvántartásból kell kapcsolni az adott kiadáshoz. **Egyetlen jogi igazolást sem szabad kitalálni; a projektgazda jogrendezési döntését tiszteletben tartjuk, és a következő munkaszakasz A-20 szakmai elfogadás.**
