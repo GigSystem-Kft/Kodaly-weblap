@@ -32,6 +32,34 @@ ensureTutorSearch(str_contains($hits[0]['label'],'Hexachord'),'specific glossary
 $reply=lessonReply($hits,'mit jelent az hogy hexachord?',true);
 ensureTutorSearch(str_contains($reply,'hat hangú'),'concrete definition survives fallback reply');
 ensureTutorSearch(str_contains($reply,'Forrás'),'source attribution present');
+// A-20: a badly transcribed, unreviewed dictionary line must not be
+// presented as a clipped explanation when it contains merged headwords.
+$glossaryStitch='dallamos moll – melodikus moll '.str_repeat('a VI. fok alakulása ',20).
+    ' dallam – hangok sora dallamvezetés – a dallam folyamata';
+$unsafeReply=lessonReply([[
+    'source'=>'Zenei kifejezések – mellékelt, nem minden címszóban lektorált teljes szótár',
+    'label'=>'09. Zenei kifejezések / dallamos moll',
+    'text'=>$glossaryStitch
+]], 'Mi a dallamos moll?', false);
+ensureTutorSearch(!str_contains($unsafeReply,'dallamvezetés') &&
+    str_contains($unsafeReply,'Nem találtam eléggé releváns'),
+    'Merged unreviewed glossary text is not accepted as a complete answer');
+$pairedReply=lessonReply([
+    [
+        'source'=>'Zenei kifejezések – mellékelt, nem minden címszóban lektorált teljes szótár',
+        'label'=>'09. Zenei kifejezések / dallamos moll',
+        'text'=>$glossaryStitch
+    ],
+    [
+        'source'=>'Zeneelméleti Műhely – Tananyag',
+        'label'=>'Moll hangnemek',
+        'text'=>'A dallamos moll felszálló alakjában a VI. és VII. fok emelt.'
+    ]
+], 'Mi a dallamos moll?', false);
+ensureTutorSearch(str_contains($pairedReply,'VI. és VII. fok emelt') &&
+    !str_contains($pairedReply,'dallamvezetés'),
+    'A coherent curriculum excerpt is preferred over stitched glossary text');
+
 // A teacher upload can have the same title as a built-in bank. The student
 // must still see that it is an uploaded, not an official curriculum source.
 $teacherReply=lessonReply([[
