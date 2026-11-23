@@ -906,6 +906,60 @@ try {
     console.log('Storage denied: '+(accountAvailable?'authenticated':'guest')+' UI usable');
   }
 
+  // A-14 / A-20: two same-tick activations must not award the same
+  // ear-training question twice. Use a fresh guest and deterministic shuffle
+  // to exercise the actual React click handlers, not just the static data.
+  const earContext = await browser.newContext({viewport:{width:1280,height:900}});
+  await earContext.addInitScript(() => { Math.random = () => 0; });
+  const earPage = await earContext.newPage();
+  try {
+    await earPage.goto(root,{waitUntil:'domcontentloaded'});
+    await earPage.getByRole('button',{name:/05\\. Hallás/}).click();
+    await earPage.getByRole('heading',{name:'Hangközök felismerése'}).waitFor();
+    const pressTwice = async (label) => earPage.getByRole('button',{name:label,exact:true})
+      .evaluate(button => { button.click(); button.click(); });
+    const guestXp = () => earPage.evaluate(() => {
+      try {return JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0;}
+      catch {return 0;}
+    });
+    const startXp = await guestXp();
+    await pressTwice('Kis Szekund (k2)');
+    await earPage.getByText(/Helyes válasz! Szereztél/).waitFor();
+    await earPage.waitForFunction(previous => {
+      try{return (JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0)>previous;}
+      catch{return false;}
+    },startXp);
+    if ((await guestXp()) - startXp !== 25)
+      throw new Error('Interval ear exercise awarded XP more than once');
+    await earPage.getByRole('button',{name:'Következő kihívás'}).click();
+    await earPage.getByRole('button',{name:'Hangsorok, ritmusok, hangértékek'}).click();
+    await earPage.getByRole('heading',{name:'Hangzó felismerés és gyakorlás'}).waitFor();
+    const afterInterval = await guestXp();
+    await pressTwice('G-dúr');
+    await earPage.getByText(/Helyes! \\+25 XP/).waitFor();
+    await earPage.waitForFunction(previous => {
+      try{return (JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0)>previous;}
+      catch{return false;}
+    },afterInterval);
+    if ((await guestXp()) - afterInterval !== 25)
+      throw new Error('Extended scale ear exercise awarded XP more than once');
+    await earPage.getByRole('button',{name:'Következő feladat'}).click();
+    await earPage.getByRole('button',{name:'Ritmusképletek'}).click();
+    await earPage.getByRole('heading',{name:'Hangzó felismerés és gyakorlás'}).waitFor();
+    const afterScale = await guestXp();
+    await pressTwice('Nyújtott ritmus'); // Shuffle index 1 at Math.random=0
+    await earPage.getByText(/Helyes! \\+25 XP/).waitFor();
+    await earPage.waitForFunction(previous => {
+      try{return (JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0)>previous;}
+      catch{return false;}
+    },afterScale);
+    if ((await guestXp()) - afterScale !== 25)
+      throw new Error('Extended rhythm ear exercise awarded XP more than once');
+    console.log('Ear training: interval, scale and rhythm award at most one XP event on rapid clicks');
+  } finally {
+    await earContext.close();
+  }
+
   console.log('Browser smoke checks PASSED');
 } catch(error) {
   failures.push(error instanceof Error ? error.stack : String(error));
