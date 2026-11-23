@@ -31,3 +31,20 @@ A projektgazda 2026-11-23-i bemásolt Tanársegéd-válaszai a projektbeszélget
 | Nyújtott és éles ritmus | **Korábbi részteszt: alapvetően megfelelő** | Az új kiadásban erre a kérdésre nem érkezett külön újrateszt, ezért új PASS nem állítható. |
 
 **Bizonyíték:** a projektgazda az éles Tanársegéd két teljes válaszát bemásolta a 2026-11-23-i projektbeszélgetésbe, és mindkettőt „Rendben” jelöléssel jóváhagyta. A GitHubon csak a nem érzékeny tartalmi összefoglaló szerepel; teljes személyes adatok és konfigurációk nem. **Kiadási döntés:** a két konkrét regresszió elfogadva, az A-20 összesített kapu továbbra is BLOCKED a szélesebb, független zenei lektorálásig.
+
+## 2026-11-23 – kibővített A-20 technikai ellenőrzés
+
+**Jelölt commit:** `5d6c276cc56d30ad2df6e5090223a601acd0e4f3`.
+
+A `scripts/test-a20-cross-module-harmony.ts` automatikus vizsgálatai immár külön ellenőrzik:
+- C-, G- és F-dúr, valamint természetes/harmonikus/dallamos a-moll függetlenül meghatározott félhangsémáját és tananyagbeli/hangzó egyezését;
+- a 12 megnevezett hangköz **önálló elméleti félhangszámát**, nem csak a magyarázó szöveg és a hangadat kölcsönös egyezését;
+- a dúr, moll, szűkített és bővített hármashangzatok intervallumszerkezetét;
+- a nyújtott, éles, szinkópás és triolás ritmusok hanghosszait és 60 BPM-es indítási időpontjait;
+- a 2/4, 3/4, 4/4, 6/8 ütemek hosszát és ütésindításait a megfelelő időegységben.
+
+**GitHub Actions ugyanazon SHA-n:** Chromium böngészős füstteszt `45270689275` **success**; PHP telepítő ZIP `45270689243` **success**; Linux telepítő `45270689282` **success**. Az emberi elfogadási workflow `45270689263` **failure**, konkrétan a 24 pontos bizonyítéknapló hitelesítésénél, nem a technikai zenei tesztekben.
+
+**Határ:** ezek az automatikus vizsgálatok a hangadatot és időzítési algoritmust ellenőrzik, nem a valódi hangszórós lejátszást, a kotta emberi olvashatóságát, a teljes kérdésbank szakmai minőségét vagy a független lektor jóváhagyását. A két korábban sikeresen élőben tesztelt Tanársegéd-kérdést nem kell indokolatlanul megismételni.
+
+**A-20 formális státusz:** változatlanul `BLOCKED` a hiányzó, aktuális jelölthöz kötött hallási/kottás/kvízes, független szakmai lektori bizonyíték miatt.
