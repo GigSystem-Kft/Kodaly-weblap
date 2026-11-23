@@ -7,6 +7,7 @@ import { ExtendedEarTraining } from './ExtendedEarTraining';
 
 interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
+  remainingXp: number;
 }
 
 export const EAR_CHALLENGES = [
@@ -24,12 +25,13 @@ export const EAR_CHALLENGES = [
   { id: 12, title: 'Tiszta Oktáv (t8)', notes: ['C4','C5'], description: '12 félhang: C–C.' }
 ];
 
-export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => {
+export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp, remainingXp }) => {
   const [trainingTab,setTrainingTab] = useState<'intervals'|'collections'|'extended'>('intervals');
   const [round, setRound] = useState(() => shuffleEarChallenges(EAR_CHALLENGES));
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [awarded, setAwarded] = useState(0);
   const [streak, setStreak] = useState<number>(0);
   // Guard award side effects synchronously, before React commits a re-render.
   const answeredRef = useRef(false);
@@ -48,11 +50,13 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
     setSelectedAnswer(title);
     const correct = title === current.title;
     setIsCorrect(correct);
+    const earned = correct ? Math.min(25,remainingXp) : 0;
+    setAwarded(earned);
 
     if (correct) {
       playNote('C6', 400);
       setStreak((prev) => prev + 1);
-      onAddXp(25);
+      if (earned > 0) onAddXp(earned);
     } else {
       playNote('C3', 400);
       setStreak(0);
@@ -65,6 +69,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
     answeredRef.current = false;
     setSelectedAnswer(null);
     setIsCorrect(null);
+    setAwarded(0);
     if (currentChallengeIndex === round.length - 1) {
       setRound(shuffleEarChallenges(EAR_CHALLENGES, current.id));
       setCurrentChallengeIndex(0);
@@ -88,7 +93,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
       A további ismétlések korlátozás nélkül gyakorolhatók, de már nem adnak új XP-t.
       Az XP játékos gyakorlási pont, nem vizsgajegy.
     </p>
-    {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
+    {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp} remainingXp={remainingXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp} remainingXp={remainingXp}/> : (
     <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangközök felismerése">
       <div className="text-center mb-6">
         <p className="text-xs uppercase font-bold tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · hangközök</p>
@@ -150,7 +155,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
           <div role="status" className="mt-6 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-left">
               <p className={`font-bold text-sm ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
-                {isCorrect ? 'Helyes válasz! Szereztél +25 XP-t.' : `Helytelen. A helyes válasz: ${current.title}`}
+                {isCorrect ? (awarded > 0 ? `Helyes válasz! Szereztél +${awarded} XP-t.` : 'Helyes válasz! A napi 100 XP-s gyakorlási kereted betelt.') : `Helytelen. A helyes válasz: ${current.title}`}
               </p>
               <p className="text-xs text-slate-600 mt-1">{current.description}</p>
             </div>
