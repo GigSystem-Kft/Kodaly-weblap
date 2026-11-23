@@ -1,7 +1,7 @@
 import { loadPendingProgress, recoverPendingProgress, savePendingProgress, clearSavedPendingProgress } from './src/pendingProgress';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, shouldRescheduleProgressSync, validStudyDay, getQuizBestScore } from './src/progress';
+import { createEmptyProgress, migrateProgress, recordActivity, consecutiveDays, mergeProgress, mergeConcurrentProgress, recordEarTrainingActivity, remainingEarTrainingXp, shouldRescheduleProgressSync, validStudyDay, getQuizBestScore } from './src/progress';
 
 test('a new learner starts with zero experience and no fabricated days', () => {
   const progress = createEmptyProgress();
@@ -366,6 +366,23 @@ test('hearing exercise XP is bounded to 100 per day without losing historical po
   const next=recordEarTrainingActivity(progress,25,'2026-11-08');
   assert.equal(next.xp,425);
 });
+test('remaining ear-training XP agrees with actual daily and lifetime reward caps', () => {
+  const date='2026-11-07';
+  const base=createEmptyProgress();
+  assert.equal(remainingEarTrainingXp(base,date),100);
+  const nearDaily={...base,xp:100,earTrainingDailyXp:{[date]:90}};
+  assert.equal(remainingEarTrainingXp(nearDaily,date),10);
+  const awarded=recordEarTrainingActivity(nearDaily,25,date);
+  assert.equal(awarded.xp,110);
+  assert.equal(remainingEarTrainingXp(awarded,date),0);
+  assert.equal(recordEarTrainingActivity(awarded,25,date).xp,110);
+  assert.equal(remainingEarTrainingXp(awarded,'2026-11-08'),100);
+  const nearLifetime={...base,xp:99_999_990};
+  assert.equal(remainingEarTrainingXp(nearLifetime,date),10);
+  assert.equal(recordEarTrainingActivity(nearLifetime,25,date).xp,100_000_000);
+  assert.equal(remainingEarTrainingXp(base,'2026-02-30'),0);
+});
+
 test('daily XP caps survive import and reject forged daily counter shapes', () => {
   const server=createEmptyProgress();
   server.earTrainingDailyXp={'2026-11-07':75};
