@@ -4,7 +4,7 @@ A-02,NOT_RUN,,,,,
 A-03,NOT_RUN,,,,,
 A-04,NOT_RUN,,,,,
 A-05,NOT_RUN,,,,,
-A-06,NOT_RUN,,,,,
+A-06,NOT_RUN,projektgazda,2026-11-23,,docs/acceptance/a06-keteszkoz-konfliktus-proba-2026-11-23.md,Two different favorites survived PC-phone conflict sync and refresh owner-confirmed PASS for preservation; exact live HTTP 409 and tested release SHA still unverified
 A-07,NOT_RUN,,,,,
 A-08,NOT_RUN,,,,,
 A-09,NOT_RUN,,,,,
