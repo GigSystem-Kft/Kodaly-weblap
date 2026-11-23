@@ -28,3 +28,11 @@ A `php/api/deployment-audit.php` `deploymentPublicRiskScan()` függvénye a webg
 4. A jogi A-15 és szakmai A-20 kapuk külön lezárandók.
 
 **Döntés:** kizárólag a felsorolt HTTP-részpróbát rögzítjük; nem módosítjuk az `acceptance-1.0.csv` A-24 = `BLOCKED` státuszát, a `main` ágat vagy az éles állományokat.
+
+## FTP-tulajdonosi ellenőrzés – 2026-11-23
+
+A projektgazda által beküldött szerver-parancskimenetek alapján a webgyökérben található `.cache` könyvtár tulajdonosa `zeneftp:zeneelmeletadmin`, módja `0700`, létrehozási dátuma 2026-11-07. A `zeneftp` rendszerfelhasználó elsődleges csoportja `zeneelmeletadmin`, másodlagos csoportja `ftp-user`, shellje `/bin/false`. Az `zeneelmeletadmin` felhasználóval indított `sudo find` jogosultság hiányában visszautasítva (nem kerülgetendő).
+
+A projektgazda FTP-felhasználóval készült FileZilla képernyőképe alapján a `.cache` könyvtárban **egy látható, 0 bájtos** `motd.legal-displayed` fájl szerepel, `zeneftp` tulajdonossal, 2026-11-07 módosítási dátummal. A fájlnév tipikusan felhasználói környezeti üzenet megjelenítését rögzítő jelző; a pontos létrehozó alkalmazás nem bizonyított. A képernyőkép csak az ott megjelenített fájlokat igazolja, nem zárja ki a további rejtett tartalmat. A teljes `.cache` könyvtár admin-oldali átvizsgálása továbbra sem történt meg.
+
+**Teendő:** FTP-kliens rejtett fájlok megjelenítésének ellenőrzése; az üzemeltetői dokumentációhoz nem titkos, csak olvasó leltár; a PHP ellenőrzőprogram `excludedDirs` figyelmeztetését nem szabad automatikusan `PASS`-ra fordítani vagy a szükséges vizsgálatot bizonyíték nélkül elhagyni. Nincs indok fájl- vagy könyvtártörlésre, `chmod`-ra vagy `chown`-ra. A-24 teljes státusz változatlanul BLOCKED.
