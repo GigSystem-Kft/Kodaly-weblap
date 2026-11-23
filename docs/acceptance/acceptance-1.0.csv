@@ -1,5 +1,5 @@
 audit_id,status,reviewer_role,checked_on,candidate_sha,evidence_ref,notes
-A-01,NOT_RUN,,,,,
+A-01,NOT_RUN,technikai-CI,2026-11-23,,docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md,13 rhythm images and byte-identity test described in audit; final release SHA and linked A-15 media rights still open
 A-02,NOT_RUN,,,,,
 A-03,NOT_RUN,,,,,
 A-04,NOT_RUN,,,,,
@@ -16,7 +16,7 @@ A-14,NOT_RUN,,,,,
 A-15,BLOCKED,,,,,Owner asserts all materials self-made or freely usable; item-level rights verification pending
 A-16,NOT_RUN,,,,,
 A-17,NOT_RUN,,,,,
-A-18,NOT_RUN,,,,,
+A-18,NOT_RUN,technikai-CI,2026-11-23,,docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md,302 textbook pages 13 rhythm images 64 notes images and package structure covered by automated checks; immutable final release SHA not recorded
 A-19,NOT_RUN,,,,,
 A-20,BLOCKED,projektgazda,2026-11-23,,docs/acceptance/a20-tanarseged-regresszio-2026-11-23.md,Owner PASS for Tutor two answers and live intervals scales rhythm score-audio plus two quiz keys; final candidate SHA evidence and independent music sign-off still missing
 A-21,NOT_RUN,,,,,
