@@ -38,3 +38,7 @@ A projektgazda FTP-felhasználóval készült FileZilla képernyőképe alapján
 **Teendő:** FTP-kliens rejtett fájlok megjelenítésének ellenőrzése; az üzemeltetői dokumentációhoz nem titkos, csak olvasó leltár; a PHP ellenőrzőprogram `excludedDirs` figyelmeztetését nem szabad automatikusan `PASS`-ra fordítani vagy a szükséges vizsgálatot bizonyíték nélkül elhagyni. Nincs indok fájl- vagy könyvtártörlésre, `chmod`-ra vagy `chown`-ra. A-24 teljes státusz változatlanul BLOCKED.
 
 **Utólagos tulajdonosi megerősítés:** a projektgazda a rejtett fájlok ellenőrzése után is kizárólag az egyetlen `motd.legal-displayed` fájlt találta a `.cache` könyvtárban. Ez a tulajdonosi FTP-leltár részeredményét megerősíti; az alkalmazás beépített kihagyásának tényét és a teljes A-24 elfogadási kapu nyitottságát nem változtatja meg.
+
+## Mentés – tulajdonosi visszajelzés (2026-11-23)
+
+A projektgazda megerősítette: **„ez már kész van”** a weboldal- és adatbázis-mentéssel kapcsolatos feladatra. A mentést ezért **tulajdonosi közlés szerint elkészültnek** rögzítjük; nem kérjük fölöslegesen újrakészíteni. A visszaállítás próbájának ténye, időpontja, helye és eredménye ebben a visszajelzésben nem szerepel; ezért az elkészített mentés önmagában **nem jelenti a helyreállítás bizonyítását**. Az éles SHA: `644914afdfae` (projektgazda által megerősítve). Az A-24 teljes kapu továbbra sem módosul automatikusan.
