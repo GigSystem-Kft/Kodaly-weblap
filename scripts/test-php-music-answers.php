@@ -33,6 +33,29 @@ $genericSignature=musicKnownAnswer('Mi az előjegyzés?');
 ensure(is_string($genericSignature) && str_contains($genericSignature,'kulcs'),
     'Unqualified question still gives the glossary explanation');
 
+// A-20: exact live tutor questions must each receive a complete reviewed
+// comparison, not a generic kvint definition or a clipped glossary entry.
+foreach ([
+    'Mi a különbség a tiszta kvint és a szűkített kvint között?',
+    'Miben különbözik a szűkített kvint a tiszta kvinttől?'
+] as $question) {
+    $answer=musicKnownAnswer($question);
+    ensure(is_string($answer) && str_contains($answer,'7 félhang') &&
+        str_contains($answer,'6 félhang') && str_contains($answer,'C–Gesz'),
+        'A-20 complete perfect/diminished fifth comparison: '.$question);
+}
+foreach ([
+    'Miben különbözik a természetes, harmonikus és dallamos a-moll hangsor?',
+    'Hasonlítsd össze a természetes, harmonikus és dallamos moll hangsort!'
+] as $question) {
+    $answer=musicKnownAnswer($question);
+    ensure(is_string($answer) && str_contains($answer,'természetes a-moll') &&
+        str_contains($answer,'harmonikus a-moll') &&
+        str_contains($answer,'dallamos a-moll') &&
+        str_contains($answer,'Fisz') && str_contains($answer,'Gisz') &&
+        !str_contains($answer,'823. sor'),
+        'A-20 complete three forms of A minor: '.$question);
+}
 ensure(musicKnownAnswer('Mi a szolmizáció?') !== null, 'szolmizáció');
 ensure(musicKnownAnswer('Hogyan kell árnyékolni a hangszereket?') === null,
     'ismeretlen kérdésre nem költ választ');
