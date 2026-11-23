@@ -3,7 +3,6 @@ import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
 import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
 import { ImageLightbox } from './ImageLightbox';
-import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { InteractiveMusicVisual } from './InteractiveMusicVisual';
 import { RhythmFiguresVisual } from './RhythmFiguresVisual';
 import { MeterExamplesVisual } from './MeterExamplesVisual';
@@ -12,8 +11,8 @@ import { SolfegeScaleVisual } from './SolfegeScaleVisual';
 import { IntervalExamplesVisual } from './IntervalExamplesVisual';
 import { CollectionLessonVisual } from './CollectionLessonVisual';
 import { TonalExamplesVisual, CircleOfFifthsVisual } from './TonalExamplesVisual';
-import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
-import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
+import { ArrowLeft, CheckCircle, HelpCircle, BookOpen, Quote } from 'lucide-react';
+import { playNote, stopEarTrainingInterval } from '../utils/audio';
 
 interface ChapterDetailViewProps {
   chapter: Chapter;
@@ -275,40 +274,10 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               </div>
             ))}
 
-            {/* Examples & Audio Player */}
-            {currentSub.examples && currentSub.examples.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-slate-200">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-slate-600 mb-4 flex items-center space-x-2">
-                  <Volume2 className="w-4 h-4 text-[#4a54e1]" />
-                  <span>Szemléltető Példák & Hangzó Anyag</span>
-                </h4>
-                <div className="space-y-4">
-                  {currentSub.examples.map((ex, eIdx) => (
-                    <div key={eIdx} className="bg-slate-50/60 border border-slate-200/60 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div>
-                        <h5 className="font-bold text-slate-900 text-sm mb-1">{ex.title}</h5>
-                        <p className="text-slate-700 text-xs">{ex.description}</p>
-                      </div>
-                      {ex.audioNotes && (
-                        <button
-                          onClick={() => currentSub.id === 'abszolutm-hangok' && ex.title === 'Alaphangok skála'
-                            ? playWarmQuarterScale(ex.audioNotes || [], 60)
-                            : playChord(ex.audioNotes || ['C4', 'E4', 'G4'], 600)}
-                          className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-md shadow-indigo-600/30 flex items-center space-x-2 shrink-0"
-                        >
-                          <Play className="w-3.5 h-3.5" />
-                          <span>{currentSub.id === 'abszolutm-hangok' && ex.title === 'Alaphangok skála' ? 'Skála meghallgatása (60 BPM)' : 'Példa hangzása'}</span>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
-      <CuratedMediaPanel chapterNumber={chapter.number}/>
+
       {zoom && <ImageLightbox src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} />}
     </div>
   );
