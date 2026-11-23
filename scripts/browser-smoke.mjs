@@ -956,7 +956,7 @@ try {
     if ((await guestXp()) - afterScale !== 25)
       throw new Error('Extended rhythm ear exercise awarded XP more than once');
     // The fourth 25-XP exercise fills the daily 100-XP limit.
-    await earPage.getByRole('button',{name:'Hangértékek'}).click();
+    await earPage.getByRole('button',{name:'Hangértékek,exact:true}}).click();
     const beforeFourth = await guestXp();
     await pressTwice('Fél hangérték');
     await earPage.getByText('Helyes! +25 XP',{exact:true}).waitFor();
@@ -968,7 +968,7 @@ try {
       throw new Error('Fourth aural challenge did not fill the daily cap');
     // A correct answer remains educational, but must not claim +25 XP
     // after the common cap has been reached by different exercise modes.
-    await earPage.getByRole('button',{name:'Ütemmutatók'}).click();
+    await earPage.getByRole('button',{name:'Ütemmutatók,exact:true}}).click();
     const beforeCap = await guestXp();
     await pressTwice('3/4');
     await earPage.getByText('Helyes! A napi 100 XP-s gyakorlási kereted betelt.').waitFor();
