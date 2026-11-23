@@ -289,10 +289,28 @@ export const AdminDashboard: React.FC = () => {
                 <p className="mt-1 text-amber-800">A két jelentés eltér. Más adatforrások és indexelési szabályok is okozhatják az eltérést; ez önmagában nem bizonyít adatvesztést.</p>
               )}
               {(staticOnly.length > 0 || liveOnly.length > 0) && (
-                <details className="mt-2">
-                  <summary className="cursor-pointer font-semibold">Forráscsoport-eltérések (csak név alapján)</summary>
-                  <p className="mt-2">Csak a csomagleltárban ({staticOnly.length}): {staticOnly.map(item => item.source).join('; ') || 'nincs'}</p>
-                  <p className="mt-2">Csak az élő PHP-indexben ({liveOnly.length}): {liveOnly.map(item => item.source).join('; ') || 'nincs'}</p>
+                <details className="mt-2" aria-label="Forrásnév-eltérések részletes jegyzéke">
+                  <summary className="cursor-pointer font-semibold">
+                    Részletes forrásnév-eltérések ({staticOnly.length} csak a csomagban, {liveOnly.length} csak a PHP-indexben)
+                  </summary>
+                  <p className="mt-2 text-slate-600">
+                    Ez kizárólag név szerinti összevetés, nem tartalmi hiánylista.
+                    Egy forrás eltérő címmel vagy több összevont részlettel is szerepelhet a másik indexben.
+                  </p>
+                  <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                    <div>
+                      <h4 className="font-semibold">Csak a csomagleltárban ({staticOnly.length})</h4>
+                      <ul className="mt-1 max-h-56 overflow-y-auto rounded-md border border-slate-200 px-3 py-2 list-disc list-inside break-words">
+                        {staticOnly.map(item => <li key={item.source} className="py-1 border-b border-slate-100 last:border-0">{item.source}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">Csak az élő PHP-indexben ({liveOnly.length})</h4>
+                      <ul className="mt-1 max-h-56 overflow-y-auto rounded-md border border-slate-200 px-3 py-2 list-disc list-inside break-words">
+                        {liveOnly.map(item => <li key={item.source} className="py-1 border-b border-slate-100 last:border-0">{item.source}</li>)}
+                      </ul>
+                    </div>
+                  </div>
                 </details>
               )}
             </div>
