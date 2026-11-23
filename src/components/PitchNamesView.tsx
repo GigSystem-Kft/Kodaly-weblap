@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { hungarianOctaveName } from '../utils/noteNotation';
 import { ArrowRight, BookOpen, Layers, Music2, Volume2 } from 'lucide-react';
 import { playMelody, playNote } from '../utils/audio';
 import { ImageLightbox } from './ImageLightbox';
@@ -76,7 +77,7 @@ export const PitchNamesView: React.FC<PitchNamesViewProps> = ({
           <p className="text-slate-300 text-sm leading-relaxed">
             {isSolfege
               ? 'A relatív szolmizációban dúr hangnemben az alaphang a dó, természetes mollban az alaphang a lá. A többi szótag a hangsor fokait követi, ezért a dó tényleges hangmagassága más hangnembe lépve megváltozhat.'
-              : 'A magyar hangnévsor: C – D – E – F – G – A – H. A H után a következő oktáv C hangja következik. A hangnév azonosítja a hangot, az oktávszám pedig annak fekvését jelöli, például C4 és C5.'}
+              : 'A magyar hangnévsor: C – D – E – F – G – A – H. A H után a következő oktáv C hangja következik. A hangnév azonosítja a hangot, az oktávjel pedig annak fekvését mutatja, például C′ és C″.'}
           </p>
           <div className="mt-5 rounded-2xl border border-indigo-500/30 bg-indigo-950/40 p-4">
             <h4 className="text-sm font-bold text-indigo-200 mb-2">
@@ -152,11 +153,11 @@ export const PitchNamesView: React.FC<PitchNamesViewProps> = ({
                   <td className="p-4 sm:px-6">
                     <button
                       onClick={() => playNote(row.note, 500)}
-                      aria-label={`${row.note} hang lejátszása`}
+                      aria-label={`${hungarianOctaveName(row.note)} hang lejátszása`}
                       className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-indigo-300 hover:bg-indigo-600 hover:text-white"
                     >
                       <Volume2 className="w-4 h-4" />
-                      {row.note}
+                      {hungarianOctaveName(row.note)}
                     </button>
                     {row.role && <p className="text-xs text-slate-400 mt-1">{row.role}</p>}
                   </td>
