@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Play } from 'lucide-react';
 import { playNote, playEarTrainingInterval, stopEarTrainingInterval } from '../utils/audio';
 import { shuffleEarChallenges } from '../utils/earTraining';
@@ -31,6 +31,8 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [streak, setStreak] = useState<number>(0);
+  // Guard award side effects synchronously, before React commits a re-render.
+  const answeredRef = useRef(false);
 
   const current = round[currentChallengeIndex];
 
@@ -41,6 +43,8 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   };
 
   const handleGuess = (title: string) => {
+    if (answeredRef.current) return;
+    answeredRef.current = true;
     setSelectedAnswer(title);
     const correct = title === current.title;
     setIsCorrect(correct);
@@ -56,7 +60,9 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   };
 
   const nextChallenge = () => {
+    if (!answeredRef.current) return;
     stopEarTrainingInterval();
+    answeredRef.current = false;
     setSelectedAnswer(null);
     setIsCorrect(null);
     if (currentChallengeIndex === round.length - 1) {
