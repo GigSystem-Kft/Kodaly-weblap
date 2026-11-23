@@ -78,19 +78,20 @@ export function playExercise(challenge:Challenge,bpm=60){
   filter.connect(gain);gain.connect(ctx.destination);
  }
 }
-export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp})=>{
+export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void;remainingXp:number}>=({onAddXp,remainingXp})=>{
  const [mode,setMode]=useState<Mode>('hangsor');
  const [round,setRound]=useState(()=>shuffle(EXTENDED_EAR_DRILLS.hangsor));
  const [index,setIndex]=useState(0);
  const [guess,setGuess]=useState<string|null>(null);
+ const [awarded,setAwarded]=useState(0);
  const [streak,setStreak]=useState(0);
  const [bpm,setBpm]=useState(60);
  const answeredRef=useRef(false);
  const current=round[index];
   useEffect(()=>()=>stopExerciseAudio(),[]);
- const changeMode=(next:Mode)=>{stopExerciseAudio();answeredRef.current=false;setMode(next);setRound(shuffle(EXTENDED_EAR_DRILLS[next]));setIndex(0);setGuess(null);setStreak(0);};
- const choose=(id:string)=>{if(answeredRef.current)return;answeredRef.current=true;setGuess(id);if(id===current.id){onAddXp(25);setStreak(n=>n+1);}else setStreak(0);};
- const advance=()=>{if(!answeredRef.current)return;stopExerciseAudio();answeredRef.current=false;setGuess(null);if(index+1>=round.length){setRound(shuffle(EXTENDED_EAR_DRILLS[mode]));setIndex(0);}else setIndex(i=>i+1);};
+ const changeMode=(next:Mode)=>{stopExerciseAudio();answeredRef.current=false;setMode(next);setRound(shuffle(EXTENDED_EAR_DRILLS[next]));setIndex(0);setGuess(null);setAwarded(0);setStreak(0);};
+ const choose=(id:string)=>{if(answeredRef.current)return;answeredRef.current=true;setGuess(id);if(id===current.id){const xp=Math.min(25,remainingXp);setAwarded(xp);if(xp>0)onAddXp(xp);setStreak(n=>n+1);}else {setAwarded(0);setStreak(0);}};
+ const advance=()=>{if(!answeredRef.current)return;stopExerciseAudio();answeredRef.current=false;setGuess(null);setAwarded(0);if(index+1>=round.length){setRound(shuffle(EXTENDED_EAR_DRILLS[mode]));setIndex(0);}else setIndex(i=>i+1);};
  return <section className="max-w-3xl mx-auto p-5 sm:p-7 mt-6 text-slate-900">
   <header className="text-center mb-6">
     <p className="font-semibold text-xs uppercase tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · új feladattípusok</p>
@@ -118,7 +119,7 @@ export const ExtendedEarTraining:React.FC<{onAddXp:(xp:number)=>void}>=({onAddXp
       className={`p-3 rounded-xl border text-sm font-semibold disabled:cursor-default ${guess!==null&&item.id===current.id?'border-emerald-600 bg-emerald-100 text-emerald-950':guess===item.id?'border-rose-600 bg-rose-100 text-rose-950':'border-slate-200 bg-slate-50 hover:bg-indigo-50'}`}>{item.title}</button>)}
     </div>
     {guess!==null&&<div role="status" className="mt-5 pt-5 border-t border-slate-200">
-      <p className={`font-bold text-sm ${guess===current.id?'text-emerald-700':'text-rose-700'}`}>{guess===current.id?'Helyes! +25 XP':'A helyes válasz: '+current.title}</p>
+      <p className={`font-bold text-sm ${guess===current.id?'text-emerald-700':'text-rose-700'}`}>{guess===current.id?(awarded>0?'Helyes! +'+awarded+' XP':'Helyes! A napi 100 XP-s gyakorlási kereted betelt.'):'A helyes válasz: '+current.title}</p>
       <p className="text-sm mt-2 text-slate-700">{current.explanation}</p>
       <button type="button" onClick={advance} className="mt-4 px-5 py-3 rounded-lg bg-indigo-700 text-white font-semibold text-sm">Következő feladat</button>
     </div>}
