@@ -18,7 +18,7 @@ A-16,NOT_RUN,,,,,
 A-17,NOT_RUN,,,,,
 A-18,NOT_RUN,,,,,
 A-19,NOT_RUN,,,,,
-A-20,NOT_RUN,,,,,
+A-20,BLOCKED,projektgazda,2026-11-23,644914afdfae460765f3b82671bb10294426b73d,docs/acceptance/a20-tanarseged-regresszio-2026-11-23.md,Két éles Tanársegéd regresszió PASS; teljes kotta-hang-kvíz és független lektori elfogadás hiányzik
 A-21,NOT_RUN,,,,,
 A-22,NOT_RUN,,,,,
 A-23,NOT_RUN,,,,,
