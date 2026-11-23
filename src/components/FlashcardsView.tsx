@@ -1,3 +1,4 @@
+import { formatHungarianPitchText } from '../utils/noteNotation';
 import React, { useState } from 'react';
 import { FLASHCARDS_DATA } from '../data/musicData';
 import { Sparkles, RotateCw, Check, ArrowRight, ArrowLeft, Volume2 } from 'lucide-react';
@@ -112,7 +113,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
           {!isFlipped ? (
             <div>
               <h3 className="text-3xl sm:text-4xl font-extrabold text-white mb-4 tracking-tight">
-                {currentCard.term}
+                {formatHungarianPitchText(currentCard.term)}
               </h3>
               <p className="text-indigo-300 text-xs flex items-center justify-center space-x-1.5 font-medium">
                 <RotateCw className="w-4 h-4 animate-spin-slow" />
@@ -123,7 +124,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-violet-400 mb-2 block">Definíció</span>
               <p className="text-lg sm:text-xl text-slate-100 font-medium leading-relaxed">
-                {currentCard.definition}
+                {formatHungarianPitchText(currentCard.definition)}
               </p>
               <p className="text-slate-300 text-xs mt-4">Kattints a visszafordításhoz</p>
             </div>
@@ -138,7 +139,7 @@ export const FlashcardsView: React.FC<FlashcardsViewProps> = ({ onMasterCard, ma
                 playNote('C5', 400);
               }}
               className="p-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-indigo-400 border border-slate-700"
-              title="Példahang lejátszása (C5)"
+              title="Példahang lejátszása (C″)"
             >
               <Volume2 className="w-4 h-4" />
             </button>
