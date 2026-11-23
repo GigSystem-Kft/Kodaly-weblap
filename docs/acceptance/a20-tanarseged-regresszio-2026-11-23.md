@@ -58,3 +58,18 @@ A projektgazda a célzott A-20 akusztikai részpróba után ezt erősítette meg
 **Eredmény: PASS – a három külön megnevezett hangköz (kis szekund, tiszta kvart, tiszta kvint) tényleges meghallgatásának részpróbája.** A kapcsolódó elméleti elvárások 1, 5 és 7 félhang; a 12 hangköz külön elméleti és adatszintű automatizált tesztje a fenti SHA-n sikeres.
 
 **Bizonyíték:** a 2026-11-23-i projektbeszélgetés tulajdonosi közlése. A konkrét eszköz, böngésző és az élő lejátszás idején telepített teljes SHA nem szerepelt külön a visszajelzésben, ezért nem állítjuk, hogy az aktuális fejlesztési buildet tesztelte. A teljes A-20 továbbra is `BLOCKED`, amíg az aktuális build hangzó hangsor/ritmus/kotta/kvíz szakmai jóváhagyása és a verzióazonosító nincs megerősítve.
+
+## 2026-11-23 – háromféle a-moll hangsor élő meghallgatása
+
+A projektgazda az A-20 hallásfejlesztési részpróba után így nyilatkozott:
+
+> A-20 a-moll hangsorok hangzó próbája: a természetes, harmonikus és felszálló dallamos a-moll egyaránt helyesen szól. Folytasd a szakmai elfogadást.
+
+**Eredmény: PASS – három hangzó a-moll hangsor részpróbája.** A korábban ellenőrzött felszálló hangkészletek:
+- természetes: A–H–C–D–E–F–G–A;
+- harmonikus: A–H–C–D–E–F–Gisz–A;
+- felszálló dallamos: A–H–C–D–E–Fisz–Gisz–A.
+
+A projektgazda a három tényleges lejátszást megfelelőnek találta; a hangsorok önálló félhangsémáját és tananyag–hangadat egyezését a `5d6c276cc56d30ad2df6e5090223a601acd0e4f3` commit A-20 tesztjei automatikusan is ellenőrzik.
+
+**Korlát:** a meghallgatási válasz nem tartalmazta a telepített pontos 40 karakteres SHA-t és eszközazonosítót. Ez nem jelenti automatikusan az aktuális jelölt éles tesztelését, és nem igazolja a ritmus-, kotta- vagy kvíz-részpróbát. A teljes A-20 továbbra is `BLOCKED`, amíg a hiányzó ellenőrzések igazolása és a verzióhoz kötött független szakmai jóváhagyás nem teljes.
