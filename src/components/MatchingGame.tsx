@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { formatHungarianPitchText } from '../utils/noteNotation';
 import { MATCHING_PAIRS } from '../data/musicData';
 import { Layers, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { playNote } from '../utils/audio';
@@ -184,7 +185,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                   <button
                     type="button"
                     aria-pressed={isSelected}
-                    aria-label={`Fogalom: ${t.text}`}
+                    aria-label={`Fogalom: ${formatHungarianPitchText(t.text)}`}
                     key={t.id}
                     disabled={isMatched}
                     onClick={() => handleSelectTerm(t.id, t.pairId)}
@@ -196,7 +197,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                         : 'bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800'
                     }`}
                   >
-                    {t.text}
+                    {formatHungarianPitchText(t.text)}
                   </button>
                 );
               })}
@@ -212,7 +213,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                   <button
                     type="button"
                     aria-pressed={isSelected}
-                    aria-label={`Jelentés: ${m.text}`}
+                    aria-label={`Jelentés: ${formatHungarianPitchText(m.text)}`}
                     key={m.id}
                     disabled={isMatched}
                     onClick={() => handleSelectMatch(m.id, m.pairId)}
@@ -224,7 +225,7 @@ export const MatchingGame: React.FC<MatchingGameProps> = ({ onCompleted, initial
                         : 'bg-slate-900/80 border-slate-800 text-slate-200 hover:bg-slate-800'
                     }`}
                   >
-                    {m.text}
+                    {formatHungarianPitchText(m.text)}
                   </button>
                 );
               })}
