@@ -191,6 +191,30 @@ try {
     throw new Error('Chapter 05 quiz is unexpectedly empty');
   console.log('Guest: chapter 05 scale and chord quiz loaded');
   await checkAccessibility(page, '05. hangsorok kvíz');
+
+  // Hungarian octave notation in the *rendered* G-clef quiz, not only source data.
+  // The chapter quiz is randomized; visit its entire question set if needed.
+  await category.selectOption('hangok-kulcsok');
+  await page.getByText(/Kérdés 1 \/ /).waitFor();
+  const chapterQuestionCount=Number((await page.locator('span').filter({hasText:/^Kérdés 1 \/ \d+$/}).first().textContent())?.match(/\/ (\d+)/)?.[1]);
+  if(!Number.isInteger(chapterQuestionCount)||chapterQuestionCount<1||chapterQuestionCount>15)
+    throw new Error('Unexpected G-clef quiz length: '+chapterQuestionCount);
+  let sawGclefQuestion=false;
+  for(let index=0;index<chapterQuestionCount;index++){
+    const title=(await page.locator('h3').filter({hasText:'Mi a G-kulcs második vonalának hangja?'}).count());
+    if(title){
+      const answers=await page.locator('div.space-y-3.mb-6 > button > span').allTextContents();
+      if(JSON.stringify([...answers].sort())!==JSON.stringify(['G′','C′','F','A'].sort()))
+        throw new Error('G-clef quiz still renders legacy note names: '+answers.join(', '));
+      sawGclefQuestion=true;
+      break;
+    }
+    await page.locator('div.space-y-3.mb-6 > button').first().click();
+    await page.getByRole('button',{name:index===chapterQuestionCount-1?'Kvíz befejezése':'Következő kérdés'}).click();
+  }
+  if(!sawGclefQuestion)
+    throw new Error('G-clef second-line question was absent from the entire chapter quiz');
+  console.log('Guest: G-clef second-line answers render G′, C′, F, A, not MIDI octave numbers');
   // A-17: completing a whole mixed round with 15 wrong answers must
   // retain all 15 question IDs, not silently clip the last three.
   await category.selectOption('all');
