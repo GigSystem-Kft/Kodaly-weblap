@@ -30,3 +30,15 @@ A zöld CI **nem bizonyítja a hangkártya/fülhallgató valós hangját**, a k�
 5. Kottaképek véletlenszerű mintavétele és hozzájuk tartozó tananyag/kvíz válaszok zenei lektori összevetése.
 
 **Megjegyzés:** A-14 és A-20 összesített PASS csak a fenti valós próbák, a lektori azonosító és a telepített SHA rögzítése után adható. Az A-15 és A-24 kiadási kapuk ettől függetlenül nyitottak.
+
+## 2026-11-23 – közvetlen böngészős dupla-válasz regresszió
+
+A `scripts/browser-smoke.mjs` immár a tényleges React kezelőket aktiválja, nem pusztán az adatállományokat hasonlítja össze. Elkülönített vendég-munkamenetben, meghatározott véletlen sorrend mellett ugyanabban az eseményciklusban kétszer kattint a helyes válaszra. Három feladattípusnál – hangköz (kis szekund), hangsor (G-dúr), ritmus (nyújtott ritmus) – ellenőrzi, hogy minden feladatért **pontosan 25 XP**, nem pedig dupla jutalom jár. Az automatikus teszt a következő feladatra lépést és témakörváltást is végrehajtja.
+
+A kezdeti tesztfutás kizárólag a hibásan escape-elt tesztnavigációs reguláris kifejezésen állt meg; a javított teszt az `af7aa0e0f1496484fe74633b0ae67ab9c1cb07fa` commiton minden előírt technikai ellenőrzésen sikeres:
+
+- Chromium: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45192338110 – **success**
+- PHP/MySQL/ZIP: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45192338133 – **success**
+- Linux: https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45192338141 – **success**
+
+**A-14 és A-20 formális státusz továbbra is nyitott:** a fenti teszt nem igazolja a tényleges hangkimeneti vagy kottakép-lektorálási követelményeket. A-15, A-24 és a többi emberi elfogadási pont változatlan.
