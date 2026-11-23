@@ -73,3 +73,19 @@ A projektgazda az A-20 hallásfejlesztési részpróba után így nyilatkozott:
 A projektgazda a három tényleges lejátszást megfelelőnek találta; a hangsorok önálló félhangsémáját és tananyag–hangadat egyezését a `5d6c276cc56d30ad2df6e5090223a601acd0e4f3` commit A-20 tesztjei automatikusan is ellenőrzik.
 
 **Korlát:** a meghallgatási válasz nem tartalmazta a telepített pontos 40 karakteres SHA-t és eszközazonosítót. Ez nem jelenti automatikusan az aktuális jelölt éles tesztelését, és nem igazolja a ritmus-, kotta- vagy kvíz-részpróbát. A teljes A-20 továbbra is `BLOCKED`, amíg a hiányzó ellenőrzések igazolása és a verzióhoz kötött független szakmai jóváhagyás nem teljes.
+
+## 2026-11-23 – négy ritmus élő meghallgatása, 60 BPM
+
+A projektgazda a Hallásfejlesztés célzott akusztikai részpróbájáról visszajelezte:
+
+> A-20 ritmusgyakorlatok hangzó próbája: a nyújtott ritmus, éles ritmus, szinkópa és nyolcadtriola egyaránt megfelelően szól 60 BPM mellett. Folytasd a szakmai elfogadást.
+
+**Részpróbák: PASS** az alábbi négy lejátszásra:
+- **Nyújtott:** hosszú–rövid (pontozott negyed–nyolcad).
+- **Éles:** rövid–hosszú (nyolcad–pontozott negyed).
+- **Szinkópa:** nyolcad–negyed–nyolcad.
+- **Nyolcadtriola:** három egyenlő triolanyolcad egy negyed időtartama alatt.
+
+A 60 BPM-hez tartozó hanghosszakat és indítási időpontokat önálló számítógépes A-20 ellenőrzés is vizsgálta a `5d6c276cc56d30ad2df6e5090223a601acd0e4f3` commiton, amelynek három technikai kiadási workflow-ja sikeres volt.
+
+**Korlát:** a projektgazdai visszajelzés nem tartalmazta külön a vizsgált éles verzió pontos 40 karakteres SHA-ját; a kotta–hang összevetés és a kvízhelyesség emberi részpróbája nem szerepelt benne. Az A-20 teljes formális státusza ezért továbbra is `BLOCKED`; ezt a négy sikeres részpróbát nem kell megismételtetni.
