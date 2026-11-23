@@ -914,7 +914,7 @@ try {
   const earPage = await earContext.newPage();
   try {
     await earPage.goto(root,{waitUntil:'domcontentloaded'});
-    await earPage.getByRole('button',{name:/05\\. Hallás/}).click();
+    await earPage.getByRole('button',{name:/05\. Hallás/}).click();
     await earPage.getByRole('heading',{name:'Hangközök felismerése'}).waitFor();
     const pressTwice = async (label) => earPage.getByRole('button',{name:label,exact:true})
       .evaluate(button => { button.click(); button.click(); });
@@ -936,7 +936,7 @@ try {
     await earPage.getByRole('heading',{name:'Hangzó felismerés és gyakorlás'}).waitFor();
     const afterInterval = await guestXp();
     await pressTwice('G-dúr');
-    await earPage.getByText(/Helyes! \\+25 XP/).waitFor();
+    await earPage.getByText(/Helyes! \+25 XP/).waitFor();
     await earPage.waitForFunction(previous => {
       try{return (JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0)>previous;}
       catch{return false;}
@@ -948,7 +948,7 @@ try {
     await earPage.getByRole('heading',{name:'Hangzó felismerés és gyakorlás'}).waitFor();
     const afterScale = await guestXp();
     await pressTwice('Nyújtott ritmus'); // Shuffle index 1 at Math.random=0
-    await earPage.getByText(/Helyes! \\+25 XP/).waitFor();
+    await earPage.getByText(/Helyes! \+25 XP/).waitFor();
     await earPage.waitForFunction(previous => {
       try{return (JSON.parse(localStorage.getItem('kodaly_progress') || 'null')?.xp ?? 0)>previous;}
       catch{return false;}
