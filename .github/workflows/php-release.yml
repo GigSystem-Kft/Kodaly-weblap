@@ -177,6 +177,22 @@ jobs:
           unzip -q zeneelmeleti-muhely-php.zip -d "$unpacked"
           # Validate exactly what will be downloaded, not only the staging folder.
           python3 scripts/verify-release-assets.py "$unpacked"
+          # Negative regression: a non-empty, JPEG-named HTML error response
+          # must not pass the rhythm asset check in the extracted ZIP.
+          cp "$unpacked/ritmikai/p001.jpg" "$unpacked/rhythm-original.jpg"
+          python3 - "$unpacked/ritmikai/p001.jpg" <<'PY'
+          from pathlib import Path
+          import sys
+          Path(sys.argv[1]).write_bytes(b"<html>Not a JPEG</html>" * 100)
+          PY
+          if python3 scripts/verify-release-assets.py "$unpacked" > /tmp/zm-invalid-rhythm-check.log 2>&1; then
+            echo "Corrupted rhythm image incorrectly accepted" >&2
+            exit 1
+          fi
+          grep -q "Missing or invalid rhythm JPEG" /tmp/zm-invalid-rhythm-check.log
+          mv "$unpacked/rhythm-original.jpg" "$unpacked/ritmikai/p001.jpg"
+          rm -f /tmp/zm-invalid-rhythm-check.log
+          python3 scripts/verify-release-assets.py "$unpacked"
           # The extracted archive must match the exact workflow checkout SHA,
           # not merely have internally consistent, possibly stale stamps.
           python3 - "$unpacked/release-build.json" "$GITHUB_SHA" <<'PY'
