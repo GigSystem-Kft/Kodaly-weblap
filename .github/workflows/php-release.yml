@@ -52,6 +52,7 @@ jobs:
           python3 -m unittest discover -s scripts -p 'test_a15_media_inventory.py' -v
           python3 -m unittest discover -s scripts -p 'test_a15_rights_linkage.py' -v
           python3 -m unittest discover -s scripts -p 'test_a15_knowledge_inventory.py' -v
+          python3 -m unittest discover -s scripts -p 'test_a15_complete_coverage.py' -v
       - name: TypeScript and unit tests
         run: |
           npm test
