@@ -75,6 +75,19 @@ try {
   await page.getByText('TELJESÍTVE: 5/9 TANANYAGEGYSÉG').waitFor();
   console.log('Guest: all four extended modules navigate and retain completion in nine-unit overview');
 
+  // A-12: complete the four remaining core chapters and verify 9/9
+  // survives a full reload. The separate signed-in server check remains open.
+  for (let index = 1; index < 5; index++) {
+    await page.locator('[role="button"][tabindex="0"]').nth(index).click();
+    await page.getByRole('button',{name:'Fejezet Teljesítése'}).click();
+    await page.getByRole('button',{name:'Vissza a fejezetekhez'}).click();
+    await page.getByText('TELJESÍTVE: '+(index+5)+'/9 TANANYAGEGYSÉG').waitFor();
+  }
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.getByText('TELJESÍTVE: 9/9 TANANYAGEGYSÉG').waitFor();
+  console.log('Guest: all nine learning units remain complete after full reload');
+
+
   await page.getByRole('button',{name:/02\. Szókártyák/}).click();
   await page.getByRole('heading',{name:'Zenei Szakkifejezések Gyakorlása'}).waitFor();
   const flashcard=page.locator('[aria-label^="Szókártya:"]');
