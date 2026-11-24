@@ -46,6 +46,21 @@ class SummarizerTests(TestCase):
         self.assertIn("24-point sign-off", result["manual_checks_still_required"])
         self.assertNotIn("secret-should-never-print", out)
 
+    def test_unexpected_excluded_directory_blocks_without_disclosing_name(self):
+        status, out, _ = invoke(json.dumps(sample(
+            excludedDirs=[".cache", "private-unexpected-directory"])))
+        self.assertEqual(status, 1)
+        result = json.loads(out)
+        self.assertFalse(result["file_gate_passed"])
+        self.assertTrue(result["unexpected_exclusions_present"])
+        self.assertEqual(result["excluded_dirs_count"], 2)
+        self.assertNotIn("private-unexpected-directory", out)
+
+    def test_no_excluded_directory_is_allowed(self):
+        status, out, _ = invoke(json.dumps(sample(excludedDirs=[])))
+        self.assertEqual(status, 0)
+        self.assertFalse(json.loads(out)["unexpected_exclusions_present"])
+
     def test_wrong_sha_blocks(self):
         status, out, _ = invoke(json.dumps(sample(releaseRevision="b" * 40)))
         self.assertEqual(status, 1)
