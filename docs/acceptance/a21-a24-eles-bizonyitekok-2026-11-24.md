@@ -82,3 +82,11 @@ Kimenetben szerepel a telepített SHA, az egyezés, a `ready`, `scanComplete`, `
 **Nem titkos kimenetből is csak józan adatvédelmi ellenőrzés után készüljön elfogadási bizonyíték**; az admin teljes nyers JSON-ját nem kell és nem szabad továbbítani. Az eszköz nem helyettesíti az élő adminpróbát vagy a független emberi ellenőrzést.
 
 **További biztonsági ellenőrzés (2026-11-24):** az összesítő kizárólag a dokumentált gyökérszintű `.cache` kihagyást ismeri el. Ha az adminválasz bármely más kihagyott könyvtárat is jelez, `unexpected_exclusions_present=true` és `file_gate_passed=false`, akkor is, ha a szerver `ready=true` értéket közöl. Az ismeretlen könyvtár nevét a kimenet nem tartalmazza. Az elfogadott `.cache` kihagyás továbbra is külön HTTP 403-as és üzemeltetői vizsgálatot igényel; ez nem teljes éles kiadási PASS.
+
+## 2026-11-24 – valós A-21 e-mailes próba: projektgazdai visszajelzés
+
+A projektgazda az A-21 **valós Rackhost e-mail-kézbesítés és jelszó-visszaállítás célzott ellenőrzésére** adott kérés után kifejezetten visszajelzett: **„megcsináltam a tesztet, működik”**. Ezt **sikeres tulajdonosi funkcionális visszajelzésként** rögzítjük, és ugyanazt a próbát nem kérjük újra csak a jegyzőkönyvezés miatt.
+
+**Igazolt közlés:** a projektgazda az általa elvégzett A-21 e-mailes tesztet működőnek minősítette. A rövid közlésből nem állapítható meg külön-külön a meghívó és a resetlevél beérkezési időpontja, a tesztelt teljes telepített SHA, az SMTP-kiszolgáló naplóazonosítója vagy a 401/403-as éles HTTP-válasz. Ezeket nem találjuk ki. A meghívó, megerősítő token, jelszó-visszaállítás, jogosultsághatárok és tesztfióktörlés a **GitHub PHP/MySQL automatikus integrációs tesztjeiben** is sikeres; a CI azonban `local-test` levéltransportot használ, nem Rackhostot.
+
+**A-21 eredmény:** projektgazdai e-mailes próba **PASS (visszajelzett, a közlés szerinti terjedelemben)**; a teljes formális A-21 napló `NOT_RUN` marad, amíg a pontos kiadási SHA-hoz, megfelelő biztonságos bizonyítékazonosítóhoz és a ténylegesen tesztelt részfunkciókhoz nem lehet egyértelműen hozzárendelni. A felhasználótól e-mail-címet, hozzáférési tokent, képernyőképes személyes adatot vagy jelszót nem kérünk. A jelenlegi éles weboldalt ez a dokumentálás nem módosítja.
