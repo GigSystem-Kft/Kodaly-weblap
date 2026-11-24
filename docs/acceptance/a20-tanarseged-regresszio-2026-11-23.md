@@ -124,3 +124,11 @@ A projektgazda az A-20 célzott tesztfelhívására a következő visszajelzést
 **Szakmai részpróbák:** mindegyik felsorolt tulajdonosi ellenőrzés sikeresnek jelentve. **Formális A-20 státusz: továbbra is BLOCKED**, mert az önálló szakmai lektori jóváhagyás, a konkrét kottapélda és kvíztételek azonosítói, valamint a vizsgálat és a végső kiadási jelölt teljes 40 karakteres SHA-jának összerendelése nem igazolt.
 
 **Következő teendő:** nem újabb ismételt hallás- vagy kvízpróba, hanem a meglévő bizonyítékok verzióhoz és tételazonosítókhoz kötése, majd a szakmai jóváhagyás dokumentálása. A többi A-01–A-24 kiadási követelmény ettől önállóan érvényben marad.
+
+## 2026-11-24 – kifejezett szakmai projektgazdai jóváhagyás
+
+A projektgazda a fenti, korábban ténylegesen elvégzett hangköz-, hangsor-, ritmus-, kotta–hang-, kvíz- és Tanársegéd-részpróbák tételes összefoglalóját áttekintve a kérdésre: **„A felsorolt, már sikeresen ellenőrzött zeneelméleti funkciókat szakmai projektgazdaként jóváhagyod az 1.0-s kiadáshoz, a dokumentált mintavétel terjedelmében?”** kifejezetten **„jóváhagyom”** választ adott.
+
+**Döntés: PROJEKTGAZDAI SZAKMAI JÓVÁHAGYÁS MEGADVA – a dokumentált részpróbák és mintavétel körére.** A már elfogadott zenei próbák indokolatlan megismétlése nem szükséges. Ez nem jelenti a teljes kvízkérdésbank, az összes kottapélda és minden Tanársegéd-válasz tételes, független lektori átvizsgálását, sem azt, hogy a korábbi éles próbák automatikusan az új, `013b911b6e2c4e842960e0fffede188309db4473` kiadásjelölten történtek.
+
+**Formális napló:** az A-20 sor továbbra is `BLOCKED`, amíg a kiadásjelöltre vonatkozó független lektori/tételazonosító- és pontos verzióbizonyíték nem áll rendelkezésre. Ezt a projektgazdai jóváhagyást nem cseréljük össze azzal a külön bizonyítékkal. **Következő munkapont: A-21 fiókok, jogosultságok és valódi SMTP-kézbesítés.**
