@@ -8,16 +8,36 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 from pathlib import Path
+
+# Track ALL shipped asset formats, not just the 379 known textbook/rhythm/note
+# JPG files. External embeds and text/AI source rights are audited separately.
+MEDIA_SUFFIXES = frozenset({
+    ".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".svg", ".ico",
+    ".pdf", ".mp3", ".wav", ".ogg", ".opus", ".flac", ".m4a",
+    ".mp4", ".webm", ".mid", ".midi", ".mxl", ".musicxml",
+    ".woff", ".woff2", ".ttf", ".otf", ".eot",
+})
 
 
 def inventory(root: Path):
+    manifest = json.loads((root / "release-build.json").read_text(encoding="utf-8"))
+    sha = manifest.get("sha") if isinstance(manifest, dict) else None
+    if not isinstance(sha, str) or re.fullmatch(r"[0-9a-f]{40}", sha) is None:
+        raise ValueError("Missing or invalid release SHA")
     rows = []
+    seen = set()
     def append(category, file):
         if not file.is_file() or file.is_symlink():
             raise ValueError(f"Missing or unsafe media file: {file}")
+        relative = file.relative_to(root).as_posix()
+        if relative in seen:
+            raise ValueError(f"Duplicate media path: {relative}")
+        seen.add(relative)
         rows.append({
-            "asset_path": file.relative_to(root).as_posix(),
+            "asset_path": relative,
+            "release_sha": sha,
             "category": category,
             "sha256": hashlib.sha256(file.read_bytes()).hexdigest(),
             "size_bytes": file.stat().st_size,
@@ -45,9 +65,14 @@ def inventory(root: Path):
     for file in notes:
         append("note-illustration", file)
 
-    paths = [r["asset_path"] for r in rows]
-    if len(paths) != len(set(paths)):
-        raise ValueError("Duplicate media path")
+    # A-15: catch the other local illustrations, logos, diagrams, externalized
+    # fonts, notation/audio and documents actually included in this release.
+    # They must not silently fall outside the rights review.
+    for file in sorted(root.rglob("*")):
+        if file.suffix.lower() in MEDIA_SUFFIXES:
+            relative = file.relative_to(root).as_posix()
+            if relative not in seen:
+                append("other-shipped-media", file)
     return sorted(rows, key=lambda row: row["asset_path"])
 
 
@@ -62,8 +87,8 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=[
-            "asset_path", "category", "sha256", "size_bytes",
-            "rights_status", "evidence_ref"])
+            "asset_path", "release_sha", "category", "sha256",
+            "size_bytes", "rights_status", "evidence_ref"])
         writer.writeheader()
         writer.writerows(rows)
     print(f"A-15 inventory: {len(rows)} media paths and SHA-256 hashes; all rights UNVERIFIED")
