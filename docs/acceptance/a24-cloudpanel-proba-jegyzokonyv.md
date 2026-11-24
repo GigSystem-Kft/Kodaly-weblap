@@ -84,3 +84,15 @@ A projektgazda a `https://zeneelmelet.digitaliskottatar.hu/` weboldal **Felhaszn
 **Következtetés kizárólag a kép alapján:** a régebbi, éles `644914afdfae` verzióban a nyilvános fájlvizsgálat sikeresnek látszik, és a buildazonosítót közösnek jelzi; a `.cache` kizárást külön figyelmeztetésként mutatja. Az adminfelület zöld mondatából **nem következik** automatikusan a `ready=true` nyers JSON-mező vagy a tényleges e-mail-kézbesítés igazolása. Az új fejlesztési kiadásjelölt **nem került éles telepítésre** ebben a munkaszakaszban; nem állítjuk, hogy `1911cd158c754df76ce3c6e6ec253b8e8f12ca63` éles tesztje megtörtént.
 
 **Kiadási döntés:** régi éles verzió adminfelületi **részpróbája megfigyelve**; új kiadásjelölt A-24 formális státusza továbbra is **BLOCKED**. Nem kell újra kérni ugyanezt a képernyőképet, és nincs indok az éles szerver, a `.cache` vagy a felhasználói adatok változtatására.
+
+## 2026-11-24 – szerveren kívüli mentés projektgazdai megerősítése
+
+A projektgazda a kifejezetten feltett kérdésre: **„A weboldal és az adatbázis korábban elkészített biztonsági mentéséből van szerveren kívül is megőrzött példány?”** ezt válaszolta: **„Igen, van szerveren kívüli biztonsági mentésem. Folytasd a kiadási ellenőrzést.”**
+
+**Eredmény:** a weboldal- és adatbázis-mentés **léte**, a korábban elvégzett **próbavisszaállítás**, valamint a **szerveren kívüli példány megléte projektgazdai közlés alapján visszaigazolt**. Ezek újabb megismétlése a puszta dokumentáció kedvéért nem szükséges; mentési helyet, jogosultságot, tartalmat vagy személyes adatot nem rögzítünk nyilvánosan.
+
+**Amit ez nem igazol önmagában:** a legutolsó mentés keletkezési időpontja, teljes állomány-/adatbázis-lefedettsége, a külön tárolt PHP-privát konfiguráció és AI-forrásállományok tényleges leltára, a próbavisszaállítás célkörnyezete és adatintegritási kontrollja, valamint az új `b9aa5f3c5cdf07d89bb15781d2f3f35ef27ec5ad` build feltöltési hash-egyezése. Ezeket nem találjuk ki, és a fenti tulajdonosi tényeket nem változtatjuk teljes A-24 `PASS`-ra.
+
+**Kiadási műszaki CI:** a `b9aa5f3c5cdf07d89bb15781d2f3f35ef27ec5ad` commit Chromium `45394378012`, PHP ZIP `45394377971` és Linux `45394377868` workflow-ja sikeres. A PHP ZIP-folyamatban az archívum megépítése, kibontási/fájlútvonal-/SHA-ellenőrzése és a külön SHA-256 checksum publikálása sikeres. Ez **GitHub CI-bizonyíték**, nem új éles telepítés.
+
+**Következő A-24 zárási kapu:** a végső csomag pontos Git SHA-ja és tényleges telepítési ellenőrzése (`scanComplete`, `buildConsistent`, `ready`) csak a kiadási felhatalmazás és a teljes elfogadási kapu lezárása után. A projektgazda kérésére a régi `teszt.zeneelmelet.digitaliskottatar.hu` tesztaldomain újbóli ellenőrzése **nem része a teendőknek**. Formális A-24: **BLOCKED**.
