@@ -66,3 +66,17 @@ Hivatkozott, tényleges jegyzőkönyvek:
 - `docs/acceptance/a24-cache-http-proba-2026-11-23.md`
 - `docs/acceptance/a24-cloudpanel-proba-jegyzokonyv.md`
 - `docs/cloudpanel-telepites.md`
+
+## 2026-11-24 – hitelesített admin válasz biztonságos helyi összefoglalása
+
+A `scripts/summarize-deployment-check.py` offline segéd csak **meglévő**, admin jogosultsággal, biztonságosan megszerzett `auth/deployment-check` JSON-választ fogad, és a kiadáshoz szükséges mezők szűkített összesítését adja vissza. **Nem** kér be felhasználónevet, jelszót vagy sessiontokent; nem csatlakozik hálózathoz; nem jeleníti meg a válaszban lévő állományneveket vagy további mezőket. A nyers admin JSON-t és böngészőhitelesítési adatot nem szabad nyilvános GitHubra tölteni.
+
+A fájlt csak biztonságos helyi mappából olvasva, a **ténylegesen telepített build** teljes SHA-jával lehet futtatni:
+
+```bash
+python3 scripts/summarize-deployment-check.py --expected-sha TELJES_40_KARAKTERES_SHA < admin-deployment-check.json
+```
+
+Kimenetben szerepel a telepített SHA, az egyezés, a `ready`, `scanComplete`, `buildConsistent`, `mailConfigured` logikai státusz, továbbá a hiányzó fájlok és kizárt könyvtárak **darabszáma** (nem a neve), és hogy volt-e scanhiba. A visszatérési kód `0` csak a fájlkapu igazolására utal; a többi kézi kapu mindig nyitott marad. Hibás JSON, hiányzó kötelező mező vagy SHA-eltérés esetén hibával tér vissza. Az összesítőt a PHP telepítő CI külön teszteli.
+
+**Nem titkos kimenetből is csak józan adatvédelmi ellenőrzés után készüljön elfogadási bizonyíték**; az admin teljes nyers JSON-ját nem kell és nem szabad továbbítani. Az eszköz nem helyettesíti az élő adminpróbát vagy a független emberi ellenőrzést.
