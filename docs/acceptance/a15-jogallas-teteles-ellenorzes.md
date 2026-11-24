@@ -64,3 +64,31 @@ python3 scripts/check-a15-rights-linkage.py \
 ```
 
 A kimenet kizárólag darabszámokat jelez: elfogadott, hiányzó, elavult, függő és hibás hivatkozások. Az eszköz nem olvassa ki és nem teszi közzé az engedélylevelek szövegét, és **a médiakapcsolatok 100%-os lefedettsége sem A-15 PASS**: a tankönyv- és szótárszövegek, tanári források, külső beágyazások, AI-indexelés és attribúció külön jogi/szakmai ellenőrzést igényelnek. A privát ellenőrzési CSV-t soha nem szabad a nyilvános webgyökérbe vagy GitHubra feltölteni.
+
+## A-15 közös média- és Tanársegéd-forráslefedettségi próba
+
+A GitHub `zeneelmeleti-muhely-php` artifactja két külön, csak technikai tényeket tartalmazó leltárt ad:
+`a15-media-inventory.csv` (helyi fájlok) és `a15-knowledge-source-inventory.csv` (a telepített PHP Tanársegédben becsomagolt forráscsoportok). Mindkettő a **pontos 40 karakteres kiadási SHA-hoz** kötött.
+
+Az eddig meglévő, privát engedélynyilvántartásokat nem kell a nyilvános GitHubba feltölteni. Az új szöveges forráscsoportokhoz üres, helyi sablon készíthető:
+
+```bash
+python3 scripts/check-a15-complete-coverage.py \
+  --source-inventory a15-knowledge-source-inventory.csv \
+  --source-template "$HOME/privat-irattar/a15-szoveg-jovahagyas.csv"
+```
+
+A jogosult ellenőrző **a már meglévő jogi igazolásokra** hivatkozva töltheti ki az `APPROVED`, `reviewer_role`, `reviewed_on` és `evidence_ref` mezőket. Amíg a döntés `PENDING`, vagy az igazolt szöveg tartalmi SHA-256 lenyomata eltér, a kapcsolás nem fogadható el. A sablon nem engedélylevél és nem automatikus jogi tanúsítás.
+
+A médiafájlok jóváhagyási táblájával **együtt**, helyi gépen futtatható az összesített lefedettség-ellenőrző:
+
+```bash
+python3 scripts/check-a15-complete-coverage.py \
+  --media-inventory a15-media-inventory.csv \
+  --media-review "$HOME/privat-irattar/a15-review.csv" \
+  --source-inventory a15-knowledge-source-inventory.csv \
+  --source-review "$HOME/privat-irattar/a15-szoveg-jovahagyas.csv" \
+  --expected-sha TELJES_40_KARAKTERES_GIT_SHA
+```
+
+Ez **leáll**, ha bármelyik leltár hiányos, egy korábbi buildből származik, vagy az engedélyhivatkozás nem azonos tartalomra mutat. Csak az ellenőrzések darabszáma és az eredmény jelenik meg; bizalmas engedélyszöveg vagy személyes adat nem. A 100%-os technikai lefedettség **nem helyettesíti** az engedélyek valódi terjedelmének, attribúciójának, külső beágyazásoknak és az AI-indexelési jogosultságnak emberi ellenőrzését. A-15 emiatt továbbra is `BLOCKED`, amíg a teljes valós jóváhagyás nincs igazolva.
