@@ -79,7 +79,9 @@ curl -fsS -b "$student_jar" "${base}progress" > /tmp/zm-role-student-before.json
 php -r '$j=json_decode(file_get_contents("/tmp/zm-role-student-before.json"),true); if(!is_array($j) || !array_key_exists("progress",$j) || $j["progress"]!==null) exit(1);'
 student_revision="$(php -r '$j=json_decode(file_get_contents("/tmp/zm-role-student-before.json"),true);echo $j["revision"];')"
 test "${#student_revision}" = 64
-student_progress='{"completedChapters":["szolfézs"],"completedSubchapters":[],"quizScores":{"ritmus":77},"flashcardsMastered":[],"matchingCompleted":[],"xp":10,"streak":0,"lastActiveDate":"","activityDays":[]}'
+# A-12: a separate authenticated student must retain all nine learning units,
+# including the four extended modules, isolated from the administrator.
+student_progress='{"completedChapters":["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"],"completedSubchapters":[],"quizScores":{"ritmus":77},"flashcardsMastered":[],"matchingCompleted":[],"xp":10,"streak":0,"lastActiveDate":"","activityDays":[]}'
 student_save="$(curl -sS -b "$student_jar" -o /tmp/zm-role-student-save.json -w '%{http_code}' \
  -X PUT "${base}progress" -H 'Origin: http://localhost:8000' \
  -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
@@ -92,7 +94,8 @@ $a=json_decode(file_get_contents("/tmp/zm-role-admin-before.json"),true);
 $b=json_decode(file_get_contents("/tmp/zm-role-admin-after.json"),true);
 $c=json_decode(file_get_contents("/tmp/zm-role-student-after.json"),true);
 if(($a["revision"]??null)!==($b["revision"]??null)) exit(1);
-if(($c["progress"]["completedChapters"][0]??null)!=="szolfézs") exit(1);
+$expected=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
+if(($c["progress"]["completedChapters"]??null)!==$expected) exit(1);
 if(($c["progress"]["xp"]??null)!==10) exit(1);
 '
 
@@ -142,7 +145,8 @@ $j=json_decode(file_get_contents("/tmp/zm-role-export.json"),true);
 if(($j["format"]??null)!=="zeneelmeleti-muhely-personal-data-v1")exit(1);
 if(($j["profile"]["email"]??null)!=="role-student@example.org")exit(1);
 if(($j["profile"]["id"]??null)!==$argv[1])exit(1);
-if(($j["progress"]["completedChapters"][0]??null)!=="szolfézs")exit(1);
+$expected=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
+if(($j["progress"]["completedChapters"]??null)!==$expected)exit(1);
 if(($j["progress"]["xp"]??null)!==10)exit(1);
 if(str_contains(json_encode($j),"pilot@example.org"))exit(1);
 foreach(["password_hash","token_hash","currentPassword","session"] as $secret)
