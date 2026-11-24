@@ -1,6 +1,6 @@
 # A-24 – CloudPanel elfogadási próba jegyzőkönyve
 
-**Állapot: NEM FUTTATOTT. Ez egy kitöltendő sablon, nem szerverellenőrzési jelentés.**
+**Állapot: RÉSZBEN TULAJDONOS ÁLTAL VISSZAIGAZOLT, TELJES A-24: BLOCKED.** Ez a próbalap nem hitelesített éles szerverellenőrzési jelentés; a korábbi 2026-11-23-i tulajdonosi mentési és próbavisszaállítási eredményeket külön, tényleges bizonyítékként kezeli, a hiányzó metaadatokat nem találja ki.
 
 A vizsgált rendszer: `https://zeneelmelet.digitaliskottatar.hu` (PHP + MySQL). A jelen dokumentumot csak az üzemeltető töltheti ki valós, biztonságosan elvégzett próbák alapján. Bizalmas adatok és mentések nem kerülhetnek a GitHubra.
 
@@ -55,14 +55,14 @@ A vizsgált rendszer: `https://zeneelmelet.digitaliskottatar.hu` (PHP + MySQL). 
 
 | Próba | Állapot | Dátum | Ellenőrző szerepe | Bizonyítékazonosító |
 |---|---|---|---|---|
-| Teljes mentés és offsite | NOT RUN | – | – | – |
-| Elkülönített helyreállítás | NOT RUN | – | – | – |
+| Teljes mentés | TULAJDONOSI VISSZAIGAZOLÁS – részpróba; offsite nem bizonyított | 2026-11-23 | projektgazda | docs/acceptance/a24-cache-http-proba-2026-11-23.md |
+| Próbavisszaállítás | TULAJDONOSI VISSZAIGAZOLÁS – részpróba; elkülönített tesztkörnyezet és konzisztencia metaadata hiányzik | 2026-11-23 | projektgazda | docs/acceptance/a24-cache-http-proba-2026-11-23.md |
 | ZIP/hash és verzióazonosság | NOT RUN | – | – | – |
 | Nyilvános PHP/HTML/JS/CSS preflight | NOT RUN | – | – | – |
 | Auth admin deployment-check | NOT RUN | – | – | – |
 | SMTP és szerepkörök | NOT RUN | – | – | – |
-| Két valódi eszköz, adatmegőrzés | NOT RUN | – | – | – |
+| Két valódi eszköz, adatmegőrzés | TULAJDONOSI PASS részpróba – két külön kedvenc megmaradt; HTTP 409 és SHA hiányzik | 2026-11-23 | projektgazda | docs/acceptance/a06-keteszkoz-konfliktus-proba-2026-11-23.md |
 
-**PASS csak** ténylegesen elvégzett, dátummal és biztonságos bizonyítékazonosítóval ellátott vizsgálat után adható. A #3 issue A-24 jelölőnégyzete addig nem változhat. Bármilyen hibás próbához külön hibajegy és megismételt ellenőrzés kell.
+**A részpróba visszaigazolása nem formális PASS.** A teljes A-24-hez továbbra is a végső SHA, az admin `scanComplete/buildConsistent/ready` értékei, a ZIP-hash, a helyreállítási metaadat és a többi kiadási kapu ellenőrzése szükséges. **PASS csak** ténylegesen elvégzett, dátummal és biztonságos bizonyítékazonosítóval ellátott teljes vizsgálat után adható. A #3 issue A-24 jelölőnégyzete addig nem változhat. Bármilyen hibás próbához külön hibajegy és megismételt ellenőrzés kell.
 
 A végleges kiadás további feltétele: A-15 jogok, A-20 szakmai lektorálás, A-23 hozzáférhetőség és minden további A-01–A-24 pont igazolása.
