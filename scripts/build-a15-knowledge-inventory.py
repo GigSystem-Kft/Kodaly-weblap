@@ -52,7 +52,7 @@ def inventory(root: Path):
         # A generated bank may legitimately contain a blank string; retain it
         # in the content hash so that the audit inventories the *exact* PHP
         # payload without inventing text or silently filtering records.
-        groups.setdefault(source, []).append([label, text])
+        groups.setdefault(source, []).append(entry)
     rows = []
     for source, items in groups.items():
         canonical = json.dumps(items, ensure_ascii=False, separators=(",", ":"))
