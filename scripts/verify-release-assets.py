@@ -176,8 +176,8 @@ for book in range(1, 5):
 
 for number in range(1, 14):
     image = root / "ritmikai" / f"p{number:03d}.jpg"
-    if not image.is_file() or image.stat().st_size == 0:
-        errors.append(f"Missing or empty rhythm image: {image}")
+    if not valid_jpeg(image):
+        errors.append(f"Missing or invalid rhythm JPEG: {image}")
     else:
         counts["rhythm"] += 1
 
