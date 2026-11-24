@@ -9,7 +9,7 @@ A-07,NOT_RUN,,,,,
 A-08,NOT_RUN,,,,,
 A-09,NOT_RUN,,,,,
 A-10,NOT_RUN,,,,,
-A-11,NOT_RUN,projektgazda,2026-11-24,,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Owner approved practice-only XP on 2026-11-24; remaining final SHA and audit validation needed
+A-11,PASS,projektgazda,2026-11-24,fa9ed132d30e0483e2c1f7d2dd2b4e859b60f523,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Pedagogical 1.0 decision explicitly approved; daily practice XP cap validated by passing build tests; no certified scoring claimed
 A-12,NOT_RUN,,,,,
 A-13,NOT_RUN,,,,,
 A-14,NOT_RUN,,,,,
@@ -20,6 +20,6 @@ A-18,PASS,technikai-CI,2026-11-24,a25bd93e804b3b2c347520cb2fe5876c1a5bdc7d,https
 A-19,NOT_RUN,,,,,
 A-20,BLOCKED,projektgazda,2026-11-24,,docs/acceptance/a20-tanarseged-regresszio-2026-11-23.md,Owner explicitly approved documented music and Tutor test samples for 1.0 on 2026-11-24; independent full-bank review and candidate SHA linkage remain unverified
 A-21,NOT_RUN,projektgazda,2026-11-24,,docs/acceptance/a21-a24-eles-bizonyitekok-2026-11-24.md,Owner confirms A21 real email test works and earlier roles 5of5; separate invitation and reset evidence details and exact candidate SHA not established
-A-22,NOT_RUN,projektgazda,2026-11-24,,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Owner approved 3+3 quiz trend as practice feedback not certified measurement; final SHA and complete acceptance evidence pending
+A-22,PASS,projektgazda,2026-11-24,fa9ed132d30e0483e2c1f7d2dd2b4e859b60f523,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Pedagogical evaluation rule explicitly approved; practice quiz and 3plus3 trend already covered by technical tests; no academic grade claimed
 A-23,NOT_RUN,projektgazda,2026-11-23,,docs/acceptance/a23-zoom-200-tulajdonosi-proba-2026-11-23.md,200 percent zoom and contrast-focus visibility user reported PASS for named screens; full candidate SHA and any additional theme review not yet evidenced
 A-24,BLOCKED,projektgazda,2026-11-24,644914afdfae460765f3b82671bb10294426b73d,docs/acceptance/a24-cloudpanel-proba-jegyzokonyv.md,Owner confirms website and database backup plus offsite copy and prior restore trial; CI ZIP checksum verified for new candidate but deployed SHA and admin readiness still unverified
