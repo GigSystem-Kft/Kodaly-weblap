@@ -42,3 +42,25 @@ A-15 akkor lehet PASS, ha az 1.0 tényleges kész csomagjának médiája és ind
 A projektgazda a beszélgetésben külön megerősítette: **„A szerzői jogok rendezve azt ugorhatjuk is”**. Ennek megfelelően a szerzői jogi rendezést **projektgazdai visszajelzés szerint befejezettnek** tekintjük, és nem kérünk újabb általános jogi felülvizsgálatot vagy a korábbi vizsgálatok indokolatlan ismétlését.
 
 Ez a visszajelzés ugyanakkor önmagában nem szolgáltatja a jelen munkalap által igényelt fájlonkénti, licencekre/engedélyekre mutató bizonyítékazonosítókat; az A-15 formális `PASS`-ra váltásához azokat a meglévő, privát jognyilvántartásból kell kapcsolni az adott kiadáshoz. **Egyetlen jogi igazolást sem szabad kitalálni; a projektgazda jogrendezési döntését tiszteletben tartjuk, és a következő munkaszakasz A-20 szakmai elfogadás.**
+
+## A tényleges PHP-kiadás médialeltárának biztonságos bizonyítékkapcsolása (2026-11-24)
+
+A GitHub PHP ZIP munkafolyamata a `zeneelmeleti-muhely-php` artifactba a ZIP és a SHA-256 ellenőrzőösszeg mellé `a15-media-inventory.csv` állományt készít. A fájl minden **helyi médiaállományhoz** tartalmaz útvonalat, tartalmi SHA-256 értéket és teljes kiadási Git SHA-t. Az alapértelmezett `UNVERIFIED` **nem** jelenti a már egyeztetett engedélyek visszavonását, csupán azt, hogy a fájlhoz a bizalmas nyilvántartás hivatkozása még nincs kapcsolva.
+
+A meglévő engedélyadatokat nem kell újra beszerezni: kizárólag az adott állományhoz kell kapcsolni a privát nyilvántartásban szereplő ellenőrzési hivatkozást és a jogosult ellenőrző döntését. A CSV-ben a `decision=APPROVED` megjelölést csak az erre jogosult lektor rögzítheti, érdemi engedély- és felhasználásiterjedelem-ellenőrzés után. Hiányzó, megváltozott, ismételt vagy nem jóváhagyott tétel esetén az ellenőrző blokkol.
+
+A már előállított GitHub artifact letöltése **nem** jelent végleges kiadási engedélyt. Biztonságos helyi mappában:
+
+```bash
+python3 scripts/check-a15-rights-linkage.py \
+  --inventory a15-media-inventory.csv \
+  --template /privat-irattar/a15-review.csv
+
+# A már meglévő tételes jogi nyilvántartással való párosítás és lektori
+# ellenőrzés után, kizárólag a helyi, privát CSV ellenében:
+python3 scripts/check-a15-rights-linkage.py \
+  --inventory a15-media-inventory.csv \
+  --review /privat-irattar/a15-review.csv
+```
+
+A kimenet kizárólag darabszámokat jelez: elfogadott, hiányzó, elavult, függő és hibás hivatkozások. Az eszköz nem olvassa ki és nem teszi közzé az engedélylevelek szövegét, és **a médiakapcsolatok 100%-os lefedettsége sem A-15 PASS**: a tankönyv- és szótárszövegek, tanári források, külső beágyazások, AI-indexelés és attribúció külön jogi/szakmai ellenőrzést igényelnek. A privát ellenőrzési CSV-t soha nem szabad a nyilvános webgyökérbe vagy GitHubra feltölteni.
