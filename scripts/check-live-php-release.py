@@ -123,6 +123,35 @@ def verify_html_assets(opener, origin, html, fingerprints, failures):
             failures.append(f"Frontend assets: request failed for {path} ({type(error).__name__})")
 
 
+
+def verify_cache_get_denied(opener, origin, failures):
+    """Check the actual GET method on exact public cache paths.
+
+    A previous manual HEAD 403 alone does not demonstrate that GET is denied.
+    HTTPError is expected when nginx explicitly returns 403. Never request
+    directory listings recursively or reveal response bodies.
+    """
+    for path in ("/.cache/", "/.cache/ellenorzes-nemletezo.txt"):
+        request = Request(origin + path, method="GET", headers={
+            "Accept": "*/*", "Cache-Control": "no-cache"})
+        try:
+            with opener.open(request, timeout=12) as response:
+                failures.append(
+                    "Cache GET: expected HTTP 403 for " + path +
+                    ", got HTTP " + str(response.status))
+        except HTTPError as error:
+            if error.code != 403:
+                failures.append(
+                    "Cache GET: expected HTTP 403 for " + path +
+                    ", got HTTP " + str(error.code))
+            error.close()
+        except (URLError, TimeoutError, ValueError, OSError) as error:
+            failures.append(
+                "Cache GET: request failed for " + path +
+                " (" + type(error).__name__ + ")")
+
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--origin", default="https://zeneelmelet.digitaliskottatar.hu")
@@ -138,6 +167,7 @@ def main():
         parser.error("--expected-sha must be a lowercase 40-character Git SHA")
     opener = build_opener(HTTPSHandler(context=ssl.create_default_context()), NoRedirect())
     failures = []
+    verify_cache_get_denied(opener, origin, failures)
     health = read_json(opener, origin + "/api/index.php?route=health", "PHP health", failures)
     if health is not None and (health.get("status") != "ok"
                                or health.get("service") != "zeneelmeleti-muhely-php"):
