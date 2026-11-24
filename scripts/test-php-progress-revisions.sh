@@ -118,7 +118,7 @@ $p=json_decode($argv[1],true,512,JSON_THROW_ON_ERROR);
 $p["completedChapters"]=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
 echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
 ' "$updated")"
-test "$(put_progress "{\\"progress\\":$all_nine,\\"revision\\":\\"$nine_base\\"}")" = 200
+test "$(put_progress "{\"progress\":$all_nine,\"revision\":\"$nine_base\"}")" = 200
 nine_saved="$(revision)"
 get_progress
 test "$(revision)" = "$nine_saved"
