@@ -15,7 +15,7 @@ A-13,NOT_RUN,,,,,
 A-14,NOT_RUN,,,,,
 A-15,BLOCKED,,,,,Owner asserts all materials self-made or freely usable; item-level rights verification pending
 A-16,NOT_RUN,projektgazda,2026-11-24,,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Owner approved synchronized progress and XP as non-official activity data; final SHA and verified live data safety evidence pending
-A-17,NOT_RUN,projektgazda,2026-11-24,,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Owner approved quiz percentage and errors as self-check only; final SHA and complete acceptance evidence pending
+A-17,PASS,projektgazda,2026-11-24,c861227a149cad7b430db33ceee2cf9c2c554adf,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Practice-only quiz score errors and 3plus3 trend explicitly owner-approved; 15-question history and double-click browser regressions confirmed by Chromium CI 45421880109
 A-18,PASS,technikai-CI,2026-11-24,a25bd93e804b3b2c347520cb2fe5876c1a5bdc7d,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45416716856,Build scope only: 302 textbook pages 13 rhythm images 64 notes images; PHP JS CSS ZIP extraction content checks and checksum passed; production upload remains A-24
 A-19,NOT_RUN,,,,,
 A-20,BLOCKED,projektgazda,2026-11-24,,docs/acceptance/a20-tanarseged-regresszio-2026-11-23.md,Owner explicitly approved documented music and Tutor test samples for 1.0 on 2026-11-24; independent full-bank review and candidate SHA linkage remain unverified
