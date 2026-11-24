@@ -97,6 +97,7 @@ if(($a["revision"]??null)!==($b["revision"]??null)) exit(1);
 $expected=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
 if(($c["progress"]["completedChapters"]??null)!==$expected) exit(1);
 if(($c["progress"]["xp"]??null)!==10) exit(1);
+if(($c["progress"]["flashcardsMastered"]??null)!==["f1"] || ($c["progress"]["matchingCompleted"]??null)!==["m1"])exit(1);
 '
 
 # Only an administrator may promote a student to teacher or reverse it.
@@ -148,6 +149,7 @@ if(($j["profile"]["id"]??null)!==$argv[1])exit(1);
 $expected=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
 if(($j["progress"]["completedChapters"]??null)!==$expected)exit(1);
 if(($j["progress"]["xp"]??null)!==10)exit(1);
+if(($j["progress"]["flashcardsMastered"]??null)!==["f1"] || ($j["progress"]["matchingCompleted"]??null)!==["m1"])exit(1);
 if(str_contains(json_encode($j),"pilot@example.org"))exit(1);
 foreach(["password_hash","token_hash","currentPassword","session"] as $secret)
  if(array_key_exists($secret,$j["profile"]))exit(1);
