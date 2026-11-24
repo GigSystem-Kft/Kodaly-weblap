@@ -21,7 +21,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
   const metrics = [
     { title:'Tanulmányozottnak jelölt egységek', value:`${stats.completedModules} / ${stats.curriculumModules}`, foot:'5 alapfejezet + 4 bővített témakör · saját jelölés', Icon:BookOpen,  },
     { title:'Teljesített alapfejezetek', value:`${stats.completedCoreChapters} / ${stats.coreChapters}`, foot:`${stats.corePercentage}% · csak a követett alapfejezetek`, Icon:CheckCircle2,  },
-    { title:'Kvízek átlagos legjobb eredménye', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy,  },
+    { title:'Gyakorlókvízek legjobb eredményeinek átlaga', value:stats.averageBestQuizScore===null?'—':`${stats.averageBestQuizScore}%`, foot:stats.attemptedQuizCategories ? `${stats.attemptedQuizCategories} témakörben van mentett eredmény`:'Még nincs megoldott kvíz', Icon:Trophy,  },
     { title:'Gyakorlási XP', value:`${progress.xp} XP`, foot:`${trueStreak} napos sorozat · mai hallásfejlesztés: ${earXpToday}/100 XP · nem vizsgaértékelés`, Icon:Sparkles,  },
   ];
 
@@ -34,7 +34,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
         <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Tanulási profil és eredmények</h2>
         <p className="text-slate-600 text-sm max-w-2xl mx-auto">
           Az aktuális, kilenc tananyagegységes Zeneelméleti Műhelyhez igazított eredmények.
-          A korábbi teljesítéseid és XP-pontjaid változatlanul megmaradnak.
+          A korábbi teljesítéseid és XP-pontjaid változatlanul megmaradnak. Ezek önellenőrzési és gyakorlási adatok, nem hivatalos osztályzatok vagy vizsgaeredmények.
         </p>
       </div>
 
@@ -156,7 +156,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
                     <p className="text-xs text-slate-300">{chapter.subchapters.length} alfejezet · {studied} külön megjelölve</p>
                   </div>
                 </div>
-                <span className={`rounded-full border px-3 py-1 text-xs font-medium ${done?'border-emerald-600/40 bg-emerald-900/40 text-emerald-200':'border-slate-600 text-slate-200'}`}>{done?'Teljesítve':score!==undefined?`Kvíz legjobb: ${score}%`:'Még nincs teljesítve'}</span>
+                <span className={`rounded-full border px-3 py-1 text-xs font-medium ${done?'border-emerald-600/40 bg-emerald-900/40 text-emerald-200':'border-slate-600 text-slate-200'}`}>{done?'Teljesítve':score!==undefined?`Gyakorlókvíz legjobb: ${score}%`:'Még nincs teljesítve'}</span>
               </div>
             </div>;
           })}
@@ -175,7 +175,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ progress, 
                 <div className="flex-1"><span className="block text-xs font-bold text-indigo-700 mb-1">0{module.number}. TANANYAG</span><h4 className="font-semibold text-slate-900">{module.title}</h4></div>
                 <div className="flex flex-col gap-1 items-end">
                 {completed&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Tanulmányozottnak jelölve</span>}
-                {score!==undefined&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Kvíz: {score}%</span>}
+                {score!==undefined&&<span className="text-xs border border-emerald-200 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-full">Gyakorlókvíz: {score}%</span>}
                 </div>
               </div>
               <p className="text-xs text-slate-600 mt-2 mb-3">{module.description}</p>
