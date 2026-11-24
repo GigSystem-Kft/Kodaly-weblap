@@ -51,6 +51,7 @@ jobs:
         run: |
           python3 -m unittest discover -s scripts -p 'test_a15_media_inventory.py' -v
           python3 -m unittest discover -s scripts -p 'test_a15_rights_linkage.py' -v
+          python3 -m unittest discover -s scripts -p 'test_a15_knowledge_inventory.py' -v
       - name: TypeScript and unit tests
         run: |
           npm test
@@ -200,6 +201,7 @@ jobs:
           # A-15: inventory exactly what this ZIP ships, with media hashes but
           # WITHOUT assuming that any media has a publication license.
           python3 scripts/build-a15-media-inventory.py "$unpacked" a15-media-inventory.csv
+          python3 scripts/build-a15-knowledge-inventory.py "$unpacked" a15-knowledge-source-inventory.csv
           # The extracted archive must match the exact workflow checkout SHA,
           # not merely have internally consistent, possibly stale stamps.
           python3 - "$unpacked/release-build.json" "$GITHUB_SHA" <<'PY'
@@ -224,5 +226,6 @@ jobs:
             zeneelmeleti-muhely-php.zip
             zeneelmeleti-muhely-php.zip.sha256
             a15-media-inventory.csv
+            a15-knowledge-source-inventory.csv
           retention-days: 14
           if-no-files-found: error
