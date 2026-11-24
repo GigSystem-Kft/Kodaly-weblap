@@ -109,6 +109,27 @@ test "$status" = 409
 php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["quizScores"]["ritmus"]??null)!==90)exit(1);'
 get_progress
 php -r '$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true);if(($j["progress"]["xp"]??null)!==50 || count($j["progress"]["quizAttempts"]??[])!==1 || ($j["progress"]["earTrainingDailyXp"]["2026-11-07"]??null)!==75 || ($j["progress"]["favoriteExpressions"][0]??null)!=="favorite-a")exit(1);'
+# A-12: a signed-in session must persist all five core chapters and all four
+# extended learning modules in the real disposable PHP/MySQL backend.
+get_progress
+nine_base="$(revision)"
+all_nine="$(php -r '
+$p=json_decode($argv[1],true,512,JSON_THROW_ON_ERROR);
+$p["completedChapters"]=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
+echo json_encode($p,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+' "$updated")"
+test "$(put_progress "{\\"progress\\":$all_nine,\\"revision\\":\\"$nine_base\\"}")" = 200
+nine_saved="$(revision)"
+get_progress
+test "$(revision)" = "$nine_saved"
+php -r '
+$j=json_decode(file_get_contents("/tmp/zm-progress-response.json"),true,512,JSON_THROW_ON_ERROR);
+$actual=$j["progress"]["completedChapters"]??null;
+$expected=["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"];
+if($actual!==$expected)exit(1);
+'
+echo 'PHP authenticated progress: all nine learning modules persisted and reloaded'
+
 # Large genuine progress must fit, unlike the former generic 64 KiB cap.
 # Other JSON endpoints still reject bodies over 64 KiB.
 get_progress
