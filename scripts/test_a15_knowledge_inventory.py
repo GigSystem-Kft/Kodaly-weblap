@@ -60,6 +60,13 @@ class KnowledgeRightsInventoryTests(unittest.TestCase):
                             after["Hungarian glossary"])
         self.assertEqual(before["First-party lesson"], after["First-party lesson"])
 
+    def test_blank_text_is_inventory_data_not_an_implicit_drop(self):
+        self.entries[0]["text"] = ""
+        self.write_index()
+        rows = module.inventory(self.root)
+        self.assertEqual(sum(row["passage_count"] for row in rows), 3)
+        self.assertEqual(len(rows), 2)
+
     def test_missing_source_attribution_fails_closed(self):
         del self.entries[0]["source"]
         self.write_index()
