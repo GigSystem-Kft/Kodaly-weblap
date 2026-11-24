@@ -193,6 +193,9 @@ jobs:
           mv "$unpacked/rhythm-original.jpg" "$unpacked/ritmikai/p001.jpg"
           rm -f /tmp/zm-invalid-rhythm-check.log
           python3 scripts/verify-release-assets.py "$unpacked"
+          # A-15: inventory exactly what this ZIP ships, with media hashes but
+          # WITHOUT assuming that any media has a publication license.
+          python3 scripts/build-a15-media-inventory.py "$unpacked" a15-media-inventory.csv
           # The extracted archive must match the exact workflow checkout SHA,
           # not merely have internally consistent, possibly stale stamps.
           python3 - "$unpacked/release-build.json" "$GITHUB_SHA" <<'PY'
@@ -216,5 +219,6 @@ jobs:
           path: |
             zeneelmeleti-muhely-php.zip
             zeneelmeleti-muhely-php.zip.sha256
+            a15-media-inventory.csv
           retention-days: 14
           if-no-files-found: error
