@@ -43,9 +43,15 @@ def inventory(root: Path):
         if not isinstance(entry, dict):
             raise ValueError("Malformed knowledge passage")
         source, label, text = (entry.get(k) for k in ("source", "label", "text"))
-        if not all(isinstance(value, str) and value.strip()
-                   for value in (source, label, text)):
-            raise ValueError("Missing passage attribution, label or text")
+        if not isinstance(source, str) or not source.strip():
+            raise ValueError("Missing passage attribution")
+        if not isinstance(label, str) or not label.strip():
+            raise ValueError("Missing passage label")
+        if not isinstance(text, str):
+            raise ValueError("Missing passage text")
+        # A generated bank may legitimately contain a blank string; retain it
+        # in the content hash so that the audit inventories the *exact* PHP
+        # payload without inventing text or silently filtering records.
         groups.setdefault(source, []).append([label, text])
     rows = []
     for source, items in groups.items():
