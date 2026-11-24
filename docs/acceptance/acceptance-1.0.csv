@@ -1,5 +1,5 @@
 audit_id,status,reviewer_role,checked_on,candidate_sha,evidence_ref,notes
-A-01,NOT_RUN,technikai-CI,2026-11-23,,docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md,13 rhythm images and byte-identity test described in audit; final release SHA and linked A-15 media rights still open
+A-01,PASS,technikai-CI,2026-11-24,63edfe8ed1be1b6ffdec25a9ac8f49d2a8e63a16,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45431926931,Build-scope acceptance only: 13 original rhythm JPGs imported with prior Git blob byte identity check and current PHP ZIP release asset verifier green; usage rights remain independent BLOCKED A-15 and live deployment remains A-24
 A-02,NOT_RUN,technikai-CI,2026-11-24,f70cee7fef096536e8c10b2b1c75b4bc567b74b9,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45425373292,All four grade textbooks load and page zoom closes in Chromium; search accent case whitespace E2E on grade 1; book-by-book live search and page-open evidence remains
 A-03,NOT_RUN,,,,,
 A-04,NOT_RUN,technikai-CI,2026-11-24,cf8e3c2bdd84d9600ab61ee33ca7d59a54af59a4,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45426851753,PHP MySQL learner progress write read revision and account isolation verified; guest chapter completion and reload verified in Chromium 45426851806; exact live enrolled learner SHA evidence remains
