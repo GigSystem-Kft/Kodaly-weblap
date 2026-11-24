@@ -48,7 +48,9 @@ jobs:
           python3 -m py_compile scripts/summarize-deployment-check.py scripts/test_deployment_summary.py
           python3 -m unittest discover -s scripts -p 'test_deployment_summary.py' -v
       - name: Verify rights media inventory stays complete and unapproved
-        run: python3 -m unittest discover -s scripts -p 'test_a15_media_inventory.py' -v
+        run: |
+          python3 -m unittest discover -s scripts -p 'test_a15_media_inventory.py' -v
+          python3 -m unittest discover -s scripts -p 'test_a15_rights_linkage.py' -v
       - name: TypeScript and unit tests
         run: |
           npm test
