@@ -66,3 +66,21 @@ A vizsgált rendszer: `https://zeneelmelet.digitaliskottatar.hu` (PHP + MySQL). 
 **A részpróba visszaigazolása nem formális PASS.** A teljes A-24-hez továbbra is a végső SHA, az admin `scanComplete/buildConsistent/ready` értékei, a ZIP-hash, a helyreállítási metaadat és a többi kiadási kapu ellenőrzése szükséges. **PASS csak** ténylegesen elvégzett, dátummal és biztonságos bizonyítékazonosítóval ellátott teljes vizsgálat után adható. A #3 issue A-24 jelölőnégyzete addig nem változhat. Bármilyen hibás próbához külön hibajegy és megismételt ellenőrzés kell.
 
 A végleges kiadás további feltétele: A-15 jogok, A-20 szakmai lektorálás, A-23 hozzáférhetőség és minden további A-01–A-24 pont igazolása.
+
+## 2026-11-24 – adminisztrátori képernyőkép: a jelenlegi éles verzió ellenőrzése
+
+A projektgazda a `https://zeneelmelet.digitaliskottatar.hu/` weboldal **Felhasználók és meghívók → Telepítés és fájlok ellenőrzése** részéről Chrome-képernyőképet küldött. Az abban ténylegesen látható, **jelenleg telepített** változat adatai:
+
+| Képernyőképen látható mező | Megfigyelés |
+|---|---|
+| Ellenőrzött közös Git-verzió | `644914afdfae` (12 karakteres megjelenítés; a teljes 40 karaktert a kép önmagában nem igazolja) |
+| Fájlok és belépési állományok | Zöld: jelen vannak; a nyilvános fájlfák ellenőrzése teljes |
+| Átvizsgált fájl- és mappabejegyzések | 529 |
+| Kizárt könyvtár | `.cache` – narancssárga figyelmeztetés; a tartalma nem került átvizsgálásra |
+| SMTP-konfiguráció | Beállítva, de a képernyő maga kimondja: kézbesítés nincs itt tesztelve |
+| Megjelenített ellenőrzési időpont | `2026-11-24T08:30:53+00:00` |
+| Bizonyíték | Projektgazda által a 2026-11-24-i projektbeszélgetésben beküldött admin-képernyőkép; a képet nem tölthetjük automatikusan GitHubra |
+
+**Következtetés kizárólag a kép alapján:** a régebbi, éles `644914afdfae` verzióban a nyilvános fájlvizsgálat sikeresnek látszik, és a buildazonosítót közösnek jelzi; a `.cache` kizárást külön figyelmeztetésként mutatja. Az adminfelület zöld mondatából **nem következik** automatikusan a `ready=true` nyers JSON-mező vagy a tényleges e-mail-kézbesítés igazolása. Az új fejlesztési kiadásjelölt **nem került éles telepítésre** ebben a munkaszakaszban; nem állítjuk, hogy `1911cd158c754df76ce3c6e6ec253b8e8f12ca63` éles tesztje megtörtént.
+
+**Kiadási döntés:** régi éles verzió adminfelületi **részpróbája megfigyelve**; új kiadásjelölt A-24 formális státusza továbbra is **BLOCKED**. Nem kell újra kérni ugyanezt a képernyőképet, és nincs indok az éles szerver, a `.cache` vagy a felhasználói adatok változtatására.
