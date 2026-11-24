@@ -370,7 +370,7 @@ try {
   await touch.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
   await touch.locator('#textbook-search').waitFor();
   // A-05: test a real mobile touch selection and matching result.
-  await touch.getByRole('button',{name:/03\\. Játék/}).click();
+  await touch.getByRole('button',{name:/03\. Játék/}).click();
   const mobileTerm = touch.getByRole('button',{name:/^Fogalom:/}).first();
   await mobileTerm.waitFor();
   const mobileTermText = (await mobileTerm.textContent())?.trim();
@@ -384,7 +384,7 @@ try {
   await mobileTerm.tap();
   await mobileAnswers[0].tap();
   const mobileFeedback = (await touch.getByRole('status').textContent())?.trim();
-  if (!/^Helyes párosítás! 1 \\/ \\d+ pár megtalálva\\.$/.test(mobileFeedback??''))
+  if (!/^Helyes párosítás! 1 \/ \d+ pár megtalálva\.$/.test(mobileFeedback??''))
     throw new Error('Mobile matching touch did not register a correct pair: '+mobileFeedback);
   await touchContext.close();
   console.log('Mobile: textbook menu and matching game respond to touch');
