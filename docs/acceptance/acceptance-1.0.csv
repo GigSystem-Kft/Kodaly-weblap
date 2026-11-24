@@ -2,9 +2,9 @@ audit_id,status,reviewer_role,checked_on,candidate_sha,evidence_ref,notes
 A-01,NOT_RUN,technikai-CI,2026-11-23,,docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md,13 rhythm images and byte-identity test described in audit; final release SHA and linked A-15 media rights still open
 A-02,NOT_RUN,technikai-CI,2026-11-24,f70cee7fef096536e8c10b2b1c75b4bc567b74b9,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45425373292,All four grade textbooks load and page zoom closes in Chromium; search accent case whitespace E2E on grade 1; book-by-book live search and page-open evidence remains
 A-03,NOT_RUN,,,,,
-A-04,NOT_RUN,,,,,
+A-04,NOT_RUN,technikai-CI,2026-11-24,cf8e3c2bdd84d9600ab61ee33ca7d59a54af59a4,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45426851753,PHP MySQL learner progress write read revision and account isolation verified; guest chapter completion and reload verified in Chromium 45426851806; exact live enrolled learner SHA evidence remains
 A-05,NOT_RUN,,,,,
-A-06,NOT_RUN,projektgazda,2026-11-23,,docs/acceptance/a06-keteszkoz-konfliktus-proba-2026-11-23.md,Two different favorites survived PC-phone conflict sync and refresh owner-confirmed PASS for preservation; exact live HTTP 409 and tested release SHA still unverified
+A-06,NOT_RUN,projektgazda,2026-11-24,cf8e3c2bdd84d9600ab61ee33ca7d59a54af59a4,docs/acceptance/a06-keteszkoz-konfliktus-proba-2026-11-23.md,Owner two-physical-device preservation PASS; PHP MySQL stale revision 409 and browser two-client reconciliation passed CI 45426851753 and 45426851806; exact live HTTP 409 and live tested SHA unverified
 A-07,NOT_RUN,,,,,
 A-08,NOT_RUN,,,,,
 A-09,NOT_RUN,,,,,
@@ -14,7 +14,7 @@ A-12,NOT_RUN,,,,,
 A-13,NOT_RUN,,,,,
 A-14,NOT_RUN,,,,,
 A-15,BLOCKED,,,,,Owner asserts all materials self-made or freely usable; item-level rights verification pending
-A-16,NOT_RUN,projektgazda,2026-11-24,,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Owner approved synchronized progress and XP as non-official activity data; final SHA and verified live data safety evidence pending
+A-16,NOT_RUN,projektgazda,2026-11-24,cf8e3c2bdd84d9600ab61ee33ca7d59a54af59a4,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Owner approved practice-only XP and two-device data preservation; PHP MySQL conflict rejection data isolation invalid input safeguards and browser merge covered by green CI; final deployed SHA and complete live evidence missing
 A-17,PASS,projektgazda,2026-11-24,c861227a149cad7b430db33ceee2cf9c2c554adf,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Practice-only quiz score errors and 3plus3 trend explicitly owner-approved; 15-question history and double-click browser regressions confirmed by Chromium CI 45421880109
 A-18,PASS,technikai-CI,2026-11-24,a25bd93e804b3b2c347520cb2fe5876c1a5bdc7d,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45416716856,Build scope only: 302 textbook pages 13 rhythm images 64 notes images; PHP JS CSS ZIP extraction content checks and checksum passed; production upload remains A-24
 A-19,NOT_RUN,technikai-CI,2026-11-24,f70cee7fef096536e8c10b2b1c75b4bc567b74b9,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45425373292,Chromium verified textbook navigation for four grades chapter keyboard access and mobile touch; comprehensive live external links and browser back navigation not independently verified
