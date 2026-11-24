@@ -34,6 +34,9 @@ def summarize(payload, expected_sha):
     issue = payload.get("scanIssue")
     if issue is not None and not isinstance(issue, str):
         raise ValueError("invalid scanIssue")
+    # Only the documented root .cache exception may be skipped by the server scan.
+    # Other excluded paths must block release, even when the server claims ready.
+    unexpected_exclusions = any(item != ".cache" for item in payload["excludedDirs"])
     # Do not copy names, paths, user-supplied descriptions or response bodies.
     return {
         "evidence_type": "authenticated_deployment_check_summary",
@@ -46,11 +49,13 @@ def summarize(payload, expected_sha):
         "missing_count": len(payload["missing"]),
         "public_archives_count": len(payload["publicArchives"]),
         "excluded_dirs_count": len(payload["excludedDirs"]),
+        "unexpected_exclusions_present": unexpected_exclusions,
         "scan_issue_present": bool(issue),
         "file_gate_passed": (
             sha == expected_sha and payload["ready"] and
             payload["scanComplete"] and payload["buildConsistent"] and
-            not payload["missing"] and not payload["publicArchives"] and not issue
+            not payload["missing"] and not payload["publicArchives"] and
+            not issue and not unexpected_exclusions
         ),
         "manual_checks_still_required": [
             "SMTP actual delivery", "role authorization", "data retention and restore",
