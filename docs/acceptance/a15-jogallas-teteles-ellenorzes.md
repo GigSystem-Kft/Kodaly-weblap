@@ -54,13 +54,13 @@ A már előállított GitHub artifact letöltése **nem** jelent végleges kiad�
 ```bash
 python3 scripts/check-a15-rights-linkage.py \
   --inventory a15-media-inventory.csv \
-  --template /privat-irattar/a15-review.csv
+  --template $HOME/privat-irattar/a15-review.csv
 
 # A már meglévő tételes jogi nyilvántartással való párosítás és lektori
 # ellenőrzés után, kizárólag a helyi, privát CSV ellenében:
 python3 scripts/check-a15-rights-linkage.py \
   --inventory a15-media-inventory.csv \
-  --review /privat-irattar/a15-review.csv
+  --review $HOME/privat-irattar/a15-review.csv
 ```
 
 A kimenet kizárólag darabszámokat jelez: elfogadott, hiányzó, elavult, függő és hibás hivatkozások. Az eszköz nem olvassa ki és nem teszi közzé az engedélylevelek szövegét, és **a médiakapcsolatok 100%-os lefedettsége sem A-15 PASS**: a tankönyv- és szótárszövegek, tanári források, külső beágyazások, AI-indexelés és attribúció külön jogi/szakmai ellenőrzést igényelnek. A privát ellenőrzési CSV-t soha nem szabad a nyilvános webgyökérbe vagy GitHubra feltölteni.
