@@ -46,3 +46,9 @@ A projektgazda megerősítette: **„ez már kész van”** a weboldal- és adat
 ## Próbavisszaállítás – projektgazdai visszajelzés (2026-11-23)
 
 A projektgazda a mentés elkészültének megerősítése után külön jelezte: **„kipróbáltam”** a mentés visszaállítását. Ezt **tulajdonos által elvégzett próbavisszaállításként** rögzítjük. A teszt célkörnyezete, az adatbázis- és fájlvisszaállítás részletes ellenőrzése, valamint a napló vagy a nem bizalmas bizonyíték azonosítója nem került megadásra; ezért a teljes A-24 kiadási kapu még nem tekinthető automatikusan PASS-nak. Nem kérünk új, szükségtelen mentést vagy ismételt visszaállítást; a meglévő próba bizonyítékát összekapcsoljuk a telepítési ellenőrzéssel.
+
+## 2026-11-24 – automatikus GET-védelem előellenőrzése hozzáadva
+
+A `scripts/check-live-php-release.py` most bizalmas adatot nem kérő, **csak olvasó GET** vizsgálatot is végrehajt a `/.cache/` és a `/.cache/ellenorzes-nemletezo.txt` útvonalakon. A korábban dokumentált nginx `return 403` szabályok miatt mindkét útvonalon **HTTP 403 az elvárt érték**. Más státusz (beleértve a 200 és 404 értéket) vagy sikertelen hálózati kérés az előellenőrzés egészét megbuktatja; a program nem olvassa fel az elutasítás választestét, nem küld hitelesítő adatokat és nem módosít fájlokat.
+
+Automatikus, hálózat nélküli egységtesztek készültek a 403, a hibás 200, a hibás 404 és a hálózati hiba esetére. A helyes teszteredmény **még nem** a valódi CloudPanelre mért bizonyíték: tényleges üzemeltetői preflightot az előzőleg elfogadott kiadási jelölt **pontos, telepített 40 karakteres SHA-jával** kell futtatni. A már korábban mért HEAD 403 eredmény ettől változatlanul érvényes részpróba. A teljes A-24 státusza továbbra is BLOCKED.
