@@ -369,8 +369,25 @@ try {
   await touch.getByRole('button',{name:/07\. Tankönyvek/}).click();
   await touch.getByRole('button',{name:/Énekzene 1\. osztály/}).click();
   await touch.locator('#textbook-search').waitFor();
+  // A-05: test a real mobile touch selection and matching result.
+  await touch.getByRole('button',{name:/03\\. Játék/}).click();
+  const mobileTerm = touch.getByRole('button',{name:/^Fogalom:/}).first();
+  await mobileTerm.waitFor();
+  const mobileTermText = (await mobileTerm.textContent())?.trim();
+  const mobileCandidates = MATCHING_PAIRS.filter(pair => pair.term === mobileTermText);
+  const mobileAnswers = [];
+  for (const candidate of mobileCandidates) {
+    const answer = touch.getByRole('button',{name:'Jelentés: '+candidate.match,exact:true});
+    if (await answer.count()===1 && await answer.isEnabled()) mobileAnswers.push(answer);
+  }
+  if (mobileAnswers.length!==1) throw new Error('Mobile matching pair is ambiguous');
+  await mobileTerm.tap();
+  await mobileAnswers[0].tap();
+  const mobileFeedback = (await touch.getByRole('status').textContent())?.trim();
+  if (!/^Helyes párosítás! 1 \\/ \\d+ pár megtalálva\\.$/.test(mobileFeedback??''))
+    throw new Error('Mobile matching touch did not register a correct pair: '+mobileFeedback);
   await touchContext.close();
-  console.log('Mobile: textbook menu works with touch');
+  console.log('Mobile: textbook menu and matching game respond to touch');
 
   await page.setViewportSize({width:390,height:844});
   await page.getByRole('button',{name:'Tanársegéd AI megnyitása'}).click();
