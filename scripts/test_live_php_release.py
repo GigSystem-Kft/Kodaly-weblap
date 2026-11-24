@@ -134,7 +134,8 @@ class LivePreflightTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertTrue(result["public_preflight_passed"])
         self.assertEqual(result["deployed_sha"], SHA)
-        self.assertEqual(len(opener.paths), 6)
+        # Six existing public endpoints plus two read-only cache GET probes.
+        self.assertEqual(len(opener.paths), 8)
         self.assertIn("24-point sign-off", result["not_checked"])
 
     def test_mysql_unavailable_fails_closed(self):
