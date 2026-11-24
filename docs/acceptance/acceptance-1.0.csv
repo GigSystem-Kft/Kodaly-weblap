@@ -10,7 +10,7 @@ A-08,NOT_RUN,,,,,
 A-09,NOT_RUN,,,,,
 A-10,NOT_RUN,technikai-CI,2026-11-24,f70cee7fef096536e8c10b2b1c75b4bc567b74b9,docs/kiadas-elotti-elfogadas-24-pont-2026-11-09.md,1793 glossary entries in 12 categories and zero uncategorized are protected by build checks; terminology sampling and independent expert signoff not documented
 A-11,PASS,projektgazda,2026-11-24,fa9ed132d30e0483e2c1f7d2dd2b4e859b60f523,docs/acceptance/a11-a16-a17-a22-pedagogiai-dontes-2026-11-24.md,Pedagogical 1.0 decision explicitly approved; daily practice XP cap validated by passing build tests; no certified scoring claimed
-A-12,NOT_RUN,,,,,
+A-12,NOT_RUN,technikai-CI,2026-11-24,cb3f132e8209f81a7ce1d68f6015232f9b1b6021,https://github.com/GigSystem-Kft/Kodaly-weblap/actions/runs/45430665356,All nine learning modules persisted in real PHP MySQL authenticated student account and exported; Chromium full 9of9 completion survives reload run 45430666189; exact deployed live candidate and full profile check remain
 A-13,NOT_RUN,,,,,
 A-14,NOT_RUN,,,,,
 A-15,BLOCKED,,,,,Owner asserts all materials self-made or freely usable; item-level rights verification pending
