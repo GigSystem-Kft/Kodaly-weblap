@@ -45,6 +45,8 @@ jobs:
         run: |
           python3 -m py_compile scripts/check-live-php-release.py scripts/test_live_php_release.py
           python3 -m unittest discover -s scripts -p 'test_live_php_release.py' -v
+          python3 -m py_compile scripts/summarize-deployment-check.py scripts/test_deployment_summary.py
+          python3 -m unittest discover -s scripts -p 'test_deployment_summary.py' -v
       - name: TypeScript and unit tests
         run: |
           npm test
