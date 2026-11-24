@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 import unittest
-from urllib.error import URLError
+from urllib.error import HTTPError, URLError
 from unittest.mock import patch
 
 SCRIPT = Path(__file__).with_name("check-live-php-release.py")
@@ -58,13 +58,19 @@ class FakeOpener:
         self.paths.append(req.full_url)
         if req.full_url not in self.replies:
             raise URLError("fixture not found")
-        return self.replies[req.full_url]
+        reply = self.replies[req.full_url]
+        if isinstance(reply, Exception):
+            raise reply
+        return reply
 
 
 def fixture(auth=None, sha=SHA, manifest=None):
     if manifest is None:
         manifest = {"schema": 2, "sha": sha, "files": FINGERPRINTS}
     return FakeOpener({
+        ORIGIN + "/.cache/": HTTPError(ORIGIN + "/.cache/", 403, "Forbidden", {}, None),
+        ORIGIN + "/.cache/ellenorzes-nemletezo.txt": HTTPError(
+            ORIGIN + "/.cache/ellenorzes-nemletezo.txt", 403, "Forbidden", {}, None),
         ORIGIN + "/api/index.php?route=health":
             Response({"status": "ok", "service": "zeneelmeleti-muhely-php"}),
         ORIGIN + "/api/index.php?route=auth/status":
@@ -90,6 +96,38 @@ def invoke(opener, expected=SHA):
 
 
 class LivePreflightTests(unittest.TestCase):
+    def test_cache_get_denied_with_403_for_both_paths(self):
+        opener = fixture()
+        code, result = invoke(opener)
+        self.assertEqual(code, 0, result["errors"])
+        self.assertIn(ORIGIN + "/.cache/", opener.paths)
+        self.assertIn(ORIGIN + "/.cache/ellenorzes-nemletezo.txt", opener.paths)
+
+    def test_cache_get_directory_200_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/.cache/"] = Response(b"index", "text/html")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("Cache GET: expected HTTP 403 for /.cache/" in e
+                            for e in result["errors"]))
+
+    def test_cache_get_child_404_fails_closed(self):
+        opener = fixture()
+        url = ORIGIN + "/.cache/ellenorzes-nemletezo.txt"
+        opener.replies[url] = HTTPError(url, 404, "Not Found", {}, None)
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("Cache GET: expected HTTP 403 for /.cache/ellenorzes-nemletezo.txt" in e
+                            for e in result["errors"]))
+
+    def test_cache_get_unreachable_fails_closed(self):
+        opener = fixture()
+        opener.replies[ORIGIN + "/.cache/"] = URLError("connection refused")
+        code, result = invoke(opener)
+        self.assertEqual(code, 1)
+        self.assertTrue(any("Cache GET: request failed" in e
+                            for e in result["errors"]))
+
     def test_expected_php_and_mysql_and_sha(self):
         opener = fixture()
         code, result = invoke(opener)
