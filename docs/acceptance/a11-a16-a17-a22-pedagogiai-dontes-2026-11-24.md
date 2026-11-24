@@ -32,3 +32,15 @@ A `src/components/ProgressDashboard.tsx` és `src/progress.ts` alapján:
 - `MÓDOSÍTÁST KÉREK`: először az értékelési policy és szükség esetén a megfelelő kód/teszt pontosítása, utána új technikai és szakmai ellenőrzés.
 
 A jelen dokumentum létrehozása **nem tulajdonosi elfogadás és nem formális PASS**. A `docs/acceptance/acceptance-1.0.csv` sorait változatlanul kell hagyni, amíg a döntés, a végleges kiadási SHA és a nem titkos bizonyítékazonosító ténylegesen nincs meg.
+
+## 2026-11-24 – projektgazdai döntés: ELFOGADVA
+
+A projektgazda az előterjesztett 1.0 értékelési szabályt kifejezetten jóváhagyta a projektbeszélgetésben:
+
+> Elfogadom a Zeneelméleti Műhely 1.0 pedagógiai szabályát: az XP, kvízeredmény, teljesítési jelölés és fejlődési trend kizárólag gyakorlási és önellenőrzési adat, nem hivatalos értékelés. Rögzítsd a döntést és folytasd az elfogadást.
+
+**Döntés:** a fenti A-11/A-16/A-17/A-22 pedagógiai értelmezés **elfogadott 1.0 termékszabály**, a projektgazda jóváhagyásával, 2026-11-24-i dátummal. A szabály nem jogosít hivatalos osztályzat, vizsgaeredmény, intézményi bizonyítvány vagy kredit megállapítására; a 1.0 adatmodell és a meglévő eredmények nem változnak.
+
+**Technikai támpont:** a döntést megelőző `2f0ed1a117dc2753b0dd4bed89b75db397fe20d1` commiton a Chromium (`45346654343`), PHP ZIP (`45346654203`) és Linux (`45346654771`) ellenőrzések **success** eredményűek. Ezek fejlesztői bizonyítékok, nem az éles környezet elfogadása.
+
+**Formális elfogadási határ:** az A-11/A-16/A-17/A-22 pont **pedagógiai döntési része lezárult**; az audit teljes `PASS` értékéhez továbbra is az aktuális végleges telepített SHA, tételes ellenőrzési evidencia és az adott A-pont minden további feltétele szükséges. A 24 pontos napló ellenőrzését nem kerüljük meg. Az elfogadott döntést nem kell újból megkérdezni.
