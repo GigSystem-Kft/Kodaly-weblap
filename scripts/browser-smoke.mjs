@@ -311,6 +311,20 @@ try {
   if(await page.getByRole('dialog').count()!==0) throw new Error('Textbook lightbox did not close');
   console.log('Guest: textbook search and lightbox OK');
   await checkAccessibility(page, 'tankönyv');
+  // A-02: exercise all four grade textbooks, not only the first.
+  // The live-server acceptance remains a separate release requirement.
+  for (const grade of [2, 3, 4]) {
+    await page.getByRole('button',{name:/07\. Tankönyvek/}).click();
+    await page.getByRole('button',{name:new RegExp('Énekzene '+grade+'\\. osztály')}).click();
+    await page.locator('#textbook-search').waitFor();
+    await page.locator('article').first().waitFor();
+    await page.locator('article button').first().click();
+    await page.getByRole('dialog').waitFor();
+    await page.getByRole('button',{name:'Bezár'}).click();
+    if (await page.getByRole('dialog').count() !== 0)
+      throw new Error('Textbook '+grade+' lightbox did not close');
+  }
+  console.log('Guest: all four grade textbooks load and page zoom/close works');
 
   await page.getByRole('button',{name:/06\. Profil/}).click();
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
