@@ -67,6 +67,16 @@ class KnowledgeRightsInventoryTests(unittest.TestCase):
         self.assertEqual(sum(row["passage_count"] for row in rows), 3)
         self.assertEqual(len(rows), 2)
 
+    def test_changed_index_metadata_also_changes_source_digest(self):
+        before = {x["source_label"]: x["content_sha256"]
+                  for x in module.inventory(self.root)}
+        self.entries[2]["contextApproved"] = False
+        self.write_index()
+        after = {x["source_label"]: x["content_sha256"]
+                 for x in module.inventory(self.root)}
+        self.assertNotEqual(before["First-party lesson"],
+                            after["First-party lesson"])
+
     def test_missing_source_attribution_fails_closed(self):
         del self.entries[0]["source"]
         self.write_index()
