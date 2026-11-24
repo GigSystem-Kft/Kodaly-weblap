@@ -81,7 +81,7 @@ student_revision="$(php -r '$j=json_decode(file_get_contents("/tmp/zm-role-stude
 test "${#student_revision}" = 64
 # A-12: a separate authenticated student must retain all nine learning units,
 # including the four extended modules, isolated from the administrator.
-student_progress='{"completedChapters":["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"],"completedSubchapters":[],"quizScores":{"ritmus":77},"flashcardsMastered":[],"matchingCompleted":[],"xp":10,"streak":0,"lastActiveDate":"","activityDays":[]}'
+student_progress='{"completedChapters":["ritmus","hangok-kulcsok","szolmizacio-hangkozok","hangkeszletek","hetfoku-hangsorok","creative","musicHistory","musicPedagogy","musicExpressions"],"completedSubchapters":[],"quizScores":{"ritmus":77},"flashcardsMastered":["f1"],"matchingCompleted":["m1"],"xp":10,"streak":0,"lastActiveDate":"","activityDays":[]}'
 student_save="$(curl -sS -b "$student_jar" -o /tmp/zm-role-student-save.json -w '%{http_code}' \
  -X PUT "${base}progress" -H 'Origin: http://localhost:8000' \
  -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' \
