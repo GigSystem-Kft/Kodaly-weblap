@@ -12,6 +12,17 @@ function searchTerms(string $value): array {
     // Otherwise the same musical term silently becomes different tokens.
     $text = preg_replace('/\\p{Mn}+/u', '', $text);
     if (!is_string($text)) return [];
+    // Preserve compound meter signatures as exact searchable concepts.
+    // Previously "6/8" became two one-letter number tokens which were then
+    // dropped; a learner asking only "Mi a 6/8?" could never retrieve the
+    // six-eight meter material. Keep each signature distinct from the others.
+    $text = preg_replace_callback(
+        '/(?<![a-z0-9])((?:2\\s*\\/\\s*4|3\\s*\\/\\s*4|4\\s*\\/\\s*4|6\\s*\\/\\s*8))(?=$|[^a-z0-9])/u',
+        static fn(array $match): string =>
+            ' utemmutato' . preg_replace('/[^0-9]/', '', $match[1]) . ' ',
+        $text
+    );
+    if (!is_string($text)) return [];
     // Keep concepts, not the grammar surrounding a question.
     $stop = ['hogy','milyen','ennek','annak','vagy','amit','ezek','azok','egy',
         'van','nem','kerlek','roviden','tomoren','lenyegretoro','mondanal',
