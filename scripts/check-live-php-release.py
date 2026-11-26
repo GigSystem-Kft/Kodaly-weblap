@@ -210,6 +210,42 @@ def main():
                        and re.fullmatch(r"[0-9a-f]{64}", digest)
                        for name, digest in files.items()):
                 failures.append("Release manifest: invalid file fingerprint entry")
+    # A-24: the new release also fingerprints the media that learners use.
+    # This public probe checks manifest completeness and safe names; the
+    # authenticated admin scan independently hashes the actual disk files.
+    if manifest is not None:
+        media = manifest.get("media")
+        if not isinstance(media, dict) or len(media) < 379:
+            failures.append("Release manifest: missing learning-media fingerprints")
+        else:
+            required_media = {
+                f"tankonyvek/{grade}/p{page:03d}.jpg"
+                for grade, count in ((1, 72), (2, 69), (3, 80), (4, 81))
+                for page in range(1, count + 1)
+            }
+            required_media.update(
+                f"ritmikai/p{page:03d}.jpg" for page in range(1, 14)
+            )
+            if not required_media.issubset(media):
+                failures.append("Release manifest: missing required textbook or rhythm image")
+            note_count = sum(
+                isinstance(name, str) and
+                re.fullmatch(r"assets/jegyzet/[A-Za-z0-9._-]+\\.jpg", name, re.I) is not None
+                for name in media
+            )
+            if note_count < 64:
+                failures.append("Release manifest: missing note illustrations")
+            media_extension = r"(?:jpg|jpeg|png|webp|avif|gif|svg|ico|pdf|mp3|wav|ogg|opus|flac|m4a|mp4|webm|mid|midi|mxl|musicxml|woff|woff2|ttf|otf|eot)"
+            if not all(
+                isinstance(name, str) and
+                re.fullmatch(r"[A-Za-z0-9._/-]+\\." + media_extension, name, re.I)
+                and not name.startswith(".") and
+                all(part not in ("", ".", "..") and not part.startswith(".")
+                    for part in name.split("/")) and
+                isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest)
+                for name, digest in media.items()
+            ):
+                failures.append("Release manifest: invalid learning-media fingerprint")
     frontend_sha = read_frontend_sha(opener, origin,
                                      manifest.get("files") if isinstance(manifest, dict) else None,
                                      failures)
