@@ -96,3 +96,19 @@ A projektgazda a kifejezetten feltett kérdésre: **„A weboldal és az adatbá
 **Kiadási műszaki CI:** a `b9aa5f3c5cdf07d89bb15781d2f3f35ef27ec5ad` commit Chromium `45394378012`, PHP ZIP `45394377971` és Linux `45394377868` workflow-ja sikeres. A PHP ZIP-folyamatban az archívum megépítése, kibontási/fájlútvonal-/SHA-ellenőrzése és a külön SHA-256 checksum publikálása sikeres. Ez **GitHub CI-bizonyíték**, nem új éles telepítés.
 
 **Következő A-24 zárási kapu:** a végső csomag pontos Git SHA-ja és tényleges telepítési ellenőrzése (`scanComplete`, `buildConsistent`, `ready`) csak a kiadási felhatalmazás és a teljes elfogadási kapu lezárása után. A projektgazda kérésére a régi `teszt.zeneelmelet.digitaliskottatar.hu` tesztaldomain újbóli ellenőrzése **nem része a teendőknek**. Formális A-24: **BLOCKED**.
+
+## 2026-11-26 – teljes médiakészlet byteazonosságának ellenőrzése a kiadási jelöltben
+
+A korábbi A-24 buildazonosító és adminvizsgálat a PHP-, JavaScript- és CSS-fájlokra koncentrált; ezért önmagában nem igazolta, hogy **a teljes helyi médiakészlet** azonos a tesztelt ZIP tartalmával.
+
+A `538a2895fa04a30c3db178e5c4d9d481639cdcf7` fejlesztési kiadásjelöltben:
+
+- A `release-build.json` már az összes **403 helyi médiatétel** SHA-256 lenyomatát is rögzíti (a kódfájloktól külön `media` mezőben).
+- A ZIP-kibontás után a `verify-release-assets.py` a *ténylegesen kicsomagolt* médiafájlok darabszámát és minden byte lenyomatát összeveti ezzel a jegyzékkel. Hiányzó vagy megváltozott média esetén a build blokkol.
+- A bejelentkezett admin `auth/deployment-check` ellenőrzését végző `deploymentBuildFingerprint()` az éles webgyökéren is ezeket a lenyomatokat hasonlítja össze; külön előírja mind a **302 tankönyvoldal**, **13 ritmikai JPG** és legalább **64 jegyzetkép** meglétét.
+- A csak olvasó nyilvános `check-live-php-release.py` előellenőrző megköveteli a teljes és biztonságos médiaállomány-jegyzéket, de **nem tölti le mind a 403 fájlt**. A valódi kiszolgálóoldali byteazonosság igazolása az adminellenőrzés feladata.
+- A PHP lokális MySQL/fiókteszt 379 szintetikus képet állít elő a kizárólag tesztcélú környezetében; a külön PHP admin-regresszió szimulálja a hiányzó és megváltoztatott tankönyv-, ritmikai és jegyzetképet is. Nem használ valódi jogvédett tananyagokat.
+
+**GitHub-bizonyíték:** a fenti SHA Chromium `45899444347`, Linux `45899444445` és PHP ZIP `45899444487` futása mind **SUCCESS**. A PHP naplója szerint a csomag `403 media hashes` értékkel készült, a kibontott csomag ellenőrzése sikeres volt. Ez **offline / CI alapú technikai bizonyíték**: nem történt sem éles CloudPanel telepítés, sem új éles admin `scanComplete/buildConsistent/ready` lekérdezés.
+
+**Formális A-24: BLOCKED.** A korábban projektgazdailag igazolt mentést és elkülönített visszaállítási részpróbákat nem kell megismételtetni. A végleges, ténylegesen feltöltött jelölt pontos SHA-ját, az admin `ready=true` és a működő weboldal ellenőrzését csak jóváhagyott, adatmegőrzést biztosító telepítés után lehet lezárni. Az A-15, A-20 és a többi emberi kapu változatlanul érvényes.
