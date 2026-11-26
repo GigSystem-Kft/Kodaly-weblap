@@ -24,7 +24,15 @@ FINGERPRINTS = {
     "assets/index-abcd.js": "dc1c5eca6b249db6d52558df3e91d29c7f131b7cd793bb108b850bd8f24daf50",
     "assets/index-abcd.css": "884546c4a2f1fb49dae8ce7f64c71fe0db10bdc37b5a51ee72a8b80342cdec83",
 }
-
+MEDIA_FINGERPRINTS = {
+    **{
+        f"tankonyvek/{grade}/p{number:03d}.jpg": "4" * 64
+        for grade, count in ((1, 72), (2, 69), (3, 80), (4, 81))
+        for number in range(1, count + 1)
+    },
+    **{f"ritmikai/p{number:03d}.jpg": "5" * 64 for number in range(1, 14)},
+    **{f"assets/jegyzet/n{number:03d}.jpg": "6" * 64 for number in range(1, 65)},
+}
 
 
 class Response:
@@ -66,7 +74,8 @@ class FakeOpener:
 
 def fixture(auth=None, sha=SHA, manifest=None):
     if manifest is None:
-        manifest = {"schema": 2, "sha": sha, "files": FINGERPRINTS}
+        manifest = {"schema": 2, "sha": sha, "files": FINGERPRINTS,
+                    "media": MEDIA_FINGERPRINTS}
     return FakeOpener({
         ORIGIN + "/.cache/": HTTPError(ORIGIN + "/.cache/", 403, "Forbidden", {}, None),
         ORIGIN + "/.cache/ellenorzes-nemletezo.txt": HTTPError(
@@ -168,6 +177,36 @@ class LivePreflightTests(unittest.TestCase):
         code, result = invoke(opener)
         self.assertEqual(code, 1)
         self.assertTrue(any("exceeds 1 MiB" in e for e in result["errors"]))
+
+    def test_media_manifest_missing_or_incomplete_fails_closed(self):
+        for media in (
+            None,
+            {key: value for key, value in MEDIA_FINGERPRINTS.items()
+             if key != "ritmikai/p001.jpg"},
+            {key: value for key, value in MEDIA_FINGERPRINTS.items()
+             if key != "assets/jegyzet/n001.jpg"},
+        ):
+            with self.subTest(media=media is not None, size=len(media or {})):
+                manifest = {"schema": 2, "sha": SHA, "files": FINGERPRINTS}
+                if media is not None:
+                    manifest["media"] = media
+                status, result = invoke(fixture(manifest=manifest))
+                self.assertEqual(status, 1)
+                self.assertTrue(any("media" in error or "illustrations" in error
+                                    for error in result["errors"]))
+
+    def test_media_manifest_unsafe_path_or_hash_fails_closed(self):
+        for extra in (
+            {"assets/../private.jpg": "7" * 64},
+            {"assets/other.jpg": "wrong-hash"},
+        ):
+            with self.subTest(extra=extra):
+                manifest = {"schema": 2, "sha": SHA, "files": FINGERPRINTS,
+                            "media": {**MEDIA_FINGERPRINTS, **extra}}
+                status, result = invoke(fixture(manifest=manifest))
+                self.assertEqual(status, 1)
+                self.assertTrue(any("invalid learning-media fingerprint" in error
+                                    for error in result["errors"]))
 
     def test_manifest_schema_mismatch_fails_closed(self):
         bad = {"schema": 1, "sha": SHA, "files": FINGERPRINTS}
