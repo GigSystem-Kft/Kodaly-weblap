@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import { MATCHING_PAIRS, QUIZ_QUESTIONS } from '../src/data/musicData.ts';
+import { formatHungarianPitchText } from '../src/utils/noteNotation.ts';
 
 const browser = await chromium.launch({headless:true});
 const root='http://127.0.0.1:4173/';
@@ -194,16 +195,73 @@ try {
   await page.getByRole('button',{name:/04\. Teszt/}).click();
   await page.getByRole('heading',{name:'Interaktív Ellenőrző Teszt'}).waitFor();
   const category=page.locator('#quiz-chapter');
-  await category.selectOption('hangkeszletek');
-  await page.getByText(/Kérdés 1 \/ /).waitFor();
-  console.log('Guest: chapter 04 quiz loaded');
-  await checkAccessibility(page, 'kvíz');
-  await category.selectOption('hetfoku-hangsorok');
-  await page.getByText(/Kérdés 1 \/ /).waitFor();
-  if (await page.getByRole('heading',{name:'Ehhez a témakörhöz még nincs kérdés'}).count())
-    throw new Error('Chapter 05 quiz is unexpectedly empty');
-  console.log('Guest: chapter 05 scale and chord quiz loaded');
-  await checkAccessibility(page, '05. hangsorok kvíz');
+  // A-03: don't just render the fourth and fifth chapter quizzes. Complete
+  // both actual randomized sessions using the correct keys from the source
+  // bank, verify each graded answer and retain the saved 100% attempts.
+  // This is a technical correctness check, NOT independent music proofreading.
+  for (const [chapterId, grade] of [
+    ['hangkeszletek','04. hangkészletek'],
+    ['hetfoku-hangsorok','05. hangsorok és hármashangzatok']
+  ]) {
+    await category.selectOption(chapterId);
+    await page.getByText(/Kérdés 1 \/ /).waitFor();
+    if (await page.getByRole('heading',{name:'Ehhez a témakörhöz még nincs kérdés'}).count())
+      throw new Error('Empty A-03 topic quiz: '+chapterId);
+    const bank=QUIZ_QUESTIONS.filter(q=>q.chapterId===chapterId);
+    if(bank.length<5)throw new Error('A-03 topic bank lacks breadth: '+chapterId+' ('+bank.length+')');
+    const roundLength=Math.min(15,bank.length);
+    if(grade.startsWith('04.'))await checkAccessibility(page,'04. hangkészletek kvíz');
+    else await checkAccessibility(page,'05. hangsorok kvíz');
+    const completedBefore=await page.evaluate(id=>
+      (JSON.parse(localStorage.getItem('kodaly_progress')||'null')?.quizAttempts??[])
+        .filter(a=>a.chapterId===id).length,chapterId);
+    for(let index=0;index<roundLength;index++){
+      await page.getByText('Kérdés '+(index+1)+' / '+roundLength,{exact:true}).waitFor();
+      const shownPrompt=await page.locator('h3.text-xl.font-bold.text-white').innerText();
+      const options=page.locator('div.space-y-3.mb-6 > button');
+      const shownOptions=(await options.locator('span').allTextContents()).map(x=>x.trim());
+      const matches=bank.filter(item=>
+        formatHungarianPitchText(item.question)===shownPrompt &&
+        JSON.stringify(item.options.map(x=>formatHungarianPitchText(x)))===JSON.stringify(shownOptions));
+      if(!matches.length)
+        throw new Error('A-03 visible quiz key cannot be identified: '+chapterId+' / '+shownPrompt);
+      const keys=new Set(matches.map(item=>item.correctIndex));
+      if(keys.size!==1)throw new Error('A-03 contradictory keys: '+chapterId+' / '+shownPrompt);
+      const correctIndex=[...keys][0];
+      await options.nth(correctIndex).click();
+      await page.getByText('Magyarázat',{exact:true}).waitFor();
+      if(!(await options.nth(correctIndex).getAttribute('class')||'').includes('border-emerald-500'))
+        throw new Error('A-03 correct option not marked correct: '+chapterId+' / '+shownPrompt);
+      await page.getByRole('button',{
+        name:index===roundLength-1?'Kvíz befejezése':'Következő kérdés'
+      }).click();
+    }
+    await page.getByRole('heading',{name:'Kvíz Teljesítve!'}).waitFor();
+    await page.waitForFunction(({id,before,count})=>{
+      const saved=JSON.parse(localStorage.getItem('kodaly_progress')||'null');
+      const entries=(saved?.quizAttempts??[]).filter(a=>a.chapterId===id);
+      return entries.length===before+1 &&
+        entries[entries.length-1]?.correct===count &&
+        entries[entries.length-1]?.total===count &&
+        entries[entries.length-1]?.score===100;
+    },{id:chapterId,before:completedBefore,count:roundLength});
+    console.log('Guest: '+grade+' chapter quiz graded '+roundLength+
+      '/'+roundLength+' correct and saved a 100% practice attempt');
+  }
+  await page.reload({waitUntil:'domcontentloaded'});
+  await page.getByRole('heading',{name:'Zeneelméleti Műhely'}).waitFor();
+  const topicSummary=await page.evaluate(()=>{
+    const saved=JSON.parse(localStorage.getItem('kodaly_progress')||'null');
+    return ['hangkeszletek','hetfoku-hangsorok'].map(id=>{
+      const entry=(saved?.quizAttempts??[]).filter(a=>a.chapterId===id).at(-1);
+      return {id,valid:!!entry && entry.score===100 && entry.correct===entry.total && entry.total>=5};
+    });
+  });
+  if(topicSummary.some(item=>!item.valid))
+    throw new Error('A-03 completed chapter practice attempts lost after reload: '+JSON.stringify(topicSummary));
+  await page.getByRole('button',{name:/04\. Teszt/}).click();
+  await page.getByRole('heading',{name:'Interaktív Ellenőrző Teszt'}).waitFor();
+  console.log('Guest: A-03 both subject quiz attempts survive full reload');
 
   // Hungarian octave notation in the *rendered* G-clef quiz, not only source data.
   // The chapter quiz is randomized; visit its entire question set if needed.
