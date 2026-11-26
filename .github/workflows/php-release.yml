@@ -219,9 +219,7 @@ jobs:
           # A-20: supply an item-addressable, version-fingerprinted QUIZ BANK
           # for independent music review. This is NOT a reviewer approval.
           node --import tsx scripts/export-a20-quiz-review.ts "$GITHUB_SHA" a20-quiz-review.csv
-          python3 scripts/check-a20-quiz-review.py \\
-            --inventory a20-quiz-review.csv --expected-sha "$GITHUB_SHA" \\
-            --template "$RUNNER_TEMP/a20-review-template.csv"
+          python3 scripts/check-a20-quiz-review.py --inventory a20-quiz-review.csv --expected-sha "$GITHUB_SHA" --template "$RUNNER_TEMP/a20-review-template.csv"
           test "$(find "$unpacked" -type f | wc -l)" -gt 100
           # Ship a verifiable checksum next to the ZIP; validate it here too.
           sha256sum zeneelmeleti-muhely-php.zip > zeneelmeleti-muhely-php.zip.sha256
