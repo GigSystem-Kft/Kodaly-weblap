@@ -11,6 +11,16 @@ from pathlib import Path
 import re
 import sys
 
+# A-24: the authenticated deployment scan must also catch a partially
+# uploaded textbook, rhythm, notation, audio or other learning-media file.
+# Keep this extension set aligned with the A-15 shipped-media inventory.
+MEDIA_SUFFIXES = frozenset({
+    ".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".svg", ".ico",
+    ".pdf", ".mp3", ".wav", ".ogg", ".opus", ".flac", ".m4a",
+    ".mp4", ".webm", ".mid", ".midi", ".mxl", ".musicxml",
+    ".woff", ".woff2", ".ttf", ".otf", ".eot",
+})
+
 CORE_PHP = (
     "api/index.php",
     "api/admin.php",
@@ -71,8 +81,23 @@ for name in files:
         raise SystemExit(f"Required release fingerprint file missing or unsafe: {name}")
     digests[name] = hashlib.sha256(path.read_bytes()).hexdigest()
 
+media_paths = sorted(
+    path.relative_to(root).as_posix()
+    for path in root.rglob("*")
+    if path.suffix.lower() in MEDIA_SUFFIXES
+)
+if len(media_paths) < 379:
+    raise SystemExit("Missing required learning media while stamping release")
+media_digests = {}
+for name in media_paths:
+    path = root / name
+    if not path.is_file() or path.is_symlink():
+        raise SystemExit(f"Missing or unsafe learning media: {name}")
+    media_digests[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+
 (root / "release-build.json").write_text(
-    json.dumps({"schema": 2, "sha": revision, "files": digests},
+    json.dumps({"schema": 2, "sha": revision, "files": digests,
+                "media": media_digests},
                ensure_ascii=False, separators=(",", ":")) + "\n",
     encoding="utf-8"
 )
@@ -80,4 +105,4 @@ for name in files:
     "<?php\n// Public, non-secret checked-out release revision.\nreturn '" + revision + "';\n",
     encoding="utf-8"
 )
-print(f"Release fingerprint embedded in HTML, JSON and PHP: {revision}; {len(files)} file hashes")
+print(f"Release fingerprint embedded in HTML, JSON and PHP: {revision}; {len(files)} code hashes; {len(media_digests)} media hashes")
