@@ -174,6 +174,25 @@ try {
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
         'restoring the exact image manifest repairs release consistency');
 
+    // After an otherwise complete upload, old images or fonts left under
+    // different names must not be hidden from the authenticated A-24 scan.
+    foreach (['assets/old-lesson.jpg', 'tankonyvek/1/leftover.png',
+              'assets/legacy-font.woff2'] as $extra) {
+        $path = $root . '/' . $extra;
+        file_put_contents($path, 'obsolete unmanifested asset');
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+            'unmanifested stale media must block deployment: ' . $extra);
+        unlink($path);
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+            'removing stale media restores consistent release: ' . $extra);
+    }
+    // The host-managed .cache exclusion must not require reading private
+    // CloudPanel files when the documented server explicitly blocks access.
+    file_put_contents($root . '/.cache/private-preview.jpg', 'managed cache data');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+        'managed root .cache stays outside release media set');
+    unlink($root . '/.cache/private-preview.jpg');
+
     file_put_contents($jsPath, 'console.log("stale JS asset")');
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
         'stale JavaScript must be caught even when all three revision labels agree');
