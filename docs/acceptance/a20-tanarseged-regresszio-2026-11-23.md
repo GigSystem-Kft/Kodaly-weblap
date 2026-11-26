@@ -132,3 +132,31 @@ A projektgazda a fenti, korábban ténylegesen elvégzett hangköz-, hangsor-, r
 **Döntés: PROJEKTGAZDAI SZAKMAI JÓVÁHAGYÁS MEGADVA – a dokumentált részpróbák és mintavétel körére.** A már elfogadott zenei próbák indokolatlan megismétlése nem szükséges. Ez nem jelenti a teljes kvízkérdésbank, az összes kottapélda és minden Tanársegéd-válasz tételes, független lektori átvizsgálását, sem azt, hogy a korábbi éles próbák automatikusan az új, `013b911b6e2c4e842960e0fffede188309db4473` kiadásjelölten történtek.
 
 **Formális napló:** az A-20 sor továbbra is `BLOCKED`, amíg a kiadásjelöltre vonatkozó független lektori/tételazonosító- és pontos verzióbizonyíték nem áll rendelkezésre. Ezt a projektgazdai jóváhagyást nem cseréljük össze azzal a külön bizonyítékkal. **Következő munkapont: A-21 fiókok, jogosultságok és valódi SMTP-kézbesítés.**
+
+## A-20 – teljes kvízbank tételes, verziókötött szakmai lektori jegyzéke
+
+A PHP-kiadási GitHub-folyamat a ténylegesen betöltött `QUIZ_QUESTIONS` kérdésbankból létrehozza az `a20-quiz-review.csv` állományt. Ez a tesztelt kiadási artifact **melléklete**, nem a nyilvános webgyökér része.
+
+A CSV minden stabil kérdésazonosítóhoz megadja a fejezetet, a megjelenő kérdést, az összes válaszlehetőséget (`options_json`), a helyes válasz indexét és szövegét, az indoklást, az `item_sha256` tartalmi lenyomatot és a teljes 40 karakteres `release_sha` verziót. A `decision` minden sornál kezdetben **PENDING**. Ez **nem** jelenti azt, hogy az eddig igazolt két kvízkérdéses szakmai részpróba elvész, és nem állítja, hogy a teljes kérdésbankot bárki már lektorálta.
+
+A GitHub ZIP artifact letöltése után a jogosult szakmai lektor a CSV mellett **helyi, privát** döntési munkalapot készíthet:
+
+```bash
+python3 scripts/check-a20-quiz-review.py \
+  --inventory a20-quiz-review.csv \
+  --expected-sha TELJES_40_KARAKTERES_GIT_SHA \
+  --template "$HOME/privat-irattar/a20-kviz-lektori-dontesek.csv"
+```
+
+A munkalap minden tételnél csak a kérdésazonosítót és a tartalmi lenyomatot, valamint a `decision`, `reviewer_role`, `reviewed_on`, `evidence_ref` oszlopokat tartalmazza. A lektor csak tényleges szakmai ellenőrzés és bizonyíték mellett írhat be `APPROVED` döntést. Ezt követően:
+
+```bash
+python3 scripts/check-a20-quiz-review.py \
+  --inventory a20-quiz-review.csv \
+  --expected-sha TELJES_40_KARAKTERES_GIT_SHA \
+  --review "$HOME/privat-irattar/a20-kviz-lektori-dontesek.csv"
+```
+
+A program megtagadja a lefedettség igazolását, ha hiányzik egy tétel, megváltozott a kérdés, a válaszkulcs vagy a magyarázat, rossz kiadás SHA-jával készült a CSV, vagy a jóváhagyáshoz nem tartozik ellenőrző szerep, dátum és bizalmas bizonyítékazonosító. Csak az összevont darabszámokat jelenti.
+
+**A kapu értelmezése:** a teljes kérdésbankot gépileg már több módon ellenőrizzük, de a válaszkulcs szintaktikai helyessége és a szókártyával való összhang **nem helyettesíti a független zenei szakértői lektorálást**. A kvízbank-ellenőrző `coverage_passed` eredménye kizárólag bizonyítékhivatkozási teljesség. A korábbi projektgazdai hallás-, kotta- és két kvízkérdéses részpróba érvényes a dokumentált mintákra; **a teljes A-20 továbbra is BLOCKED**, amíg a végleges kiadásjelölthöz kötött szakmai jóváhagyás nincs meg. A privát lektori munkalapot tilos a webgyökérbe vagy nyilvános GitHubra másolni.
