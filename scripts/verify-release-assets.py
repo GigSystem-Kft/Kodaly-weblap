@@ -6,6 +6,13 @@ import json
 import re
 import sys
 
+MEDIA_SUFFIXES = frozenset({
+    ".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif", ".svg", ".ico",
+    ".pdf", ".mp3", ".wav", ".ogg", ".opus", ".flac", ".m4a",
+    ".mp4", ".webm", ".mid", ".midi", ".mxl", ".musicxml",
+    ".woff", ".woff2", ".ttf", ".otf", ".eot",
+})
+
 root = Path(sys.argv[1] if len(sys.argv) > 1 else "release")
 errors = []
 counts = {"textbook_pages": 0, "notes": 0, "rhythm": 0}
@@ -59,12 +66,14 @@ try:
     manifest = json.loads((root / "release-build.json").read_text(encoding="utf-8"))
     revision = manifest.get("sha") if isinstance(manifest, dict) else None
     digests = manifest.get("files") if isinstance(manifest, dict) else None
+    media_digests = manifest.get("media") if isinstance(manifest, dict) else None
     if (
         not isinstance(manifest, dict)
         or manifest.get("schema") != 2
         or not isinstance(revision, str)
         or re.fullmatch(r"[a-f0-9]{40}", revision) is None
         or not isinstance(digests, dict)
+        or not isinstance(media_digests, dict)
     ):
         errors.append("Invalid release-build.json revision or file integrity map")
     else:
@@ -107,6 +116,23 @@ try:
             errors.append("Missing JavaScript file for release integrity check")
         if not entrypoints.issubset(shipped_assets):
             errors.append("HTML references an absent JavaScript/CSS entrypoint")
+        packaged_media = {
+            path.relative_to(root).as_posix()
+            for path in root.rglob("*")
+            if path.suffix.lower() in MEDIA_SUFFIXES
+        }
+        if len(packaged_media) < 379 or set(media_digests) != packaged_media:
+            errors.append("Release media fingerprint map incomplete or stale")
+        else:
+            for name in sorted(packaged_media):
+                path = root / name
+                digest = media_digests[name]
+                if (not isinstance(digest, str) or
+                    re.fullmatch(r"[a-f0-9]{64}", digest) is None or
+                    not path.is_file() or path.is_symlink()):
+                    errors.append(f"Missing or unsafe fingerprinted media: {name}")
+                elif hashlib.sha256(path.read_bytes()).hexdigest() != digest:
+                    errors.append(f"Release media checksum mismatch: {name}")
         if set(digests) != expected_files:
             errors.append("Release manifest does not enumerate every shipped PHP and JS/CSS file")
         else:
