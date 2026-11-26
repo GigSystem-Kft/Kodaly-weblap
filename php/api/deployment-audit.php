@@ -222,5 +222,51 @@ function deploymentBuildFingerprint(string $webroot): array {
     if ($noteCount < 64) {
         return ['buildConsistent'=>false, 'releaseRevision'=>null];
     }
+    // A-24: a server left with unlisted images from an older CloudPanel
+    // upload must not report a fully consistent release. Verify the entire
+    // deployed MEDIA path set, not just files mentioned by the manifest.
+    // The managed root .cache is explicitly excluded, as in the risk scan;
+    // all other folders (including hidden ones) remain in scope.
+    $actualMedia = [];
+    try {
+        $filter = new RecursiveCallbackFilterIterator(
+            new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS),
+            static function (SplFileInfo $item) use ($root): bool {
+                $relative = str_replace(
+                    DIRECTORY_SEPARATOR, '/',
+                    substr($item->getPathname(), strlen($root) + 1)
+                );
+                if ($relative === '.cache' && $item->isDir()) return false;
+                // Do not traverse or silently ignore symlinked directories.
+                if ($item->isLink() && $item->isDir()) {
+                    throw new RuntimeException('Unexpected linked directory');
+                }
+                return true;
+            }
+        );
+        $examined = 0;
+        foreach (new RecursiveIteratorIterator($filter) as $item) {
+            if (++$examined > 50000) {
+                return ['buildConsistent'=>false, 'releaseRevision'=>null];
+            }
+            if (!preg_match('/\\.(?:jpg|jpeg|png|webp|avif|gif|svg|ico|pdf|mp3|wav|ogg|opus|flac|m4a|mp4|webm|mid|midi|mxl|musicxml|woff|woff2|ttf|otf|eot)$/iD',
+                            $item->getFilename())) continue;
+            if (!$item->isFile() || $item->isLink()) {
+                return ['buildConsistent'=>false, 'releaseRevision'=>null];
+            }
+            $actualMedia[] = str_replace(
+                DIRECTORY_SEPARATOR, '/',
+                substr($item->getPathname(), strlen($root) + 1)
+            );
+        }
+    } catch (Throwable) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
+    sort($actualMedia, SORT_STRING);
+    $expectedMedia = array_keys($mediaDigests);
+    sort($expectedMedia, SORT_STRING);
+    if ($actualMedia !== $expectedMedia) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
+    }
     return ['buildConsistent'=>true, 'releaseRevision'=>$revision];
 }
