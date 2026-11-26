@@ -107,8 +107,10 @@ function deploymentBuildFingerprint(string $webroot): array {
     catch (Throwable) { return ['buildConsistent'=>false, 'releaseRevision'=>null]; }
     $revision = is_array($manifest) ? ($manifest['sha'] ?? null) : null;
     $digests = is_array($manifest) ? ($manifest['files'] ?? null) : null;
+    $mediaDigests = is_array($manifest) ? ($manifest['media'] ?? null) : null;
     if (($manifest['schema'] ?? null) !== 2 || !is_string($revision) ||
-        !preg_match('/^[0-9a-f]{40}$/D', $revision) || !is_array($digests)) {
+        !preg_match('/^[0-9a-f]{40}$/D', $revision) || !is_array($digests) ||
+        !is_array($mediaDigests) || count($mediaDigests) < 379) {
         return ['buildConsistent'=>false, 'releaseRevision'=>null];
     }
     $expectedPhp = "<?php\n// Public, non-secret checked-out release revision.\nreturn '" . $revision . "';\n";
@@ -182,6 +184,43 @@ function deploymentBuildFingerprint(string $webroot): array {
         if (!is_string($actual) || !hash_equals($expected, $actual)) {
             return ['buildConsistent'=>false, 'releaseRevision'=>null];
         }
+    }
+    // A-24: PHP/JS version consistency alone does not prove that the 302
+    // textbook pages, 13 rhythm samples or 64 note images survived upload.
+    // Hash ALL media files stamped in the same release (including other
+    // images/audio/PDF/font files), not just HTML entrypoints.
+    for ($grade = 1; $grade <= 4; ++$grade) {
+        $count = [1=>72, 2=>69, 3=>80, 4=>81][$grade];
+        for ($page = 1; $page <= $count; ++$page) {
+            $name = sprintf('tankonyvek/%d/p%03d.jpg', $grade, $page);
+            if (!array_key_exists($name, $mediaDigests)) {
+                return ['buildConsistent'=>false, 'releaseRevision'=>null];
+            }
+        }
+    }
+    for ($page = 1; $page <= 13; ++$page) {
+        if (!array_key_exists(sprintf('ritmikai/p%03d.jpg', $page), $mediaDigests)) {
+            return ['buildConsistent'=>false, 'releaseRevision'=>null];
+        }
+    }
+    $noteCount = 0;
+    foreach ($mediaDigests as $relative => $expected) {
+        if (!is_string($relative) || !is_string($expected) ||
+            !preg_match('/^[0-9a-f]{64}$/D', $expected) ||
+            !preg_match('~^(?:[A-Za-z0-9._-]+/)*[A-Za-z0-9._-]+\\.(?:jpg|jpeg|png|webp|avif|gif|svg|ico|pdf|mp3|wav|ogg|opus|flac|m4a|mp4|webm|mid|midi|mxl|musicxml|woff|woff2|ttf|otf|eot)$~iD', $relative) ||
+            in_array('..', explode('/', $relative), true) ||
+            str_starts_with($relative, '.') || str_contains($relative, '/.')) {
+            return ['buildConsistent'=>false, 'releaseRevision'=>null];
+        }
+        if (preg_match('~^assets/jegyzet/[^/]+\\.jpg$~iD', $relative)) ++$noteCount;
+        $file = $root . '/' . $relative;
+        if (!is_file($file) || is_link($file) || !is_readable($file) ||
+            !hash_equals($expected, (string) @hash_file('sha256', $file))) {
+            return ['buildConsistent'=>false, 'releaseRevision'=>null];
+        }
+    }
+    if ($noteCount < 64) {
+        return ['buildConsistent'=>false, 'releaseRevision'=>null];
     }
     return ['buildConsistent'=>true, 'releaseRevision'=>$revision];
 }
