@@ -56,6 +56,28 @@ foreach ([
         !str_contains($answer,'823. sor'),
         'A-20 complete three forms of A minor: '.$question);
 }
+// A-20: exact previously sampled live question and two natural rephrasings.
+// The direct answer must preserve both rhythms, their order, and 60 BPM
+// durations rather than a partial or stitched glossary excerpt.
+foreach ([
+    'Mi a különbség a nyújtott és az éles ritmus között?',
+    'Hasonlítsd össze az éles és nyújtott ritmust!',
+    'Röviden miben különbözik a nyújtott ritmus az éles ritmustól?',
+] as $question) {
+    $answer = musicKnownAnswer($question);
+    ensure(is_string($answer)
+        && str_contains($answer, 'nyújtott ritmus')
+        && str_contains($answer, 'éles ritmus')
+        && str_contains($answer, 'pontozott negyed + nyolcad')
+        && str_contains($answer, 'nyolcad + pontozott negyed')
+        && str_contains($answer, '1,5 másodperc')
+        && str_contains($answer, '0,5 másodperc')
+        && !str_contains($answer, '823. sor'),
+        'A-20 dotted versus reverse-dotted rhythm is fully compared: '.$question);
+}
+ensure(musicKnownAnswer('Mit jelent a nyújtott ritmus egyetlen példában?') === null,
+    'Unreviewed standalone rhythm question is not invented as a reviewed comparison');
+
 ensure(musicKnownAnswer('Mi a szolmizáció?') !== null, 'szolmizáció');
 ensure(musicKnownAnswer('Hogyan kell árnyékolni a hangszereket?') === null,
     'ismeretlen kérdésre nem költ választ');
