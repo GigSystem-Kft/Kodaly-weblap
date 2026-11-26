@@ -53,6 +53,8 @@ jobs:
           python3 -m unittest discover -s scripts -p 'test_a15_rights_linkage.py' -v
           python3 -m unittest discover -s scripts -p 'test_a15_knowledge_inventory.py' -v
           python3 -m unittest discover -s scripts -p 'test_a15_complete_coverage.py' -v
+      - name: Validate A-20 full-quiz reviewer gate
+        run: python3 -m unittest discover -s scripts -p 'test_a20_quiz_review.py' -v
       - name: TypeScript and unit tests
         run: |
           npm test
@@ -214,6 +216,12 @@ jobs:
               raise SystemExit("Release archive SHA differs from the tested checkout")
           print("Archive SHA matches the tested GitHub checkout")
           PY
+          # A-20: supply an item-addressable, version-fingerprinted QUIZ BANK
+          # for independent music review. This is NOT a reviewer approval.
+          node --import tsx scripts/export-a20-quiz-review.ts "$GITHUB_SHA" a20-quiz-review.csv
+          python3 scripts/check-a20-quiz-review.py \\
+            --inventory a20-quiz-review.csv --expected-sha "$GITHUB_SHA" \\
+            --template "$RUNNER_TEMP/a20-review-template.csv"
           test "$(find "$unpacked" -type f | wc -l)" -gt 100
           # Ship a verifiable checksum next to the ZIP; validate it here too.
           sha256sum zeneelmeleti-muhely-php.zip > zeneelmeleti-muhely-php.zip.sha256
@@ -228,5 +236,6 @@ jobs:
             zeneelmeleti-muhely-php.zip.sha256
             a15-media-inventory.csv
             a15-knowledge-source-inventory.csv
+            a20-quiz-review.csv
           retention-days: 14
           if-no-files-found: error
