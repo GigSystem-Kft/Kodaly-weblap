@@ -329,15 +329,28 @@ try {
   for (const grade of [2, 3, 4]) {
     await page.getByRole('button',{name:/07\. Tankönyvek/}).click();
     await page.getByRole('button',{name:new RegExp('Énekzene '+grade+'\\. osztály')}).click();
-    await page.locator('#textbook-search').waitFor();
-    await page.locator('article').first().waitFor();
+    const gradeSearch = page.locator('#textbook-search');
+    await gradeSearch.waitFor();
+    await gradeSearch.fill('ének');
+    await page.waitForTimeout(150);
+    const gradeAccentHits = await page.locator('article').count();
+    if (gradeAccentHits === 0)
+      throw new Error('Textbook '+grade+' has no searchable results for ének');
+    for (const variant of ['ÉNEK', 'enek', '  eNeK   ']) {
+      await gradeSearch.fill(variant);
+      await page.waitForTimeout(100);
+      const hits = await page.locator('article').count();
+      if (hits !== gradeAccentHits)
+        throw new Error('Textbook '+grade+' search differs for '+variant+
+          ': '+hits+' vs '+gradeAccentHits);
+    }
     await page.locator('article button').first().click();
     await page.getByRole('dialog').waitFor();
     await page.getByRole('button',{name:'Bezár'}).click();
     if (await page.getByRole('dialog').count() !== 0)
       throw new Error('Textbook '+grade+' lightbox did not close');
   }
-  console.log('Guest: all four grade textbooks load and page zoom/close works');
+  console.log('Guest: all four grade textbooks search accent/case/whitespace and page zoom/close work');
 
   await page.getByRole('button',{name:/06\. Profil/}).click();
   await page.getByRole('heading',{name:'Személyes tanulási napló'}).waitFor();
