@@ -239,6 +239,25 @@ printf '%s\n' '<?php return [];' > php/api/knowledge.php
 cat > php/index.html <<HTML
 <html><head><script src="/assets/index-ci.js"></script></head><body>Test</body></html>
 HTML
+# The authenticated admin's release scan now fingerprints learning images.
+# These are tiny disposable synthetic media files, NOT copied lesson assets.
+python3 - <<'PY'
+from pathlib import Path
+root = Path("php")
+for grade, count in ((1, 72), (2, 69), (3, 80), (4, 81)):
+    for number in range(1, count + 1):
+        p = root / "tankonyvek" / str(grade) / f"p{number:03d}.jpg"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(f"CI textbook grade {grade} page {number}".encode())
+for number in range(1, 14):
+    p = root / "ritmikai" / f"p{number:03d}.jpg"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(f"CI rhythm {number}".encode())
+for number in range(1, 65):
+    p = root / "assets" / "jegyzet" / f"n{number:03d}.jpg"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_bytes(f"CI notes illustration {number}".encode())
+PY
 python3 scripts/stamp-php-release.py php "$REVISION"
 printf "<?php\n// Public, non-secret checked-out release revision.\nreturn '%s';\n" "$REVISION" > php/api/release-build.php
 fingerprintStatus="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-deployment-diagnostic.json -w '%{http_code}' \
@@ -287,6 +306,7 @@ if (($j["buildConsistent"]??null)!==false || ($j["ready"]??null)!==false ||
 }
 '
 rm -f php/index.html php/release-build.json php/api/release-build.php php/api/knowledge.php php/assets/index-ci.js
+rm -rf php/tankonyvek php/ritmikai php/assets/jegyzet
 echo 'Live admin diagnostic blocks mixed frontend/PHP source revisions'
 
 
