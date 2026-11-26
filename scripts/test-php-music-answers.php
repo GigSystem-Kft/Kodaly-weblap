@@ -78,6 +78,37 @@ foreach ([
 ensure(musicKnownAnswer('Mit jelent a nyújtott ritmus egyetlen példában?') === null,
     'Unreviewed standalone rhythm question is not invented as a reviewed comparison');
 
+// A-09: composed and decomposed Hungarian accents must reach the SAME
+// reviewed facts, rather than silently dropping into a less precise source
+// excerpt. This also covers copy/paste from differently normalized editors.
+foreach ([
+    ["Mi a kvintko\u{0308}r?", "Mi a kvintkör?", "kvintkör"],
+    ["Mi az elo\u{030B}jegyze\u{0301}s?", "Mi az előjegyzés?", "előjegyzés"],
+    ["Mi a szolmiza\u{0301}cio\u{0301}?", "Mi a szolmizáció?", "szolmizáció"],
+    ["G-du\u{0301}rban ha\u{0301}ny kereszt van?",
+        "G-dúrban hány kereszt van?", "F♯"],
+    ["Mi a ku\u{0308}lo\u{0308}nbse\u{0301}g a tiszta kvint e\u{0301}s a szu\u{030B}ki\u{0301}tett kvint ko\u{0308}zo\u{0308}tt?",
+        "Mi a különbség a tiszta kvint és a szűkített kvint között?", "C–Gesz"],
+    ["Miben ku\u{0308}lo\u{0308}nbo\u{0308}zik a terme\u{0301}szetes, harmonikus e\u{0301}s dallamos a-moll hangsor?",
+        "Miben különbözik a természetes, harmonikus és dallamos a-moll hangsor?", "Gisz"]
+] as [$decomposed, $composed, $fact]) {
+    $expected = musicKnownAnswer($composed);
+    $actual = musicKnownAnswer($decomposed);
+    ensure(is_string($actual) && $actual === $expected &&
+        str_contains($actual, $fact),
+        'A-09 Unicode-equivalent Hungarian reviewed question: '.$composed);
+}
+ensure(musicBriefRequested("Ro\u{0308}viden mondd el a kvintko\u{0308}rt!") === true,
+    'Decomposed röviden still asks for the short answer');
+$shortDecomposed = musicKnownAnswer("Ro\u{0308}viden mi a kvintko\u{0308}r?");
+ensure(is_string($shortDecomposed) && strlen($shortDecomposed) < 500,
+    'Decomposed brief request must remain brief');
+ensure(musicNormalize("O\u{030B}sz") === musicNormalize('Ősz'),
+    'Long double-acute Hungarian vowel normalized identically');
+ensure(musicNormalize("é\xFF") === '' &&
+    musicKnownAnswer("Mi a kvintkör?\xFF") === null,
+    'Invalid UTF-8 cannot turn into a falsely reviewed answer');
+
 ensure(musicKnownAnswer('Mi a szolmizáció?') !== null, 'szolmizáció');
 ensure(musicKnownAnswer('Hogyan kell árnyékolni a hangszereket?') === null,
     'ismeretlen kérdésre nem költ választ');
