@@ -110,9 +110,33 @@ try {
         'assets/lazy/lesson.js', 'assets/lazy/lesson.css'] as $relative) {
         $fileHashes[$relative] = hash_file('sha256', $root . '/' . $relative);
     }
-    $writeManifest = static function (string $sha, array $hashes) use ($root): void {
+    // Synthetic images allow us to prove A-24 catches missing/mixed bytes
+    // without requiring a production server or copying licensed textbooks.
+    $mediaHashes = [];
+    foreach ([1=>72, 2=>69, 3=>80, 4=>81] as $grade=>$count) {
+        $folder = $root . '/tankonyvek/' . $grade;
+        mkdir($folder, 0700, true);
+        for ($number=1; $number<=$count; ++$number) {
+            $relative = sprintf('tankonyvek/%d/p%03d.jpg', $grade, $number);
+            file_put_contents($root . '/' . $relative, 'CI-lesson-page-' . $relative);
+            $mediaHashes[$relative] = hash_file('sha256', $root . '/' . $relative);
+        }
+    }
+    mkdir($root . '/ritmikai', 0700);
+    for ($number=1; $number<=13; ++$number) {
+        $relative = sprintf('ritmikai/p%03d.jpg', $number);
+        file_put_contents($root . '/' . $relative, 'CI-rhythm-' . $relative);
+        $mediaHashes[$relative] = hash_file('sha256', $root . '/' . $relative);
+    }
+    mkdir($root . '/assets/jegyzet', 0700);
+    for ($number=1; $number<=64; ++$number) {
+        $relative = sprintf('assets/jegyzet/n%03d.jpg', $number);
+        file_put_contents($root . '/' . $relative, 'CI-note-' . $relative);
+        $mediaHashes[$relative] = hash_file('sha256', $root . '/' . $relative);
+    }
+    $writeManifest = static function (string $sha, array $hashes) use ($root, &$mediaHashes): void {
         file_put_contents($root . '/release-build.json', json_encode([
-            'schema'=>2,'sha'=>$sha,'files'=>$hashes
+            'schema'=>2,'sha'=>$sha,'files'=>$hashes,'media'=>$mediaHashes
         ], JSON_THROW_ON_ERROR));
     };
     $writeManifest($releaseSha, $fileHashes);
@@ -122,6 +146,33 @@ try {
     checkDeployment($fingerprint['buildConsistent'] === true &&
         $fingerprint['releaseRevision'] === $releaseSha,
         'matching Git and actual JS/PHP release checksums pass');
+
+    foreach (['tankonyvek/1/p001.jpg', 'ritmikai/p001.jpg',
+              'assets/jegyzet/n001.jpg'] as $relative) {
+        $file = $root . '/' . $relative;
+        $original = file_get_contents($file);
+        file_put_contents($file, 'partial CloudPanel media upload');
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+            'stale image cannot retain ready=true: ' . $relative);
+        file_put_contents($file, $original);
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+            'restored image should return a matching deployed fingerprint');
+        unlink($file);
+        checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+            'missing image cannot retain ready=true: ' . $relative);
+        file_put_contents($file, $original);
+    }
+    // A forged or obsolete manifest with missing media entries must fail,
+    // even when PHP, HTML, and JavaScript are unchanged.
+    $before = $mediaHashes['ritmikai/p001.jpg'];
+    unset($mediaHashes['ritmikai/p001.jpg']);
+    $writeManifest($releaseSha, $fileHashes);
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'manifest omitting a required rhythm image is incomplete');
+    $mediaHashes['ritmikai/p001.jpg'] = $before;
+    $writeManifest($releaseSha, $fileHashes);
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+        'restoring the exact image manifest repairs release consistency');
 
     file_put_contents($jsPath, 'console.log("stale JS asset")');
     checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
