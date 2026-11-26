@@ -43,6 +43,20 @@ function musicKnownAnswer(string $question): ?string {
             . 'vagyis a természetes moll hangjaival. A harmonikus mollban az F–Gisz '
             . 'közötti bővített szekundot a dallamos moll felszálló alakja elkerüli.';
     }
+    // A-20: the owner-tested long-short vs short-long rhythm comparison
+    // must not degrade into an unrelated dictionary excerpt. In 4/4 context
+    // the two examples each span two quarter-note beats.
+    if (preg_match('/\\bnyujtott[a-z]*\\b/u', $q)
+        && preg_match('/\\beles[a-z]*\\b/u', $q)
+        && preg_match('/\\britmus[a-z]*\\b/u', $q)) {
+        return 'A **nyújtott ritmus** hosszú–rövid sorrendű: például '
+            . '**pontozott negyed + nyolcad** (1½ + ½ negyedérték). '
+            . 'Az **éles ritmus** ennek fordítottja, rövid–hosszú: '
+            . '**nyolcad + pontozott negyed** (½ + 1½ negyedérték). '
+            . 'Mindkettő összesen két negyedértéknyi időt tölt ki; '
+            . '60 BPM mellett a hosszú érték 1,5 másodperc, '
+            . 'a rövid 0,5 másodperc. A különbség a hangértékek sorrendje.';
+    }
     // A teaching comparison is not a single dictionary term: answer it directly
     // from reviewed meter definitions before scanning the full source index.
     if (preg_match('/\\b3\\s*\\/\\s*4\\b/', $q) && preg_match('/\\b6\\s*\\/\\s*8\\b/', $q)) {
