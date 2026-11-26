@@ -35,9 +35,14 @@ foreach ($sourceBanks as $name) {
     checkPackagedRetrieval(count($subset) > 0, 'Required source bank missing');
     $candidate = null;
     foreach ($subset as $entry) {
-        $tokens = searchTerms((string)($entry['label'] ?? ''));
-        if ($tokens) {
-            $candidate = $tokens[0];
+        // Prefer a concrete concept appearing both in the label and text.
+        // Querying only a broad category such as "Ritmus" can find a label
+        // while producing no relevant sentence in the returned explanation.
+        $labelTokens = searchTerms((string)($entry['label'] ?? ''));
+        $bodyTokens = searchTerms((string)($entry['text'] ?? ''));
+        $common = array_values(array_intersect($labelTokens, $bodyTokens));
+        if ($common) {
+            $candidate = $common[count($common)-1];
             break;
         }
     }
