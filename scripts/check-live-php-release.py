@@ -230,7 +230,7 @@ def main():
                 failures.append("Release manifest: missing required textbook or rhythm image")
             note_count = sum(
                 isinstance(name, str) and
-                re.fullmatch(r"assets/jegyzet/[A-Za-z0-9._-]+\\.jpg", name, re.I) is not None
+                re.fullmatch(r"assets/jegyzet/[A-Za-z0-9._-]+\.jpg", name, re.I) is not None
                 for name in media
             )
             if note_count < 64:
@@ -238,7 +238,7 @@ def main():
             media_extension = r"(?:jpg|jpeg|png|webp|avif|gif|svg|ico|pdf|mp3|wav|ogg|opus|flac|m4a|mp4|webm|mid|midi|mxl|musicxml|woff|woff2|ttf|otf|eot)"
             if not all(
                 isinstance(name, str) and
-                re.fullmatch(r"[A-Za-z0-9._/-]+\\." + media_extension, name, re.I)
+                re.fullmatch(r"[A-Za-z0-9._/-]+\." + media_extension, name, re.I)
                 and not name.startswith(".") and
                 all(part not in ("", ".", "..") and not part.startswith(".")
                     for part in name.split("/")) and
