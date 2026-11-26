@@ -5,6 +5,38 @@ require __DIR__ . '/../php/api/music-answers.php';
 function ensureTutorSearch(bool $yes,string $label): void {
  if (!$yes) {fwrite(STDERR,"FAIL: $label\n");exit(1);}
 }
+// A-07: named meter is a musical concept, not disposable punctuation.
+// In 6/8 the denominator is essential; treating both digits as stopwords
+// made "Mi a 6/8?" return zero indexed terms before this regression.
+foreach ([
+    '2/4' => 'utemmutato24',
+    '3/4' => 'utemmutato34',
+    '4/4' => 'utemmutato44',
+    '6/8' => 'utemmutato68',
+    '6 / 8' => 'utemmutato68',
+    '6/8-os' => 'utemmutato68',
+] as $input => $concept) {
+    ensureTutorSearch(searchTerms('Mi a '.$input.'?') === [$concept],
+        'Keep exact musical meter in retrieval: '.$input);
+}
+$meters = [
+ ['source'=>'Ritmus', 'label'=>'2/4-es ütem',
+  'text'=>'Két negyednyi ütem, egy súlyos és egy súlytalan negyed.'],
+ ['source'=>'Ritmus', 'label'=>'3/4-es ütem',
+  'text'=>'Három negyednyi ütem, egy súlyos és két súlytalan negyed.'],
+ ['source'=>'Ritmus', 'label'=>'4/4-es ütem',
+  'text'=>'Négy negyednyi ütem, az első a fősúlyos.'],
+ ['source'=>'Ritmus', 'label'=>'6/8-os ütem',
+  'text'=>'Hat nyolcad, két háromnyolcados csoport.']
+];
+foreach (['2/4','3/4','4/4','6/8'] as $meter) {
+    $ranked = rankLessons($meter, $meters, 4);
+    ensureTutorSearch(count($ranked) === 1 &&
+        str_contains($ranked[0]['label'], $meter),
+        'Distinct time-signature lookup must not retrieve another meter: '.$meter);
+}
+ensureTutorSearch(searchTerms('Mi a 5/7?') === [],
+    'Unsupported signature is not silently treated as a supported musical meter');
 $terms=searchTerms('Mit jelent az, hogy hexachord?');
 ensureTutorSearch($terms===['hexachord'],'ignore Hungarian filler words');
 ensureTutorSearch(searchTerms('Mi az a hexakord?')===['hexachord'],'Hungarian spelling');
