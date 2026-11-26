@@ -52,6 +52,22 @@ for MESSAGE in \
     if (($x["mode"]??null)==="reviewed" && strpos($x["reply"],"3+3")===false) exit(1);
   '
 done
+# A-09: exercise decomposed Hungarian Unicode over the actual HTTP JSON
+# endpoint, not only the pure PHP answer function. This must remain available
+# even while the account database is offline.
+echo 'Checking decomposed Hungarian music question over HTTP'
+DECOMPOSED_KVINT="$(php -r 'echo json_encode(["message"=>"Ro\u{0308}viden mi a kvintko\u{0308}r?"], JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);')"
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data "$DECOMPOSED_KVINT" \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="reviewed" || !str_contains($x["reply"]??"","kvintkör") || strlen($x["reply"]??"")>=500)exit(1);'
+DECOMPOSED_SIGNATURE="$(php -r 'echo json_encode(["message"=>"G-du\u{0301}rban ha\u{0301}ny kereszt van?"], JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);')"
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data "$DECOMPOSED_SIGNATURE" \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="reviewed" || !str_contains($x["reply"]??"","F♯") || !str_contains($x["reply"]??"","G–A–H"))exit(1);'
 # A broken optional knowledge source must not turn either a reviewed
 # musical explanation or an unknown question into a generic HTTP 503.
 # The error must be logged, while the student receives a safe fallback.
