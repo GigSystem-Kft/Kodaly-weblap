@@ -12,7 +12,13 @@ function musicNormalize(string $text): string {
         'Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o','Ö'=>'o','Ő'=>'o',
         'Ú'=>'u','Ü'=>'u','Ű'=>'u'
     ]));
-    return $text;
+    // A-09: pasted Hungarian questions may use decomposed Unicode accents
+    // (for example "o" followed by U+0308 instead of a precomposed "ö").
+    // Match the source searcher's normalization without requiring intl or
+    // mbstring on shared PHP hosts. Reject invalid UTF-8 rather than turning
+    // it into a misleading, partially normalized reviewed answer.
+    $folded = preg_replace('/\\p{Mn}+/u', '', $text);
+    return is_string($folded) ? $folded : '';
 }
 
 function musicBriefRequested(string $question): bool {
