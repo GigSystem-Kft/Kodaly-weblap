@@ -132,6 +132,7 @@ jobs:
           cp -a php/api/vendor release/api/vendor
           node --import tsx scripts/export-php-knowledge.ts release/api/knowledge.php
           node --import tsx scripts/verify-php-knowledge-parity.ts release/api/knowledge.php
+          php scripts/test-php-packaged-tutor-retrieval.php release/api/knowledge.php
           # A-07: the live PHP assistant must contain all 1,793 chapter 09
           # glossary entries, even if its total chunk count differs from
           # the separately generated frontend/source-inventory.json report.
