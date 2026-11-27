@@ -23,14 +23,14 @@ def records():
     ]
 
 
-def run_validation(rows, expected_sha=None):
+def run_validation(rows, expected_sha=None, scope="full"):
     with TemporaryDirectory() as directory:
         path = Path(directory) / "acceptance.csv"
         with path.open("w", encoding="utf-8", newline="") as stream:
             writer = csv.DictWriter(stream, fieldnames=checker.FIELDS)
             writer.writeheader()
             writer.writerows(rows)
-        return checker.check_ledger(path, expected_sha)
+        return checker.check_ledger(path, expected_sha, scope)
 
 
 class AcceptanceLedgerTests(unittest.TestCase):
@@ -58,6 +58,34 @@ class AcceptanceLedgerTests(unittest.TestCase):
         errors = run_validation(rows)
         self.assertTrue(any("duplicate A-01" in x for x in errors))
         self.assertTrue(any("Missing A-02" in x for x in errors))
+
+    def test_minimum_scope_accepts_documented_deferred_work_without_fake_passes(self):
+        rows = records()
+        for row in rows:
+            if row["audit_id"] not in checker.CRITICAL:
+                row["status"] = "NOT_RUN"
+        self.assertEqual(run_validation(rows, scope="minimum"), [])
+        self.assertTrue(any("not approved" in error for error in run_validation(rows)))
+
+    def test_minimum_scope_never_waives_critical_missing_rights_or_deployment(self):
+        for code in sorted(checker.CRITICAL):
+            rows = records()
+            next(row for row in rows if row["audit_id"] == code)["status"] = "BLOCKED"
+            errors = run_validation(rows, scope="minimum")
+            self.assertTrue(any(code + ": not approved" in err for err in errors), code)
+
+    def test_minimum_scope_still_blocks_any_explicit_failure_or_missing_evidence(self):
+        rows = records()
+        rows[1]["status"] = "FAIL"  # Noncritical A-02, but a real failure.
+        self.assertTrue(any("A-02: not approved (FAIL)" in err
+                            for err in run_validation(rows, scope="minimum")))
+        rows = records()
+        rows[14]["evidence_ref"] = ""  # Rights A-15 cannot be claimed PASS without proof.
+        self.assertTrue(any("A-15: PASS requires evidence_ref" in err
+                            for err in run_validation(rows, scope="minimum")))
+        rows = records()[:-1]
+        self.assertTrue(any("Missing A-24" in err
+                            for err in run_validation(rows, scope="minimum")))
 
     def test_future_date_detected(self):
         rows = records()
