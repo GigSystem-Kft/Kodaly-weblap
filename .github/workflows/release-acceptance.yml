@@ -23,9 +23,12 @@ jobs:
       - name: Test acceptance ledger verifier
         if: github.event.pull_request.number == 2
         run: python3 -m unittest discover -s scripts -p 'test_acceptance_ledger.py' -v
-      - name: Validate six critical 1.0 sign-offs (retain all 24 audit rows)
+      # Pre-merge: backup and a rollback plan are mandatory. The final main
+      # artifact cannot be deployed before merge, so its on-server audit is
+      # deliberately a separate post-deployment release gate.
+      - name: Validate five release sign-offs and A-24 deployment preflight
         if: github.event.pull_request.number == 2
-        run: python3 scripts/check-acceptance-ledger.py --scope minimum
+        run: python3 scripts/check-acceptance-ledger.py --scope premerge
       - name: Check 1.0 manual sign-off evidence (PR #2 only)
         uses: actions/github-script@v7
         with:
@@ -40,11 +43,13 @@ jobs:
             });
             const body = issue.body || '';
             const items = body.split(/\r?\n/).filter(x => /^- \[[ xX]\] /.test(x));
-            // The final SHA/main publication must be checked AFTER the merge.
+            // The final SHA/main publication and live A-24 check happen AFTER merge.
             // Its checkbox is not a prerequisite for a pre-merge review.
             // The 24-row audit stays visible, but does not force the owner
             // to repeat passed feature checks. The six safety-critical manual
             // groups below remain mandatory, irrespective of green CI.
+            // A-24 here means READY_TO_DEPLOY with proven backup/restore;
+            // it is NOT a successful live scan or final publication approval.
             const required = [
               '**A-15 / jogok:**', '**A-20 / szakmai:**',
               '**A-21 / SMTP és szerepkörök:**',
@@ -64,4 +69,4 @@ jobs:
               core.setFailed('Release approval blocked; see issue #3. Technical build success is not approval.');
               return;
             }
-            core.notice('All six safety-critical pre-merge manual acceptance groups are checked. Verify their evidence independently; this is not an automated rights or live deployment audit.');
+            core.notice('Pre-merge approval means safe readiness to deploy, NOT deployed. Only the exact post-merge main ZIP and a live A-24 readiness/data-retention verification authorize final publication.');
