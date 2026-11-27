@@ -11,9 +11,15 @@ FIELDS = ("audit_id", "status", "reviewer_role", "checked_on",
           "candidate_sha", "evidence_ref", "notes")
 EXPECTED = {f"A-{i:02d}" for i in range(1, 25)}
 STATES = {"NOT_RUN", "BLOCKED", "FAIL", "PASS"}
+# Owner-approved lean 1.0 gate: the complete 24-item audit is retained, but
+# only these six independent safety/sign-off categories block a release.
+# Any explicit FAIL anywhere still blocks; unknown/missing rows also block.
+CRITICAL = {"A-06", "A-15", "A-20", "A-21", "A-23", "A-24"}
 
 
-def check_ledger(path, expected_sha=None):
+def check_ledger(path, expected_sha=None, scope="full"):
+    if scope not in {"full", "minimum"}:
+        return ["Ledger: invalid acceptance scope"]
     errors = []
     try:
         with Path(path).open("r", encoding="utf-8-sig", newline="") as stream:
@@ -38,7 +44,8 @@ def check_ledger(path, expected_sha=None):
             errors.append(f"{code}: invalid status {status!r}")
             continue
         if status != "PASS":
-            errors.append(f"{code}: not approved ({status})")
+            if scope == "full" or code in CRITICAL or status == "FAIL":
+                errors.append(f"{code}: not approved ({status})")
             continue
         for field in ("reviewer_role", "checked_on", "candidate_sha", "evidence_ref"):
             if not record[field] or not record[field].strip():
@@ -70,16 +77,21 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ledger", default="docs/acceptance/acceptance-1.0.csv")
     parser.add_argument("--expected-sha", help="Optional exact SHA for an immutable, pre-recorded evidence snapshot")
+    parser.add_argument("--scope", choices=("full", "minimum"), default="full",
+                        help="full=historical 24/24 audit; minimum=only six safety-critical sign-offs, but any FAIL still blocks")
     args = parser.parse_args()
     if args.expected_sha and not re.fullmatch(r"[0-9a-f]{40}", args.expected_sha):
         parser.error("--expected-sha requires an exact Git commit SHA")
-    errors = check_ledger(args.ledger, args.expected_sha)
+    errors = check_ledger(args.ledger, args.expected_sha, args.scope)
     if errors:
         print(f"ACCEPTANCE BLOCKED ({len(errors)} checks):")
         for error in errors:
             print(" -", error)
         return 1
-    print("24/24 evidence ledger rows recorded with reviewer, date, tested SHA and reference.")
+    if args.scope == "minimum":
+        print("1.0 minimum gate: six mandatory safety sign-offs approved; other audit rows retained.")
+    else:
+        print("24/24 evidence ledger rows recorded with reviewer, date, tested SHA and reference.")
     print("This ledger does not replace independent review of the evidence.")
     return 0
 
