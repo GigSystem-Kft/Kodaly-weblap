@@ -87,6 +87,47 @@ class AcceptanceLedgerTests(unittest.TestCase):
         self.assertTrue(any("Missing A-24" in err
                             for err in run_validation(rows, scope="minimum")))
 
+    def test_premerge_accepts_only_documented_a24_readiness(self):
+        rows = records()
+        for row in rows:
+            if row["audit_id"] not in checker.CRITICAL:
+                row["status"] = "NOT_RUN"
+        next(row for row in rows if row["audit_id"] == "A-24")["status"] = "READY_TO_DEPLOY"
+        self.assertEqual(run_validation(rows, SHA, "premerge"), [])
+        self.assertTrue(any("A-24: not approved (READY_TO_DEPLOY)" in err
+                            for err in run_validation(rows, SHA, "minimum")))
+        self.assertTrue(any("A-24: not approved (READY_TO_DEPLOY)" in err
+                            for err in run_validation(rows, SHA, "full")))
+
+    def test_premerge_never_allows_missing_critical_or_undeclared_ready(self):
+        rows = records()
+        next(row for row in rows if row["audit_id"] == "A-24")["status"] = "READY_TO_DEPLOY"
+        next(row for row in rows if row["audit_id"] == "A-20")["status"] = "BLOCKED"
+        self.assertTrue(any("A-20: not approved" in err for err in run_validation(rows, SHA, "premerge")))
+        rows = records()
+        next(row for row in rows if row["audit_id"] == "A-21")["status"] = "READY_TO_DEPLOY"
+        self.assertTrue(any("allowed only for A-24" in err for err in run_validation(rows, SHA, "premerge")))
+
+    def test_premerge_requires_real_evidence_for_backup_readiness(self):
+        rows = records()
+        a24 = next(row for row in rows if row["audit_id"] == "A-24")
+        a24["status"] = "READY_TO_DEPLOY"
+        a24["notes"] = ""
+        self.assertTrue(any("A-24: READY_TO_DEPLOY requires notes" in err
+                            for err in run_validation(rows, SHA, "premerge")))
+        a24["notes"] = "Backup and restore checked; rollback planned"
+        a24["evidence_ref"] = ""
+        self.assertTrue(any("A-24: READY_TO_DEPLOY requires evidence_ref" in err
+                            for err in run_validation(rows, SHA, "premerge")))
+        a24["evidence_ref"] = "private-ledger/A-24"
+        a24["candidate_sha"] = "b" * 40
+        self.assertTrue(any("another source SHA" in err for err in run_validation(rows, SHA, "premerge")))
+        a24["candidate_sha"] = SHA
+        a24["notes"] = "Backup and restore checked; rollback planned"
+        rows[0]["status"] = "FAIL"
+        self.assertTrue(any("A-01: not approved (FAIL)" in err
+                            for err in run_validation(rows, SHA, "premerge")))
+
     def test_future_date_detected(self):
         rows = records()
         rows[0]["checked_on"] = "2999-01-01"
