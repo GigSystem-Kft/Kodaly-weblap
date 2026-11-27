@@ -1,3 +1,4 @@
+import { ModuleCompletionButton } from './ModuleCompletionButton';
 import React, {useMemo, useState} from 'react';
 import {ArrowLeft, BookOpen, Search, Layers, HelpCircle, Gamepad2, ExternalLink, ChevronLeft, ChevronRight} from 'lucide-react';
 import entries from '../data/musicExpressions.json';
@@ -12,15 +13,18 @@ interface Props {
  onFlashcards:(category:string)=>void;
  onMatching:(category:string)=>void;
  onQuiz:()=>void;
+ completed?:boolean;
+ onComplete?:()=>void;
+ favoriteIds?:string[];
+ onFavoriteChange?:(ids:string[])=>void;
 }
-export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatching,onQuiz})=>{
+export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatching,onQuiz,completed=false,onComplete,favoriteIds=[],onFavoriteChange})=>{
  const [search,setSearch]=useState('');
  const [category,setCategory]=useState('mind');
  const [letter,setLetter]=useState('mind');
  const [page,setPage]=useState(0);
  const [expanded,setExpanded]=useState<string[]>([]);
  const [onlyFavorites,setOnlyFavorites]=useState(false);
- const [favoriteIds,setFavoriteIds]=useState<string[]>([]);
  const letters=[...new Set(entries.map(item=>item.letter))].sort((a,b)=>a.localeCompare(b,'hu'));
  const filtered=useMemo(()=>{
   const terms=normalize(search.trim()).split(/\s+/).filter(Boolean);
@@ -42,6 +46,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
  };
  return <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 text-slate-900">
   <button type="button" onClick={onBack} className="inline-flex items-center gap-2 mb-7 px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold hover:border-indigo-400"><ArrowLeft size={16}/> Vissza a tananyaghoz</button>
+      {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
   <header className="bg-white border border-slate-200 shadow-sm rounded-3xl p-6 md:p-9 mb-7">
    <p className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-2">09. fejezet · kereshető fogalomtár</p>
    <h2 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-3">Zenei kifejezések</h2>
@@ -49,7 +54,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
     A mellékelt magyar nyelvű zenei szakkifejezés-gyűjtemény teljes, betűrendben rendezett feldolgozása. Az idegen nyelvű előadási utasítások mellett hangszeres, ritmikai, formai és zenetörténeti fogalmakat is kereshetsz.
    </p>
    <p className="text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mt-4">
-     Forrás: a szerző által mellékelt szótár, eredeti meghatározásokkal. Régi vagy pontatlan szóhasználat is előfordulhat; a Tanársegéd a szakmailag ellenőrzött tananyagokkal összevetve értelmezi. A kategóriák kulcsszavas, tanulást segítő csoportosítások.
+     Forrás: a szerző által mellékelt szótár, eredeti meghatározásokkal. Régi vagy pontatlan szóhasználat is előfordulhat; a Tanársegéd a szakmailag ellenőrzött tananyagokkal összevetve értelmezi. Mind az 1793 eredeti szócikk 12 pedagógiai kategóriában szerepel. A rövid idegen nyelvű utasítások külön csoportot kaptak. A besorolás a mellékelt magyar meghatározásokat követi, de nem helyettesíti a szakmai lektorálást.
    </p>
    <div className="grid sm:grid-cols-3 gap-3 mt-6">
      <button type="button" onClick={()=>onFlashcards('Zenei kifejezések – '+(category==='mind'?'Tempó és időkezelés':category))}
@@ -89,7 +94,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
         <button type="button" aria-expanded={open} onClick={()=>setExpanded(list=>open?list.filter(id=>id!==item.id):[...list,item.id])}
           className="text-left flex-1"><strong className="text-base text-slate-900">{item.term}</strong>
           <span className="block mt-1 text-xs text-indigo-700">{item.category}</span></button>
-        <button type="button" aria-label={favorite?'Kedvenc eltávolítása':'Kedvencekhez adás'} aria-pressed={favorite} onClick={()=>setFavoriteIds(prev=>favorite?prev.filter(id=>id!==item.id):[...prev,item.id])}
+        <button type="button" aria-label={favorite?'Kedvenc eltávolítása':'Kedvencekhez adás'} aria-pressed={favorite} onClick={()=>onFavoriteChange?.(favorite?favoriteIds.filter(id=>id!==item.id):[...favoriteIds,item.id])}
           className={`rounded-lg px-3 py-2 text-lg ${favorite?'text-amber-600 bg-amber-50':'text-slate-400 bg-white'}`}>★</button>
        </div>
        <p className={`text-sm mt-3 leading-relaxed text-slate-700 ${open?'':'line-clamp-3'}`}>{item.definition}</p>

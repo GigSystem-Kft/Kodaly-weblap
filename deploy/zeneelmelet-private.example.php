@@ -21,6 +21,15 @@ return [
     // Opcionális, külön fizetős képgenerálás: csak akkor kapcsold be,
     // ha a Google AI Studio API-számlázás és a havi költségkeret be van állítva.
     // Az API-kulcs sosem kerül a nyilvános webgyökérbe.
+    // Opcionális, kizárólag bejelentkezett felhasználóknak szánt szöveges AI.
+    // Alapesetben kikapcsolt! A tanulók kérdése külső Google-szolgáltatóhoz kerül,
+    // de a teljes pedagógiai könyvek, fiókadatok és eredmények nem.
+    // Bekapcsolás előtt szükséges az adatkezelési tájékoztató és a költségkeret jóváhagyása.
+    'tutor_text_generation' => [
+        'enabled' => false,
+        'model' => 'gemini-2.5-flash-lite',
+        'api_key' => 'IDE_IRD_A_GEMINI_API_KULCSOT',
+    ],
     'tutor_image_generation' => [
         'enabled' => false,
         'model' => 'gemini-2.5-flash-image',

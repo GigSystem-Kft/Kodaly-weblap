@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Play } from 'lucide-react';
 import { playNote, playEarTrainingInterval, stopEarTrainingInterval } from '../utils/audio';
 import { shuffleEarChallenges } from '../utils/earTraining';
@@ -7,9 +7,10 @@ import { ExtendedEarTraining } from './ExtendedEarTraining';
 
 interface EarTrainingViewProps {
   onAddXp: (amount: number) => void;
+  remainingXp: number;
 }
 
-const EAR_CHALLENGES = [
+export const EAR_CHALLENGES = [
   { id: 1, title: 'Tiszta Prím (t1)', notes: ['C4','C4'], description: '0 félhang: két azonos hang.' },
   { id: 2, title: 'Kis Szekund (k2)', notes: ['C4','C#4'], description: '1 félhang, például C–Desz.' },
   { id: 3, title: 'Nagy Szekund (n2)', notes: ['C4','D4'], description: '2 félhang: C–D.' },
@@ -20,17 +21,20 @@ const EAR_CHALLENGES = [
   { id: 8, title: 'Kis Szext (k6)', notes: ['C4','G#4'], description: '8 félhang: C–Asz.' },
   { id: 9, title: 'Nagy Szext (n6)', notes: ['C4','A4'], description: '9 félhang: C–A.' },
   { id: 10, title: 'Kis Szeptim (k7)', notes: ['C4','A#4'], description: '10 félhang: C–B.' },
-  { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','B4'], description: '11 félhang: C–H.' },
+  { id: 11, title: 'Nagy Szeptim (n7)', notes: ['C4','H4'], description: '11 félhang: C–H.' },
   { id: 12, title: 'Tiszta Oktáv (t8)', notes: ['C4','C5'], description: '12 félhang: C–C.' }
 ];
 
-export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => {
+export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp, remainingXp }) => {
   const [trainingTab,setTrainingTab] = useState<'intervals'|'collections'|'extended'>('intervals');
   const [round, setRound] = useState(() => shuffleEarChallenges(EAR_CHALLENGES));
   const [currentChallengeIndex, setCurrentChallengeIndex] = useState<number>(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [awarded, setAwarded] = useState(0);
   const [streak, setStreak] = useState<number>(0);
+  // Guard award side effects synchronously, before React commits a re-render.
+  const answeredRef = useRef(false);
 
   const current = round[currentChallengeIndex];
 
@@ -41,14 +45,18 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   };
 
   const handleGuess = (title: string) => {
+    if (answeredRef.current) return;
+    answeredRef.current = true;
     setSelectedAnswer(title);
     const correct = title === current.title;
     setIsCorrect(correct);
+    const earned = correct ? Math.min(25,remainingXp) : 0;
+    setAwarded(earned);
 
     if (correct) {
       playNote('C6', 400);
       setStreak((prev) => prev + 1);
-      onAddXp(25);
+      if (earned > 0) onAddXp(earned);
     } else {
       playNote('C3', 400);
       setStreak(0);
@@ -56,9 +64,12 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
   };
 
   const nextChallenge = () => {
+    if (!answeredRef.current) return;
     stopEarTrainingInterval();
+    answeredRef.current = false;
     setSelectedAnswer(null);
     setIsCorrect(null);
+    setAwarded(0);
     if (currentChallengeIndex === round.length - 1) {
       setRound(shuffleEarChallenges(EAR_CHALLENGES, current.id));
       setCurrentChallengeIndex(0);
@@ -77,7 +88,12 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
       <button type="button" aria-pressed={trainingTab==='extended'} onClick={()=>{stopEarTrainingInterval();setTrainingTab('extended')}}
         className={`px-5 py-3 rounded-xl text-sm font-semibold border ${trainingTab==='extended'?'bg-indigo-600 text-white border-indigo-600':'bg-white text-slate-800 border-slate-300'}`}>Hangsorok, ritmusok, hangértékek</button>
     </nav>
-    {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp}/> : (
+    <p className="max-w-3xl mx-auto px-4 mt-3 text-sm text-slate-600">
+      Hallásfejlesztési gyakorlásért naponta összesen legfeljebb 100 XP gyűjthető.
+      A további ismétlések korlátozás nélkül gyakorolhatók, de már nem adnak új XP-t.
+      Az XP játékos gyakorlási pont, nem vizsgajegy.
+    </p>
+    {trainingTab==='extended' ? <ExtendedEarTraining onAddXp={onAddXp} remainingXp={remainingXp}/> : trainingTab==='collections' ? <PitchCollectionTraining onAddXp={onAddXp} remainingXp={remainingXp}/> : (
     <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangközök felismerése">
       <div className="text-center mb-6">
         <p className="text-xs uppercase font-bold tracking-widest text-indigo-700 mb-2">Hallásfejlesztés · hangközök</p>
@@ -139,7 +155,7 @@ export const EarTrainingView: React.FC<EarTrainingViewProps> = ({ onAddXp }) => 
           <div role="status" className="mt-6 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-left">
               <p className={`font-bold text-sm ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>
-                {isCorrect ? 'Helyes válasz! Szereztél +25 XP-t.' : `Helytelen. A helyes válasz: ${current.title}`}
+                {isCorrect ? (awarded > 0 ? `Helyes válasz! Szereztél +${awarded} XP-t.` : 'Helyes válasz! A napi 100 XP-s gyakorlási kereted betelt.') : `Helytelen. A helyes válasz: ${current.title}`}
               </p>
               <p className="text-xs text-slate-600 mt-1">{current.description}</p>
             </div>

@@ -41,3 +41,58 @@ test('profile distinguishes five progress-tracked lessons and the four extended 
  assert.ok(app.includes('onOpenModule={(tab) => {setActiveTab(tab)'));
  assert.ok(!page.includes('Tanfolyam Haladása'));
 });
+
+test('extended module completion is counted separately and reflected on profile',()=>{
+ const progress=createEmptyProgress();
+ progress.completedChapters=[MUSIC_CHAPTERS[0].id,...EXTRA_LEARNING_MODULES.map(module=>module.id)];
+ const summary=learningProgressSummary(progress);
+ assert.equal(summary.completedCoreChapters,1);
+ assert.equal(summary.completedExtendedModules,4);
+ assert.equal(summary.completedModules,5);
+ const dashboard=readFileSync('src/components/ProgressDashboard.tsx','utf8');
+ assert.match(dashboard,/stats.completedModules/);
+ for(const id of EXTRA_LEARNING_MODULES.map(module=>module.id)){
+   assert.ok(readFileSync('src/App.tsx','utf8').includes(`completeChapter('${id}')`));
+ }
+});
+
+test('account progress offers retry after transient network outage', () => {
+ const app=readFileSync('src/App.tsx','utf8');
+ const panel=readFileSync('src/components/AccountPanel.tsx','utf8');
+ assert.match(app,/window\.addEventListener\('online', retry\)/);
+ assert.match(app,/window\.setInterval\(retry, 15_000\)/);
+ assert.match(app,/onRetrySync=\{retrySync\}/);
+ assert.match(app,/window\.addEventListener\('beforeunload', warnPendingSave\)/);
+ assert.match(panel,/Eredmények mentésének újrapróbálása/);
+});
+
+test('floating AI assistant is constrained to small mobile viewport width and height',()=>{
+ const chat=readFileSync('src/components/ChatAssistant.tsx','utf8');
+ assert.match(chat,/w-\[calc\(100vw-1\.5rem\)\]/);
+ assert.match(chat,/max-h-\[calc\(100dvh-1\.5rem\)\]/);
+});
+
+test('glossary favorites are controlled by saved profile and not reset on view navigation',()=>{
+  const app=readFileSync('src/App.tsx','utf8');
+  const glossary=readFileSync('src/components/MusicExpressionsView.tsx','utf8');
+  assert.match(app,/favoriteIds=\{progress\.favoriteExpressions \?\? \[\]\}/);
+  assert.match(app,/onFavoriteChange=\{\(ids\) => setProgress/);
+  assert.match(glossary,/favoriteIds\?:string\[\]/);
+  assert.match(glossary,/onFavoriteChange\?\./);
+  assert.ok(!glossary.includes('setFavoriteIds'),'Glossary favorites should not be reset on remount');
+});
+
+test('signout must warn before discarding unsynchronized student results',()=>{
+ const app=readFileSync('src/App.tsx','utf8');
+ const account=readFileSync('src/components/AccountPanel.tsx','utf8');
+ assert.match(app,/hasUnsavedProgress=\{account !== null/);
+ assert.match(account,/if \(hasUnsavedProgress && !window\.confirm/);
+ assert.match(account,/Ha most kijelentkezel, ezek elveszhetnek/);
+});
+
+test('a missed quiz question has a grounded correct response and explanation in profile',()=>{
+  const dashboard=readFileSync('src/components/ProgressDashboard.tsx','utf8');
+  assert.match(dashboard,/question\.options\[question\.correctIndex\]/);
+  assert.match(dashboard,/question\.explanation/);
+  assert.match(dashboard,/Korábbi kérdés \(már nem szerepel a feladatbankban\)/);
+});

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { hungarianOctaveName } from '../utils/noteNotation';
 import { playNote, playRhythmPlayback, stopRhythmPlayback } from '../utils/audio';
 import { RHYTHM_SUBDIVISIONS, rhythmPattern, type RhythmSubdivision } from '../utils/rhythmPattern';
 import { trebleStaffY, TREBLE_STAFF_LINES, FIRST_LEDGER_LINE_Y } from '../utils/trebleStaff';
@@ -104,9 +105,9 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
           className={`rounded-lg border px-3 py-2 text-sm ${selected===i?'bg-indigo-600 text-white':'bg-white text-slate-800'}`}>{preset.label}</button>)}
       </div>
       <div className="grid grid-cols-8 gap-1 h-28 sm:h-40 mb-3">
-        {keys.map(({note,name,semi})=><button key={note} type="button" disabled={!notes.includes(semi)}
-          aria-label={note+' megszólaltatása'} onClick={()=>{setActive(note);playNote(note,650)}}
-          className={`rounded-b-lg border flex items-end justify-center pb-3 font-bold ${!notes.includes(semi)?'bg-slate-100 text-slate-400':active===note?'bg-indigo-500 text-white':'bg-white text-indigo-800 border-indigo-300 hover:bg-indigo-50'}`}>{name}</button>)}
+        {keys.map(({note,semi})=><button key={note} type="button" disabled={!notes.includes(semi)}
+          aria-label={hungarianOctaveName(note)+' megszólaltatása'} onClick={()=>{setActive(note);playNote(note,650)}}
+          className={`rounded-b-lg border flex items-end justify-center pb-3 font-bold ${!notes.includes(semi)?'bg-slate-100 text-slate-400':active===note?'bg-indigo-500 text-white':'bg-white text-indigo-800 border-indigo-300 hover:bg-indigo-50'}`}>{hungarianOctaveName(note)}</button>)}
       </div>
       <svg viewBox="0 0 440 135" role="img" aria-label="A kiválasztott hangsor kottavonalon szemléltetve" className="w-full max-w-xl rounded-lg bg-indigo-50">
         {TREBLE_STAFF_LINES.map(y=><line key={y} x1="18" y1={y} x2="422" y2={y} stroke="#64748b" strokeWidth="1.2"/>)}
@@ -118,7 +119,7 @@ export const InteractiveMusicVisual:React.FC<{chapterId:string}>=({chapterId})=>
             {step===0 && <line x1={x-16} y1={FIRST_LEDGER_LINE_Y} x2={x+16} y2={FIRST_LEDGER_LINE_Y} stroke="#64748b" strokeWidth="1.2"/>}
             <ellipse cx={x} cy={y} rx="8" ry="5.5" transform={`rotate(-18 ${x} ${y})`} fill="#4338ca"/>
             <line x1={x+7} y1={y} x2={x+7} y2={y-31} stroke="#4338ca" strokeWidth="1.6"/>
-            <text x={x} y="124" textAnchor="middle" fontSize="12" fill="#312e81">{keys.find(k=>k.semi===semi)?.name}</text>
+            <text x={x} y="124" textAnchor="middle" fontSize="12" fill="#312e81">{hungarianOctaveName(keys.find(k=>k.semi===semi)?.note ?? 'C4')}</text>
           </g>;
         })}
       </svg>

@@ -43,3 +43,12 @@ test('tempo scales the figures and metronome together',()=>{
  assert.deepEqual(sharp.beats.map(x=>x.startSeconds),[0,0.5]);
  assert.throws(()=>rhythmFigurePattern('triola',0));
 });
+
+test('rhythm descriptions agree with the actual single playback length',()=>{
+ for(const id of ['nyujtott','eles'] as const){
+  const figure=RHYTHM_FIGURES.find(x=>x.id===id)!;
+  assert.match(figure.explanation,/Két negyednyi ritmusképlet, egyszer megszólaltatva\./);
+  assert.equal(rhythmFigurePattern(id,60).totalSeconds,2);
+  assert.equal(rhythmFigurePattern(id,60).events.length,2);
+ }
+});

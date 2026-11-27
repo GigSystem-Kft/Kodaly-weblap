@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { formatHungarianPitchText } from '../utils/noteNotation';
 import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
 import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
 import { ImageLightbox } from './ImageLightbox';
-import { CuratedMediaPanel } from './CuratedMediaPanel';
 import { InteractiveMusicVisual } from './InteractiveMusicVisual';
 import { RhythmFiguresVisual } from './RhythmFiguresVisual';
 import { MeterExamplesVisual } from './MeterExamplesVisual';
@@ -12,14 +12,16 @@ import { SolfegeScaleVisual } from './SolfegeScaleVisual';
 import { IntervalExamplesVisual } from './IntervalExamplesVisual';
 import { CollectionLessonVisual } from './CollectionLessonVisual';
 import { TonalExamplesVisual, CircleOfFifthsVisual } from './TonalExamplesVisual';
-import { ArrowLeft, Play, CheckCircle, HelpCircle, BookOpen, Volume2, Quote } from 'lucide-react';
-import { playNote, playChord, playWarmQuarterScale, stopEarTrainingInterval } from '../utils/audio';
+import { ArrowLeft, CheckCircle, HelpCircle, BookOpen, Quote } from 'lucide-react';
+import { playNote, stopEarTrainingInterval } from '../utils/audio';
 
 interface ChapterDetailViewProps {
   chapter: Chapter;
   onBack: () => void;
   onOpenQuiz: (chapterId: string) => void;
   onCompleteChapter: (chapterId: string) => void;
+  onCompleteSubchapter: (subchapterId: string) => void;
+  completedSubchapters: string[];
   isCompleted: boolean;
 }
 
@@ -28,6 +30,8 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   onBack,
   onOpenQuiz,
   onCompleteChapter,
+  onCompleteSubchapter,
+  completedSubchapters,
   isCompleted
 }) => {
   const [activeSubId, setActiveSubId] = useState<string>(chapter.subchapters[0]?.id || '');
@@ -35,6 +39,11 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
   const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
 
   const currentSub = chapter.subchapters.find((s) => s.id === activeSubId) || chapter.subchapters[0];
+  useEffect(() => {
+    setActiveSubId(chapter.subchapters[0]?.id || '');
+    setRevealedAnswers([]);
+    setZoom(null);
+  }, [chapter.id]);
   useEffect(() => () => stopEarTrainingInterval(), [activeSubId]);
   const illustrations = LESSON_ILLUSTRATIONS[currentSub.id] ?? [];
   const guide = getFoundationsSubchapterGuide(chapter.id, currentSub.id);
@@ -62,7 +71,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
           {!isCompleted ? (
             <button
               onClick={() => onCompleteChapter(chapter.id)}
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium transition-all shadow-lg shadow-emerald-600/30"
             >
               <CheckCircle className="w-4 h-4" />
               <span>Fejezet Teljesítése</span>
@@ -96,7 +105,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <button
                 key={sub.id}
                 onClick={() => setActiveSubId(sub.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-start space-x-3 ${
+                className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium flex items-start space-x-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-800 ${
                   isActive
                     ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                     : 'bg-white hover:bg-indigo-50 text-slate-700 border border-slate-200'
@@ -108,6 +117,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                   {idx + 1}
                 </span>
                 <span className="flex-1 leading-snug">{sub.title}</span>
+                {completedSubchapters.includes(sub.id) && <CheckCircle className="w-4 h-4 shrink-0" aria-label="Tanulmányozott alfejezet" />}
               </button>
             );
           })}
@@ -116,9 +126,19 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
         {/* Content area */}
         <div className="lg:col-span-3 space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">{currentSub.title}</h3>
+            <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
+              <h3 className="text-xl font-bold text-slate-900">{currentSub.title}</h3>
+              {completedSubchapters.includes(currentSub.id) ? (
+                <span className="text-sm text-emerald-700 inline-flex gap-1 items-center"><CheckCircle className="w-4 h-4"/> Tanulmányozottnak jelölve</span>
+              ) : (
+                <button type="button" onClick={() => onCompleteSubchapter(currentSub.id)}
+                  className="rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white px-3 py-2 text-sm font-medium">
+                  Alfejezet tanulmányozva
+                </button>
+              )}
+            </div>
             <p className="text-[#4a54e1] font-medium text-sm mb-6 pb-4 border-b border-slate-200">
-              {currentSub.summary}
+              {formatHungarianPitchText(currentSub.summary)}
             </p>
 
             {/* Content paragraphs / bullets */}
@@ -126,7 +146,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               {currentSub.content.map((paragraph, i) => (
                 <div key={i} className="flex items-start space-x-3 text-slate-700 leading-relaxed">
                   <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2.5 shrink-0" />
-                  <p>{paragraph}</p>
+                  <p>{formatHungarianPitchText(paragraph)}</p>
                 </div>
               ))}
             </div>
@@ -144,7 +164,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 <h4 className="font-serif-cormorant text-2xl font-semibold">Részletes magyarázat – az alfejezethez</h4>
                 {guide.sections.map(section => <article key={section.title}>
                   <h5 className="text-lg font-semibold mb-2">{section.title}</h5>
-                  {section.paragraphs.map(paragraph=><p key={paragraph.slice(0,40)} className="text-slate-700 leading-relaxed mb-3 text-sm md:text-base">{paragraph}</p>)}
+                  {section.paragraphs.map(paragraph=><p key={paragraph.slice(0,40)} className="text-slate-700 leading-relaxed mb-3 text-sm md:text-base">{formatHungarianPitchText(paragraph)}</p>)}
                 </article>)}
               </div>
               <div className="rounded-xl bg-indigo-50/50 border border-indigo-100 p-5 mb-5">
@@ -162,15 +182,16 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <div className="rounded-xl border border-indigo-200 p-5 mb-5">
                 <h4 className="font-semibold mb-3">Önellenőrzés</h4>
                 {guide.selfCheck.map((item,index) => {
-                  const key = chapter.id + ':' + index;
+                  // Distinct answers belong to distinct subchapters, even at the same question index.
+                  const key = chapter.id + ':' + currentSub.id + ':' + index;
                   const visible = revealedAnswers.includes(key);
                   return <div key={item.question} className="py-3 border-b border-slate-100 last:border-0">
-                    <p className="text-sm font-medium mb-2">{index + 1}. {item.question}</p>
+                    <p className="text-sm font-medium mb-2">{index + 1}. {formatHungarianPitchText(item.question)}</p>
                     <button type="button" onClick={()=>setRevealedAnswers(prev => visible ? prev.filter(id=>id!==key) : [...prev,key])}
                       aria-expanded={visible} className="text-sm text-[#4a54e1] font-semibold hover:underline">
                       {visible ? 'Válasz elrejtése' : 'Mintaválasz megmutatása'}
                     </button>
-                    {visible && <p className="text-sm text-slate-700 mt-2">{item.answer}</p>}
+                    {visible && <p className="text-sm text-slate-700 mt-2">{formatHungarianPitchText(item.answer)}</p>}
                   </div>;
                 })}
               </div>
@@ -248,46 +269,16 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               <div key={qIdx} className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 my-6 flex items-start space-x-4">
                 <Quote className="w-8 h-8 text-[#4a54e1] shrink-0 opacity-70" />
                 <div>
-                  <p className="text-slate-200 italic font-medium mb-2">„{q.text}”</p>
+                  <p className="text-slate-800 italic font-medium mb-2">„{q.text}”</p>
                   <span className="text-xs font-bold text-[#4a54e1]">— {q.source}</span>
                 </div>
               </div>
             ))}
 
-            {/* Examples & Audio Player */}
-            {currentSub.examples && currentSub.examples.length > 0 && (
-              <div className="mt-8 pt-6 border-t border-slate-200">
-                <h4 className="text-sm font-bold uppercase tracking-wider text-slate-600 mb-4 flex items-center space-x-2">
-                  <Volume2 className="w-4 h-4 text-[#4a54e1]" />
-                  <span>Szemléltető Példák & Hangzó Anyag</span>
-                </h4>
-                <div className="space-y-4">
-                  {currentSub.examples.map((ex, eIdx) => (
-                    <div key={eIdx} className="bg-slate-50/60 border border-slate-200/60 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                      <div>
-                        <h5 className="font-bold text-slate-900 text-sm mb-1">{ex.title}</h5>
-                        <p className="text-slate-700 text-xs">{ex.description}</p>
-                      </div>
-                      {ex.audioNotes && (
-                        <button
-                          onClick={() => currentSub.id === 'abszolutm-hangok' && ex.title === 'Alaphangok skála'
-                            ? playWarmQuarterScale(ex.audioNotes || [], 60)
-                            : playChord(ex.audioNotes || ['C4', 'E4', 'G4'], 600)}
-                          className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-md shadow-indigo-600/30 flex items-center space-x-2 shrink-0"
-                        >
-                          <Play className="w-3.5 h-3.5" />
-                          <span>{currentSub.id === 'abszolutm-hangok' && ex.title === 'Alaphangok skála' ? 'Skála meghallgatása (60 BPM)' : 'Példa hangzása'}</span>
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
-      <CuratedMediaPanel chapterNumber={chapter.number}/>
+
       {zoom && <ImageLightbox src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} />}
     </div>
   );

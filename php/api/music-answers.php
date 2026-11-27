@@ -12,7 +12,13 @@ function musicNormalize(string $text): string {
         'Á'=>'a','É'=>'e','Í'=>'i','Ó'=>'o','Ö'=>'o','Ő'=>'o',
         'Ú'=>'u','Ü'=>'u','Ű'=>'u'
     ]));
-    return $text;
+    // A-09: pasted Hungarian questions may use decomposed Unicode accents
+    // (for example "o" followed by U+0308 instead of a precomposed "ö").
+    // Match the source searcher's normalization without requiring intl or
+    // mbstring on shared PHP hosts. Reject invalid UTF-8 rather than turning
+    // it into a misleading, partially normalized reviewed answer.
+    $folded = preg_replace('/\\p{Mn}+/u', '', $text);
+    return is_string($folded) ? $folded : '';
 }
 
 function musicBriefRequested(string $question): bool {
@@ -23,6 +29,51 @@ function musicBriefRequested(string $question): bool {
 function musicKnownAnswer(string $question): ?string {
     $q = musicNormalize($question);
     $short = musicBriefRequested($question);
+    // A-20: answer these whole-concept comparisons with reviewed teaching facts
+    // rather than letting a generic "kvint" match swallow a comparison.
+    if (preg_match('/\\b(tiszta|tiszta\\s+kvint[a-z]*)\\b/u', $q)
+        && preg_match('/\\bszukitett\\s+kvint[a-z]*\\b/u', $q)) {
+        return 'A **tiszta kvint** öt hangnévnyi távolság és **7 félhangból** áll, például **C–G**. A **szűkített kvint** ugyancsak öt hangnévnyi távolság, de csak **6 félhangból** áll, például **C–Gesz**. A különbség tehát egy félhang: a szűkített kvint kisebb a tiszta kvintnél.';
+    }
+    // Hungarian tradition: melodic minor raises VI and VII ascending and
+    // usually uses natural minor descending. A minor has no key signature.
+    if (preg_match('/\\b(termeszetes|naturalis)[a-z]*\\b/u', $q)
+        && preg_match('/\\bharmonikus[a-z]*\\b/u', $q)
+        && preg_match('/\\b(dallamos|melodikus)[a-z]*\\b/u', $q)
+        && preg_match('/\\b(a\\s*[- ]?moll|moll\\s+hangsor)[a-z]*\\b/u', $q)) {
+        return 'Az **a-moll** három gyakori alakja: '
+            . '**természetes a-moll:** A–H–C–D–E–F–G–A (nincs módosított hang); '
+            . '**harmonikus a-moll:** A–H–C–D–E–F–Gisz–A (a VII. fok emelt); '
+            . '**dallamos a-moll:** felszállva A–H–C–D–E–Fisz–Gisz–A '
+            . '(a VI. és VII. fok emelt), hagyományosan leszállva A–G–F–E–D–C–H–A, '
+            . 'vagyis a természetes moll hangjaival. A harmonikus mollban az F–Gisz '
+            . 'közötti bővített szekundot a dallamos moll felszálló alakja elkerüli.';
+    }
+    // A-20: the owner-tested long-short vs short-long rhythm comparison
+    // must not degrade into an unrelated dictionary excerpt. In 4/4 context
+    // the two examples each span two quarter-note beats.
+    if (preg_match('/\\bnyujtott[a-z]*\\b/u', $q)
+        && preg_match('/\\beles[a-z]*\\b/u', $q)
+        && preg_match('/\\britmus[a-z]*\\b/u', $q)) {
+        return 'A **nyújtott ritmus** hosszú–rövid sorrendű: például '
+            . '**pontozott negyed + nyolcad** (1½ + ½ negyedérték). '
+            . 'Az **éles ritmus** ennek fordítottja, rövid–hosszú: '
+            . '**nyolcad + pontozott negyed** (½ + 1½ negyedérték). '
+            . 'Mindkettő összesen két negyedértéknyi időt tölt ki; '
+            . '60 BPM mellett a hosszú érték 1,5 másodperc, '
+            . 'a rövid 0,5 másodperc. A különbség a hangértékek sorrendje.';
+    }
+    // A teaching comparison is not a single dictionary term: answer it directly
+    // from reviewed meter definitions before scanning the full source index.
+    if (preg_match('/\\b3\\s*\\/\\s*4\\b/', $q) && preg_match('/\\b6\\s*\\/\\s*8\\b/', $q)) {
+        return 'A **3/4-es ütem** három negyedből áll, rendszerint **súlyos–súlytalan–súlytalan** lüktetéssel. A **6/8-os ütem** hat nyolcadnyi értékből áll, általában **3+3 nyolcadra**, vagyis **két pontozott negyednyi lüktetési egységre** tagolódik. Az első és negyedik nyolcad csoportkezdő, az első a főhangsúlyos. A 6/8 tehát nem egyszerűen gyorsabb 3/4: a hangsúlyrendjük és a lüktetési egységeik eltérnek.';
+    }
+    // A named-key question needs its actual signature, not a generic
+    // dictionary definition of "előjegyzés".
+    if (preg_match('/\\bg\\s*[- ]?\\s*dur(?:ban|ben|nak|hoz|rol|t)?\\b/u', $q)
+        && preg_match('/\\b(elojegyz[a-z]*|kereszt[a-z]*|modositojel[a-z]*|hany\\s+kereszt[a-z]*)\\b/u', $q)) {
+        return 'A **G-dúr előjegyzése egy kereszt (♯): a fisz, vagyis az F♯**. A G-dúr hangsor hangjai: G–A–H–C–D–E–Fisz–G. A kereszt a kotta elején az F hangot módosítja, amíg más előjegyzés vagy helyi módosítójel nem változtatja meg.';
+    }
     $answers = [
         '/\\b(hexachord|hexakord|hexachordum)[a-z]*\\b/' => [
             'A **hexachord (hexakord)** hat hangból álló hangsorszakasz. A középkori Guido-féle szolmizációban az ut–re–mi–fa–sol–la hangsort jelenti (egész–egész–fél–egész–egész lépésrend). _Magyar forrás: Kelemen Judit, Zempléni Múzsa: https://zemplenimuzsa.hu/latoter/kelemen-judit-matyas-korabeli-zenei-neveles-sarospatakon-a-szalkai-kodex-tukreben/_',

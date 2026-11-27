@@ -6,7 +6,7 @@ trap '[[ -n "${SERVER_PID:-}" ]] && kill "$SERVER_PID" 2>/dev/null || true; rm -
 trap 'echo "PHP offline-chat test failed; sanitized local server log:" >&2; tail -n 50 "$ROOT/php-server.log" >&2 || true' ERR
 SITE="$ROOT/owner/htdocs/example.test"
 mkdir -p "$SITE/api"
-cp php/api/{index.php,tutor-search.php,tutor-sources.php,tutor-visuals.php,creative-answers.php,music-answers.php,tutor-image-generation.php} "$SITE/api/"
+cp php/api/{index.php,tutor-search.php,tutor-sources.php,tutor-visuals.php,creative-answers.php,music-answers.php,tutor-image-generation.php,tutor-text-generation.php} "$SITE/api/"
 cat > "$ROOT/owner/zeneelmelet-private.php" <<'PHP'
 <?php
 return [
@@ -37,4 +37,54 @@ echo 'Checking chat reply with unreachable MySQL'; curl -fsS -X POST "${BASE}cha
   -H 'X-Requested-With: XMLHttpRequest' \
   --data '{"message":"Mit jelent a príma vista?"}' \
   | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="fallback" || stripos($x["reply"]??"","príma vista")===false) {fwrite(STDERR, json_encode($x));exit(1);}'
-printf 'Offline database: tutor status and prima vista answers are operational.\n'
+# Human-acceptance regressions: both the meter comparison and an unknown
+# music term must return HTTP 200 even when the account database is offline.
+for MESSAGE in \
+  'Mi a különbség a 3/4-es és a 6/8-os ütem között?' \
+  'Mi az a zorbafonikus hetedik kvantumhangzat?'; do
+  ANSWER="$(curl -fsS -X POST "${BASE}chat" \
+    -H 'Content-Type: application/json' \
+    -H 'X-Requested-With: XMLHttpRequest' \
+    --data "$(php -r 'echo json_encode(["message"=>$argv[1]], JSON_UNESCAPED_UNICODE);' "$MESSAGE")")"
+  printf '%s' "$ANSWER" | php -r '
+    $x=json_decode(stream_get_contents(STDIN),true);
+    if(!is_array($x) || !is_string($x["reply"]??null) || trim($x["reply"])==="") exit(1);
+    if (($x["mode"]??null)==="reviewed" && strpos($x["reply"],"3+3")===false) exit(1);
+  '
+done
+# A-09: exercise decomposed Hungarian Unicode over the actual HTTP JSON
+# endpoint, not only the pure PHP answer function. This must remain available
+# even while the account database is offline.
+echo 'Checking decomposed Hungarian music question over HTTP'
+DECOMPOSED_KVINT="$(php -r 'echo json_encode(["message"=>"Ro\u{0308}viden mi a kvintko\u{0308}r?"], JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);')"
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data "$DECOMPOSED_KVINT" \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="reviewed" || !str_contains($x["reply"]??"","kvintkör") || strlen($x["reply"]??"")>=500)exit(1);'
+DECOMPOSED_SIGNATURE="$(php -r 'echo json_encode(["message"=>"G-du\u{0301}rban ha\u{0301}ny kereszt van?"], JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);')"
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data "$DECOMPOSED_SIGNATURE" \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="reviewed" || !str_contains($x["reply"]??"","F♯") || !str_contains($x["reply"]??"","G–A–H"))exit(1);'
+# A broken optional knowledge source must not turn either a reviewed
+# musical explanation or an unknown question into a generic HTTP 503.
+# The error must be logged, while the student receives a safe fallback.
+cat > "$SITE/api/knowledge.php" <<'PHP'
+<?php
+throw new RuntimeException('Synthetic source-index read failure');
+PHP
+echo 'Checking reviewed meter answer with unavailable knowledge index'
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data '{"message":"Mi a különbség a 3/4-es és a 6/8-os ütemmutató között?"}' \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); if(($x["mode"]??null)!=="reviewed" || !str_contains($x["reply"]??"","3+3 nyolcadra"))exit(1);'
+echo 'Checking unknown term with unavailable knowledge index'
+curl -fsS -X POST "${BASE}chat" \
+  -H 'Content-Type: application/json' \
+  -H 'X-Requested-With: XMLHttpRequest' \
+  --data '{"message":"Mi az a zorbafonikus hetedik kvantumhangzat?"}' \
+  | php -r '$x=json_decode(stream_get_contents(STDIN),true); $reply=$x["reply"]??""; if(($x["mode"]??null)!=="fallback" || !str_contains($reply,"nem találtam") || str_contains($reply,"szerveroldali szolgáltatás"))exit(1);'
+printf 'Offline database and failing knowledge index: safe tutor replies passed.\n'

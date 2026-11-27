@@ -1,17 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Play, Shuffle, Volume2 } from 'lucide-react';
 import { createPitchCollectionRound, PITCH_COLLECTIONS, pitchNotes } from '../data/pitchCollections';
 import { playEarTrainingMelody, stopEarTrainingInterval } from '../utils/audio';
 
-interface Props { onAddXp: (xp: number) => void; }
+interface Props { onAddXp: (xp: number) => void; remainingXp: number; }
 type TrainingMode='felismeres'|'parositas';
 const getSet=(id:number)=>PITCH_COLLECTIONS.find(item=>item.id===id)!;
 
-export const PitchCollectionTraining: React.FC<Props>=({onAddXp})=>{
+export const PitchCollectionTraining: React.FC<Props>=({onAddXp,remainingXp})=>{
   const [mode,setMode]=useState<TrainingMode>('felismeres');
   const [round,setRound]=useState(()=>createPitchCollectionRound());
   const [index,setIndex]=useState(0);
   const [answer,setAnswer]=useState<number|null>(null);
+  const [awarded,setAwarded]=useState(0);
+  const answeredRef=useRef(false);
+  const matchedRef=useRef(new Set<number>());
   const [streak,setStreak]=useState(0);
   const [matches,setMatches]=useState<number[]>([]);
   const [selected,setSelected]=useState<number|null>(null);
@@ -22,7 +25,8 @@ export const PitchCollectionTraining: React.FC<Props>=({onAddXp})=>{
   const reset=(newMode:TrainingMode=mode)=>{
     stopEarTrainingInterval();
     setRound(createPitchCollectionRound(round[round.length-1].id));
-    setIndex(0);setAnswer(null);setMatches([]);setSelected(null);setWrong(false);
+    answeredRef.current=false;matchedRef.current=new Set();
+    setIndex(0);setAnswer(null);setAwarded(0);setMatches([]);setSelected(null);setWrong(false);
     setMode(newMode);
   };
   useEffect(()=>()=>stopEarTrainingInterval(),[]);
@@ -31,20 +35,24 @@ export const PitchCollectionTraining: React.FC<Props>=({onAddXp})=>{
     playEarTrainingMelody(pitchNotes(item,variantIndex));
   };
   const guess=(id:number)=>{
-    if(answer!==null)return;
+    if(answeredRef.current)return;
+    answeredRef.current=true;
     setAnswer(id);
-    if(id===entry.id){setStreak(n=>n+1);onAddXp(25);}
+    if(id===entry.id){const xp=Math.min(25,remainingXp);setAwarded(xp);setStreak(n=>n+1);if(xp>0)onAddXp(xp);}
     else setStreak(0);
   };
   const next=()=>{
+    if(!answeredRef.current)return;
     stopEarTrainingInterval();
+    answeredRef.current=false;
     setAnswer(null);
+    setAwarded(0);
     if(index===round.length-1){setRound(createPitchCollectionRound(entry.id));setIndex(0);}
     else setIndex(n=>n+1);
   };
   const match=(id:number)=>{
-    if(selected===null || matches.includes(selected))return;
-    if(id===selected){setMatches(prev=>[...prev,id]);setSelected(null);setWrong(false);onAddXp(15);}
+    if(selected===null || matchedRef.current.has(selected))return;
+    if(id===selected){matchedRef.current.add(id);setMatches(prev=>[...prev,id]);setSelected(null);setWrong(false);const xp=Math.min(15,remainingXp);if(xp>0)onAddXp(xp);}
     else setWrong(true);
   };
   return <section className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-slate-900" aria-label="Hangkészletek hallásfeladatai">
@@ -77,7 +85,7 @@ export const PitchCollectionTraining: React.FC<Props>=({onAddXp})=>{
           })}
         </div>
         {answer!==null&&<div role="status" className="border-t mt-6 pt-5">
-          <p className={`font-bold ${answer===entry.id?'text-emerald-700':'text-rose-700'}`}>{answer===entry.id?'Helyes válasz! +25 XP':`A helyes válasz: ${challenge.title}`}</p>
+          <p className={`font-bold ${answer===entry.id?'text-emerald-700':'text-rose-700'}`}>{answer===entry.id?(awarded>0?'Helyes válasz! +'+awarded+' XP':'Helyes válasz! A napi 100 XP-s gyakorlási kereted betelt.'):`A helyes válasz: ${challenge.title}`}</p>
           <p className="text-sm mt-2"><strong>Szolmizáció:</strong> {challenge.solfege}</p>
           <p className="text-sm text-slate-600 mt-1">{challenge.explanation}</p>
           <button type="button" onClick={next} className="bg-indigo-700 text-white rounded-lg px-5 py-3 mt-4 font-semibold">

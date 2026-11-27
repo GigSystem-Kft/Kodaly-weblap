@@ -1,3 +1,4 @@
+import { noteFrequencyHz } from '../src/utils/audio';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { MUSIC_CHAPTERS } from '../src/data/musicData';
@@ -29,4 +30,17 @@ test('C major scale plays eight equal quarter notes exactly 60 BPM', () => {
  assert.ok(schedule.notes.every(e=>e.durationSeconds===1));
  assert.equal(quarterScaleSchedule(C_MAJOR_SCALE_NOTES,120).totalSeconds,4);
  assert.throws(()=>quarterScaleSchedule(C_MAJOR_SCALE_NOTES,0));
+});
+
+test('Hungarian B-flat differs from natural H in every supported octave',()=>{
+  for(const octave of [3,4,5]){
+    const b=noteFrequencyHz('B'+octave);
+    const h=noteFrequencyHz('H'+octave);
+    const ais=noteFrequencyHz('A#'+octave);
+    assert.ok(b && h && ais);
+    assert.equal(b,ais,'Hungarian B must equal international B-flat/A-sharp');
+    assert.ok(h>b,'H-natural must be higher than B-flat');
+    assert.ok(Math.abs(12*Math.log2(h/b)-1)<0.01,'B-to-H must be one semitone');
+  }
+  assert.equal(noteFrequencyHz('not-a-note'),undefined);
 });

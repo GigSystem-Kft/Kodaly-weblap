@@ -35,3 +35,13 @@ test('Quiz – header text is dark outside the dark question card',()=>{
  assert.ok(s.includes('text-slate-800">Teszt témaköre'));
  assert.ok(s.includes('className="text-xl font-bold text-white mb-6 leading-snug"'));
 });
+
+test('flashcards and matching remain navigable without a mouse or category data', () => {
+  const flashcards=readFileSync('src/components/FlashcardsView.tsx','utf8');
+  const matching=readFileSync('src/components/MatchingGame.tsx','utf8');
+  assert.match(flashcards,/aria-pressed=\{isFlipped\}/);
+  assert.match(flashcards,/event\.key === 'Enter' \|\| event\.key === ' '/);
+  assert.match(flashcards,/Ebben a témakörben még nincs szókártya/);
+  assert.match(matching,/Ehhez a témakörhöz még nincs párosító feladat/);
+  assert.match(matching,/aria-pressed=\{isSelected\}/);
+});

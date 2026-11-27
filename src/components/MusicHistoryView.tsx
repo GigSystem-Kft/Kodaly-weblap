@@ -1,4 +1,4 @@
-import { CuratedMediaPanel } from './CuratedMediaPanel';
+import { ModuleCompletionButton } from './ModuleCompletionButton';
 import { HistorySupplementSection } from './HistorySupplementSection';
 import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS } from '../data/musicHistorySupplement';
 import React, { useState } from 'react';
@@ -12,8 +12,10 @@ interface MusicHistoryViewProps {
   onQuiz: () => void;
   onFlashcards: () => void;
   onMatching: () => void;
+  completed?: boolean;
+  onComplete?: () => void;
 }
-export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQuiz, onFlashcards, onMatching }) => {
+export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQuiz, onFlashcards, onMatching, completed = false, onComplete }) => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [revealedAnswers, setRevealedAnswers] = useState<string[]>([]);
@@ -29,6 +31,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
       <button type="button" onClick={onBack} className="inline-flex items-center gap-2 text-sm text-[#4a54e1] hover:underline mb-7">
         <ArrowLeft size={17} /> Vissza a tananyaghoz
       </button>
+      {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
       <div className="mb-8 max-w-3xl">
         <p className="text-[#4a54e1] font-bold text-xs uppercase tracking-widest mb-3">07. fejezet · Zenetörténet</p>
         <h2 className="font-serif-cormorant text-5xl md:text-6xl font-semibold mb-4">Zenetörténet</h2>
@@ -277,7 +280,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
           );
         })}
       </div>
-      <CuratedMediaPanel chapterNumber={7}/>
+
       <aside className="mt-10 border border-indigo-200 rounded-2xl p-5 md:p-7 bg-indigo-50/60">
         <h3 className="font-serif-cormorant font-semibold text-2xl mb-2">Gyakorold a zenetörténetet!</h3>
         <p className="text-sm text-slate-700 mb-4">A teljes fejezet után válassz feladattípust. Korábbi eredményeid megmaradnak.</p>
