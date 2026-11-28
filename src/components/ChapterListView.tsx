@@ -25,7 +25,7 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
       <div className="flex flex-col justify-between pr-0 lg:pr-12 overflow-y-auto">
         <div>
           <div className="font-serif-cormorant text-5xl md:text-7xl font-semibold leading-[0.95] mb-6 text-[#1c1c1c]">
-            <SiteText id="home.title" fallback={'A zenei\nismeretek\nművészete.'} />
+            <SiteText id="home.title" fallback={'A zenei\nismeretek\nművészete.'} className="whitespace-pre-line" />
           </div>
           <p className="font-sans text-base md:text-lg leading-relaxed text-[#1c1c1c]/70 mb-8 max-w-lg">
             <SiteText id="home.intro" fallback="Interaktív egyetemi tananyag kisgyermeknevelő, óvodapedagógus és tanító szakos hallgatóknak a MATE gondozásában. Ismerd meg a ritmust, hangközöket, dúr és moll hangsorokat." />
