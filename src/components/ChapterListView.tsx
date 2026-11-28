@@ -1,5 +1,6 @@
 import React from 'react';
 import { MUSIC_CHAPTERS } from '../data/musicData';
+import { SiteText } from '../siteContent';
 import { EXTRA_LEARNING_MODULES } from '../data/learningProgressSummary';
 import { Chapter, UserProgress } from '../types';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
@@ -24,10 +25,10 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
       <div className="flex flex-col justify-between pr-0 lg:pr-12 overflow-y-auto">
         <div>
           <div className="font-serif-cormorant text-5xl md:text-7xl font-semibold leading-[0.95] mb-6 text-[#1c1c1c]">
-            A zenei<br />ismeretek<br />művészete.
+            <SiteText id="home.title" fallback={'A zenei\nismeretek\nművészete.'} />
           </div>
           <p className="font-sans text-base md:text-lg leading-relaxed text-[#1c1c1c]/70 mb-8 max-w-lg">
-            Interaktív egyetemi tananyag kisgyermeknevelő, óvodapedagógus és tanító szakos hallgatóknak a MATE gondozásában. Ismerd meg a ritmust, hangközöket, dúr és moll hangsorokat.
+            <SiteText id="home.intro" fallback="Interaktív egyetemi tananyag kisgyermeknevelő, óvodapedagógus és tanító szakos hallgatóknak a MATE gondozásában. Ismerd meg a ritmust, hangközöket, dúr és moll hangsorokat." />
           </p>
         </div>
 
@@ -79,10 +80,10 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
                 </div>
                 <div>
                   <h4 className="font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">
-                    {chapter.title}
+                    <SiteText id={'chapter.' + chapter.id + '.title'} fallback={chapter.title} />
                   </h4>
                   <p className="text-xs text-[#1c1c1c]/75 line-clamp-1 leading-normal">
-                    {chapter.description}
+                    <SiteText id={'chapter.' + chapter.id + '.description'} fallback={chapter.description} />
                   </p>
                 </div>
                 <div>
@@ -102,10 +103,10 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">06</span>
             <span>
               <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">
-                Kreatív zenei nevelés
+                <SiteText id="module.creative.title" fallback="Kreatív zenei nevelés" />
               </span>
               <span className="block text-xs text-[#1c1c1c]/75 leading-normal">
-                Énekes-játékok, ritmikus mozgás és kipróbálható, forrásmegjelölt zenepedagógiai jógyakorlatok.
+                <SiteText id="module.creative.description" fallback="Énekes-játékok, ritmikus mozgás és kipróbálható, forrásmegjelölt zenepedagógiai jógyakorlatok." />
               </span>
             </span>
             {progress.completedChapters.includes('creative') ? (
@@ -118,9 +119,9 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
             <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">07</span>
             <span>
-              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Zenetörténet</span>
+              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors"><SiteText id="module.musicHistory.title" fallback="Zenetörténet" /></span>
               <span className="block text-xs text-[#1c1c1c]/75 leading-normal">
-                Korszakok az ókortól a 20. századig, jellegzetes műfajok, zeneszerzők és több Wikipédia-forrás.
+                <SiteText id="module.musicHistory.description" fallback="Korszakok az ókortól a 20. századig, jellegzetes műfajok, zeneszerzők és több Wikipédia-forrás." />
               </span>
             </span>
             {progress.completedChapters.includes('musicHistory') ? (
@@ -133,8 +134,8 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
             <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">08</span>
             <span>
-              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Ének-zene tantárgy-pedagógia</span>
-              <span className="block text-xs text-[#1c1c1c]/75 leading-normal">Kelemen Judit szakirodalma nyomán: 17 részletes egyetemi témakör, módszertani feladatok és önellenőrzés.</span>
+              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors"><SiteText id="module.musicPedagogy.title" fallback="Ének-zene tantárgy-pedagógia" /></span>
+              <span className="block text-xs text-[#1c1c1c]/75 leading-normal"><SiteText id="module.musicPedagogy.description" fallback="Kelemen Judit szakirodalma nyomán: 17 részletes egyetemi témakör, módszertani feladatok és önellenőrzés." /></span>
             </span>
             {progress.completedChapters.includes('musicPedagogy') ? (
               <span className="w-6 h-6 rounded-full border border-[#4a54e1] flex items-center justify-center text-[#4a54e1] text-xs font-bold" aria-label="Tanulmányozva">✓</span>
@@ -146,8 +147,8 @@ export const ChapterListView: React.FC<ChapterListViewProps> = ({ onSelectChapte
             className="w-full text-left bg-[#fdfcf8] hover:bg-[#f5f4ef] p-6 grid grid-cols-[3rem_1fr_auto] gap-4 items-center transition-colors cursor-pointer group">
             <span className="font-mono-jetbrains text-[0.8rem] text-[#1c1c1c]/75 font-medium">09</span>
             <span>
-              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors">Zenei kifejezések</span>
-              <span className="block text-xs text-[#1c1c1c]/75 leading-normal">1793 kereshető zenei fogalom, betűrend és tematikus kategóriák, szókártyák, párosító és kvíz.</span>
+              <span className="block font-serif-cormorant text-xl font-bold mb-1 text-[#1c1c1c] group-hover:text-[#4a54e1] transition-colors"><SiteText id="module.musicExpressions.title" fallback="Zenei kifejezések" /></span>
+              <span className="block text-xs text-[#1c1c1c]/75 leading-normal"><SiteText id="module.musicExpressions.description" fallback="1793 kereshető zenei fogalom, betűrend és tematikus kategóriák, szókártyák, párosító és kvíz." /></span>
             </span>
             {progress.completedChapters.includes('musicExpressions') ? (
               <span className="w-6 h-6 rounded-full border border-[#4a54e1] flex items-center justify-center text-[#4a54e1] text-xs font-bold" aria-label="Tanulmányozva">✓</span>
