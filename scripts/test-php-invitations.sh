@@ -236,6 +236,9 @@ mkdir -p php/assets/lazy
 printf 'console.log("ci test")\n' > php/assets/index-ci.js
 printf 'export const moduleVersion = "current";\n' > php/assets/lazy/chunk.js
 printf '%s\n' '<?php return [];' > php/api/knowledge.php
+printf '/* CI PWA stub */\n' > php/sw.js
+printf '{"name":"CI PWA"}\n' > php/manifest.webmanifest
+printf '<html lang="hu">Kapcsolat nélkül</html>\n' > php/offline.html
 cat > php/index.html <<HTML
 <html><head><script src="/assets/index-ci.js"></script></head><body>Test</body></html>
 HTML
