@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 
 function siteEditorValidateEntries(mixed $raw): array {
-    if (!is_array($raw) || array_is_list($raw) || count($raw) > 700) {
+    if (!is_array($raw) || ($raw !== [] && array_is_list($raw)) || count($raw) > 700) {
         fail(400, 'Érvénytelen vagy túl sok szerkesztett szöveg.');
     }
     $normalized = [];
