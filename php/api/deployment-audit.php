@@ -127,7 +127,7 @@ function deploymentBuildFingerprint(string $webroot): array {
     // the files prescribed by this application plus the JS/CSS assets that
     // index.html actually loads, to reject both omitted and injected entries.
     $corePhp = [
-        'api/index.php', 'api/admin.php', 'api/deployment-audit.php',
+        'api/index.php', 'api/admin.php', 'api/site-editor.php', 'api/deployment-audit.php',
         'api/tutor-text-generation.php', 'api/tutor-image-generation.php',
         'api/tutor-visuals.php', 'api/creative-answers.php',
         'api/music-answers.php', 'api/vendor/autoload.php',

@@ -31,7 +31,7 @@ def valid_jpeg(path: Path) -> bool:
 # administration fails if any of these PHP modules are missing from the upload.
 required_files = [
     "index.html", "source-inventory.json", "release-build.json", "api/release-build.php",
-    "api/index.php", "api/admin.php", "api/knowledge.php",
+    "api/index.php", "api/admin.php", "api/site-editor.php", "api/knowledge.php",
     "api/deployment-audit.php",
     "api/tutor-sources.php", "api/tutor-search.php",
     "api/tutor-text-generation.php", "api/tutor-image-generation.php",
@@ -96,7 +96,7 @@ try:
             markup,
         ))
         core = {
-            "api/index.php", "api/admin.php", "api/deployment-audit.php",
+            "api/index.php", "api/admin.php", "api/site-editor.php", "api/deployment-audit.php",
             "api/tutor-text-generation.php", "api/tutor-image-generation.php",
             "api/tutor-visuals.php", "api/creative-answers.php",
             "api/music-answers.php", "api/vendor/autoload.php",

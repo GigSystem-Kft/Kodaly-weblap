@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { formatHungarianPitchText } from '../utils/noteNotation';
+import { SiteText } from '../siteContent';
 import { Chapter } from '../types';
 import { LESSON_ILLUSTRATIONS } from '../data/lessonIllustrations';
 import { getFoundationsSubchapterGuide } from '../data/musicFoundationsSubchapters';
@@ -88,8 +89,8 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
       {/* Chapter Header */}
       <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 mb-8 shadow-sm">
         <span className="text-xs font-bold text-[#4a54e1]">0{chapter.number}. FEJEZET</span>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 mb-3">{chapter.title}</h2>
-        <p className="text-slate-700 text-base leading-relaxed">{chapter.description}</p>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1 mb-3"><SiteText id={'chapter.' + chapter.id + '.title'} fallback={chapter.title} /></h2>
+        <p className="text-slate-700 text-base leading-relaxed"><SiteText id={'chapter.' + chapter.id + '.description'} fallback={chapter.description} /></p>
       </div>
 
       {/* Main layout: Subchapter tabs + content */}
@@ -116,7 +117,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
                 }`}>
                   {idx + 1}
                 </span>
-                <span className="flex-1 leading-snug">{sub.title}</span>
+                <span className="flex-1 leading-snug"><SiteText id={'sub.' + sub.id + '.title'} fallback={sub.title} /></span>
                 {completedSubchapters.includes(sub.id) && <CheckCircle className="w-4 h-4 shrink-0" aria-label="Tanulmányozott alfejezet" />}
               </button>
             );
@@ -127,7 +128,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
         <div className="lg:col-span-3 space-y-6">
           <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl">
             <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
-              <h3 className="text-xl font-bold text-slate-900">{currentSub.title}</h3>
+              <h3 className="text-xl font-bold text-slate-900"><SiteText id={'sub.' + currentSub.id + '.title'} fallback={currentSub.title} /></h3>
               {completedSubchapters.includes(currentSub.id) ? (
                 <span className="text-sm text-emerald-700 inline-flex gap-1 items-center"><CheckCircle className="w-4 h-4"/> Tanulmányozottnak jelölve</span>
               ) : (
@@ -138,7 +139,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               )}
             </div>
             <p className="text-[#4a54e1] font-medium text-sm mb-6 pb-4 border-b border-slate-200">
-              {formatHungarianPitchText(currentSub.summary)}
+              <SiteText id={'sub.' + currentSub.id + '.summary'} fallback={formatHungarianPitchText(currentSub.summary)} />
             </p>
 
             {/* Content paragraphs / bullets */}
@@ -146,7 +147,7 @@ export const ChapterDetailView: React.FC<ChapterDetailViewProps> = ({
               {currentSub.content.map((paragraph, i) => (
                 <div key={i} className="flex items-start space-x-3 text-slate-700 leading-relaxed">
                   <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 mt-2.5 shrink-0" />
-                  <p>{formatHungarianPitchText(paragraph)}</p>
+                  <p><SiteText id={'sub.' + currentSub.id + '.paragraph.' + i} fallback={formatHungarianPitchText(paragraph)} /></p>
                 </div>
               ))}
             </div>

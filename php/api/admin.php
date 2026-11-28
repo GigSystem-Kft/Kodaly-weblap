@@ -9,6 +9,10 @@ function requireAdmin(PDO $pdo): array {
 }
 function adminApi(PDO $pdo, array $config, string $route): never {
     $admin = requireAdmin($pdo);
+    if ($route === 'admin/site-content') {
+        require_once __DIR__ . '/site-editor.php';
+        siteEditorAdmin($pdo, $config, $admin);
+    }
     if ($route === 'admin/source-coverage') {
         method('GET');
         answer(200, tutorDetailedCoverage(knowledgeEntries()));

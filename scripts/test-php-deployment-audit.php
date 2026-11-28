@@ -92,7 +92,7 @@ try {
     file_put_contents($lazyPath, 'export const lesson = "új kiadás";');
     file_put_contents($root . '/assets/lazy/lesson.css', '.lesson { display: block; }');
     $coreFiles = [
-        'api/index.php', 'api/admin.php', 'api/deployment-audit.php',
+        'api/index.php', 'api/admin.php', 'api/site-editor.php', 'api/deployment-audit.php',
         'api/tutor-text-generation.php', 'api/tutor-image-generation.php',
         'api/tutor-visuals.php', 'api/creative-answers.php',
         'api/music-answers.php', 'api/vendor/autoload.php',

@@ -353,7 +353,7 @@ try {
         if (($operator['role'] ?? '') !== 'admin') fail(403,'Nincs adminisztrátori jogosultságod.');
         $root=dirname(__DIR__);
         $required=['index.html','source-inventory.json','release-build.json','api/release-build.php',
-            'api/index.php','api/admin.php','api/tutor-search.php',
+            'api/index.php','api/admin.php','api/site-editor.php','api/tutor-search.php',
             'api/deployment-audit.php',
             'api/tutor-sources.php','api/tutor-text-generation.php',
             'api/tutor-image-generation.php','api/tutor-visuals.php',
@@ -409,6 +409,13 @@ try {
                 ($config['mail_transport'] ?? '')==='smtp',
             'scope'=>'Fájlkészlet-ellenőrzés, nem helyettesíti az éles funkcionális próbát'
         ]);
+    }
+
+    // Published text overrides are readable by everyone; drafts and history
+    // are never returned by this public endpoint.
+    if ($route === 'content/published') {
+        require_once __DIR__ . '/site-editor.php';
+        siteEditorPublic($pdo);
     }
 
     if (str_starts_with($route, 'admin/')) {

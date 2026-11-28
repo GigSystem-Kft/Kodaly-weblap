@@ -636,6 +636,89 @@ try {
     console.log('Account UI: '+role+' navigation verified');
   }
 
+  // 1.2 editor: real browser draft/preview/publish flow using a mock API.
+  // PHP's real MySQL authorization/locking is independently tested in CI.
+  const editorPage=await browser.newPage();
+  let publishedCopy={};
+  let draftCopy={};
+  let contentVersion=0;
+  let editorPublishes=0;
+  await editorPage.route('**/api/index.php?*', route => {
+    const req=route.request();
+    const endpoint=new URL(req.url()).searchParams.get('route');
+    let body;
+    if (endpoint==='auth/me') {
+      body={user:{id:'editor-fixture',email:'editor@example.invalid',
+        displayName:'Szerkesztő admin',role:'admin'}};
+    } else if (endpoint==='progress') {
+      body={progress:null,revision:'0'.repeat(64)};
+    } else if (endpoint==='content/published') {
+      body={revision:contentVersion,entries:publishedCopy};
+    } else if (endpoint==='admin/site-content') {
+      if (req.method()==='POST') {
+        const input=req.postDataJSON();
+        if(input.revision!==contentVersion){
+          return route.fulfill({status:409,contentType:'application/json',
+            body:JSON.stringify({error:'Verzióütközés'})});
+        }
+        if(input.action==='save') draftCopy=input.draft;
+        else if(input.action==='publish'){
+          publishedCopy=draftCopy;
+          editorPublishes++;
+        }
+        contentVersion++;
+        body={message:input.action==='save'?'A vázlat mentve.':'A módosítások közzétéve.',
+          revision:contentVersion};
+      } else {
+        body={revision:contentVersion,draft:draftCopy,published:publishedCopy,
+          history:[],updatedAt:null,publishedAt:editorPublishes?'most':null};
+      }
+    } else if(endpoint==='admin/users'){
+      body={users:[]};
+    } else if(endpoint==='admin/invitations'){
+      body={invitations:[]};
+    } else if(endpoint==='admin/sources'){
+      body={sources:[]};
+    } else if(endpoint==='admin/source-coverage'){
+      body={generatedAt:'',indexChunks:0,indexedCharacters:0,sources:[],omitted:[],missing:[],limitations:[]};
+    } else if(endpoint==='auth/deployment-check'){
+      body={ready:false,checkedAt:'',missing:[],publicArchives:[],scanComplete:false,
+        buildConsistent:false,mailConfigured:false,scope:'local mock'};
+    } else if(endpoint==='chat/status'){
+      body={mode:'fallback',knowledge:{indexedSources:0,lessonChunks:0}};
+    } else {
+      body={error:'Fixture route unavailable'};
+    }
+    return route.fulfill({status:body.error?404:200,contentType:'application/json',
+      body:JSON.stringify(body)});
+  });
+  editorPage.on('dialog', dialog => dialog.accept());
+  try {
+    await editorPage.goto(root,{waitUntil:'domcontentloaded'});
+    await editorPage.getByRole('button',{name:'Admin',exact:true}).click();
+    const editor=editorPage.locator('section[aria-label="Tananyag- és szövegszerkesztő"]');
+    await editor.getByRole('heading',{name:'Tananyag- és szövegszerkesztő'}).waitFor();
+    await editor.locator('textarea').fill('Új **főoldali** cím');
+    const preview=editor.getByText('Előnézet – csak neked látható');
+    await preview.waitFor();
+    if(await editor.locator('strong').filter({hasText:'főoldali'}).count()===0)
+      throw new Error('Editor Markdown emphasis preview missing');
+    await editor.getByRole('button',{name:'Vázlat mentése'}).click();
+    await editor.getByText('A vázlat mentve.').waitFor();
+    if(!draftCopy['home.title'] || Object.keys(publishedCopy).length!==0)
+      throw new Error('Saving draft leaked unpublished text to public');
+    await editor.getByRole('button',{name:'Vázlat közzététele'}).click();
+    await editor.getByText('A módosítások közzétéve.').waitFor();
+    if(publishedCopy['home.title']?.text!=='Új **főoldali** cím' ||
+       editorPublishes!==1)
+      throw new Error('Editor explicit publish failed');
+    await editorPage.getByRole('button',{name:/01\. Tananyag/}).click();
+    await editorPage.getByText('Új főoldali cím').waitFor();
+    console.log('Admin editor: preview, draft isolation and published copy visible on homepage');
+  } finally {
+    await editorPage.close();
+  }
+
   // Account isolation: a delayed initial auth/me must not overwrite the
   // new account after the learner logs in during the bootstrap request.
   const accountRaceContext = await browser.newContext();

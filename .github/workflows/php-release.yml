@@ -58,6 +58,7 @@ jobs:
       - name: TypeScript and unit tests
         run: |
           npm test
+          node --import tsx --test scripts/test-site-content.tsx
           npm run lint
       - name: Install PHP mail transport
         run: |
@@ -88,6 +89,8 @@ jobs:
           php -v
           php -l php/api/index.php
           php -l php/api/admin.php
+          php -l php/api/site-editor.php
+          php scripts/test-php-site-editor.php
           php -l php/api/music-answers.php
           php -l php/api/creative-answers.php
           php scripts/test-php-creative-answers.php
@@ -121,6 +124,7 @@ jobs:
           cp -a dist/. release/
           cp php/api/index.php release/api/index.php
           cp php/api/admin.php release/api/admin.php
+          cp php/api/site-editor.php release/api/site-editor.php
           cp php/api/deployment-audit.php release/api/deployment-audit.php
           cp php/api/music-answers.php release/api/music-answers.php
           cp php/api/creative-answers.php release/api/creative-answers.php
