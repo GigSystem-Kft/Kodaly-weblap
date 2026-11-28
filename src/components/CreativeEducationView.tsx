@@ -1,4 +1,5 @@
 import { ModuleCompletionButton } from './ModuleCompletionButton';
+import { SiteText } from '../siteContent';
 import React, { useEffect, useState } from 'react';
 import { CREATIVE_SOURCE, CREATIVE_THEMES, CREATIVE_PRACTICES } from '../data/creativeEducation';
 import { CREATIVE_WORKSHOPS } from '../data/hungarianDidacticWorkshops';
@@ -62,7 +63,7 @@ export const CreativeEducationView: React.FC<CreativeEducationViewProps> = ({ on
       {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
       <div className="max-w-3xl mb-10">
         <p className="uppercase tracking-[0.2em] text-[0.7rem] font-semibold text-[#4a54e1] mb-3">Kreatív · módszertani gyűjtemény</p>
-        <h2 className="font-serif-cormorant text-4xl md:text-6xl font-bold leading-tight mb-4">Kreatív zenei nevelés</h2>
+        <h2 className="font-serif-cormorant text-4xl md:text-6xl font-bold leading-tight mb-4"><SiteText id="module.creative.title" fallback="Kreatív zenei nevelés" /></h2>
         <p className="text-lg text-[#1c1c1c]/75 leading-relaxed">
           Éneklés, játék és mozgás találkozása. Kipróbálható módszertani ötletek a lüktetés,
           metrum, zenei forma, ritmus, dallami relációk, többszólamúság és zenehallgatás fejlesztéséhez.
