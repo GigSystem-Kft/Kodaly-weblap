@@ -1,4 +1,5 @@
 import { ModuleCompletionButton } from './ModuleCompletionButton';
+import { SiteText } from '../siteContent';
 import React, {useMemo, useState} from 'react';
 import {ArrowLeft, BookOpen, Search, Layers, HelpCircle, Gamepad2, ExternalLink, ChevronLeft, ChevronRight} from 'lucide-react';
 import entries from '../data/musicExpressions.json';
@@ -49,7 +50,7 @@ export const MusicExpressionsView:React.FC<Props>=({onBack,onFlashcards,onMatchi
       {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
   <header className="bg-white border border-slate-200 shadow-sm rounded-3xl p-6 md:p-9 mb-7">
    <p className="text-xs font-bold uppercase tracking-widest text-indigo-700 mb-2">09. fejezet · kereshető fogalomtár</p>
-   <h2 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-3">Zenei kifejezések</h2>
+   <h2 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-3"><SiteText id="module.musicExpressions.title" fallback="Zenei kifejezések" /></h2>
    <p className="text-sm md:text-base text-slate-700 max-w-3xl leading-relaxed">
     A mellékelt magyar nyelvű zenei szakkifejezés-gyűjtemény teljes, betűrendben rendezett feldolgozása. Az idegen nyelvű előadási utasítások mellett hangszeres, ritmikai, formai és zenetörténeti fogalmakat is kereshetsz.
    </p>
