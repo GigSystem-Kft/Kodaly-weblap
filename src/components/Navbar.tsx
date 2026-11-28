@@ -34,7 +34,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
           title="Vissza a tananyag főoldalára"
         >
           <img
-            src={headerBrandImage}
+            src="/images/zeneelmeleti_muhely_logo_atlatszo.png"
+            onError={(event) => {
+              // Keep the 1.0 header logo visible until the transparent PNG is
+              // uploaded to the matching CloudPanel /images/ folder.
+              const image = event.currentTarget;
+              if (!image.src.startsWith('data:')) image.src = headerBrandImage;
+            }}
             alt="Zeneelméleti Műhely – Zenei Ismeretek és Oktatási Portál"
             className="h-[7.2rem] md:h-[8.4rem] w-auto object-contain"
             width="270"
