@@ -164,7 +164,8 @@ const template=fs.readFileSync('scripts/pwa-sw.template.js','utf8');
 if(!template.includes('__PWA_CACHE_VERSION__') || !template.includes('__PWA_SHELL_JSON__')) {
   throw new Error('PWA worker template missing expected placeholders');
 }
-const worker=template.replace('__PWA_CACHE_VERSION__',JSON.stringify(version))
-  .replace('__PWA_SHELL_JSON__',JSON.stringify(shell));
+const worker=template.replaceAll('__PWA_CACHE_VERSION__',JSON.stringify(version))
+  .replaceAll('__PWA_SHELL_JSON__',JSON.stringify(shell));
+if(worker.includes('__PWA_')) throw new Error('Unresolved PWA worker placeholder');
 fs.writeFileSync(path.join(root,'sw.js'),worker);
 console.log('PWA offline shell generated',version,'assets:',shell.length);
