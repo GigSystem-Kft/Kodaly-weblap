@@ -40,7 +40,7 @@ test('all catalog fields have unique, stable keys covered by PHP validation', ()
   assert.ok(EDITABLE_SITE_FIELDS.length > 40);
   const keys = EDITABLE_SITE_FIELDS.map(field => field.id);
   assert.equal(new Set(keys).size, keys.length, 'duplicate editor IDs');
-  const valid = /^(?:home\.(?:title|intro)|navbar\.(?:chapters|flashcards|matching|quiz|eartraining|dashboard)|chapter\.[a-z0-9-]+\.(?:title|description)|sub\.[a-z0-9-]+\.(?:title|summary|paragraph\.[0-9]{1,3})|module\.(?:creative|musicHistory|musicPedagogy|musicExpressions)\.(?:title|description))$/;
+  const valid = /^(?:home\.(?:title|intro)|navbar\.(?:chapters|flashcards|matching|quiz|eartraining|dashboard)|chapter\.[\p{L}0-9-]+\.(?:title|description)|sub\.[\p{L}0-9-]+\.(?:title|summary|paragraph\.[0-9]{1,3})|module\.(?:creative|musicHistory|musicPedagogy|musicExpressions)\.(?:title|description))$/u;
   for (const field of EDITABLE_SITE_FIELDS) {
     assert.match(field.id, valid);
     assert.ok(field.fallback.trim().length > 0);
