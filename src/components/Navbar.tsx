@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { headerBrandImage } from '../assets/headerBrandImage';
+import { SiteText } from '../siteContent';
 import { TEXTBOOKS } from './TextbookView';
 import { BookOpen, Award, Layers, Volume2, Flame, Sparkles, HelpCircle, Image as ImageIcon, Table } from 'lucide-react';
 
@@ -65,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab, xp, str
                     : 'text-[#1c1c1c]/75 hover:text-[#1c1c1c]'
                 }`}
               >
-                {item.label}
+                <SiteText id={'navbar.' + item.id} fallback={item.label} />
               </button>
             );
           })}
