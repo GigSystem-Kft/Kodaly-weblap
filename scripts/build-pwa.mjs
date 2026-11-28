@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import zlib from 'node:zlib';
+import { spawnSync } from 'node:child_process';
 
 const root = path.resolve('dist');
 const outputIcons = path.join(root, 'icons');
@@ -168,4 +169,10 @@ const worker=template.replaceAll('__PWA_CACHE_VERSION__',JSON.stringify(version)
   .replaceAll('__PWA_SHELL_JSON__',JSON.stringify(shell));
 if(worker.includes('__PWA_')) throw new Error('Unresolved PWA worker placeholder');
 fs.writeFileSync(path.join(root,'sw.js'),worker);
+const checked = spawnSync(process.execPath, ['--check', path.join(root,'sw.js')], {
+  encoding:'utf8'
+});
+if (checked.status !== 0) {
+  throw new Error('Invalid generated PWA worker: ' + checked.stderr);
+}
 console.log('PWA offline shell generated',version,'assets:',shell.length);
