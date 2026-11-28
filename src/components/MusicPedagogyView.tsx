@@ -1,4 +1,5 @@
 import { ModuleCompletionButton } from './ModuleCompletionButton';
+import { SiteText } from '../siteContent';
 import React, { useMemo, useState } from 'react';
 import { PEDAGOGY_SOURCE, PEDAGOGY_UNITS } from '../data/musicPedagogy';
 import { DEEP_PEDAGOGY_LESSONS } from '../data/musicPedagogyDeep';
@@ -22,7 +23,7 @@ export const MusicPedagogyView:React.FC<{onBack:()=>void;onQuiz:()=>void;onFlash
   <button onClick={onBack} className="inline-flex items-center gap-2 text-sm text-[#4a54e1] mb-6 hover:underline"><ArrowLeft size={17}/> Vissza a tananyaghoz</button>
   {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
   <p className="text-indigo-600 tracking-wider font-semibold uppercase text-xs mb-2">08. fejezet · Egyetemi szakirodalomra épülő tananyag</p>
-  <h1 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-5">Ének-zene tantárgy-pedagógia</h1>
+  <h1 className="font-serif-cormorant text-4xl md:text-6xl font-semibold mb-5"><SiteText id="module.musicPedagogy.title" fallback="Ének-zene tantárgy-pedagógia" /></h1>
   <p className="text-base md:text-lg leading-relaxed max-w-3xl mb-6 text-slate-700">
     A tanító szakos hallgatók számára készített tantárgy-pedagógiai tanulóút: a zenei
     élmény szerepétől a Kodály-koncepción át a daltanításig, a készségfejlesztésig,
