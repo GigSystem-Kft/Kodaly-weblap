@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '../api';
+import { SiteContentEditor } from './SiteContentEditor';
 
 type User = { id: string; email: string; display_name: string; role: string; created_at: string; email_verified_at: string | null };
 type Invite = { id: string; email: string; created_at: string; expires_at: string; used_at: string | null };
@@ -166,6 +167,7 @@ export const AdminDashboard: React.FC = () => {
     <section className="max-w-5xl mx-auto px-5 py-8 text-slate-900">
       <h2 className="font-serif-cormorant text-3xl font-semibold mb-2">Felhasználók és meghívók</h2>
       <p className="text-sm text-slate-600 mb-5">Az adminisztráció kizárólag jogosult fiókkal érhető el. A meghívókat a rendszer automatikusan e-mailben küldi.</p>
+      <SiteContentEditor />
       {message && <p role="status" className="mb-3 text-sm text-emerald-700">{message}</p>}
       {error && <p role="alert" className="mb-3 text-sm text-red-700">{error}</p>}
       <section className="rounded-xl border border-slate-200 bg-white p-5 mb-6" aria-label="Telepítés állapota">
