@@ -60,9 +60,12 @@ try {
     }
     await pwaPage.evaluate(async () => {
       if(!('serviceWorker' in navigator)) throw new Error('Browser has no service worker');
-      await navigator.serviceWorker.ready;
+      await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise((_,reject) => setTimeout(() => reject(new Error('PWA registration did not activate')), 12000))
+      ]);
     });
-    await pwaPage.waitForFunction(() => navigator.serviceWorker.controller !== null,{timeout:15000});
+    await pwaPage.waitForFunction(() => navigator.serviceWorker.controller !== null, null, {timeout:15000});
     const initialCache=await pwaPage.evaluate(async () => {
       const keys=await caches.keys();
       const pwa=keys.filter(name=>name.startsWith('zm-public-shell-'));
