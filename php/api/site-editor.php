@@ -17,7 +17,7 @@ function siteEditorValidateEntries(mixed $raw): array {
     $totalBytes = 0;
     foreach ($raw as $key => $entry) {
         if (!is_string($key) || strlen($key) > 105 ||
-            preg_match('/^(?:home\.(?:title|intro)|navbar\.(?:chapters|flashcards|matching|quiz|eartraining|dashboard)|chapter\.[a-z0-9-]+\.(?:title|description)|sub\.[a-z0-9-]+\.(?:title|summary|paragraph\.[0-9]{1,3})|module\.(?:creative|musicHistory|musicPedagogy|musicExpressions)\.(?:title|description))$/D', $key) !== 1) {
+            preg_match('/^(?:home\.(?:title|intro)|navbar\.(?:chapters|flashcards|matching|quiz|eartraining|dashboard)|chapter\.[\p{L}0-9-]+\.(?:title|description)|sub\.[\p{L}0-9-]+\.(?:title|summary|paragraph\.[0-9]{1,3})|module\.(?:creative|musicHistory|musicPedagogy|musicExpressions)\.(?:title|description))$/uD', $key) !== 1) {
             fail(400, 'Nem szerkeszthető szövegazonosító.');
         }
         if (!is_array($entry) || !is_string($entry['text'] ?? null) ||
