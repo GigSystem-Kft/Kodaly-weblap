@@ -24,6 +24,7 @@ MEDIA_SUFFIXES = frozenset({
 CORE_PHP = (
     "api/index.php",
     "api/admin.php",
+    "api/site-editor.php",
     "api/deployment-audit.php",
     "api/tutor-text-generation.php",
     "api/tutor-image-generation.php",
