@@ -128,6 +128,7 @@ function deploymentBuildFingerprint(string $webroot): array {
     // index.html actually loads, to reject both omitted and injected entries.
     $corePhp = [
         'api/index.php', 'api/admin.php', 'api/site-editor.php', 'api/deployment-audit.php',
+        'sw.js', 'manifest.webmanifest', 'offline.html',
         'api/tutor-text-generation.php', 'api/tutor-image-generation.php',
         'api/tutor-visuals.php', 'api/creative-answers.php',
         'api/music-answers.php', 'api/vendor/autoload.php',
