@@ -354,6 +354,7 @@ try {
         $root=dirname(__DIR__);
         $required=['index.html','source-inventory.json','release-build.json','api/release-build.php',
             'api/index.php','api/admin.php','api/site-editor.php','api/tutor-search.php',
+            'sw.js','manifest.webmanifest','offline.html',
             'api/deployment-audit.php',
             'api/tutor-sources.php','api/tutor-text-generation.php',
             'api/tutor-image-generation.php','api/tutor-visuals.php',
