@@ -1,4 +1,5 @@
 import { ModuleCompletionButton } from './ModuleCompletionButton';
+import { SiteText } from '../siteContent';
 import { HistorySupplementSection } from './HistorySupplementSection';
 import { HISTORY_NOTE_INSIGHTS, HISTORY_TEXTBOOK_LINKS } from '../data/musicHistorySupplement';
 import React, { useState } from 'react';
@@ -34,7 +35,7 @@ export const MusicHistoryView: React.FC<MusicHistoryViewProps> = ({ onBack, onQu
       {onComplete && <div className="mb-5"><ModuleCompletionButton completed={completed} onComplete={onComplete}/></div>}
       <div className="mb-8 max-w-3xl">
         <p className="text-[#4a54e1] font-bold text-xs uppercase tracking-widest mb-3">07. fejezet · Zenetörténet</p>
-        <h2 className="font-serif-cormorant text-5xl md:text-6xl font-semibold mb-4">Zenetörténet</h2>
+        <h2 className="font-serif-cormorant text-5xl md:text-6xl font-semibold mb-4"><SiteText id="module.musicHistory.title" fallback="Zenetörténet" /></h2>
         <p className="text-base md:text-lg text-[#1c1c1c]/75 leading-relaxed">
           A zene alakulása az ókortól napjainkig. Áttekintő tanulókártyák, fontos műfajok,
           jellegzetes stílusjegyek és hallgatási feladatok, megbízhatóan megjelölt továbbolvasási forrásokkal.
