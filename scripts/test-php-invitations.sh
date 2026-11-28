@@ -321,6 +321,9 @@ adminId="$(php -r '$p=new PDO("mysql:host=127.0.0.1;dbname=zeneelmelet","root","
 selfRole="$(curl -sS -b /tmp/zm-admin-cookies -o /tmp/zm-response.json -w '%{http_code}' -X POST 'http://127.0.0.1:8000/api/index.php?route=admin/set-role' -H 'Origin: http://localhost:8000' -H 'X-Requested-With: XMLHttpRequest' -H 'Content-Type: application/json' --data "{\"userId\":\"$adminId\",\"role\":\"student\"}")"
 test "$selfRole" = 403
 echo 'PHP admin: guarded endpoints, invitation, listing and privilege restrictions passed'
+
+# 1.2 editor acceptance shares this disposable CI MySQL database and admin cookie.
+bash scripts/test-php-site-editor-http.sh
 echo 'PHP account pilot: invitation, email verification, one-use reset and password change passed'
 
 # Exercise optimistic revision checks against the same disposable MySQL database.
