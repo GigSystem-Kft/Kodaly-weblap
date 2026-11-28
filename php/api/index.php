@@ -411,6 +411,13 @@ try {
         ]);
     }
 
+    // Published text overrides are readable by everyone; drafts and history
+    // are never returned by this public endpoint.
+    if ($route === 'content/published') {
+        require_once __DIR__ . '/site-editor.php';
+        siteEditorPublic($pdo);
+    }
+
     if (str_starts_with($route, 'admin/')) {
         require_once __DIR__ . '/admin.php';
         adminApi($pdo, $config, $route);
