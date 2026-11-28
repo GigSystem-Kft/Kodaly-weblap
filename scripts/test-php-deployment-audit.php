@@ -186,6 +186,18 @@ try {
         checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
             'removing stale media restores consistent release: ' . $extra);
     }
+    // The 1.1 owner-provided transparent PNG is managed separately from the
+    // generated ZIP. A missing file keeps the original-logo fallback valid;
+    // a wrong or unapproved image must never silently pass the release audit.
+    mkdir($root . '/images', 0700);
+    $brandLogo = $root . '/images/zeneelmeleti_muhely_logo_atlatszo.png';
+    file_put_contents($brandLogo, 'unapproved logo payload');
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === false,
+        'unapproved separately uploaded logo must be rejected');
+    unlink($brandLogo);
+    checkDeployment(deploymentBuildFingerprint($root)['buildConsistent'] === true,
+        'absent optional logo keeps the bundled safe fallback consistent');
+
     // The host-managed .cache exclusion must not require reading private
     // CloudPanel files when the documented server explicitly blocks access.
     file_put_contents($root . '/.cache/private-preview.jpg', 'managed cache data');
