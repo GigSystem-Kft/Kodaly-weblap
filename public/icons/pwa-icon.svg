@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Zeneelméleti Műhely – nyitott kotta és hangjegy</title>
+  <rect width="512" height="512" rx="100" fill="#fdfcf8"/>
+  <circle cx="256" cy="235" r="155" fill="none" stroke="#16435a" stroke-width="15"/>
+  <path d="M92 310C150 269 203 277 256 324C309 277 362 269 420 310" fill="none" stroke="#16435a" stroke-width="16" stroke-linecap="round"/>
+  <path d="M95 319C160 295 208 310 256 342C304 310 352 295 417 319" fill="none" stroke="#d7a434" stroke-width="13" stroke-linecap="round"/>
+  <path d="M256 322V104C205 155 206 201 255 224C298 248 293 299 256 302C204 305 198 255 224 238" fill="none" stroke="#16435a" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M270 124C237 167 236 210 267 234C304 264 294 312 251 309" fill="none" stroke="#e0b23e" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="250" cy="303" r="17" fill="#e0b23e" stroke="#16435a" stroke-width="8"/>
+  <path d="M139 371H373" stroke="#16435a" stroke-opacity=".22" stroke-width="7" stroke-linecap="round"/>
+</svg>
