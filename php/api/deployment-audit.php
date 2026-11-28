@@ -264,6 +264,19 @@ function deploymentBuildFingerprint(string $webroot): array {
     }
     sort($actualMedia, SORT_STRING);
     $expectedMedia = array_keys($mediaDigests);
+    // 1.1 header artwork is deployed by the owner separately from the
+    // generated PHP ZIP. Approve only that single, exact original PNG.
+    // Do not whitelist arbitrary files or weaken the full media inventory.
+    $externalLogo = 'images/zeneelmeleti_muhely_logo_atlatszo.png';
+    $externalLogoSha = 'b48c9286aa19fcf522661af71c55888e6b71cfeb6d8a29d857e293227d395934';
+    $logoFile = $root . '/' . $externalLogo;
+    if (file_exists($logoFile) || is_link($logoFile)) {
+        if (!is_file($logoFile) || is_link($logoFile) || !is_readable($logoFile) ||
+            !hash_equals($externalLogoSha, (string) @hash_file('sha256', $logoFile))) {
+            return ['buildConsistent'=>false, 'releaseRevision'=>null];
+        }
+        $expectedMedia[] = $externalLogo;
+    }
     sort($expectedMedia, SORT_STRING);
     if ($actualMedia !== $expectedMedia) {
         return ['buildConsistent'=>false, 'releaseRevision'=>null];
