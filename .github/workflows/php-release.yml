@@ -58,6 +58,7 @@ jobs:
       - name: TypeScript and unit tests
         run: |
           npm test
+          node --import tsx --test scripts/test-site-content.tsx
           npm run lint
       - name: Install PHP mail transport
         run: |
