@@ -34,6 +34,70 @@ try {
   console.log('Guest: landing page loaded');
   await checkAccessibility(page, 'főoldal');
 
+  // PWA: the install manifest, generated icons and cached public shell must
+  // work offline without ever storing authenticated API responses.
+  const pwaContext=await browser.newContext({serviceWorkers:'allow'});
+  const pwaPage=await pwaContext.newPage();
+  try {
+    await pwaPage.goto(root,{waitUntil:'domcontentloaded'});
+    const manifest=await pwaPage.evaluate(async () => {
+      const response=await fetch('/manifest.webmanifest');
+      if(!response.ok) throw new Error('PWA manifest is absent');
+      return response.json();
+    });
+    if(manifest.display!=='standalone' || manifest.lang!=='hu' ||
+       !manifest.icons.some(i=>i.sizes==='192x192') ||
+       !manifest.icons.some(i=>i.sizes==='512x512'))
+      throw new Error('PWA manifest has incomplete install metadata');
+    for (const filename of ['/icons/pwa-192.png','/icons/pwa-512.png','/icons/apple-touch-icon.png']) {
+      const result=await pwaPage.evaluate(async name => {
+        const response=await fetch(name);
+        const content=new Uint8Array(await response.arrayBuffer());
+        return {ok:response.ok,signature:[...content.slice(0,8)]};
+      }, filename);
+      if(!result.ok || result.signature.join(',')!=='137,80,78,71,13,10,26,10')
+        throw new Error('PWA PNG icon is missing or malformed: '+filename);
+    }
+    await pwaPage.evaluate(async () => {
+      if(!('serviceWorker' in navigator)) throw new Error('Browser has no service worker');
+      await navigator.serviceWorker.ready;
+    });
+    await pwaPage.waitForFunction(() => navigator.serviceWorker.controller !== null,{timeout:15000});
+    const initialCache=await pwaPage.evaluate(async () => {
+      const keys=await caches.keys();
+      const pwa=keys.filter(name=>name.startsWith('zm-public-shell-'));
+      if(pwa.length!==1) throw new Error('Invalid PWA cache count: '+pwa.length);
+      const cache=await caches.open(pwa[0]);
+      const urls=(await cache.keys()).map(request=>new URL(request.url).pathname);
+      return urls;
+    });
+    if (!initialCache.includes('/index.html') ||
+        !initialCache.includes('/manifest.webmanifest') ||
+        !initialCache.some(url=>url.startsWith('/assets/') && url.endsWith('.js')) ||
+        initialCache.some(url=>url.startsWith('/api/')))
+      throw new Error('PWA shell cache incomplete or contains a private API route');
+    await pwaContext.setOffline(true);
+    await pwaPage.reload({waitUntil:'domcontentloaded'});
+    await pwaPage.getByRole('heading',{name:'Zeneelméleti Műhely'}).waitFor();
+    await pwaPage.getByRole('button',{name:'Kurzus indítása'}).click();
+    await pwaPage.getByText('Ritmus', {exact:false}).first().waitFor();
+    const cacheOffline=await pwaPage.evaluate(async () => {
+      const names=await caches.keys();
+      const items=await Promise.all(names.filter(n=>n.startsWith('zm-public-shell-')).map(async name => {
+        const cache=await caches.open(name);
+        return (await cache.keys()).map(req=>new URL(req.url).pathname);
+      }));
+      return items.flat();
+    });
+    if(cacheOffline.some(url=>url.startsWith('/api/') || url.includes('progress') ||
+        url.includes('auth/me')))
+      throw new Error('Private API response was persisted by service worker');
+    console.log('PWA: manifest, 192/512 PNG icons, offline lessons and private-API exclusion passed');
+  } finally {
+    await pwaContext.close();
+  }
+
+
   await page.getByRole('button',{name:'Kurzus indítása'}).click();
   await page.getByRole('button',{name:'Mintaválasz megmutatása'}).first().click();
   if (await page.getByRole('button',{name:'Válasz elrejtése'}).count()!==1)
